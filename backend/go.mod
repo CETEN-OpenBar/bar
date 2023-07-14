@@ -8,6 +8,9 @@ require (
 	github.com/getkin/kin-openapi v0.118.0
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.10.2
+	github.com/labstack/gommon v0.4.0
+	github.com/neko-neko/echo-logrus v1.1.0
+	github.com/neko-neko/echo-logrus/v2 v2.0.2
 	github.com/sirupsen/logrus v1.9.3
 	go.mongodb.org/mongo-driver v1.12.0
 )
@@ -32,7 +35,7 @@ require (
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/compress v1.16.3 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.4 // indirect
-	github.com/labstack/gommon v0.4.0 // indirect
+	github.com/labstack/echo v3.3.10+incompatible // indirect
 	github.com/leodido/go-urn v1.2.4 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect

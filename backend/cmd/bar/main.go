@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bar/api"
 	"bar/internal/config"
 	"bar/internal/db"
 	"time"
@@ -21,4 +22,9 @@ func main() {
 		logrus.Panic(err)
 	}
 
+	s := api.NewServer(db)
+
+	if err := s.Serve(); err != nil {
+		logrus.Panic(err)
+	}
 }
