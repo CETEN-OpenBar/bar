@@ -24,7 +24,7 @@ func main() {
 
 	s := api.NewServer(db)
 
-	if err := s.Serve(); err != nil {
+	if err := s.Serve(&c); err != nil {
 		logrus.Panic(err)
 	}
 }

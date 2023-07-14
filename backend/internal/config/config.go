@@ -14,6 +14,12 @@ type Config struct {
 		Database      string `env:"DB" envDefault:"bar"`
 		Timeout       int    `env:"TIMEOUT" envDefault:"30"`
 	} `envPrefix:"BAR_MONGO_"`
+
+	ApiConfig struct {
+		SessionSecret      string `env:"SESSION_SECRET"`
+		AdminSessionSecret string `env:"ADMIN_SESSION_SECRET"`
+		Port               string `env:"PORT" envDefault:":8080"`
+	} `envPrefix:"BAR_API_"`
 }
 
 var config Config

@@ -2312,5 +2312,5 @@ components:
       in: cookie
     admin_auth:
       type: apiKey
-      name: admin
-      in: header
+      name: BAR_ADMIN_SESS
+      in: cookie
