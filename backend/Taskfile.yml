@@ -1,0 +1,15 @@
+# https://taskfile.dev
+
+version: '3'
+
+tasks:
+  setup: 
+    cmds:
+      - go mod download
+      - go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest
+      - go install github.com/fatih/gomodifytags@latest
+  regen:
+    cmds:
+      - oapi-codegen -generate="types,server,strict-server,spec" -package autogen bar.openapi.yml > autogen/bar.gen.go
+      - go mod tidy
+      - gomodifytags -all -file ./autogen/bar.gen.go -add-tags bson -w > /dev/null

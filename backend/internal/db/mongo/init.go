@@ -1,0 +1,152 @@
+package mongo
+
+import (
+	"strings"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+)
+
+var (
+	Collections = []string{
+		"transactions",
+		"refills",
+		"items",
+		"categories",
+		"carousel_texts",
+		"carousel_images",
+		"accounts",
+	}
+
+	// Add indexes to index "id" which is text & unique
+	indexes = map[string][]mongo.IndexModel{
+		"transactions": {
+			mongo.IndexModel{
+				Keys: bson.M{
+					"id": 1,
+				},
+				Options: options.Index().SetUnique(true).SetPartialFilterExpression(bson.M{
+					"id": bson.M{
+						"$exists": true,
+					},
+				}),
+			},
+		},
+		"refills": {
+			mongo.IndexModel{
+				Keys: bson.M{
+					"id": 1,
+				},
+				Options: options.Index().SetUnique(true).SetPartialFilterExpression(bson.M{
+					"id": bson.M{
+						"$exists": true,
+					},
+				}),
+			}},
+		"items": {
+			mongo.IndexModel{
+				Keys: bson.M{
+					"id": 1,
+				},
+				Options: options.Index().SetUnique(true).SetPartialFilterExpression(bson.M{
+					"id": bson.M{
+						"$exists": true,
+					},
+				}),
+			}},
+		"categories": {
+			mongo.IndexModel{
+				Keys: bson.M{
+					"id": 1,
+				},
+				Options: options.Index().SetUnique(true).SetPartialFilterExpression(bson.M{
+					"id": bson.M{
+						"$exists": true,
+					},
+				}),
+			}},
+		"carousel_texts": {
+			mongo.IndexModel{
+				Keys: bson.M{
+					"id": 1,
+				},
+				Options: options.Index().SetUnique(true).SetPartialFilterExpression(bson.M{
+					"id": bson.M{
+						"$exists": true,
+					},
+				}),
+			}},
+		"carousel_images": {
+			mongo.IndexModel{
+				Keys: bson.M{
+					"id": 1,
+				},
+				Options: options.Index().SetUnique(true).SetPartialFilterExpression(bson.M{
+					"id": bson.M{
+						"$exists": true,
+					},
+				}),
+			}},
+		"accounts": {
+			mongo.IndexModel{
+				Keys: bson.M{
+					"id": 1,
+				},
+				Options: options.Index().SetUnique(true).SetPartialFilterExpression(bson.M{
+					"id": bson.M{
+						"$exists": true,
+					},
+				}),
+			}},
+	}
+
+	TransactionsCollection   = "transactions"
+	RefillsCollection        = "refills"
+	ItemsCollection          = "items"
+	CategoriesCollection     = "categories"
+	CarouselTextsCollection  = "carousel_texts"
+	CarouselImagesCollection = "carousel_images"
+	AccountsCollection       = "accounts"
+)
+
+func (b *Backend) CreateCollections() error {
+	ctx, cancel := b.GetContext()
+	defer cancel()
+
+	for _, collection := range Collections {
+		err := b.db.CreateCollection(ctx, collection)
+		if err != nil {
+			if strings.Contains(err.Error(), "exists") {
+				if err := b.CreateIndexes(collection); err != nil {
+					return err
+				}
+				return nil
+			}
+			return err
+		}
+
+		if err := b.CreateIndexes(collection); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (b *Backend) CreateIndexes(collection string) error {
+	ctx, cancel := b.GetContext()
+	defer cancel()
+
+	v, ok := indexes[collection]
+	if !ok {
+		return nil
+	}
+
+	_, err := b.db.Collection(collection).Indexes().CreateMany(ctx, v)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

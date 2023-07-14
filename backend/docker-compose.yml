@@ -1,0 +1,19 @@
+version: '3.5'
+
+services:
+  mongo:
+    image: mongo
+    restart: always
+    # entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "rs0" ]
+    ports:
+    - 27017:27017 # admin
+    environment:
+      MONGO_INITDB_DATABASE: astralys
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+    - 8081:8081 # admin
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_PORT: 27017
