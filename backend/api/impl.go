@@ -4,6 +4,8 @@ import (
 	"bar/autogen"
 	"bar/internal/config"
 	"bar/internal/db"
+	"fmt"
+	"net/http"
 	"os"
 	"time"
 
@@ -56,6 +58,10 @@ func (s *Server) Serve(c *config.Config) error {
 			return next(c)
 		}
 	})
+
+	// Generate an admin cookie to test the admin endpoints
+	adminSess, err := adminStore.Get(&http.Request{}, "BAR_ADMIN_SESS")
+	fmt.Println(adminSess, err)
 
 	// You can use h for intellisense and get the handlers' names
 	h := autogen.NewStrictHandler(s, []autogen.StrictMiddlewareFunc{
