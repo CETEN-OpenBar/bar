@@ -2,29 +2,30 @@ package api
 
 import (
 	"bar/autogen"
-	"context"
+
+	"github.com/labstack/echo/v4"
 )
 
 // (POST /categories/{category_id}/items)
-func (s *Server) PostItem(ctx context.Context, request autogen.PostItemRequestObject) (autogen.PostItemResponseObject, error) {
+func (s *Server) PostItem(c echo.Context, categoryId autogen.UUID) error {
 	// TODO: implement
-	return nil, nil
+	return nil
 }
 
 // (DELETE /categories/{category_id}/items/{item_id})
-func (s *Server) DeleteItem(ctx context.Context, request autogen.DeleteItemRequestObject) (autogen.DeleteItemResponseObject, error) {
+func (s *Server) DeleteItem(c echo.Context, categoryId autogen.UUID, itemId autogen.UUID) error {
 	// TODO: implement
-	return nil, nil
+	return nil
 }
 
 // (PATCH /categories/{category_id}/items/{item_id})
-func (s *Server) PatchItem(ctx context.Context, request autogen.PatchItemRequestObject) (autogen.PatchItemResponseObject, error) {
+func (s *Server) PatchItem(c echo.Context, categoryId autogen.UUID, itemId autogen.UUID) error {
 	// TODO: implement
-	return nil, nil
+	return nil
 }
 
 // (GET /categories/{category_id}/items/{item_id}/picture)
-func (s *Server) GetItemPicture(ctx context.Context, request autogen.GetItemPictureRequestObject) (autogen.GetItemPictureResponseObject, error) {
+func (s *Server) GetItemPicture(c echo.Context, categoryId autogen.UUID, itemId autogen.UUID) error {
 	// TODO: implement
-	return nil, nil
+	return nil
 }

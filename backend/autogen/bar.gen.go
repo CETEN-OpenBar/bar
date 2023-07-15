@@ -53,6 +53,7 @@ const (
 	ErrAccountNotFound     ErrorCodes = "account_not_found"
 	ErrBadRequest          ErrorCodes = "bad_request"
 	ErrForbidden           ErrorCodes = "forbidden"
+	ErrInternalServerError ErrorCodes = "internal_server_error"
 	ErrQRInvalid           ErrorCodes = "qr_invalid"
 	ErrTransactionNotFound ErrorCodes = "transaction_not_found"
 )
@@ -69,6 +70,7 @@ const (
 	MsgAccountNotAllowed    Messages = "Account is not allowed to use ressource"
 	MsgAccountNotAvailable  Messages = "Account cannot use ressource at the time being"
 	MsgAccountNotFound      Messages = "Account not found"
+	MsgInternalServerError  Messages = "Internal server error"
 	MsgMissingFields        Messages = "Missing fields %v"
 	MsgNotConnected         Messages = "Not connected"
 	MsgQRInvalid            Messages = "Invalid QR Code nonce"
@@ -172,8 +174,8 @@ type ErrorCodes string
 
 // HTTPError defines model for HTTPError.
 type HTTPError struct {
-	ErrorCode *ErrorCodes `json:"error_code,omitempty" bson:"error_code"`
-	Message   *Messages   `json:"message,omitempty" bson:"message"`
+	ErrorCode ErrorCodes `json:"error_code" bson:"error_code"`
+	Message   Messages   `json:"message" bson:"message"`
 }
 
 // Item defines model for Item.
@@ -247,6 +249,16 @@ type NewItem struct {
 
 	// State State of the item
 	State ItemState `json:"state" bson:"state"`
+}
+
+// NewTransaction defines model for NewTransaction.
+type NewTransaction struct {
+	Items []NewTransactionItem `json:"items" bson:"items"`
+}
+
+// NewTransactionItem defines model for NewTransactionItem.
+type NewTransactionItem struct {
+	ItemId UUID `json:"item_id" bson:"item_id"`
 }
 
 // Refill defines model for Refill.
@@ -447,8 +459,11 @@ type GetTransactionsParams struct {
 	State *TransactionState `form:"state,omitempty" json:"state,omitempty" bson:"state"`
 }
 
-// PutAccountsJSONRequestBody defines body for PutAccounts for application/json ContentType.
-type PutAccountsJSONRequestBody = NewAccount
+// PostTransactionsJSONRequestBody defines body for PostTransactions for application/json ContentType.
+type PostTransactionsJSONRequestBody = NewTransaction
+
+// PostAccountsJSONRequestBody defines body for PostAccounts for application/json ContentType.
+type PostAccountsJSONRequestBody = NewAccount
 
 // PatchAccountIdJSONRequestBody defines body for PatchAccountId for application/json ContentType.
 type PatchAccountIdJSONRequestBody = UpdateAccountAdmin
@@ -487,46 +502,46 @@ type ServerInterface interface {
 	GetCurrentAccountTransactions(ctx echo.Context, params GetCurrentAccountTransactionsParams) error
 
 	// (POST /account/transactions)
-	PutTransactions(ctx echo.Context) error
+	PostTransactions(ctx echo.Context) error
 
 	// (GET /accounts)
 	GetAccounts(ctx echo.Context, params GetAccountsParams) error
 
 	// (POST /accounts)
-	PutAccounts(ctx echo.Context) error
+	PostAccounts(ctx echo.Context) error
 
 	// (DELETE /accounts/{account_id})
-	DeleteAccountId(ctx echo.Context, accountId string) error
+	DeleteAccountId(ctx echo.Context, accountId UUID) error
 
 	// (GET /accounts/{account_id})
-	GetAccountId(ctx echo.Context, accountId string) error
+	GetAccountId(ctx echo.Context, accountId UUID) error
 
 	// (PATCH /accounts/{account_id})
-	PatchAccountId(ctx echo.Context, accountId string) error
+	PatchAccountId(ctx echo.Context, accountId UUID) error
 
 	// (GET /accounts/{account_id}/refills)
-	GetAccountRefills(ctx echo.Context, accountId string, params GetAccountRefillsParams) error
+	GetAccountRefills(ctx echo.Context, accountId UUID, params GetAccountRefillsParams) error
 
 	// (POST /accounts/{account_id}/refills)
-	PostRefill(ctx echo.Context, accountId string, params PostRefillParams) error
+	PostRefill(ctx echo.Context, accountId UUID, params PostRefillParams) error
 
 	// (DELETE /accounts/{account_id}/refills/{refill_id})
-	DeleteRefill(ctx echo.Context, accountId string, refillId string) error
+	DeleteRefill(ctx echo.Context, accountId UUID, refillId UUID) error
 
 	// (GET /accounts/{account_id}/transactions)
-	GetAccountTransactions(ctx echo.Context, accountId string, params GetAccountTransactionsParams) error
+	GetAccountTransactions(ctx echo.Context, accountId UUID, params GetAccountTransactionsParams) error
 
 	// (DELETE /accounts/{account_id}/transactions/{transaction_id})
-	DeleteTransactionId(ctx echo.Context, accountId string, transactionId string) error
+	DeleteTransactionId(ctx echo.Context, accountId UUID, transactionId UUID) error
 
 	// (GET /accounts/{account_id}/transactions/{transaction_id})
-	GetTransactionId(ctx echo.Context, accountId string, transactionId string) error
+	GetTransactionId(ctx echo.Context, accountId UUID, transactionId UUID) error
 
 	// (PATCH /accounts/{account_id}/transactions/{transaction_id})
-	PatchTransactionId(ctx echo.Context, accountId string, transactionId string, params PatchTransactionIdParams) error
+	PatchTransactionId(ctx echo.Context, accountId UUID, transactionId UUID, params PatchTransactionIdParams) error
 
 	// (PATCH /accounts/{account_id}/transactions/{transaction_id}/{item_id})
-	PatchTransactionItemId(ctx echo.Context, accountId string, transactionId string, itemId string, params PatchTransactionItemIdParams) error
+	PatchTransactionItemId(ctx echo.Context, accountId UUID, transactionId UUID, itemId UUID, params PatchTransactionItemIdParams) error
 
 	// (GET /auth/google/begin/{qr_nonce})
 	ConnectAccount(ctx echo.Context, qrNonce string) error
@@ -541,7 +556,7 @@ type ServerInterface interface {
 	AddCarouselImage(ctx echo.Context) error
 
 	// (DELETE /carousel/images/{image_id})
-	DeleteCarouselImage(ctx echo.Context, imageId string) error
+	DeleteCarouselImage(ctx echo.Context, imageId UUID) error
 
 	// (GET /carousel/texts)
 	GetCarouselTexts(ctx echo.Context) error
@@ -550,7 +565,7 @@ type ServerInterface interface {
 	AddCarouselText(ctx echo.Context) error
 
 	// (DELETE /carousel/texts/{text_id})
-	DeleteCarouselText(ctx echo.Context, textId string) error
+	DeleteCarouselText(ctx echo.Context, textId UUID) error
 
 	// (GET /categories)
 	GetCategories(ctx echo.Context) error
@@ -559,28 +574,28 @@ type ServerInterface interface {
 	PostCategory(ctx echo.Context) error
 
 	// (DELETE /categories/{category_id})
-	DeleteCategory(ctx echo.Context, categoryId string) error
+	DeleteCategory(ctx echo.Context, categoryId UUID) error
 
 	// (GET /categories/{category_id})
-	GetCategory(ctx echo.Context, categoryId string) error
+	GetCategory(ctx echo.Context, categoryId UUID) error
 
 	// (PATCH /categories/{category_id})
-	PatchCategory(ctx echo.Context, categoryId string) error
+	PatchCategory(ctx echo.Context, categoryId UUID) error
 
 	// (POST /categories/{category_id}/items)
-	PostItem(ctx echo.Context, categoryId string) error
+	PostItem(ctx echo.Context, categoryId UUID) error
 
 	// (DELETE /categories/{category_id}/items/{item_id})
-	DeleteItem(ctx echo.Context, categoryId string, itemId string) error
+	DeleteItem(ctx echo.Context, categoryId UUID, itemId UUID) error
 
 	// (PATCH /categories/{category_id}/items/{item_id})
-	PatchItem(ctx echo.Context, categoryId string, itemId string) error
+	PatchItem(ctx echo.Context, categoryId UUID, itemId UUID) error
 
 	// (GET /categories/{category_id}/items/{item_id}/picture)
-	GetItemPicture(ctx echo.Context, categoryId string, itemId string) error
+	GetItemPicture(ctx echo.Context, categoryId UUID, itemId UUID) error
 
 	// (GET /categories/{category_id}/picture)
-	GetCategoryPicture(ctx echo.Context, categoryId openapi_types.File) error
+	GetCategoryPicture(ctx echo.Context, categoryId UUID) error
 
 	// (GET /refills)
 	GetRefills(ctx echo.Context, params GetRefillsParams) error
@@ -691,14 +706,14 @@ func (w *ServerInterfaceWrapper) GetCurrentAccountTransactions(ctx echo.Context)
 	return err
 }
 
-// PutTransactions converts echo context to params.
-func (w *ServerInterfaceWrapper) PutTransactions(ctx echo.Context) error {
+// PostTransactions converts echo context to params.
+func (w *ServerInterfaceWrapper) PostTransactions(ctx echo.Context) error {
 	var err error
 
 	ctx.Set(AuthScopes, []string{})
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.PutTransactions(ctx)
+	err = w.Handler.PostTransactions(ctx)
 	return err
 }
 
@@ -729,14 +744,14 @@ func (w *ServerInterfaceWrapper) GetAccounts(ctx echo.Context) error {
 	return err
 }
 
-// PutAccounts converts echo context to params.
-func (w *ServerInterfaceWrapper) PutAccounts(ctx echo.Context) error {
+// PostAccounts converts echo context to params.
+func (w *ServerInterfaceWrapper) PostAccounts(ctx echo.Context) error {
 	var err error
 
 	ctx.Set(Admin_authScopes, []string{})
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.PutAccounts(ctx)
+	err = w.Handler.PostAccounts(ctx)
 	return err
 }
 
@@ -744,7 +759,7 @@ func (w *ServerInterfaceWrapper) PutAccounts(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) DeleteAccountId(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "account_id" -------------
-	var accountId string
+	var accountId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "account_id", runtime.ParamLocationPath, ctx.Param("account_id"), &accountId)
 	if err != nil {
@@ -762,7 +777,7 @@ func (w *ServerInterfaceWrapper) DeleteAccountId(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) GetAccountId(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "account_id" -------------
-	var accountId string
+	var accountId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "account_id", runtime.ParamLocationPath, ctx.Param("account_id"), &accountId)
 	if err != nil {
@@ -780,7 +795,7 @@ func (w *ServerInterfaceWrapper) GetAccountId(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) PatchAccountId(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "account_id" -------------
-	var accountId string
+	var accountId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "account_id", runtime.ParamLocationPath, ctx.Param("account_id"), &accountId)
 	if err != nil {
@@ -798,7 +813,7 @@ func (w *ServerInterfaceWrapper) PatchAccountId(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) GetAccountRefills(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "account_id" -------------
-	var accountId string
+	var accountId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "account_id", runtime.ParamLocationPath, ctx.Param("account_id"), &accountId)
 	if err != nil {
@@ -846,7 +861,7 @@ func (w *ServerInterfaceWrapper) GetAccountRefills(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) PostRefill(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "account_id" -------------
-	var accountId string
+	var accountId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "account_id", runtime.ParamLocationPath, ctx.Param("account_id"), &accountId)
 	if err != nil {
@@ -873,7 +888,7 @@ func (w *ServerInterfaceWrapper) PostRefill(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) DeleteRefill(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "account_id" -------------
-	var accountId string
+	var accountId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "account_id", runtime.ParamLocationPath, ctx.Param("account_id"), &accountId)
 	if err != nil {
@@ -881,7 +896,7 @@ func (w *ServerInterfaceWrapper) DeleteRefill(ctx echo.Context) error {
 	}
 
 	// ------------- Path parameter "refill_id" -------------
-	var refillId string
+	var refillId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "refill_id", runtime.ParamLocationPath, ctx.Param("refill_id"), &refillId)
 	if err != nil {
@@ -899,7 +914,7 @@ func (w *ServerInterfaceWrapper) DeleteRefill(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) GetAccountTransactions(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "account_id" -------------
-	var accountId string
+	var accountId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "account_id", runtime.ParamLocationPath, ctx.Param("account_id"), &accountId)
 	if err != nil {
@@ -940,7 +955,7 @@ func (w *ServerInterfaceWrapper) GetAccountTransactions(ctx echo.Context) error 
 func (w *ServerInterfaceWrapper) DeleteTransactionId(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "account_id" -------------
-	var accountId string
+	var accountId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "account_id", runtime.ParamLocationPath, ctx.Param("account_id"), &accountId)
 	if err != nil {
@@ -948,7 +963,7 @@ func (w *ServerInterfaceWrapper) DeleteTransactionId(ctx echo.Context) error {
 	}
 
 	// ------------- Path parameter "transaction_id" -------------
-	var transactionId string
+	var transactionId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "transaction_id", runtime.ParamLocationPath, ctx.Param("transaction_id"), &transactionId)
 	if err != nil {
@@ -966,7 +981,7 @@ func (w *ServerInterfaceWrapper) DeleteTransactionId(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) GetTransactionId(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "account_id" -------------
-	var accountId string
+	var accountId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "account_id", runtime.ParamLocationPath, ctx.Param("account_id"), &accountId)
 	if err != nil {
@@ -974,7 +989,7 @@ func (w *ServerInterfaceWrapper) GetTransactionId(ctx echo.Context) error {
 	}
 
 	// ------------- Path parameter "transaction_id" -------------
-	var transactionId string
+	var transactionId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "transaction_id", runtime.ParamLocationPath, ctx.Param("transaction_id"), &transactionId)
 	if err != nil {
@@ -992,7 +1007,7 @@ func (w *ServerInterfaceWrapper) GetTransactionId(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) PatchTransactionId(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "account_id" -------------
-	var accountId string
+	var accountId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "account_id", runtime.ParamLocationPath, ctx.Param("account_id"), &accountId)
 	if err != nil {
@@ -1000,7 +1015,7 @@ func (w *ServerInterfaceWrapper) PatchTransactionId(ctx echo.Context) error {
 	}
 
 	// ------------- Path parameter "transaction_id" -------------
-	var transactionId string
+	var transactionId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "transaction_id", runtime.ParamLocationPath, ctx.Param("transaction_id"), &transactionId)
 	if err != nil {
@@ -1027,7 +1042,7 @@ func (w *ServerInterfaceWrapper) PatchTransactionId(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) PatchTransactionItemId(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "account_id" -------------
-	var accountId string
+	var accountId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "account_id", runtime.ParamLocationPath, ctx.Param("account_id"), &accountId)
 	if err != nil {
@@ -1035,7 +1050,7 @@ func (w *ServerInterfaceWrapper) PatchTransactionItemId(ctx echo.Context) error 
 	}
 
 	// ------------- Path parameter "transaction_id" -------------
-	var transactionId string
+	var transactionId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "transaction_id", runtime.ParamLocationPath, ctx.Param("transaction_id"), &transactionId)
 	if err != nil {
@@ -1043,7 +1058,7 @@ func (w *ServerInterfaceWrapper) PatchTransactionItemId(ctx echo.Context) error 
 	}
 
 	// ------------- Path parameter "item_id" -------------
-	var itemId string
+	var itemId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "item_id", runtime.ParamLocationPath, ctx.Param("item_id"), &itemId)
 	if err != nil {
@@ -1135,7 +1150,7 @@ func (w *ServerInterfaceWrapper) AddCarouselImage(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) DeleteCarouselImage(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "image_id" -------------
-	var imageId string
+	var imageId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "image_id", runtime.ParamLocationPath, ctx.Param("image_id"), &imageId)
 	if err != nil {
@@ -1173,7 +1188,7 @@ func (w *ServerInterfaceWrapper) AddCarouselText(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) DeleteCarouselText(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "text_id" -------------
-	var textId string
+	var textId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "text_id", runtime.ParamLocationPath, ctx.Param("text_id"), &textId)
 	if err != nil {
@@ -1213,7 +1228,7 @@ func (w *ServerInterfaceWrapper) PostCategory(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) DeleteCategory(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "category_id" -------------
-	var categoryId string
+	var categoryId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "category_id", runtime.ParamLocationPath, ctx.Param("category_id"), &categoryId)
 	if err != nil {
@@ -1231,7 +1246,7 @@ func (w *ServerInterfaceWrapper) DeleteCategory(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) GetCategory(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "category_id" -------------
-	var categoryId string
+	var categoryId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "category_id", runtime.ParamLocationPath, ctx.Param("category_id"), &categoryId)
 	if err != nil {
@@ -1249,7 +1264,7 @@ func (w *ServerInterfaceWrapper) GetCategory(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) PatchCategory(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "category_id" -------------
-	var categoryId string
+	var categoryId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "category_id", runtime.ParamLocationPath, ctx.Param("category_id"), &categoryId)
 	if err != nil {
@@ -1267,7 +1282,7 @@ func (w *ServerInterfaceWrapper) PatchCategory(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) PostItem(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "category_id" -------------
-	var categoryId string
+	var categoryId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "category_id", runtime.ParamLocationPath, ctx.Param("category_id"), &categoryId)
 	if err != nil {
@@ -1285,7 +1300,7 @@ func (w *ServerInterfaceWrapper) PostItem(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) DeleteItem(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "category_id" -------------
-	var categoryId string
+	var categoryId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "category_id", runtime.ParamLocationPath, ctx.Param("category_id"), &categoryId)
 	if err != nil {
@@ -1293,7 +1308,7 @@ func (w *ServerInterfaceWrapper) DeleteItem(ctx echo.Context) error {
 	}
 
 	// ------------- Path parameter "item_id" -------------
-	var itemId string
+	var itemId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "item_id", runtime.ParamLocationPath, ctx.Param("item_id"), &itemId)
 	if err != nil {
@@ -1311,7 +1326,7 @@ func (w *ServerInterfaceWrapper) DeleteItem(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) PatchItem(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "category_id" -------------
-	var categoryId string
+	var categoryId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "category_id", runtime.ParamLocationPath, ctx.Param("category_id"), &categoryId)
 	if err != nil {
@@ -1319,7 +1334,7 @@ func (w *ServerInterfaceWrapper) PatchItem(ctx echo.Context) error {
 	}
 
 	// ------------- Path parameter "item_id" -------------
-	var itemId string
+	var itemId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "item_id", runtime.ParamLocationPath, ctx.Param("item_id"), &itemId)
 	if err != nil {
@@ -1337,7 +1352,7 @@ func (w *ServerInterfaceWrapper) PatchItem(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) GetItemPicture(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "category_id" -------------
-	var categoryId string
+	var categoryId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "category_id", runtime.ParamLocationPath, ctx.Param("category_id"), &categoryId)
 	if err != nil {
@@ -1345,7 +1360,7 @@ func (w *ServerInterfaceWrapper) GetItemPicture(ctx echo.Context) error {
 	}
 
 	// ------------- Path parameter "item_id" -------------
-	var itemId string
+	var itemId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "item_id", runtime.ParamLocationPath, ctx.Param("item_id"), &itemId)
 	if err != nil {
@@ -1363,7 +1378,7 @@ func (w *ServerInterfaceWrapper) GetItemPicture(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) GetCategoryPicture(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "category_id" -------------
-	var categoryId openapi_types.File
+	var categoryId UUID
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "category_id", runtime.ParamLocationPath, ctx.Param("category_id"), &categoryId)
 	if err != nil {
@@ -1484,9 +1499,9 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.GET(baseURL+"/account/qr", wrapper.GetAccountQR)
 	router.GET(baseURL+"/account/refills", wrapper.GetSelfRefills)
 	router.GET(baseURL+"/account/transactions", wrapper.GetCurrentAccountTransactions)
-	router.POST(baseURL+"/account/transactions", wrapper.PutTransactions)
+	router.POST(baseURL+"/account/transactions", wrapper.PostTransactions)
 	router.GET(baseURL+"/accounts", wrapper.GetAccounts)
-	router.POST(baseURL+"/accounts", wrapper.PutAccounts)
+	router.POST(baseURL+"/accounts", wrapper.PostAccounts)
 	router.DELETE(baseURL+"/accounts/:account_id", wrapper.DeleteAccountId)
 	router.GET(baseURL+"/accounts/:account_id", wrapper.GetAccountId)
 	router.PATCH(baseURL+"/accounts/:account_id", wrapper.PatchAccountId)
@@ -1677,52 +1692,53 @@ func (response GetCurrentAccountTransactions403JSONResponse) VisitGetCurrentAcco
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PutTransactionsRequestObject struct {
+type PostTransactionsRequestObject struct {
+	Body *PostTransactionsJSONRequestBody `bson:"body"`
 }
 
-type PutTransactionsResponseObject interface {
-	VisitPutTransactionsResponse(w http.ResponseWriter) error
+type PostTransactionsResponseObject interface {
+	VisitPostTransactionsResponse(w http.ResponseWriter) error
 }
 
-type PutTransactions201JSONResponse Transaction
+type PostTransactions201JSONResponse Transaction
 
-func (response PutTransactions201JSONResponse) VisitPutTransactionsResponse(w http.ResponseWriter) error {
+func (response PostTransactions201JSONResponse) VisitPostTransactionsResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(201)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PutTransactions401JSONResponse HTTPError
+type PostTransactions401JSONResponse HTTPError
 
-func (response PutTransactions401JSONResponse) VisitPutTransactionsResponse(w http.ResponseWriter) error {
+func (response PostTransactions401JSONResponse) VisitPostTransactionsResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(401)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PutTransactions403JSONResponse HTTPError
+type PostTransactions403JSONResponse HTTPError
 
-func (response PutTransactions403JSONResponse) VisitPutTransactionsResponse(w http.ResponseWriter) error {
+func (response PostTransactions403JSONResponse) VisitPostTransactionsResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(403)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PutTransactions404JSONResponse HTTPError
+type PostTransactions404JSONResponse HTTPError
 
-func (response PutTransactions404JSONResponse) VisitPutTransactionsResponse(w http.ResponseWriter) error {
+func (response PostTransactions404JSONResponse) VisitPostTransactionsResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PutTransactions500JSONResponse HTTPError
+type PostTransactions500JSONResponse HTTPError
 
-func (response PutTransactions500JSONResponse) VisitPutTransactionsResponse(w http.ResponseWriter) error {
+func (response PostTransactions500JSONResponse) VisitPostTransactionsResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
@@ -1779,53 +1795,53 @@ func (response GetAccounts500JSONResponse) VisitGetAccountsResponse(w http.Respo
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PutAccountsRequestObject struct {
-	Body *PutAccountsJSONRequestBody `bson:"body"`
+type PostAccountsRequestObject struct {
+	Body *PostAccountsJSONRequestBody `bson:"body"`
 }
 
-type PutAccountsResponseObject interface {
-	VisitPutAccountsResponse(w http.ResponseWriter) error
+type PostAccountsResponseObject interface {
+	VisitPostAccountsResponse(w http.ResponseWriter) error
 }
 
-type PutAccounts200JSONResponse []Account
+type PostAccounts200JSONResponse []Account
 
-func (response PutAccounts200JSONResponse) VisitPutAccountsResponse(w http.ResponseWriter) error {
+func (response PostAccounts200JSONResponse) VisitPostAccountsResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PutAccounts401JSONResponse HTTPError
+type PostAccounts401JSONResponse HTTPError
 
-func (response PutAccounts401JSONResponse) VisitPutAccountsResponse(w http.ResponseWriter) error {
+func (response PostAccounts401JSONResponse) VisitPostAccountsResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(401)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PutAccounts403JSONResponse HTTPError
+type PostAccounts403JSONResponse HTTPError
 
-func (response PutAccounts403JSONResponse) VisitPutAccountsResponse(w http.ResponseWriter) error {
+func (response PostAccounts403JSONResponse) VisitPostAccountsResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(403)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PutAccounts409JSONResponse HTTPError
+type PostAccounts409JSONResponse HTTPError
 
-func (response PutAccounts409JSONResponse) VisitPutAccountsResponse(w http.ResponseWriter) error {
+func (response PostAccounts409JSONResponse) VisitPostAccountsResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(409)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PutAccounts500JSONResponse HTTPError
+type PostAccounts500JSONResponse HTTPError
 
-func (response PutAccounts500JSONResponse) VisitPutAccountsResponse(w http.ResponseWriter) error {
+func (response PostAccounts500JSONResponse) VisitPostAccountsResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
@@ -1833,7 +1849,7 @@ func (response PutAccounts500JSONResponse) VisitPutAccountsResponse(w http.Respo
 }
 
 type DeleteAccountIdRequestObject struct {
-	AccountId string `json:"account_id" bson:"account_id"`
+	AccountId UUID `json:"account_id" bson:"account_id"`
 }
 
 type DeleteAccountIdResponseObject interface {
@@ -1885,7 +1901,7 @@ func (response DeleteAccountId500JSONResponse) VisitDeleteAccountIdResponse(w ht
 }
 
 type GetAccountIdRequestObject struct {
-	AccountId string `json:"account_id" bson:"account_id"`
+	AccountId UUID `json:"account_id" bson:"account_id"`
 }
 
 type GetAccountIdResponseObject interface {
@@ -1938,7 +1954,7 @@ func (response GetAccountId500JSONResponse) VisitGetAccountIdResponse(w http.Res
 }
 
 type PatchAccountIdRequestObject struct {
-	AccountId string                         `json:"account_id" bson:"account_id"`
+	AccountId UUID                           `json:"account_id" bson:"account_id"`
 	Body      *PatchAccountIdJSONRequestBody `bson:"body"`
 }
 
@@ -1992,7 +2008,7 @@ func (response PatchAccountId500JSONResponse) VisitPatchAccountIdResponse(w http
 }
 
 type GetAccountRefillsRequestObject struct {
-	AccountId string                  `json:"account_id" bson:"account_id"`
+	AccountId UUID                    `json:"account_id" bson:"account_id"`
 	Params    GetAccountRefillsParams `bson:"params"`
 }
 
@@ -2046,7 +2062,7 @@ func (response GetAccountRefills500JSONResponse) VisitGetAccountRefillsResponse(
 }
 
 type PostRefillRequestObject struct {
-	AccountId string           `json:"account_id" bson:"account_id"`
+	AccountId UUID             `json:"account_id" bson:"account_id"`
 	Params    PostRefillParams `bson:"params"`
 }
 
@@ -2109,8 +2125,8 @@ func (response PostRefill500JSONResponse) VisitPostRefillResponse(w http.Respons
 }
 
 type DeleteRefillRequestObject struct {
-	AccountId string `json:"account_id" bson:"account_id"`
-	RefillId  string `json:"refill_id" bson:"refill_id"`
+	AccountId UUID `json:"account_id" bson:"account_id"`
+	RefillId  UUID `json:"refill_id" bson:"refill_id"`
 }
 
 type DeleteRefillResponseObject interface {
@@ -2162,7 +2178,7 @@ func (response DeleteRefill500JSONResponse) VisitDeleteRefillResponse(w http.Res
 }
 
 type GetAccountTransactionsRequestObject struct {
-	AccountId string                       `json:"account_id" bson:"account_id"`
+	AccountId UUID                         `json:"account_id" bson:"account_id"`
 	Params    GetAccountTransactionsParams `bson:"params"`
 }
 
@@ -2212,8 +2228,8 @@ func (response GetAccountTransactions500JSONResponse) VisitGetAccountTransaction
 }
 
 type DeleteTransactionIdRequestObject struct {
-	AccountId     string `json:"account_id" bson:"account_id"`
-	TransactionId string `json:"transaction_id" bson:"transaction_id"`
+	AccountId     UUID `json:"account_id" bson:"account_id"`
+	TransactionId UUID `json:"transaction_id" bson:"transaction_id"`
 }
 
 type DeleteTransactionIdResponseObject interface {
@@ -2266,8 +2282,8 @@ func (response DeleteTransactionId500JSONResponse) VisitDeleteTransactionIdRespo
 }
 
 type GetTransactionIdRequestObject struct {
-	AccountId     string `json:"account_id" bson:"account_id"`
-	TransactionId string `json:"transaction_id" bson:"transaction_id"`
+	AccountId     UUID `json:"account_id" bson:"account_id"`
+	TransactionId UUID `json:"transaction_id" bson:"transaction_id"`
 }
 
 type GetTransactionIdResponseObject interface {
@@ -2320,8 +2336,8 @@ func (response GetTransactionId500JSONResponse) VisitGetTransactionIdResponse(w 
 }
 
 type PatchTransactionIdRequestObject struct {
-	AccountId     string                   `json:"account_id" bson:"account_id"`
-	TransactionId string                   `json:"transaction_id" bson:"transaction_id"`
+	AccountId     UUID                     `json:"account_id" bson:"account_id"`
+	TransactionId UUID                     `json:"transaction_id" bson:"transaction_id"`
 	Params        PatchTransactionIdParams `bson:"params"`
 }
 
@@ -2375,9 +2391,9 @@ func (response PatchTransactionId500JSONResponse) VisitPatchTransactionIdRespons
 }
 
 type PatchTransactionItemIdRequestObject struct {
-	AccountId     string                       `json:"account_id" bson:"account_id"`
-	TransactionId string                       `json:"transaction_id" bson:"transaction_id"`
-	ItemId        string                       `json:"item_id" bson:"item_id"`
+	AccountId     UUID                         `json:"account_id" bson:"account_id"`
+	TransactionId UUID                         `json:"transaction_id" bson:"transaction_id"`
+	ItemId        UUID                         `json:"item_id" bson:"item_id"`
 	Params        PatchTransactionItemIdParams `bson:"params"`
 }
 
@@ -2587,7 +2603,7 @@ func (response AddCarouselImage500JSONResponse) VisitAddCarouselImageResponse(w 
 }
 
 type DeleteCarouselImageRequestObject struct {
-	ImageId string `json:"image_id" bson:"image_id"`
+	ImageId UUID `json:"image_id" bson:"image_id"`
 }
 
 type DeleteCarouselImageResponseObject interface {
@@ -2726,7 +2742,7 @@ func (response AddCarouselText500JSONResponse) VisitAddCarouselTextResponse(w ht
 }
 
 type DeleteCarouselTextRequestObject struct {
-	TextId string `json:"text_id" bson:"text_id"`
+	TextId UUID `json:"text_id" bson:"text_id"`
 }
 
 type DeleteCarouselTextResponseObject interface {
@@ -2865,7 +2881,7 @@ func (response PostCategory500JSONResponse) VisitPostCategoryResponse(w http.Res
 }
 
 type DeleteCategoryRequestObject struct {
-	CategoryId string `json:"category_id" bson:"category_id"`
+	CategoryId UUID `json:"category_id" bson:"category_id"`
 }
 
 type DeleteCategoryResponseObject interface {
@@ -2899,7 +2915,7 @@ func (response DeleteCategory500JSONResponse) VisitDeleteCategoryResponse(w http
 }
 
 type GetCategoryRequestObject struct {
-	CategoryId string `json:"category_id" bson:"category_id"`
+	CategoryId UUID `json:"category_id" bson:"category_id"`
 }
 
 type GetCategoryResponseObject interface {
@@ -2934,7 +2950,7 @@ func (response GetCategory500JSONResponse) VisitGetCategoryResponse(w http.Respo
 }
 
 type PatchCategoryRequestObject struct {
-	CategoryId string            `json:"category_id" bson:"category_id"`
+	CategoryId UUID              `json:"category_id" bson:"category_id"`
 	Body       *multipart.Reader `bson:"body"`
 }
 
@@ -2997,7 +3013,7 @@ func (response PatchCategory500JSONResponse) VisitPatchCategoryResponse(w http.R
 }
 
 type PostItemRequestObject struct {
-	CategoryId string            `json:"category_id" bson:"category_id"`
+	CategoryId UUID              `json:"category_id" bson:"category_id"`
 	Body       *multipart.Reader `bson:"body"`
 }
 
@@ -3060,8 +3076,8 @@ func (response PostItem500JSONResponse) VisitPostItemResponse(w http.ResponseWri
 }
 
 type DeleteItemRequestObject struct {
-	CategoryId string `json:"category_id" bson:"category_id"`
-	ItemId     string `json:"item_id" bson:"item_id"`
+	CategoryId UUID `json:"category_id" bson:"category_id"`
+	ItemId     UUID `json:"item_id" bson:"item_id"`
 }
 
 type DeleteItemResponseObject interface {
@@ -3113,8 +3129,8 @@ func (response DeleteItem500JSONResponse) VisitDeleteItemResponse(w http.Respons
 }
 
 type PatchItemRequestObject struct {
-	CategoryId string            `json:"category_id" bson:"category_id"`
-	ItemId     string            `json:"item_id" bson:"item_id"`
+	CategoryId UUID              `json:"category_id" bson:"category_id"`
+	ItemId     UUID              `json:"item_id" bson:"item_id"`
 	Body       *multipart.Reader `bson:"body"`
 }
 
@@ -3177,8 +3193,8 @@ func (response PatchItem500JSONResponse) VisitPatchItemResponse(w http.ResponseW
 }
 
 type GetItemPictureRequestObject struct {
-	CategoryId string `json:"category_id" bson:"category_id"`
-	ItemId     string `json:"item_id" bson:"item_id"`
+	CategoryId UUID `json:"category_id" bson:"category_id"`
+	ItemId     UUID `json:"item_id" bson:"item_id"`
 }
 
 type GetItemPictureResponseObject interface {
@@ -3223,7 +3239,7 @@ func (response GetItemPicture500JSONResponse) VisitGetItemPictureResponse(w http
 }
 
 type GetCategoryPictureRequestObject struct {
-	CategoryId openapi_types.File `json:"category_id" bson:"category_id"`
+	CategoryId UUID `json:"category_id" bson:"category_id"`
 }
 
 type GetCategoryPictureResponseObject interface {
@@ -3375,13 +3391,13 @@ type StrictServerInterface interface {
 	GetCurrentAccountTransactions(ctx context.Context, request GetCurrentAccountTransactionsRequestObject) (GetCurrentAccountTransactionsResponseObject, error)
 
 	// (POST /account/transactions)
-	PutTransactions(ctx context.Context, request PutTransactionsRequestObject) (PutTransactionsResponseObject, error)
+	PostTransactions(ctx context.Context, request PostTransactionsRequestObject) (PostTransactionsResponseObject, error)
 
 	// (GET /accounts)
 	GetAccounts(ctx context.Context, request GetAccountsRequestObject) (GetAccountsResponseObject, error)
 
 	// (POST /accounts)
-	PutAccounts(ctx context.Context, request PutAccountsRequestObject) (PutAccountsResponseObject, error)
+	PostAccounts(ctx context.Context, request PostAccountsRequestObject) (PostAccountsResponseObject, error)
 
 	// (DELETE /accounts/{account_id})
 	DeleteAccountId(ctx context.Context, request DeleteAccountIdRequestObject) (DeleteAccountIdResponseObject, error)
@@ -3585,23 +3601,29 @@ func (sh *strictHandler) GetCurrentAccountTransactions(ctx echo.Context, params 
 	return nil
 }
 
-// PutTransactions operation middleware
-func (sh *strictHandler) PutTransactions(ctx echo.Context) error {
-	var request PutTransactionsRequestObject
+// PostTransactions operation middleware
+func (sh *strictHandler) PostTransactions(ctx echo.Context) error {
+	var request PostTransactionsRequestObject
+
+	var body PostTransactionsJSONRequestBody
+	if err := ctx.Bind(&body); err != nil {
+		return err
+	}
+	request.Body = &body
 
 	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.PutTransactions(ctx.Request().Context(), request.(PutTransactionsRequestObject))
+		return sh.ssi.PostTransactions(ctx.Request().Context(), request.(PostTransactionsRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "PutTransactions")
+		handler = middleware(handler, "PostTransactions")
 	}
 
 	response, err := handler(ctx, request)
 
 	if err != nil {
 		return err
-	} else if validResponse, ok := response.(PutTransactionsResponseObject); ok {
-		return validResponse.VisitPutTransactionsResponse(ctx.Response())
+	} else if validResponse, ok := response.(PostTransactionsResponseObject); ok {
+		return validResponse.VisitPostTransactionsResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("Unexpected response type: %T", response)
 	}
@@ -3633,29 +3655,29 @@ func (sh *strictHandler) GetAccounts(ctx echo.Context, params GetAccountsParams)
 	return nil
 }
 
-// PutAccounts operation middleware
-func (sh *strictHandler) PutAccounts(ctx echo.Context) error {
-	var request PutAccountsRequestObject
+// PostAccounts operation middleware
+func (sh *strictHandler) PostAccounts(ctx echo.Context) error {
+	var request PostAccountsRequestObject
 
-	var body PutAccountsJSONRequestBody
+	var body PostAccountsJSONRequestBody
 	if err := ctx.Bind(&body); err != nil {
 		return err
 	}
 	request.Body = &body
 
 	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.PutAccounts(ctx.Request().Context(), request.(PutAccountsRequestObject))
+		return sh.ssi.PostAccounts(ctx.Request().Context(), request.(PostAccountsRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "PutAccounts")
+		handler = middleware(handler, "PostAccounts")
 	}
 
 	response, err := handler(ctx, request)
 
 	if err != nil {
 		return err
-	} else if validResponse, ok := response.(PutAccountsResponseObject); ok {
-		return validResponse.VisitPutAccountsResponse(ctx.Response())
+	} else if validResponse, ok := response.(PostAccountsResponseObject); ok {
+		return validResponse.VisitPostAccountsResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("Unexpected response type: %T", response)
 	}
@@ -3663,7 +3685,7 @@ func (sh *strictHandler) PutAccounts(ctx echo.Context) error {
 }
 
 // DeleteAccountId operation middleware
-func (sh *strictHandler) DeleteAccountId(ctx echo.Context, accountId string) error {
+func (sh *strictHandler) DeleteAccountId(ctx echo.Context, accountId UUID) error {
 	var request DeleteAccountIdRequestObject
 
 	request.AccountId = accountId
@@ -3688,7 +3710,7 @@ func (sh *strictHandler) DeleteAccountId(ctx echo.Context, accountId string) err
 }
 
 // GetAccountId operation middleware
-func (sh *strictHandler) GetAccountId(ctx echo.Context, accountId string) error {
+func (sh *strictHandler) GetAccountId(ctx echo.Context, accountId UUID) error {
 	var request GetAccountIdRequestObject
 
 	request.AccountId = accountId
@@ -3713,7 +3735,7 @@ func (sh *strictHandler) GetAccountId(ctx echo.Context, accountId string) error 
 }
 
 // PatchAccountId operation middleware
-func (sh *strictHandler) PatchAccountId(ctx echo.Context, accountId string) error {
+func (sh *strictHandler) PatchAccountId(ctx echo.Context, accountId UUID) error {
 	var request PatchAccountIdRequestObject
 
 	request.AccountId = accountId
@@ -3744,7 +3766,7 @@ func (sh *strictHandler) PatchAccountId(ctx echo.Context, accountId string) erro
 }
 
 // GetAccountRefills operation middleware
-func (sh *strictHandler) GetAccountRefills(ctx echo.Context, accountId string, params GetAccountRefillsParams) error {
+func (sh *strictHandler) GetAccountRefills(ctx echo.Context, accountId UUID, params GetAccountRefillsParams) error {
 	var request GetAccountRefillsRequestObject
 
 	request.AccountId = accountId
@@ -3770,7 +3792,7 @@ func (sh *strictHandler) GetAccountRefills(ctx echo.Context, accountId string, p
 }
 
 // PostRefill operation middleware
-func (sh *strictHandler) PostRefill(ctx echo.Context, accountId string, params PostRefillParams) error {
+func (sh *strictHandler) PostRefill(ctx echo.Context, accountId UUID, params PostRefillParams) error {
 	var request PostRefillRequestObject
 
 	request.AccountId = accountId
@@ -3796,7 +3818,7 @@ func (sh *strictHandler) PostRefill(ctx echo.Context, accountId string, params P
 }
 
 // DeleteRefill operation middleware
-func (sh *strictHandler) DeleteRefill(ctx echo.Context, accountId string, refillId string) error {
+func (sh *strictHandler) DeleteRefill(ctx echo.Context, accountId UUID, refillId UUID) error {
 	var request DeleteRefillRequestObject
 
 	request.AccountId = accountId
@@ -3822,7 +3844,7 @@ func (sh *strictHandler) DeleteRefill(ctx echo.Context, accountId string, refill
 }
 
 // GetAccountTransactions operation middleware
-func (sh *strictHandler) GetAccountTransactions(ctx echo.Context, accountId string, params GetAccountTransactionsParams) error {
+func (sh *strictHandler) GetAccountTransactions(ctx echo.Context, accountId UUID, params GetAccountTransactionsParams) error {
 	var request GetAccountTransactionsRequestObject
 
 	request.AccountId = accountId
@@ -3848,7 +3870,7 @@ func (sh *strictHandler) GetAccountTransactions(ctx echo.Context, accountId stri
 }
 
 // DeleteTransactionId operation middleware
-func (sh *strictHandler) DeleteTransactionId(ctx echo.Context, accountId string, transactionId string) error {
+func (sh *strictHandler) DeleteTransactionId(ctx echo.Context, accountId UUID, transactionId UUID) error {
 	var request DeleteTransactionIdRequestObject
 
 	request.AccountId = accountId
@@ -3874,7 +3896,7 @@ func (sh *strictHandler) DeleteTransactionId(ctx echo.Context, accountId string,
 }
 
 // GetTransactionId operation middleware
-func (sh *strictHandler) GetTransactionId(ctx echo.Context, accountId string, transactionId string) error {
+func (sh *strictHandler) GetTransactionId(ctx echo.Context, accountId UUID, transactionId UUID) error {
 	var request GetTransactionIdRequestObject
 
 	request.AccountId = accountId
@@ -3900,7 +3922,7 @@ func (sh *strictHandler) GetTransactionId(ctx echo.Context, accountId string, tr
 }
 
 // PatchTransactionId operation middleware
-func (sh *strictHandler) PatchTransactionId(ctx echo.Context, accountId string, transactionId string, params PatchTransactionIdParams) error {
+func (sh *strictHandler) PatchTransactionId(ctx echo.Context, accountId UUID, transactionId UUID, params PatchTransactionIdParams) error {
 	var request PatchTransactionIdRequestObject
 
 	request.AccountId = accountId
@@ -3927,7 +3949,7 @@ func (sh *strictHandler) PatchTransactionId(ctx echo.Context, accountId string, 
 }
 
 // PatchTransactionItemId operation middleware
-func (sh *strictHandler) PatchTransactionItemId(ctx echo.Context, accountId string, transactionId string, itemId string, params PatchTransactionItemIdParams) error {
+func (sh *strictHandler) PatchTransactionItemId(ctx echo.Context, accountId UUID, transactionId UUID, itemId UUID, params PatchTransactionItemIdParams) error {
 	var request PatchTransactionItemIdRequestObject
 
 	request.AccountId = accountId
@@ -4057,7 +4079,7 @@ func (sh *strictHandler) AddCarouselImage(ctx echo.Context) error {
 }
 
 // DeleteCarouselImage operation middleware
-func (sh *strictHandler) DeleteCarouselImage(ctx echo.Context, imageId string) error {
+func (sh *strictHandler) DeleteCarouselImage(ctx echo.Context, imageId UUID) error {
 	var request DeleteCarouselImageRequestObject
 
 	request.ImageId = imageId
@@ -4134,7 +4156,7 @@ func (sh *strictHandler) AddCarouselText(ctx echo.Context) error {
 }
 
 // DeleteCarouselText operation middleware
-func (sh *strictHandler) DeleteCarouselText(ctx echo.Context, textId string) error {
+func (sh *strictHandler) DeleteCarouselText(ctx echo.Context, textId UUID) error {
 	var request DeleteCarouselTextRequestObject
 
 	request.TextId = textId
@@ -4211,7 +4233,7 @@ func (sh *strictHandler) PostCategory(ctx echo.Context) error {
 }
 
 // DeleteCategory operation middleware
-func (sh *strictHandler) DeleteCategory(ctx echo.Context, categoryId string) error {
+func (sh *strictHandler) DeleteCategory(ctx echo.Context, categoryId UUID) error {
 	var request DeleteCategoryRequestObject
 
 	request.CategoryId = categoryId
@@ -4236,7 +4258,7 @@ func (sh *strictHandler) DeleteCategory(ctx echo.Context, categoryId string) err
 }
 
 // GetCategory operation middleware
-func (sh *strictHandler) GetCategory(ctx echo.Context, categoryId string) error {
+func (sh *strictHandler) GetCategory(ctx echo.Context, categoryId UUID) error {
 	var request GetCategoryRequestObject
 
 	request.CategoryId = categoryId
@@ -4261,7 +4283,7 @@ func (sh *strictHandler) GetCategory(ctx echo.Context, categoryId string) error 
 }
 
 // PatchCategory operation middleware
-func (sh *strictHandler) PatchCategory(ctx echo.Context, categoryId string) error {
+func (sh *strictHandler) PatchCategory(ctx echo.Context, categoryId UUID) error {
 	var request PatchCategoryRequestObject
 
 	request.CategoryId = categoryId
@@ -4292,7 +4314,7 @@ func (sh *strictHandler) PatchCategory(ctx echo.Context, categoryId string) erro
 }
 
 // PostItem operation middleware
-func (sh *strictHandler) PostItem(ctx echo.Context, categoryId string) error {
+func (sh *strictHandler) PostItem(ctx echo.Context, categoryId UUID) error {
 	var request PostItemRequestObject
 
 	request.CategoryId = categoryId
@@ -4323,7 +4345,7 @@ func (sh *strictHandler) PostItem(ctx echo.Context, categoryId string) error {
 }
 
 // DeleteItem operation middleware
-func (sh *strictHandler) DeleteItem(ctx echo.Context, categoryId string, itemId string) error {
+func (sh *strictHandler) DeleteItem(ctx echo.Context, categoryId UUID, itemId UUID) error {
 	var request DeleteItemRequestObject
 
 	request.CategoryId = categoryId
@@ -4349,7 +4371,7 @@ func (sh *strictHandler) DeleteItem(ctx echo.Context, categoryId string, itemId 
 }
 
 // PatchItem operation middleware
-func (sh *strictHandler) PatchItem(ctx echo.Context, categoryId string, itemId string) error {
+func (sh *strictHandler) PatchItem(ctx echo.Context, categoryId UUID, itemId UUID) error {
 	var request PatchItemRequestObject
 
 	request.CategoryId = categoryId
@@ -4381,7 +4403,7 @@ func (sh *strictHandler) PatchItem(ctx echo.Context, categoryId string, itemId s
 }
 
 // GetItemPicture operation middleware
-func (sh *strictHandler) GetItemPicture(ctx echo.Context, categoryId string, itemId string) error {
+func (sh *strictHandler) GetItemPicture(ctx echo.Context, categoryId UUID, itemId UUID) error {
 	var request GetItemPictureRequestObject
 
 	request.CategoryId = categoryId
@@ -4407,7 +4429,7 @@ func (sh *strictHandler) GetItemPicture(ctx echo.Context, categoryId string, ite
 }
 
 // GetCategoryPicture operation middleware
-func (sh *strictHandler) GetCategoryPicture(ctx echo.Context, categoryId openapi_types.File) error {
+func (sh *strictHandler) GetCategoryPicture(ctx echo.Context, categoryId UUID) error {
 	var request GetCategoryPictureRequestObject
 
 	request.CategoryId = categoryId
@@ -4484,68 +4506,69 @@ func (sh *strictHandler) GetTransactions(ctx echo.Context, params GetTransaction
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"H4sIAAAAAAAC/+xd23LbttZ+FQ77/9N2Rg7l2mkT3dmO09/z125iO7MvOhkNREISGopQANCJt0c3+3n2",
+	"U+0n2YMDSYAESciWdTJzE5nEYWFhrW8dAAIPfohnc5zAhFF/8ODTcApnQPw8CUOcJoz/nBM8h4QhKF6M",
+	"QAySEPKf8DuYzWPoDw77/X7PH2MyA8wf+Chhvx77PZ/dz6H8E04g8Rc9H84AiocgigikojVVhDKCkgkv",
+	"MUaEsmECZtD6GkX88f8QOPYH/g9BQX6gaA8+fbp4x0vGoKkdAvnvkCGcCDoQgzPa1rTiybVed5EPExAC",
+	"7kXbOIauTfGii55PGWCudW5E2YUYxNcUERj5g784Ywzm6Qwo872XT6IitsSPjJ7P+djw6G8YMk6pjQeD",
+	"Bz+CNCRozv/2B77+1sNjj02hB5RA9XyYpDNOMoEzzOAw6xryEYxiHH6BEe86ly5rQXNGe/73A97swR0g",
+	"fMiUt5+Tymtf65XVm9OsM21cau5K48ExrB8HZWkExRP1a/gNselwBBM4RoyzcwZnI0j8ng+iGUrMwRW1",
+	"3Yd0k9cxH/wDselp0a16eZn1rv4+kUQstNpK+sxRi8f1w1ZPhrOUsiGFbBgCwpmbPcdfzIGWy1V08gwQ",
+	"nFIYX8zABFaBx131EW9gmJK4OibRtsewFyE6j8F9lQ6bXhUN2lTCoPvTPMYgslCfDaqVnhxGRygBxIFC",
+	"0XITYbfwuwXIQxxjUqXojD/OZp3xmvok/vBe/LNNn/v8MEWP2TGncumZUQTKsbTx4IxAJejPy4nVjE+0",
+	"Yh8SgxNM7p+kIi727oLBGS+cWVFzPFdglqNDmBICE+aFGWkWrsxRyFLC1QhVG/sDJV84c1Qh93ZtQqGM",
+	"nt5hNmIbP88JweQMR5KHGbyNQDTkLUPKpFKOUBTBRAO4BLPhGKeJkEMCEgqExTOefyVDlNyBWMJIwiBJ",
+	"QDykkNxBMoS8Y42kJuQ/J+QURNc5QeeEvNdoOidEgfkVZu9V5+eE3BZ0mS8+Xl/kdJ0TcqFIuxGUnUvC",
+	"Fj3//25vP8i/KsImqB+GOGp1XDQGL7gxpFRhYVOlS1mMVqY4q9/TKbDNqxDfCtlgJiYvhmNm+LBHv5ge",
+	"7NEvVg92lN4PYzRDj6qcifFQKmoJbtTLsuxzwX0a3rrrb11fT9Hd2jYJemwY4eQu8+lv8JVl9z1DHvTp",
+	"NWerBlTq/eSi92a/SnEnR530HoyER85RJPvL8KOKIg6wwck4zSvwv64wyx5wBc/VTIO+K8y8ECcJVO7y",
+	"JaIUJRNvjGAcUe9/7wpf0gMxgSC69+B3RHWn00sw8zIU1FDIeJ6VRVQ8BnGMv8GIy1JKocdjFZwSMUtZ",
+	"yRAkvKTx2gNMmmg0g94ISl4odPM+XnscebwEy3gnAzpPYrC3DAZf0skVZmc6Z+hEMee94I18lPnZkjXn",
+	"GWeKNxoUX9KJHaON0ieSM5XHdwDFam4v6UTH9Es6qcP0S5SgMYLRKvyIPXANbNp7Bb/VJkCenMNoyUws",
+	"mz0oDdMxB1Az6nqZWOlM84aWjXPMqasbwJ4b/ZWZ8mojHxrNd+tsbdKgP82WN9rxK/hNw2cLVGaBlFNE",
+	"ZbaWxVdmArEMW6LdIuqQYS9mIB6GmLIliLerBm9/6Ar4FtokQeKXZL87eddwjOLYoq3FUB3NkOpZlz3/",
+	"sP+67/102H/1uv+ff/37Z98UxBpVTUIYw2g4uncOpN1DbkpTGA0BM8CvXidUeXdSnJRI8rzBLzbkLJ9R",
+	"2bY+CJ3A+snNXeDMt8z8k4zVVddrYfiLbdLxhLBoOdVt1VvHCdDaUbNg6EtJNiySYU1QPgEk3BCi0LBW",
+	"LVoKUTbFtachV4lnFSmnDBC1TgG+wGQYAgKHeCyWaBJEp7BZBazRR7VP1UXpxS3v8QwQ+Oe4+vJ90X3p",
+	"zVlOjTm+dY/NOq7aMdnHY4xFyJlhGY5HsP/r8dH44DB6++bg9W9Ho4O3v4XRQQjevgG/vj46/i2KdHOR",
+	"psi6YPFpHgEGjVWVLVsufQGLoBXdlLOyZYFMDZVdtPJCopXS/PNGYJgSxO5veHk17xxChiBlU6GNfJgh",
+	"xl8QzEKWgX96cj08eXd5cTW8Ob+5KagDc/T/UChea3V7RU4SSsaYV41RCBMKC2XxLy9u/Z4vVlT9KWNz",
+	"OggCPIeJTMC9wmQSqErBDLFAAAJiAmz/nMPk5MOFd+CdAuL3/DtIqJzCw1f9V4eHvCxvCsyRP/CPXvVf",
+	"HfHQDLCp4EkAijyMKQG/Q5n2GwGKwlwAVPEfqcdHw6eSl+75E/jkJriKit8Xkax7kq+JE0jnOKFyGn/p",
+	"9+WqYsKgJBzM5zEKRd3gbyqdWiknte6tIw4+dkGlLI+LXjlJnYYhpHScxvG9N8FlrvB+j/uHS42zibhi",
+	"nclCi5mPXvT810ty+NE927PFuvr6g78elM799XnBvR0wodr2COp/5sUzMQ6+knox/HjthTgS2wHUcDOu",
+	"80e/YzwRmd5GUXZso06WP163S7PYcBDMk4nJ5HYz2C5kivpOulqliz8zJYuIgFvMWa2EgDj2snIWIbiB",
+	"8fg6fz0HBMwgg4QKMkr2F0ygl6RqZ5EwNl9TKKZd2Yy5XKQt+FQNySqegWhP2PTCmafeHBJPtWbrKMvx",
+	"LdOTiDK8SFuIk2yp6ULEPMNI5kAsIq/eVPy+crfnSeTeKUyi5bv8/ERj5BQDqMRdNXVZEfG1azJXDEzQ",
+	"P3dHlTN9NLVZV4BWlTYKW/T6THo2CuNvzdL7rObvUcwg8Ub3Xp7AtGt3ScuWS0U9WemsHuCjUpO2UDyP",
+	"BVszdzPwfThXrmRrYceCLs7mhlHiuH+0nq6LHVtOyGCo9WfOcpXrLEXlYlujB7wEftM1qoIEHzAtK7/a",
+	"4XaKo/uVsaC0ZLZYyOSroR+rm+tSVxsXLcOV3IRk8V6P19Nrda/PjtjckmZphpfWW9mshJ4WoE3xWFOl",
+	"ugCs1SLP1YZx3qujRY7gGKQx8wf9noPNTHLrnNPe2F3VLuf9Hdo63LCx1BInazKUS+dnVmpbryFLSUKF",
+	"cdhwDmfzVncL0UnL+dYmkOos/0kUeSDREzw8qIwAAyNAodX+azDzTLY/VzCLvWimd7GO2LVW/91zoFJ9",
+	"6IvUn+P+2/X0eoaTcYzkYtlOKq3uVAQPxc6MhdTjGNr2hr8Tz7Wv7UwNlq+VCF9Ebb7Cxbvq53tIOhFs",
+	"WlhwY9dIsUuCkRS6BsVqe1jVth9Xx/hC9abzyZe2evYljkct8S27qLcTyrW6SW0w2tu2Ethp8676sICF",
+	"06qGyp0wtSbvA6+15Uq5ej/asrXMmkdbCwJ0Kt6p+JM83mXXpkXyKamFhMJKOy5Wrx0Vet1yebdcvnvL",
+	"5R3SbjPSFhsFnFYCc2WpJgGvs1dbjponYiO0k/bnX3DUU+CwErE6zct0vk7H1yR0pyDyslNMOmzpsKUd",
+	"W1qduOBB/mhLZcqPcKgH6pBIJjN3BYsKCkwcMgnIWdNlUvdGpTFRU77Pyr3S/YaP2GjYhWjdVsduq2O3",
+	"6WLDUNmwMaweL4MH/fg/txXepn2asoj+fXa0S/6ROTQLFSa3tnlZrFHYOu/rOXu1nxm3y2DStELdgAa/",
+	"Q9ZBweahYNv2mXdgsONg0LwcrhX/keYuvWVpvMOGR1JyBb9JvjYQVBM9PY6QZ4imOt9l2zNHbO+Q65Ex",
+	"UfCgztwS0dEy4MfruSIgg7MOBR9HiTo6x0JCcVjaMyOwTsJzQa9+Lk8Hv/sMvz0DfDGRQLJHIJyyaTAR",
+	"J7oEIzhBSfDwlQzFQecL220mS54oc+Z8fIwqWRyH1Ii+H6/zw9gtWJONwGUlv3YXz5FUrfKHcBEifEDq",
+	"syPJOQ9zNmbJ+CkEkaD6wf8DSyl4XEP1tC42uPy/ayfbaAIegjgegfCLbZ1ZvvHGmCgJ9f48SYVQ2QW7",
+	"oUJJsLNOW0Rab0QeYGQ3YuqVu2D3GntyWeh5vBLt3zFmu3zKU6jusQrE6VvNS7RZWU+VtZ0Io99ZRv11",
+	"7II0r3dz3Ay5BbOUTUbG1bbvcUvsr3D/JIpMVjR9QTBLY4bmgLBgjMnsIAIMuA/YdjGd7UtLg15PKVMZ",
+	"Op7zDI+SaHR75l7GJ748FCtfILRTTrkGCRaMDh7kvZGOn/y24YYsV4YOx0RH1qQtuldErmXHmrLHXfz7",
+	"rHItcHxHA906nWLwO3N0e2TRBq/nVhVYn9MjrmB9CT6Puie11uW5le+f45tJy1WvTd4Op3STzo4Uic7X",
+	"6Xyd3cfl4IH/t7ynY0UL09FRgOHo56gGbesoksDOy9mbPSEcv/fFyRH3aiDYvvVeK2p1cLS3z+/dVG4S",
+	"3R0PpzX3pjHa8YNL7bqY6ieXZ8XLZ8r26Ld3Wv2e7O6WTbg89XR17s5ent6WSdtuuzwaBJg4HTxoFyW5",
+	"Oj018JD5O/lrR19Ha9Di75g3nq7rW8TjNYvXztp/w7jUW/x6qSms/W6ITH+N1qSTwiWdm+aTuRo8G15x",
+	"28XwWbyt0i2DK3G4+p3D1UXDnUVs9rWCPDJ1CMnUhtJqOHYhX7wcvLqC3+S11TWpyQ1EhXX0dADVJcC3",
+	"EKEk7riAk/mpQ1tgmNhRSr7eUpza5GcE3ck4m99gsMMb6TM1bo16avRShDydWq491FqN99LvvJcO8V4o",
+	"4i3juATaxfv12UkJkV5W1pKi5Hz7kL/u8HKZDOnq7tnuVKU1I+qkJE5KkYtvk15k6Zrt1Y29lc89ydpz",
+	"QV3Ble/dde/d+fXd+fUv5HRD8yDYpY585eXuoKmoP2ESQUJ/bjmyrLtkfgtPXnU/KdX5lNSyPD39QNfu",
+	"QNW9O1BV1ORNSSBISewP/Clj80EQxDgE8RRTNnjTf9MPwBwFd4e+1lr1JIYYMBh5DHspheRHKiYHJkxx",
+	"QjvLh5NWVV1LA8X9uOYxQNSpeulk7OoZPm7NZPcg/UQgiL0ZTuD9z+VD5m0tFft/OfAJBfRQInwPOsXz",
+	"SqCAoK2VC1EPJx4FMaxpQCq3jQL9IywPJFHxFXret9r8vPi8+G8AAAD//5RhZXmCsAAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

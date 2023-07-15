@@ -232,7 +232,7 @@ paths:
     post:
       summary: ''
       description: Add an account to the database
-      operationId: putAccounts
+      operationId: postAccounts
       requestBody:
         description: Add an account to the database
         content:
@@ -288,7 +288,7 @@ paths:
           description: ID of the account
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
       responses:
         '200':
           description: Successfully got account's info
@@ -334,7 +334,7 @@ paths:
           description: ID of the account
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
       requestBody:
         content:
           application/json:
@@ -385,7 +385,7 @@ paths:
           description: ID of the account
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
       responses:
         '204':
           description: ''
@@ -547,7 +547,12 @@ paths:
     post:
       summary: ''
       description: Create a new transaction
-      operationId: putTransactions
+      operationId: postTransactions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewTransaction'
       responses:
         '201':
           description: ''
@@ -594,7 +599,7 @@ paths:
           description: ID of the account
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
         - name: page
           in: query
           description: Page number
@@ -668,13 +673,13 @@ paths:
           description: ID of the account
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
         - name: transaction_id
           in: path
           description: ID of the transaction
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
       responses:
         '200':
           description: ''
@@ -719,13 +724,13 @@ paths:
           description: ID of the account
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
         - name: transaction_id
           in: path
           description: ID of the transaction
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
         - name: state
           in: query
           description: New state of the transaction
@@ -778,13 +783,13 @@ paths:
           description: ID of the account
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
         - name: transaction_id
           in: path
           description: ID of the transaction
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
       responses:
         '200':
           description: ''
@@ -830,19 +835,19 @@ paths:
           description: ID of the account
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
         - name: transaction_id
           in: path
           description: ID of the transaction
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
         - name: item_id
           in: path
           description: ID of the item
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
         - name: state
           in: query
           description: New state of the item
@@ -1012,7 +1017,7 @@ paths:
           description: ID of the account
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
         - name: page
           in: query
           description: Page number
@@ -1085,7 +1090,7 @@ paths:
           description: ID of the account
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
         - name: amount
           in: query
           description: Amount of the refill
@@ -1143,13 +1148,13 @@ paths:
           description: ID of the account
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
         - name: refill_id
           in: path
           description: ID of the refill
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
       responses:
         '204':
           description: ''
@@ -1265,7 +1270,7 @@ paths:
           description: ID of the category
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
       responses:
         '200':
           description: ''
@@ -1298,7 +1303,7 @@ paths:
           description: ID of the category
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
       requestBody:
         description: Category object
         required: true
@@ -1356,7 +1361,7 @@ paths:
           description: ID of the category
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
       responses:
         '204':
           description: ''
@@ -1386,8 +1391,7 @@ paths:
           description: ID of the category
           required: true
           schema:
-            type: string
-            format: binary
+            $ref: '#/components/schemas/UUID'
       responses:
         '200':
           description: ''
@@ -1422,7 +1426,7 @@ paths:
           description: ID of the category
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
       requestBody:
         description: Item object
         required: true
@@ -1481,13 +1485,13 @@ paths:
           description: ID of the category
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
         - name: item_id
           in: path
           description: ID of the item
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
       requestBody:
         description: Item object
         required: true
@@ -1545,13 +1549,13 @@ paths:
           description: ID of the category
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
         - name: item_id
           in: path
           description: ID of the item
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
       responses:
         '204':
           description: ''
@@ -1593,13 +1597,13 @@ paths:
           description: ID of the category
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
         - name: item_id
           in: path
           description: ID of the item
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
       responses:
         '200':
           description: ''
@@ -1706,7 +1710,7 @@ paths:
           description: ID of the image
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
       responses:
         '204':
           description: 'Success'
@@ -1820,7 +1824,7 @@ paths:
           description: ID of the text
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/UUID'
       responses:
         '204':
           description: 'Success'
@@ -1866,12 +1870,14 @@ components:
         - account_not_found
         - transaction_not_found
         - qr_invalid
+        - internal_server_error
       x-enum-varnames:
         - ErrBadRequest
         - ErrForbidden
         - ErrAccountNotFound
         - ErrTransactionNotFound
         - ErrQRInvalid
+        - ErrInternalServerError
     Messages:
       type: string
       enum:
@@ -1883,6 +1889,7 @@ components:
         - Account is not allowed to use ressource
         - Account cannot use ressource at the time being
         - Invalid QR Code nonce
+        - Internal server error
       x-enum-varnames:
         - MsgNotConnected
         - MsgMissingFields
@@ -1892,6 +1899,7 @@ components:
         - MsgAccountNotAllowed
         - MsgAccountNotAvailable
         - MsgQRInvalid
+        - MsgInternalServerError
     HTTPError:
       type: object
       properties:
@@ -1899,6 +1907,9 @@ components:
           $ref: '#/components/schemas/Messages'
         error_code:
           $ref: '#/components/schemas/ErrorCodes'
+      required:
+        - message
+        - error_code
     NewAccount:
       type: object
       properties:
@@ -2221,6 +2232,28 @@ components:
           $ref: '#/components/schemas/TransactionState'
       required:
         - id
+        - items
+        - account_id
+        - total_cost
+        - state
+    NewTransactionItem:
+      type: object
+      properties:
+        item_id:
+          $ref: '#/components/schemas/UUID'
+      required:
+        - item_id
+        - item_amount
+        - total_cost
+        - state
+    NewTransaction:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewTransactionItem'
+      required:
         - items
         - account_id
         - total_cost

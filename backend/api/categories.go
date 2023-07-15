@@ -2,41 +2,42 @@ package api
 
 import (
 	"bar/autogen"
-	"context"
+
+	"github.com/labstack/echo/v4"
 )
 
 // (GET /categories)
-func (s *Server) GetCategories(ctx context.Context, request autogen.GetCategoriesRequestObject) (autogen.GetCategoriesResponseObject, error) {
+func (s *Server) GetCategories(c echo.Context) error {
 	// TODO: implement
-	return nil, nil
+	return nil
 }
 
 // (POST /categories)
-func (s *Server) PostCategory(ctx context.Context, request autogen.PostCategoryRequestObject) (autogen.PostCategoryResponseObject, error) {
+func (s *Server) PostCategory(c echo.Context) error {
 	// TODO: implement
-	return nil, nil
+	return nil
 }
 
 // (DELETE /categories/{category_id})
-func (s *Server) DeleteCategory(ctx context.Context, request autogen.DeleteCategoryRequestObject) (autogen.DeleteCategoryResponseObject, error) {
+func (s *Server) DeleteCategory(c echo.Context, categoryId autogen.UUID) error {
 	// TODO: implement
-	return nil, nil
+	return nil
 }
 
 // (GET /categories/{category_id})
-func (s *Server) GetCategory(ctx context.Context, request autogen.GetCategoryRequestObject) (autogen.GetCategoryResponseObject, error) {
+func (s *Server) GetCategory(c echo.Context, categoryId autogen.UUID) error {
 	// TODO: implement
-	return nil, nil
+	return nil
 }
 
 // (PATCH /categories/{category_id})
-func (s *Server) PatchCategory(ctx context.Context, request autogen.PatchCategoryRequestObject) (autogen.PatchCategoryResponseObject, error) {
+func (s *Server) PatchCategory(c echo.Context, categoryId autogen.UUID) error {
 	// TODO: implement
-	return nil, nil
+	return nil
 }
 
 // (GET /categories/{category_id}/picture)
-func (s *Server) GetCategoryPicture(ctx context.Context, request autogen.GetCategoryPictureRequestObject) (autogen.GetCategoryPictureResponseObject, error) {
+func (s *Server) GetCategoryPicture(c echo.Context, categoryId autogen.UUID) error {
 	// TODO: implement
-	return nil, nil
+	return nil
 }

@@ -29,6 +29,14 @@ func NewServer(db db.DBackend) *Server {
 	return s
 }
 
+func (s *Server) getUserSess(c echo.Context) *sessions.Session {
+	return c.Get("userSess").(*sessions.Session)
+}
+
+func (s *Server) getAdminSess(c echo.Context) *sessions.Session {
+	return c.Get("adminSess").(*sessions.Session)
+}
+
 func (s *Server) Serve(c *config.Config) error {
 	e := echo.New()
 
@@ -64,11 +72,9 @@ func (s *Server) Serve(c *config.Config) error {
 	fmt.Println(adminSess, err)
 
 	// You can use h for intellisense and get the handlers' names
-	h := autogen.NewStrictHandler(s, []autogen.StrictMiddlewareFunc{
-		s.AuthMiddleware,
-	})
+	e.Use(s.AuthMiddleware)
 
-	autogen.RegisterHandlers(e, h)
+	autogen.RegisterHandlers(e, s)
 
 	if err := e.Start(c.ApiConfig.Port); err != nil {
 		return err

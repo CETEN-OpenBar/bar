@@ -2,53 +2,48 @@ package api
 
 import (
 	"bar/autogen"
-	"context"
+
+	"github.com/labstack/echo/v4"
 )
 
-// (GET /transactions)
-func (s *Server) GetTransactions(ctx context.Context, request autogen.GetTransactionsRequestObject) (autogen.GetTransactionsResponseObject, error) {
+// (GET /accounts/{account_id}/transactions)
+func (s *Server) GetAccountTransactions(c echo.Context, accountId autogen.UUID, params autogen.GetAccountTransactionsParams) error {
 	// TODO: implement
-	return nil, nil
+	return nil
 }
 
 // (GET /account/transactions)
-func (s *Server) GetCurrentAccountTransactions(ctx context.Context, request autogen.GetCurrentAccountTransactionsRequestObject) (autogen.GetCurrentAccountTransactionsResponseObject, error) {
+func (s *Server) GetCurrentAccountTransactions(c echo.Context, params autogen.GetCurrentAccountTransactionsParams) error {
 	// TODO: implement
-	return nil, nil
-}
-
-// (POST /account/transactions)
-func (s *Server) PutTransactions(ctx context.Context, request autogen.PutTransactionsRequestObject) (autogen.PutTransactionsResponseObject, error) {
-	// TODO: implement
-	return nil, nil
-}
-
-// (GET /accounts/{account_id}/transactions)
-func (s *Server) GetAccountTransactions(ctx context.Context, request autogen.GetAccountTransactionsRequestObject) (autogen.GetAccountTransactionsResponseObject, error) {
-	// TODO: implement
-	return nil, nil
+	return nil
 }
 
 // (DELETE /accounts/{account_id}/transactions/{transaction_id})
-func (s *Server) DeleteTransactionId(ctx context.Context, request autogen.DeleteTransactionIdRequestObject) (autogen.DeleteTransactionIdResponseObject, error) {
+func (s *Server) DeleteTransactionId(c echo.Context, accountId autogen.UUID, transactionId autogen.UUID) error {
 	// TODO: implement
-	return nil, nil
+	return nil
 }
 
 // (GET /accounts/{account_id}/transactions/{transaction_id})
-func (s *Server) GetTransactionId(ctx context.Context, request autogen.GetTransactionIdRequestObject) (autogen.GetTransactionIdResponseObject, error) {
+func (s *Server) GetTransactionId(c echo.Context, accountId autogen.UUID, transactionId autogen.UUID) error {
 	// TODO: implement
-	return nil, nil
+	return nil
 }
 
 // (PATCH /accounts/{account_id}/transactions/{transaction_id})
-func (s *Server) PatchTransactionId(ctx context.Context, request autogen.PatchTransactionIdRequestObject) (autogen.PatchTransactionIdResponseObject, error) {
+func (s *Server) PatchTransactionId(c echo.Context, accountId autogen.UUID, transactionId autogen.UUID, params autogen.PatchTransactionIdParams) error {
 	// TODO: implement
-	return nil, nil
+	return nil
 }
 
 // (PATCH /accounts/{account_id}/transactions/{transaction_id}/{item_id})
-func (s *Server) PatchTransactionItemId(ctx context.Context, request autogen.PatchTransactionItemIdRequestObject) (autogen.PatchTransactionItemIdResponseObject, error) {
+func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, transactionId autogen.UUID, itemId autogen.UUID, params autogen.PatchTransactionItemIdParams) error {
 	// TODO: implement
-	return nil, nil
+	return nil
+}
+
+// (GET /transactions)
+func (s *Server) GetTransactions(c echo.Context, params autogen.GetTransactionsParams) error {
+	// TODO: implement
+	return nil
 }
