@@ -6,6 +6,12 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// (POST /account/transactions)
+func (s *Server) PostTransactions(c echo.Context) error {
+	// TODO: implement
+	return nil
+}
+
 // (GET /accounts/{account_id}/transactions)
 func (s *Server) GetAccountTransactions(c echo.Context, accountId autogen.UUID, params autogen.GetAccountTransactionsParams) error {
 	// TODO: implement

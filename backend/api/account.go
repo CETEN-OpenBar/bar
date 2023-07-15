@@ -52,12 +52,6 @@ func (s *Server) GetAccount(c echo.Context) error {
 	return nil
 }
 
-// (POST /account/transactions)
-func (s *Server) PostTransactions(c echo.Context) error {
-	// TODO: implement
-	return nil
-}
-
 // (GET /accounts)
 func (s *Server) GetAccounts(c echo.Context, params autogen.GetAccountsParams) error {
 	// TODO: implement
