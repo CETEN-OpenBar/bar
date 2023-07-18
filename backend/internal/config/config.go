@@ -19,7 +19,13 @@ type Config struct {
 		SessionSecret      string `env:"SESSION_SECRET"`
 		AdminSessionSecret string `env:"ADMIN_SESSION_SECRET"`
 		Port               string `env:"PORT" envDefault:":8080"`
+		BasePath           string `env:"BASE_PATH" envDefault:"http://localhost:8080"`
 	} `envPrefix:"BAR_API_"`
+
+	OauthConfig struct {
+		GoogleClientID     string `env:"GOOGLE_CLIENT_ID"`
+		GoogleClientSecret string `env:"GOOGLE_CLIENT_SECRET"`
+	} `envPrefix:"BAR_OAUTH_"`
 }
 
 var config Config

@@ -123,6 +123,7 @@ func (s *Server) PostAccounts(c echo.Context) error {
 		Account: autogen.Account{
 			Balance:      req.Balance,
 			CardId:       cardId,
+			CardPin:      "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
 			EmailAddress: req.EmailAddress,
 			FirstName:    req.FirstName,
 			LastName:     req.LastName,
@@ -216,6 +217,7 @@ func (s *Server) PatchAccountId(c echo.Context, accountId autogen.UUID) error {
 	}
 	if req.CardId != nil {
 		account.Account.CardId = *req.CardId
+		account.Account.CardPin = "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0"
 	}
 	if req.EmailAddress != nil {
 		account.Account.EmailAddress = *req.EmailAddress
@@ -311,6 +313,7 @@ func (s *Server) ImportAccounts(c echo.Context) error {
 			Account: autogen.Account{
 				Balance:      balance,
 				CardId:       record[assignments["card_id"]],
+				CardPin:      "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
 				EmailAddress: record[assignments["email"]],
 				FirstName:    record[assignments["first_name"]],
 				LastName:     record[assignments["last_name"]],

@@ -2,10 +2,26 @@ package api
 
 import (
 	"bar/autogen"
+	"bar/internal/config"
+	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
+	"fmt"
+	"time"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/patrickmn/go-cache"
+	"github.com/skip2/go-qrcode"
 	"go.mongodb.org/mongo-driver/mongo"
+	"golang.org/x/oauth2"
+	admin "google.golang.org/api/admin/directory/v1"
+	"google.golang.org/api/option"
 )
+
+var qrCache = cache.New(5*time.Minute, 10*time.Minute)
+var stateCache = cache.New(5*time.Minute, 10*time.Minute)
 
 // (GET /account/qr)
 func (s *Server) GetAccountQR(c echo.Context) error {
@@ -28,56 +44,195 @@ func (s *Server) GetAccountQR(c echo.Context) error {
 		return Error500(c)
 	}
 
-	// TODO: implement
+	// Generate QR code nonce
+	nonce := uuid.NewString()
+
+	// Cache nonce
+	qrCache.Set(nonce, accountID, cache.DefaultExpiration)
+
+	conf := config.GetConfig()
+	url := fmt.Sprintf("%s/auth/google/begin/%s", conf.ApiConfig.BasePath, nonce)
+
+	// Generate QR code
+	png, err := qrcode.Encode(url, qrcode.Medium, 256)
+	if err != nil {
+		fmt.Println(err)
+		return Error500(c)
+	}
+
+	r := bytes.NewReader(png)
+
+	autogen.GetAccountQR200ImagepngResponse{
+		Body:          r,
+		ContentLength: int64(len(png)),
+	}.VisitGetAccountQRResponse(c.Response())
 	return nil
+}
+
+var scopes = []string{
+	"https://www.googleapis.com/auth/userinfo.profile",
+	"https://www.googleapis.com/auth/userinfo.email",
+	"https://www.googleapis.com/auth/admin.directory.user.readonly",
 }
 
 // (GET /auth/google/begin/{qr_nonce})
 func (s *Server) ConnectAccount(c echo.Context, qrNonce string) error {
-	// Get account from cookie
-	sess := s.getUserSess(c)
-	accountID, ok := sess.Values["account_id"].(string)
-	if !ok {
+	// Get account from nonce and delete nonce
+	accountID, found := qrCache.Get(qrNonce)
+	if !found {
 		return Error401(c)
 	}
+	qrCache.Delete(qrNonce)
 
-	// Get account from database
-	_, err := s.DBackend.GetAccount(accountID)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			// Delete cookie
-			sess.Options.MaxAge = -1
-			sess.Save(c.Request(), c.Response())
-			return ErrorAccNotFound(c)
-		}
-		return Error500(c)
+	conf := config.GetConfig()
+
+	// Init OAuth2 flow with Google
+	oauth2Config := oauth2.Config{
+		ClientID:     conf.OauthConfig.GoogleClientID,
+		ClientSecret: conf.OauthConfig.GoogleClientSecret,
+		RedirectURL:  fmt.Sprintf("%s/auth/google/callback", conf.ApiConfig.BasePath),
+		Scopes:       scopes,
+		Endpoint: oauth2.Endpoint{
+			AuthURL:  "https://accounts.google.com/o/oauth2/auth",
+			TokenURL: "https://oauth2.googleapis.com/token",
+		},
 	}
 
-	// TODO: implement
-	return nil
+	// state is not nonce
+	state := uuid.NewString()
+
+	// Cache state
+	stateCache.Set(state, accountID, cache.DefaultExpiration)
+
+	// Redirect to Google
+	url := oauth2Config.AuthCodeURL(state)
+
+	return c.Redirect(301, url)
+}
+
+type education struct {
+	Promo  int    `json:"Promotion"`
+	Spé    string `json:"Approfondissement"`
+	Statut int    `json:"Statut"`
+}
+
+type googleUser struct {
+	ID        string `json:"id"`
+	Email     string `json:"email"`
+	Name      string `json:"name"`
+	FirstName string `json:"given_name"`
+	LastName  string `json:"family_name"`
+	Link      string `json:"link"`
+	Picture   string `json:"picture"`
 }
 
 // (GET /auth/google/callback)
 func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
-	// Get account from cookie
-	sess := s.getUserSess(c)
-	accountID, ok := sess.Values["account_id"].(string)
-	if !ok {
+	// Get account from state and delete state
+	accountID, found := stateCache.Get(params.State)
+	if !found {
 		return Error401(c)
 	}
+	stateCache.Delete(params.State)
 
-	// Get account from database
-	_, err := s.DBackend.GetAccount(accountID)
+	account, err := s.DBackend.GetAccount(accountID.(string))
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			// Delete cookie
-			sess.Options.MaxAge = -1
-			sess.Save(c.Request(), c.Response())
 			return ErrorAccNotFound(c)
 		}
 		return Error500(c)
 	}
 
-	// TODO: implement
+	conf := config.GetConfig()
+
+	// Get token from Google
+	oauth2Config := oauth2.Config{
+		ClientID:     conf.OauthConfig.GoogleClientID,
+		ClientSecret: conf.OauthConfig.GoogleClientSecret,
+		RedirectURL:  fmt.Sprintf("%s/auth/google/callback", conf.ApiConfig.BasePath),
+		Scopes:       scopes,
+		Endpoint: oauth2.Endpoint{
+			AuthURL:  "https://accounts.google.com/o/oauth2/auth",
+			TokenURL: "https://oauth2.googleapis.com/token",
+		},
+	}
+
+	token, err := oauth2Config.Exchange(c.Request().Context(), params.Code)
+	if err != nil {
+		return Error500(c)
+	}
+
+	// Get user from Google
+	client := oauth2Config.Client(c.Request().Context(), token)
+	resp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
+	if err != nil {
+		return Error500(c)
+	}
+	defer resp.Body.Close()
+
+	usr := &googleUser{}
+	err = json.NewDecoder(resp.Body).Decode(usr)
+	if err != nil {
+		return Error500(c)
+	}
+
+	adminService, err := admin.NewService(c.Request().Context(), option.WithTokenSource(oauth2Config.TokenSource(c.Request().Context(), token)))
+	if err != nil {
+		return Error500(c)
+	}
+
+	t, err := adminService.Users.Get(usr.ID).Projection("custom").CustomFieldMask("Education").ViewType("domain_public").Do()
+	if err != nil {
+		return Error500(c)
+	}
+	edc := &education{}
+	err = json.Unmarshal(t.CustomSchemas["Education"], edc)
+	if err != nil {
+		return Error500(c)
+	}
+
+	account.FirstName = usr.FirstName
+	account.LastName = usr.LastName
+	account.EmailAddress = usr.Email
+	account.GoogleId = usr.ID
+
+	err = s.DBackend.UpdateAccount(account)
+	if err != nil {
+		return Error500(c)
+	}
+
+	autogen.Callback200JSONResponse{
+		Account: &account.Account,
+	}.VisitCallbackResponse(c.Response())
+	return nil
+}
+
+// (POST /auth/card)
+func (s *Server) ConnectCard(ctx echo.Context) error {
+	var param autogen.ConnectCardJSONBody
+	err := ctx.Bind(&param)
+	if err != nil {
+		return Error400(ctx)
+	}
+
+	account, err := s.DBackend.GetAccountByCard(param.CardId)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorAccNotFound(ctx)
+		}
+		return Error500(ctx)
+	}
+
+	// SHA256 hash of the card ID
+	hash := sha256.Sum256([]byte(param.CardId))
+	digest := hex.EncodeToString(hash[:])
+
+	if account.CardPin != digest {
+		return ErrorAccNotFound(ctx)
+	}
+
+	autogen.ConnectCard200JSONResponse{
+		Account: &account.Account,
+	}.VisitConnectCardResponse(ctx.Response())
 	return nil
 }
