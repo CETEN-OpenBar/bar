@@ -30,7 +30,7 @@ func (s *Server) GetSelfRefills(c echo.Context, params autogen.GetSelfRefillsPar
 	}
 
 	// Get account from database
-	account, err := s.DBackend.GetAccount(accountID)
+	_, err := s.DBackend.GetAccount(accountID)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			// Delete cookie
@@ -72,7 +72,7 @@ func (s *Server) PostRefill(c echo.Context, accountId autogen.UUID, params autog
 }
 
 // (DELETE /accounts/{account_id}/refills/{refill_id})
-func (s *Server) DeleteRefill(c echo.Context, accountId autogen.UUID, refillId autogen.UUID) error {
+func (s *Server) MarkDeleteRefill(c echo.Context, accountId autogen.UUID, refillId autogen.UUID) error {
 	// Get admin account from cookie
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["admin_account_id"].(string)

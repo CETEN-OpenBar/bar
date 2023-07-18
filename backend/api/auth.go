@@ -17,7 +17,7 @@ func (s *Server) GetAccountQR(c echo.Context) error {
 	}
 
 	// Get account from database
-	account, err := s.DBackend.GetAccount(accountID)
+	_, err := s.DBackend.GetAccount(accountID)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			// Delete cookie
@@ -42,7 +42,7 @@ func (s *Server) ConnectAccount(c echo.Context, qrNonce string) error {
 	}
 
 	// Get account from database
-	account, err := s.DBackend.GetAccount(accountID)
+	_, err := s.DBackend.GetAccount(accountID)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			// Delete cookie
@@ -67,7 +67,7 @@ func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 	}
 
 	// Get account from database
-	account, err := s.DBackend.GetAccount(accountID)
+	_, err := s.DBackend.GetAccount(accountID)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			// Delete cookie

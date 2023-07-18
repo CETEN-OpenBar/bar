@@ -108,7 +108,7 @@ func (s *Server) PostAccounts(c echo.Context) error {
 }
 
 // (DELETE /accounts/{account_id})
-func (s *Server) DeleteAccountId(c echo.Context, accountId autogen.UUID) error {
+func (s *Server) MarkDeleteAccountId(c echo.Context, accountId autogen.UUID) error {
 	// Get admin account from cookie
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["admin_account_id"].(string)

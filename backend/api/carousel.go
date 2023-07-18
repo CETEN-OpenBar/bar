@@ -33,7 +33,7 @@ func (s *Server) AddCarouselImage(c echo.Context) error {
 }
 
 // (DELETE /carousel/images/{image_id})
-func (s *Server) DeleteCarouselImage(c echo.Context, imageId autogen.UUID) error {
+func (s *Server) MarkDeleteCarouselImage(c echo.Context, imageId autogen.UUID) error {
 	// Get admin account from cookie
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["admin_account_id"].(string)
@@ -72,7 +72,7 @@ func (s *Server) AddCarouselText(c echo.Context) error {
 }
 
 // (DELETE /carousel/texts/{text_id})
-func (s *Server) DeleteCarouselText(c echo.Context, textId autogen.UUID) error {
+func (s *Server) MarkDeleteCarouselText(c echo.Context, textId autogen.UUID) error {
 	// Get admin account from cookie
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["admin_account_id"].(string)

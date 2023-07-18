@@ -20,7 +20,7 @@ func (s *Server) PostItem(c echo.Context, categoryId autogen.UUID) error {
 }
 
 // (DELETE /categories/{category_id}/items/{item_id})
-func (s *Server) DeleteItem(c echo.Context, categoryId autogen.UUID, itemId autogen.UUID) error {
+func (s *Server) MarkDeleteItem(c echo.Context, categoryId autogen.UUID, itemId autogen.UUID) error {
 	// Get admin account from cookie
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["admin_account_id"].(string)

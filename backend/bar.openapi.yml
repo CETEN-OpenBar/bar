@@ -22,6 +22,8 @@ tags:
     description: Items on sales in the shop
   - name: carousel
     description: Carousel texts and images
+  - name: deleted
+    description: Restore or delete permanently
 paths:
   /auth/google/begin/{qr_nonce}:
     description: Connect account to Google
@@ -383,7 +385,7 @@ paths:
     delete:
       summary: ''
       description: Delete account
-      operationId: deleteAccountId
+      operationId: markDeleteAccountId
       parameters:
         - name: account_id
           in: path
@@ -781,7 +783,7 @@ paths:
     delete:
       summary: ''
       description: Delete transaction
-      operationId: deleteTransactionId
+      operationId: markDeleteTransactionId
       parameters:
         - name: account_id
           in: path
@@ -1146,7 +1148,7 @@ paths:
   /accounts/{account_id}/refills/{refill_id}:
     delete:
       description: Cancels a refill
-      operationId: deleteRefill
+      operationId: markDeleteRefill
       parameters:
         - name: account_id
           in: path
@@ -1359,7 +1361,7 @@ paths:
         - categories
     delete:
       description: Delete a category
-      operationId: deleteCategory
+      operationId: markDeleteCategory
       parameters:
         - name: category_id
           in: path
@@ -1547,7 +1549,7 @@ paths:
         - items
     delete:
       description: Delete an item
-      operationId: deleteItem
+      operationId: markDeleteItem
       parameters:
         - name: category_id
           in: path
@@ -1708,7 +1710,7 @@ paths:
   /carousel/images/{image_id}:
     delete:
       description: 'Delete a carousel image'
-      operationId: deleteCarouselImage
+      operationId: markDeleteCarouselImage
       parameters:
         - name: image_id
           in: path
@@ -1822,7 +1824,7 @@ paths:
   /carousel/texts/{text_id}:
     delete:
       description: 'Delete a carousel text'
-      operationId: deleteCarouselText
+      operationId: markDeleteCarouselText
       parameters:
         - name: text_id
           in: path
@@ -1861,6 +1863,1002 @@ paths:
         - admin_auth: []
       tags:
         - carousel
+  /deleted/accounts:
+    get:
+      description: 'Get deleted accounts'
+      operationId: getDeletedAccounts
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Number of accounts per page
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accounts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Account'
+                  page:
+                    type: integer
+                    format: int
+                  limit:
+                    type: integer
+                    format: int
+                  max_page:
+                    type: integer
+                    format: int
+                required:
+                  - accounts
+                  - page
+                  - limit
+                  - max_page
+        '401':
+          description: 'Not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: 'Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - admin_auth: []
+      tags:
+        - deleted
+  /deleted/accounts/{account_id}:
+    patch:
+      description: 'Restore a deleted account'
+      operationId: restoreDeletedAccount
+      parameters:
+        - name: account_id
+          in: path
+          description: ID of the account
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '204':
+          description: 'Success'
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: 'Not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: 'Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: 'Account not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '409':
+          description: 'Account already exists'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - admin_auth: []
+      tags:
+        - deleted
+    delete:
+      description: 'Permanently deletes an account (SUPERADMIN)'
+      operationId: deleteAccount
+      parameters:
+        - name: account_id
+          in: path
+          description: ID of the account
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '204':
+          description: 'Success'
+        '401':
+          description: 'Not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: 'Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: 'Account not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '409':
+          description: 'Account already exists'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - admin_auth: []
+      tags:
+        - deleted
+  /deleted/transactions:
+    get:
+      description: 'Get deleted transactions'
+      operationId: getDeletedTransactions
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Number of accounts per page
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Transaction'
+                  page:
+                    type: integer
+                    format: int
+                  limit:
+                    type: integer
+                    format: int
+                  max_page:
+                    type: integer
+                    format: int
+                required:
+                  - transactions
+                  - page
+                  - limit
+                  - max_page
+        '401':
+          description: 'Not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: 'Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - admin_auth: []
+      tags:
+        - deleted
+  /deleted/transactions/{transaction_id}:
+    patch:
+      description: 'Restore a deleted transaction'
+      operationId: restoreDeletedTransaction
+      parameters:
+        - name: transaction_id
+          in: path
+          description: ID of the transaction
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '204':
+          description: 'Success'
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: 'Not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: 'Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: 'Transaction not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '409':
+          description: 'Transaction already exists'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - admin_auth: []
+      tags:
+        - deleted
+    delete:
+      description: 'Permanently deletes a transaction (SUPERADMIN)'
+      operationId: deleteTransaction
+      parameters:
+        - name: transaction_id
+          in: path
+          description: ID of the transaction
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '204':
+          description: 'Success'
+        '401':
+          description: 'Not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: 'Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: 'Transaction not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '409':
+          description: 'Transaction already exists'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - admin_auth: []
+      tags:
+        - deleted
+  /deleted/refills:
+    get:
+      description: 'Get deleted refills'
+      operationId: getDeletedRefills
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Number of accounts per page
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  refills:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Refill'
+                  page:
+                    type: integer
+                    format: int
+                  limit:
+                    type: integer
+                    format: int
+                  max_page:
+                    type: integer
+                    format: int
+                required:
+                  - refills
+                  - page
+                  - limit
+                  - max_page
+        '401':
+          description: 'Not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: 'Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - admin_auth: []
+      tags:
+        - deleted
+  /deleted/refills/{refill_id}:
+    patch:
+      description: 'Restore a deleted refill'
+      operationId: restoreDeletedRefill
+      parameters:
+        - name: refill_id
+          in: path
+          description: ID of the refill
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '204':
+          description: 'Success'
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: 'Not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: 'Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: 'Refill not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '409':
+          description: 'Refill already exists'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - admin_auth: []
+      tags:
+        - deleted
+    delete:
+      description: 'Permanently deletes a refill (SUPERADMIN)'
+      operationId: deleteRefill
+      parameters:
+        - name: refill_id
+          in: path
+          description: ID of the refill
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '204':
+          description: 'Success'
+        '401':
+          description: 'Not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: 'Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: 'Refill not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '409':
+          description: 'Refill already exists'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - admin_auth: []
+      tags:
+        - deleted
+  /deleted/items:
+    get:
+      description: 'Get deleted items'
+      operationId: getDeletedItems
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Number of accounts per page
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Item'
+                  page:
+                    type: integer
+                    format: int
+                  limit:
+                    type: integer
+                    format: int
+                  max_page:
+                    type: integer
+                    format: int
+                required:
+                  - items
+                  - page
+                  - limit
+                  - max_page
+        '401':
+          description: 'Not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: 'Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - admin_auth: []
+      tags:
+        - deleted
+  /deleted/items/{item_id}:
+    patch:
+      description: 'Restore a deleted item'
+      operationId: restoreDeletedItem
+      parameters:
+        - name: item_id
+          in: path
+          description: ID of the item
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '204':
+          description: 'Success'
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: 'Not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: 'Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: 'Item not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '409':
+          description: 'Item already exists'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - admin_auth: []
+      tags:
+        - deleted
+    delete:
+      description: 'Permanently deletes an item (SUPERADMIN)'
+      operationId: deleteItem
+      parameters:
+        - name: item_id
+          in: path
+          description: ID of the item
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '204':
+          description: 'Success'
+        '401':
+          description: 'Not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: 'Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: 'Item not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '409':
+          description: 'Item already exists'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - admin_auth: []
+      tags:
+        - deleted
+  /deleted/carousel/images:
+    get:
+      description: 'Get deleted carousel images'
+      operationId: getDeletedCarouselImages
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Number of accounts per page
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CarouselImage'
+                  page:
+                    type: integer
+                    format: int
+                  limit:
+                    type: integer
+                    format: int
+                  max_page:
+                    type: integer
+                    format: int
+                required:
+                  - items
+                  - page
+                  - limit
+                  - max_page
+        '401':
+          description: 'Not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: 'Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - admin_auth: []
+      tags:
+        - deleted
+  /deleted/carousel/images/{image_id}:
+    patch:
+      description: 'Restore a deleted carousel image'
+      operationId: restoreDeletedCarouselImage
+      parameters:
+        - name: image_id
+          in: path
+          description: ID of the carousel image
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '204':
+          description: 'Success'
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: 'Not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: 'Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: 'Carousel image not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '409':
+          description: 'Carousel image already exists'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - admin_auth: []
+      tags:
+        - deleted
+    delete:
+      description: 'Permanently deletes a carousel image (SUPERADMIN)'
+      operationId: deleteCarouselImage
+      parameters:
+        - name: image_id
+          in: path
+          description: ID of the carousel image
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '204':
+          description: 'Success'
+        '401':
+          description: 'Not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: 'Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: 'Carousel image not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '409':
+          description: 'Carousel image already exists'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - admin_auth: []
+      tags:
+        - deleted
+  /deleted/carousel/texts:
+    get:
+      description: 'Get deleted carousel texts'
+      operationId: getDeletedCarouselTexts
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Number of accounts per page
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CarouselText'
+                  page:
+                    type: integer
+                    format: int
+                  limit:
+                    type: integer
+                    format: int
+                  max_page:
+                    type: integer
+                    format: int
+                required:
+                  - items
+                  - page
+                  - limit
+                  - max_page
+        '401':
+          description: 'Not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: 'Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - admin_auth: []
+      tags:
+        - deleted
+  /deleted/carousel/texts/{text_id}:
+    patch:
+      description: 'Restore a deleted carousel text'
+      operationId: restoreDeletedCarouselText
+      parameters:
+        - name: text_id
+          in: path
+          description: ID of the carousel text
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '204':
+          description: 'Success'
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: 'Not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: 'Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: 'Carousel text not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '409':
+          description: 'Carousel text already exists'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - admin_auth: []
+      tags:
+        - deleted
+    delete:
+      description: 'Permanently deletes a carousel text (SUPERADMIN)'
+      operationId: deleteCarouselText
+      parameters:
+        - name: text_id
+          in: path
+          description: ID of the carousel text
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '204':
+          description: 'Success'
+        '401':
+          description: 'Not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: 'Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: 'Carousel text not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '409':
+          description: 'Carousel text already exists'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - admin_auth: []
+      tags:
+        - deleted
 components:
   schemas:
     UUID:
@@ -1977,6 +2975,7 @@ components:
         - student_with_benefits
         - member
         - admin
+        - superadmin
       x-enum-varnames:
         - AccountStudent
         - AccountStudentWithBenefits

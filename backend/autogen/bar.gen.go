@@ -40,6 +40,7 @@ const (
 	AccountMember              AccountRole = "member"
 	AccountStudent             AccountRole = "student"
 	AccountStudentWithBenefits AccountRole = "student_with_benefits"
+	Superadmin                 AccountRole = "superadmin"
 )
 
 // Defines values for AccountState.
@@ -446,6 +447,60 @@ type CallbackParams struct {
 	State string `form:"state" json:"state" bson:"state"`
 }
 
+// GetDeletedAccountsParams defines parameters for GetDeletedAccounts.
+type GetDeletedAccountsParams struct {
+	// Page Page number
+	Page *int `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+
+	// Limit Number of accounts per page
+	Limit *int `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+}
+
+// GetDeletedCarouselImagesParams defines parameters for GetDeletedCarouselImages.
+type GetDeletedCarouselImagesParams struct {
+	// Page Page number
+	Page *int `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+
+	// Limit Number of accounts per page
+	Limit *int `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+}
+
+// GetDeletedCarouselTextsParams defines parameters for GetDeletedCarouselTexts.
+type GetDeletedCarouselTextsParams struct {
+	// Page Page number
+	Page *int `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+
+	// Limit Number of accounts per page
+	Limit *int `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+}
+
+// GetDeletedItemsParams defines parameters for GetDeletedItems.
+type GetDeletedItemsParams struct {
+	// Page Page number
+	Page *int `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+
+	// Limit Number of accounts per page
+	Limit *int `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+}
+
+// GetDeletedRefillsParams defines parameters for GetDeletedRefills.
+type GetDeletedRefillsParams struct {
+	// Page Page number
+	Page *int `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+
+	// Limit Number of accounts per page
+	Limit *int `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+}
+
+// GetDeletedTransactionsParams defines parameters for GetDeletedTransactions.
+type GetDeletedTransactionsParams struct {
+	// Page Page number
+	Page *int `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+
+	// Limit Number of accounts per page
+	Limit *int `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+}
+
 // GetRefillsParams defines parameters for GetRefills.
 type GetRefillsParams struct {
 	// Page Page number
@@ -525,7 +580,7 @@ type ServerInterface interface {
 	PostAccounts(ctx echo.Context) error
 
 	// (DELETE /accounts/{account_id})
-	DeleteAccountId(ctx echo.Context, accountId UUID) error
+	MarkDeleteAccountId(ctx echo.Context, accountId UUID) error
 
 	// (GET /accounts/{account_id})
 	GetAccountId(ctx echo.Context, accountId UUID) error
@@ -540,13 +595,13 @@ type ServerInterface interface {
 	PostRefill(ctx echo.Context, accountId UUID, params PostRefillParams) error
 
 	// (DELETE /accounts/{account_id}/refills/{refill_id})
-	DeleteRefill(ctx echo.Context, accountId UUID, refillId UUID) error
+	MarkDeleteRefill(ctx echo.Context, accountId UUID, refillId UUID) error
 
 	// (GET /accounts/{account_id}/transactions)
 	GetAccountTransactions(ctx echo.Context, accountId UUID, params GetAccountTransactionsParams) error
 
 	// (DELETE /accounts/{account_id}/transactions/{transaction_id})
-	DeleteTransactionId(ctx echo.Context, accountId UUID, transactionId UUID) error
+	MarkDeleteTransactionId(ctx echo.Context, accountId UUID, transactionId UUID) error
 
 	// (GET /accounts/{account_id}/transactions/{transaction_id})
 	GetTransactionId(ctx echo.Context, accountId UUID, transactionId UUID) error
@@ -570,7 +625,7 @@ type ServerInterface interface {
 	AddCarouselImage(ctx echo.Context) error
 
 	// (DELETE /carousel/images/{image_id})
-	DeleteCarouselImage(ctx echo.Context, imageId UUID) error
+	MarkDeleteCarouselImage(ctx echo.Context, imageId UUID) error
 
 	// (GET /carousel/texts)
 	GetCarouselTexts(ctx echo.Context) error
@@ -579,7 +634,7 @@ type ServerInterface interface {
 	AddCarouselText(ctx echo.Context) error
 
 	// (DELETE /carousel/texts/{text_id})
-	DeleteCarouselText(ctx echo.Context, textId UUID) error
+	MarkDeleteCarouselText(ctx echo.Context, textId UUID) error
 
 	// (GET /categories)
 	GetCategories(ctx echo.Context) error
@@ -588,7 +643,7 @@ type ServerInterface interface {
 	PostCategory(ctx echo.Context) error
 
 	// (DELETE /categories/{category_id})
-	DeleteCategory(ctx echo.Context, categoryId UUID) error
+	MarkDeleteCategory(ctx echo.Context, categoryId UUID) error
 
 	// (GET /categories/{category_id})
 	GetCategory(ctx echo.Context, categoryId UUID) error
@@ -600,7 +655,7 @@ type ServerInterface interface {
 	PostItem(ctx echo.Context, categoryId UUID) error
 
 	// (DELETE /categories/{category_id}/items/{item_id})
-	DeleteItem(ctx echo.Context, categoryId UUID, itemId UUID) error
+	MarkDeleteItem(ctx echo.Context, categoryId UUID, itemId UUID) error
 
 	// (PATCH /categories/{category_id}/items/{item_id})
 	PatchItem(ctx echo.Context, categoryId UUID, itemId UUID) error
@@ -610,6 +665,60 @@ type ServerInterface interface {
 
 	// (GET /categories/{category_id}/picture)
 	GetCategoryPicture(ctx echo.Context, categoryId UUID) error
+
+	// (GET /deleted/accounts)
+	GetDeletedAccounts(ctx echo.Context, params GetDeletedAccountsParams) error
+
+	// (DELETE /deleted/accounts/{account_id})
+	DeleteAccount(ctx echo.Context, accountId UUID) error
+
+	// (PATCH /deleted/accounts/{account_id})
+	RestoreDeletedAccount(ctx echo.Context, accountId UUID) error
+
+	// (GET /deleted/carousel/images)
+	GetDeletedCarouselImages(ctx echo.Context, params GetDeletedCarouselImagesParams) error
+
+	// (DELETE /deleted/carousel/images/{image_id})
+	DeleteCarouselImage(ctx echo.Context, imageId UUID) error
+
+	// (PATCH /deleted/carousel/images/{image_id})
+	RestoreDeletedCarouselImage(ctx echo.Context, imageId UUID) error
+
+	// (GET /deleted/carousel/texts)
+	GetDeletedCarouselTexts(ctx echo.Context, params GetDeletedCarouselTextsParams) error
+
+	// (DELETE /deleted/carousel/texts/{text_id})
+	DeleteCarouselText(ctx echo.Context, textId UUID) error
+
+	// (PATCH /deleted/carousel/texts/{text_id})
+	RestoreDeletedCarouselText(ctx echo.Context, textId UUID) error
+
+	// (GET /deleted/items)
+	GetDeletedItems(ctx echo.Context, params GetDeletedItemsParams) error
+
+	// (DELETE /deleted/items/{item_id})
+	DeleteItem(ctx echo.Context, itemId UUID) error
+
+	// (PATCH /deleted/items/{item_id})
+	RestoreDeletedItem(ctx echo.Context, itemId UUID) error
+
+	// (GET /deleted/refills)
+	GetDeletedRefills(ctx echo.Context, params GetDeletedRefillsParams) error
+
+	// (DELETE /deleted/refills/{refill_id})
+	DeleteRefill(ctx echo.Context, refillId UUID) error
+
+	// (PATCH /deleted/refills/{refill_id})
+	RestoreDeletedRefill(ctx echo.Context, refillId UUID) error
+
+	// (GET /deleted/transactions)
+	GetDeletedTransactions(ctx echo.Context, params GetDeletedTransactionsParams) error
+
+	// (DELETE /deleted/transactions/{transaction_id})
+	DeleteTransaction(ctx echo.Context, transactionId UUID) error
+
+	// (PATCH /deleted/transactions/{transaction_id})
+	RestoreDeletedTransaction(ctx echo.Context, transactionId UUID) error
 
 	// (GET /refills)
 	GetRefills(ctx echo.Context, params GetRefillsParams) error
@@ -769,8 +878,8 @@ func (w *ServerInterfaceWrapper) PostAccounts(ctx echo.Context) error {
 	return err
 }
 
-// DeleteAccountId converts echo context to params.
-func (w *ServerInterfaceWrapper) DeleteAccountId(ctx echo.Context) error {
+// MarkDeleteAccountId converts echo context to params.
+func (w *ServerInterfaceWrapper) MarkDeleteAccountId(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "account_id" -------------
 	var accountId UUID
@@ -783,7 +892,7 @@ func (w *ServerInterfaceWrapper) DeleteAccountId(ctx echo.Context) error {
 	ctx.Set(Admin_authScopes, []string{})
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.DeleteAccountId(ctx, accountId)
+	err = w.Handler.MarkDeleteAccountId(ctx, accountId)
 	return err
 }
 
@@ -898,8 +1007,8 @@ func (w *ServerInterfaceWrapper) PostRefill(ctx echo.Context) error {
 	return err
 }
 
-// DeleteRefill converts echo context to params.
-func (w *ServerInterfaceWrapper) DeleteRefill(ctx echo.Context) error {
+// MarkDeleteRefill converts echo context to params.
+func (w *ServerInterfaceWrapper) MarkDeleteRefill(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "account_id" -------------
 	var accountId UUID
@@ -920,7 +1029,7 @@ func (w *ServerInterfaceWrapper) DeleteRefill(ctx echo.Context) error {
 	ctx.Set(Admin_authScopes, []string{})
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.DeleteRefill(ctx, accountId, refillId)
+	err = w.Handler.MarkDeleteRefill(ctx, accountId, refillId)
 	return err
 }
 
@@ -965,8 +1074,8 @@ func (w *ServerInterfaceWrapper) GetAccountTransactions(ctx echo.Context) error 
 	return err
 }
 
-// DeleteTransactionId converts echo context to params.
-func (w *ServerInterfaceWrapper) DeleteTransactionId(ctx echo.Context) error {
+// MarkDeleteTransactionId converts echo context to params.
+func (w *ServerInterfaceWrapper) MarkDeleteTransactionId(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "account_id" -------------
 	var accountId UUID
@@ -987,7 +1096,7 @@ func (w *ServerInterfaceWrapper) DeleteTransactionId(ctx echo.Context) error {
 	ctx.Set(Admin_authScopes, []string{})
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.DeleteTransactionId(ctx, accountId, transactionId)
+	err = w.Handler.MarkDeleteTransactionId(ctx, accountId, transactionId)
 	return err
 }
 
@@ -1160,8 +1269,8 @@ func (w *ServerInterfaceWrapper) AddCarouselImage(ctx echo.Context) error {
 	return err
 }
 
-// DeleteCarouselImage converts echo context to params.
-func (w *ServerInterfaceWrapper) DeleteCarouselImage(ctx echo.Context) error {
+// MarkDeleteCarouselImage converts echo context to params.
+func (w *ServerInterfaceWrapper) MarkDeleteCarouselImage(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "image_id" -------------
 	var imageId UUID
@@ -1174,7 +1283,7 @@ func (w *ServerInterfaceWrapper) DeleteCarouselImage(ctx echo.Context) error {
 	ctx.Set(Admin_authScopes, []string{})
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.DeleteCarouselImage(ctx, imageId)
+	err = w.Handler.MarkDeleteCarouselImage(ctx, imageId)
 	return err
 }
 
@@ -1198,8 +1307,8 @@ func (w *ServerInterfaceWrapper) AddCarouselText(ctx echo.Context) error {
 	return err
 }
 
-// DeleteCarouselText converts echo context to params.
-func (w *ServerInterfaceWrapper) DeleteCarouselText(ctx echo.Context) error {
+// MarkDeleteCarouselText converts echo context to params.
+func (w *ServerInterfaceWrapper) MarkDeleteCarouselText(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "text_id" -------------
 	var textId UUID
@@ -1212,7 +1321,7 @@ func (w *ServerInterfaceWrapper) DeleteCarouselText(ctx echo.Context) error {
 	ctx.Set(Admin_authScopes, []string{})
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.DeleteCarouselText(ctx, textId)
+	err = w.Handler.MarkDeleteCarouselText(ctx, textId)
 	return err
 }
 
@@ -1238,8 +1347,8 @@ func (w *ServerInterfaceWrapper) PostCategory(ctx echo.Context) error {
 	return err
 }
 
-// DeleteCategory converts echo context to params.
-func (w *ServerInterfaceWrapper) DeleteCategory(ctx echo.Context) error {
+// MarkDeleteCategory converts echo context to params.
+func (w *ServerInterfaceWrapper) MarkDeleteCategory(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "category_id" -------------
 	var categoryId UUID
@@ -1252,7 +1361,7 @@ func (w *ServerInterfaceWrapper) DeleteCategory(ctx echo.Context) error {
 	ctx.Set(Admin_authScopes, []string{})
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.DeleteCategory(ctx, categoryId)
+	err = w.Handler.MarkDeleteCategory(ctx, categoryId)
 	return err
 }
 
@@ -1310,8 +1419,8 @@ func (w *ServerInterfaceWrapper) PostItem(ctx echo.Context) error {
 	return err
 }
 
-// DeleteItem converts echo context to params.
-func (w *ServerInterfaceWrapper) DeleteItem(ctx echo.Context) error {
+// MarkDeleteItem converts echo context to params.
+func (w *ServerInterfaceWrapper) MarkDeleteItem(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "category_id" -------------
 	var categoryId UUID
@@ -1332,7 +1441,7 @@ func (w *ServerInterfaceWrapper) DeleteItem(ctx echo.Context) error {
 	ctx.Set(Admin_authScopes, []string{})
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.DeleteItem(ctx, categoryId, itemId)
+	err = w.Handler.MarkDeleteItem(ctx, categoryId, itemId)
 	return err
 }
 
@@ -1403,6 +1512,384 @@ func (w *ServerInterfaceWrapper) GetCategoryPicture(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshalled arguments
 	err = w.Handler.GetCategoryPicture(ctx, categoryId)
+	return err
+}
+
+// GetDeletedAccounts converts echo context to params.
+func (w *ServerInterfaceWrapper) GetDeletedAccounts(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(Admin_authScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetDeletedAccountsParams
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page", ctx.QueryParams(), &params.Page)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter page: %s", err))
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "limit", ctx.QueryParams(), &params.Limit)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter limit: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.GetDeletedAccounts(ctx, params)
+	return err
+}
+
+// DeleteAccount converts echo context to params.
+func (w *ServerInterfaceWrapper) DeleteAccount(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "account_id" -------------
+	var accountId UUID
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "account_id", runtime.ParamLocationPath, ctx.Param("account_id"), &accountId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter account_id: %s", err))
+	}
+
+	ctx.Set(Admin_authScopes, []string{})
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.DeleteAccount(ctx, accountId)
+	return err
+}
+
+// RestoreDeletedAccount converts echo context to params.
+func (w *ServerInterfaceWrapper) RestoreDeletedAccount(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "account_id" -------------
+	var accountId UUID
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "account_id", runtime.ParamLocationPath, ctx.Param("account_id"), &accountId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter account_id: %s", err))
+	}
+
+	ctx.Set(Admin_authScopes, []string{})
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.RestoreDeletedAccount(ctx, accountId)
+	return err
+}
+
+// GetDeletedCarouselImages converts echo context to params.
+func (w *ServerInterfaceWrapper) GetDeletedCarouselImages(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(Admin_authScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetDeletedCarouselImagesParams
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page", ctx.QueryParams(), &params.Page)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter page: %s", err))
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "limit", ctx.QueryParams(), &params.Limit)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter limit: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.GetDeletedCarouselImages(ctx, params)
+	return err
+}
+
+// DeleteCarouselImage converts echo context to params.
+func (w *ServerInterfaceWrapper) DeleteCarouselImage(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "image_id" -------------
+	var imageId UUID
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "image_id", runtime.ParamLocationPath, ctx.Param("image_id"), &imageId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter image_id: %s", err))
+	}
+
+	ctx.Set(Admin_authScopes, []string{})
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.DeleteCarouselImage(ctx, imageId)
+	return err
+}
+
+// RestoreDeletedCarouselImage converts echo context to params.
+func (w *ServerInterfaceWrapper) RestoreDeletedCarouselImage(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "image_id" -------------
+	var imageId UUID
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "image_id", runtime.ParamLocationPath, ctx.Param("image_id"), &imageId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter image_id: %s", err))
+	}
+
+	ctx.Set(Admin_authScopes, []string{})
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.RestoreDeletedCarouselImage(ctx, imageId)
+	return err
+}
+
+// GetDeletedCarouselTexts converts echo context to params.
+func (w *ServerInterfaceWrapper) GetDeletedCarouselTexts(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(Admin_authScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetDeletedCarouselTextsParams
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page", ctx.QueryParams(), &params.Page)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter page: %s", err))
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "limit", ctx.QueryParams(), &params.Limit)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter limit: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.GetDeletedCarouselTexts(ctx, params)
+	return err
+}
+
+// DeleteCarouselText converts echo context to params.
+func (w *ServerInterfaceWrapper) DeleteCarouselText(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "text_id" -------------
+	var textId UUID
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "text_id", runtime.ParamLocationPath, ctx.Param("text_id"), &textId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter text_id: %s", err))
+	}
+
+	ctx.Set(Admin_authScopes, []string{})
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.DeleteCarouselText(ctx, textId)
+	return err
+}
+
+// RestoreDeletedCarouselText converts echo context to params.
+func (w *ServerInterfaceWrapper) RestoreDeletedCarouselText(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "text_id" -------------
+	var textId UUID
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "text_id", runtime.ParamLocationPath, ctx.Param("text_id"), &textId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter text_id: %s", err))
+	}
+
+	ctx.Set(Admin_authScopes, []string{})
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.RestoreDeletedCarouselText(ctx, textId)
+	return err
+}
+
+// GetDeletedItems converts echo context to params.
+func (w *ServerInterfaceWrapper) GetDeletedItems(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(Admin_authScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetDeletedItemsParams
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page", ctx.QueryParams(), &params.Page)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter page: %s", err))
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "limit", ctx.QueryParams(), &params.Limit)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter limit: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.GetDeletedItems(ctx, params)
+	return err
+}
+
+// DeleteItem converts echo context to params.
+func (w *ServerInterfaceWrapper) DeleteItem(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "item_id" -------------
+	var itemId UUID
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "item_id", runtime.ParamLocationPath, ctx.Param("item_id"), &itemId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter item_id: %s", err))
+	}
+
+	ctx.Set(Admin_authScopes, []string{})
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.DeleteItem(ctx, itemId)
+	return err
+}
+
+// RestoreDeletedItem converts echo context to params.
+func (w *ServerInterfaceWrapper) RestoreDeletedItem(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "item_id" -------------
+	var itemId UUID
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "item_id", runtime.ParamLocationPath, ctx.Param("item_id"), &itemId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter item_id: %s", err))
+	}
+
+	ctx.Set(Admin_authScopes, []string{})
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.RestoreDeletedItem(ctx, itemId)
+	return err
+}
+
+// GetDeletedRefills converts echo context to params.
+func (w *ServerInterfaceWrapper) GetDeletedRefills(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(Admin_authScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetDeletedRefillsParams
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page", ctx.QueryParams(), &params.Page)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter page: %s", err))
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "limit", ctx.QueryParams(), &params.Limit)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter limit: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.GetDeletedRefills(ctx, params)
+	return err
+}
+
+// DeleteRefill converts echo context to params.
+func (w *ServerInterfaceWrapper) DeleteRefill(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "refill_id" -------------
+	var refillId UUID
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "refill_id", runtime.ParamLocationPath, ctx.Param("refill_id"), &refillId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter refill_id: %s", err))
+	}
+
+	ctx.Set(Admin_authScopes, []string{})
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.DeleteRefill(ctx, refillId)
+	return err
+}
+
+// RestoreDeletedRefill converts echo context to params.
+func (w *ServerInterfaceWrapper) RestoreDeletedRefill(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "refill_id" -------------
+	var refillId UUID
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "refill_id", runtime.ParamLocationPath, ctx.Param("refill_id"), &refillId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter refill_id: %s", err))
+	}
+
+	ctx.Set(Admin_authScopes, []string{})
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.RestoreDeletedRefill(ctx, refillId)
+	return err
+}
+
+// GetDeletedTransactions converts echo context to params.
+func (w *ServerInterfaceWrapper) GetDeletedTransactions(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(Admin_authScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetDeletedTransactionsParams
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page", ctx.QueryParams(), &params.Page)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter page: %s", err))
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "limit", ctx.QueryParams(), &params.Limit)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter limit: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.GetDeletedTransactions(ctx, params)
+	return err
+}
+
+// DeleteTransaction converts echo context to params.
+func (w *ServerInterfaceWrapper) DeleteTransaction(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "transaction_id" -------------
+	var transactionId UUID
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "transaction_id", runtime.ParamLocationPath, ctx.Param("transaction_id"), &transactionId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter transaction_id: %s", err))
+	}
+
+	ctx.Set(Admin_authScopes, []string{})
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.DeleteTransaction(ctx, transactionId)
+	return err
+}
+
+// RestoreDeletedTransaction converts echo context to params.
+func (w *ServerInterfaceWrapper) RestoreDeletedTransaction(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "transaction_id" -------------
+	var transactionId UUID
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "transaction_id", runtime.ParamLocationPath, ctx.Param("transaction_id"), &transactionId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter transaction_id: %s", err))
+	}
+
+	ctx.Set(Admin_authScopes, []string{})
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.RestoreDeletedTransaction(ctx, transactionId)
 	return err
 }
 
@@ -1516,14 +2003,14 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.POST(baseURL+"/account/transactions", wrapper.PostTransactions)
 	router.GET(baseURL+"/accounts", wrapper.GetAccounts)
 	router.POST(baseURL+"/accounts", wrapper.PostAccounts)
-	router.DELETE(baseURL+"/accounts/:account_id", wrapper.DeleteAccountId)
+	router.DELETE(baseURL+"/accounts/:account_id", wrapper.MarkDeleteAccountId)
 	router.GET(baseURL+"/accounts/:account_id", wrapper.GetAccountId)
 	router.PATCH(baseURL+"/accounts/:account_id", wrapper.PatchAccountId)
 	router.GET(baseURL+"/accounts/:account_id/refills", wrapper.GetAccountRefills)
 	router.POST(baseURL+"/accounts/:account_id/refills", wrapper.PostRefill)
-	router.DELETE(baseURL+"/accounts/:account_id/refills/:refill_id", wrapper.DeleteRefill)
+	router.DELETE(baseURL+"/accounts/:account_id/refills/:refill_id", wrapper.MarkDeleteRefill)
 	router.GET(baseURL+"/accounts/:account_id/transactions", wrapper.GetAccountTransactions)
-	router.DELETE(baseURL+"/accounts/:account_id/transactions/:transaction_id", wrapper.DeleteTransactionId)
+	router.DELETE(baseURL+"/accounts/:account_id/transactions/:transaction_id", wrapper.MarkDeleteTransactionId)
 	router.GET(baseURL+"/accounts/:account_id/transactions/:transaction_id", wrapper.GetTransactionId)
 	router.PATCH(baseURL+"/accounts/:account_id/transactions/:transaction_id", wrapper.PatchTransactionId)
 	router.PATCH(baseURL+"/accounts/:account_id/transactions/:transaction_id/:item_id", wrapper.PatchTransactionItemId)
@@ -1531,20 +2018,38 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.GET(baseURL+"/auth/google/callback", wrapper.Callback)
 	router.GET(baseURL+"/carousel/images", wrapper.GetCarouselImages)
 	router.POST(baseURL+"/carousel/images", wrapper.AddCarouselImage)
-	router.DELETE(baseURL+"/carousel/images/:image_id", wrapper.DeleteCarouselImage)
+	router.DELETE(baseURL+"/carousel/images/:image_id", wrapper.MarkDeleteCarouselImage)
 	router.GET(baseURL+"/carousel/texts", wrapper.GetCarouselTexts)
 	router.POST(baseURL+"/carousel/texts", wrapper.AddCarouselText)
-	router.DELETE(baseURL+"/carousel/texts/:text_id", wrapper.DeleteCarouselText)
+	router.DELETE(baseURL+"/carousel/texts/:text_id", wrapper.MarkDeleteCarouselText)
 	router.GET(baseURL+"/categories", wrapper.GetCategories)
 	router.POST(baseURL+"/categories", wrapper.PostCategory)
-	router.DELETE(baseURL+"/categories/:category_id", wrapper.DeleteCategory)
+	router.DELETE(baseURL+"/categories/:category_id", wrapper.MarkDeleteCategory)
 	router.GET(baseURL+"/categories/:category_id", wrapper.GetCategory)
 	router.PATCH(baseURL+"/categories/:category_id", wrapper.PatchCategory)
 	router.POST(baseURL+"/categories/:category_id/items", wrapper.PostItem)
-	router.DELETE(baseURL+"/categories/:category_id/items/:item_id", wrapper.DeleteItem)
+	router.DELETE(baseURL+"/categories/:category_id/items/:item_id", wrapper.MarkDeleteItem)
 	router.PATCH(baseURL+"/categories/:category_id/items/:item_id", wrapper.PatchItem)
 	router.GET(baseURL+"/categories/:category_id/items/:item_id/picture", wrapper.GetItemPicture)
 	router.GET(baseURL+"/categories/:category_id/picture", wrapper.GetCategoryPicture)
+	router.GET(baseURL+"/deleted/accounts", wrapper.GetDeletedAccounts)
+	router.DELETE(baseURL+"/deleted/accounts/:account_id", wrapper.DeleteAccount)
+	router.PATCH(baseURL+"/deleted/accounts/:account_id", wrapper.RestoreDeletedAccount)
+	router.GET(baseURL+"/deleted/carousel/images", wrapper.GetDeletedCarouselImages)
+	router.DELETE(baseURL+"/deleted/carousel/images/:image_id", wrapper.DeleteCarouselImage)
+	router.PATCH(baseURL+"/deleted/carousel/images/:image_id", wrapper.RestoreDeletedCarouselImage)
+	router.GET(baseURL+"/deleted/carousel/texts", wrapper.GetDeletedCarouselTexts)
+	router.DELETE(baseURL+"/deleted/carousel/texts/:text_id", wrapper.DeleteCarouselText)
+	router.PATCH(baseURL+"/deleted/carousel/texts/:text_id", wrapper.RestoreDeletedCarouselText)
+	router.GET(baseURL+"/deleted/items", wrapper.GetDeletedItems)
+	router.DELETE(baseURL+"/deleted/items/:item_id", wrapper.DeleteItem)
+	router.PATCH(baseURL+"/deleted/items/:item_id", wrapper.RestoreDeletedItem)
+	router.GET(baseURL+"/deleted/refills", wrapper.GetDeletedRefills)
+	router.DELETE(baseURL+"/deleted/refills/:refill_id", wrapper.DeleteRefill)
+	router.PATCH(baseURL+"/deleted/refills/:refill_id", wrapper.RestoreDeletedRefill)
+	router.GET(baseURL+"/deleted/transactions", wrapper.GetDeletedTransactions)
+	router.DELETE(baseURL+"/deleted/transactions/:transaction_id", wrapper.DeleteTransaction)
+	router.PATCH(baseURL+"/deleted/transactions/:transaction_id", wrapper.RestoreDeletedTransaction)
 	router.GET(baseURL+"/refills", wrapper.GetRefills)
 	router.GET(baseURL+"/transactions", wrapper.GetTransactions)
 
@@ -1862,52 +2367,52 @@ func (response PostAccounts500JSONResponse) VisitPostAccountsResponse(w http.Res
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteAccountIdRequestObject struct {
+type MarkDeleteAccountIdRequestObject struct {
 	AccountId UUID `json:"account_id" bson:"account_id"`
 }
 
-type DeleteAccountIdResponseObject interface {
-	VisitDeleteAccountIdResponse(w http.ResponseWriter) error
+type MarkDeleteAccountIdResponseObject interface {
+	VisitMarkDeleteAccountIdResponse(w http.ResponseWriter) error
 }
 
-type DeleteAccountId204Response struct {
+type MarkDeleteAccountId204Response struct {
 }
 
-func (response DeleteAccountId204Response) VisitDeleteAccountIdResponse(w http.ResponseWriter) error {
+func (response MarkDeleteAccountId204Response) VisitMarkDeleteAccountIdResponse(w http.ResponseWriter) error {
 	w.WriteHeader(204)
 	return nil
 }
 
-type DeleteAccountId401JSONResponse HTTPError
+type MarkDeleteAccountId401JSONResponse HTTPError
 
-func (response DeleteAccountId401JSONResponse) VisitDeleteAccountIdResponse(w http.ResponseWriter) error {
+func (response MarkDeleteAccountId401JSONResponse) VisitMarkDeleteAccountIdResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(401)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteAccountId403JSONResponse HTTPError
+type MarkDeleteAccountId403JSONResponse HTTPError
 
-func (response DeleteAccountId403JSONResponse) VisitDeleteAccountIdResponse(w http.ResponseWriter) error {
+func (response MarkDeleteAccountId403JSONResponse) VisitMarkDeleteAccountIdResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(403)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteAccountId404JSONResponse HTTPError
+type MarkDeleteAccountId404JSONResponse HTTPError
 
-func (response DeleteAccountId404JSONResponse) VisitDeleteAccountIdResponse(w http.ResponseWriter) error {
+func (response MarkDeleteAccountId404JSONResponse) VisitMarkDeleteAccountIdResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteAccountId500JSONResponse HTTPError
+type MarkDeleteAccountId500JSONResponse HTTPError
 
-func (response DeleteAccountId500JSONResponse) VisitDeleteAccountIdResponse(w http.ResponseWriter) error {
+func (response MarkDeleteAccountId500JSONResponse) VisitMarkDeleteAccountIdResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
@@ -2138,53 +2643,53 @@ func (response PostRefill500JSONResponse) VisitPostRefillResponse(w http.Respons
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteRefillRequestObject struct {
+type MarkDeleteRefillRequestObject struct {
 	AccountId UUID `json:"account_id" bson:"account_id"`
 	RefillId  UUID `json:"refill_id" bson:"refill_id"`
 }
 
-type DeleteRefillResponseObject interface {
-	VisitDeleteRefillResponse(w http.ResponseWriter) error
+type MarkDeleteRefillResponseObject interface {
+	VisitMarkDeleteRefillResponse(w http.ResponseWriter) error
 }
 
-type DeleteRefill204Response struct {
+type MarkDeleteRefill204Response struct {
 }
 
-func (response DeleteRefill204Response) VisitDeleteRefillResponse(w http.ResponseWriter) error {
+func (response MarkDeleteRefill204Response) VisitMarkDeleteRefillResponse(w http.ResponseWriter) error {
 	w.WriteHeader(204)
 	return nil
 }
 
-type DeleteRefill401JSONResponse HTTPError
+type MarkDeleteRefill401JSONResponse HTTPError
 
-func (response DeleteRefill401JSONResponse) VisitDeleteRefillResponse(w http.ResponseWriter) error {
+func (response MarkDeleteRefill401JSONResponse) VisitMarkDeleteRefillResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(401)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteRefill403JSONResponse HTTPError
+type MarkDeleteRefill403JSONResponse HTTPError
 
-func (response DeleteRefill403JSONResponse) VisitDeleteRefillResponse(w http.ResponseWriter) error {
+func (response MarkDeleteRefill403JSONResponse) VisitMarkDeleteRefillResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(403)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteRefill404JSONResponse HTTPError
+type MarkDeleteRefill404JSONResponse HTTPError
 
-func (response DeleteRefill404JSONResponse) VisitDeleteRefillResponse(w http.ResponseWriter) error {
+func (response MarkDeleteRefill404JSONResponse) VisitMarkDeleteRefillResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteRefill500JSONResponse HTTPError
+type MarkDeleteRefill500JSONResponse HTTPError
 
-func (response DeleteRefill500JSONResponse) VisitDeleteRefillResponse(w http.ResponseWriter) error {
+func (response MarkDeleteRefill500JSONResponse) VisitMarkDeleteRefillResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
@@ -2241,54 +2746,54 @@ func (response GetAccountTransactions500JSONResponse) VisitGetAccountTransaction
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteTransactionIdRequestObject struct {
+type MarkDeleteTransactionIdRequestObject struct {
 	AccountId     UUID `json:"account_id" bson:"account_id"`
 	TransactionId UUID `json:"transaction_id" bson:"transaction_id"`
 }
 
-type DeleteTransactionIdResponseObject interface {
-	VisitDeleteTransactionIdResponse(w http.ResponseWriter) error
+type MarkDeleteTransactionIdResponseObject interface {
+	VisitMarkDeleteTransactionIdResponse(w http.ResponseWriter) error
 }
 
-type DeleteTransactionId200JSONResponse HTTPError
+type MarkDeleteTransactionId200JSONResponse HTTPError
 
-func (response DeleteTransactionId200JSONResponse) VisitDeleteTransactionIdResponse(w http.ResponseWriter) error {
+func (response MarkDeleteTransactionId200JSONResponse) VisitMarkDeleteTransactionIdResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteTransactionId401JSONResponse HTTPError
+type MarkDeleteTransactionId401JSONResponse HTTPError
 
-func (response DeleteTransactionId401JSONResponse) VisitDeleteTransactionIdResponse(w http.ResponseWriter) error {
+func (response MarkDeleteTransactionId401JSONResponse) VisitMarkDeleteTransactionIdResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(401)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteTransactionId403JSONResponse HTTPError
+type MarkDeleteTransactionId403JSONResponse HTTPError
 
-func (response DeleteTransactionId403JSONResponse) VisitDeleteTransactionIdResponse(w http.ResponseWriter) error {
+func (response MarkDeleteTransactionId403JSONResponse) VisitMarkDeleteTransactionIdResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(403)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteTransactionId404JSONResponse HTTPError
+type MarkDeleteTransactionId404JSONResponse HTTPError
 
-func (response DeleteTransactionId404JSONResponse) VisitDeleteTransactionIdResponse(w http.ResponseWriter) error {
+func (response MarkDeleteTransactionId404JSONResponse) VisitMarkDeleteTransactionIdResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteTransactionId500JSONResponse HTTPError
+type MarkDeleteTransactionId500JSONResponse HTTPError
 
-func (response DeleteTransactionId500JSONResponse) VisitDeleteTransactionIdResponse(w http.ResponseWriter) error {
+func (response MarkDeleteTransactionId500JSONResponse) VisitMarkDeleteTransactionIdResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
@@ -2616,52 +3121,52 @@ func (response AddCarouselImage500JSONResponse) VisitAddCarouselImageResponse(w 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteCarouselImageRequestObject struct {
+type MarkDeleteCarouselImageRequestObject struct {
 	ImageId UUID `json:"image_id" bson:"image_id"`
 }
 
-type DeleteCarouselImageResponseObject interface {
-	VisitDeleteCarouselImageResponse(w http.ResponseWriter) error
+type MarkDeleteCarouselImageResponseObject interface {
+	VisitMarkDeleteCarouselImageResponse(w http.ResponseWriter) error
 }
 
-type DeleteCarouselImage204Response struct {
+type MarkDeleteCarouselImage204Response struct {
 }
 
-func (response DeleteCarouselImage204Response) VisitDeleteCarouselImageResponse(w http.ResponseWriter) error {
+func (response MarkDeleteCarouselImage204Response) VisitMarkDeleteCarouselImageResponse(w http.ResponseWriter) error {
 	w.WriteHeader(204)
 	return nil
 }
 
-type DeleteCarouselImage401JSONResponse HTTPError
+type MarkDeleteCarouselImage401JSONResponse HTTPError
 
-func (response DeleteCarouselImage401JSONResponse) VisitDeleteCarouselImageResponse(w http.ResponseWriter) error {
+func (response MarkDeleteCarouselImage401JSONResponse) VisitMarkDeleteCarouselImageResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(401)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteCarouselImage403JSONResponse HTTPError
+type MarkDeleteCarouselImage403JSONResponse HTTPError
 
-func (response DeleteCarouselImage403JSONResponse) VisitDeleteCarouselImageResponse(w http.ResponseWriter) error {
+func (response MarkDeleteCarouselImage403JSONResponse) VisitMarkDeleteCarouselImageResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(403)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteCarouselImage404JSONResponse HTTPError
+type MarkDeleteCarouselImage404JSONResponse HTTPError
 
-func (response DeleteCarouselImage404JSONResponse) VisitDeleteCarouselImageResponse(w http.ResponseWriter) error {
+func (response MarkDeleteCarouselImage404JSONResponse) VisitMarkDeleteCarouselImageResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteCarouselImage500JSONResponse HTTPError
+type MarkDeleteCarouselImage500JSONResponse HTTPError
 
-func (response DeleteCarouselImage500JSONResponse) VisitDeleteCarouselImageResponse(w http.ResponseWriter) error {
+func (response MarkDeleteCarouselImage500JSONResponse) VisitMarkDeleteCarouselImageResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
@@ -2755,52 +3260,52 @@ func (response AddCarouselText500JSONResponse) VisitAddCarouselTextResponse(w ht
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteCarouselTextRequestObject struct {
+type MarkDeleteCarouselTextRequestObject struct {
 	TextId UUID `json:"text_id" bson:"text_id"`
 }
 
-type DeleteCarouselTextResponseObject interface {
-	VisitDeleteCarouselTextResponse(w http.ResponseWriter) error
+type MarkDeleteCarouselTextResponseObject interface {
+	VisitMarkDeleteCarouselTextResponse(w http.ResponseWriter) error
 }
 
-type DeleteCarouselText204Response struct {
+type MarkDeleteCarouselText204Response struct {
 }
 
-func (response DeleteCarouselText204Response) VisitDeleteCarouselTextResponse(w http.ResponseWriter) error {
+func (response MarkDeleteCarouselText204Response) VisitMarkDeleteCarouselTextResponse(w http.ResponseWriter) error {
 	w.WriteHeader(204)
 	return nil
 }
 
-type DeleteCarouselText401JSONResponse HTTPError
+type MarkDeleteCarouselText401JSONResponse HTTPError
 
-func (response DeleteCarouselText401JSONResponse) VisitDeleteCarouselTextResponse(w http.ResponseWriter) error {
+func (response MarkDeleteCarouselText401JSONResponse) VisitMarkDeleteCarouselTextResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(401)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteCarouselText403JSONResponse HTTPError
+type MarkDeleteCarouselText403JSONResponse HTTPError
 
-func (response DeleteCarouselText403JSONResponse) VisitDeleteCarouselTextResponse(w http.ResponseWriter) error {
+func (response MarkDeleteCarouselText403JSONResponse) VisitMarkDeleteCarouselTextResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(403)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteCarouselText404JSONResponse HTTPError
+type MarkDeleteCarouselText404JSONResponse HTTPError
 
-func (response DeleteCarouselText404JSONResponse) VisitDeleteCarouselTextResponse(w http.ResponseWriter) error {
+func (response MarkDeleteCarouselText404JSONResponse) VisitMarkDeleteCarouselTextResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteCarouselText500JSONResponse HTTPError
+type MarkDeleteCarouselText500JSONResponse HTTPError
 
-func (response DeleteCarouselText500JSONResponse) VisitDeleteCarouselTextResponse(w http.ResponseWriter) error {
+func (response MarkDeleteCarouselText500JSONResponse) VisitMarkDeleteCarouselTextResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
@@ -2894,34 +3399,34 @@ func (response PostCategory500JSONResponse) VisitPostCategoryResponse(w http.Res
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteCategoryRequestObject struct {
+type MarkDeleteCategoryRequestObject struct {
 	CategoryId UUID `json:"category_id" bson:"category_id"`
 }
 
-type DeleteCategoryResponseObject interface {
-	VisitDeleteCategoryResponse(w http.ResponseWriter) error
+type MarkDeleteCategoryResponseObject interface {
+	VisitMarkDeleteCategoryResponse(w http.ResponseWriter) error
 }
 
-type DeleteCategory204Response struct {
+type MarkDeleteCategory204Response struct {
 }
 
-func (response DeleteCategory204Response) VisitDeleteCategoryResponse(w http.ResponseWriter) error {
+func (response MarkDeleteCategory204Response) VisitMarkDeleteCategoryResponse(w http.ResponseWriter) error {
 	w.WriteHeader(204)
 	return nil
 }
 
-type DeleteCategory404JSONResponse HTTPError
+type MarkDeleteCategory404JSONResponse HTTPError
 
-func (response DeleteCategory404JSONResponse) VisitDeleteCategoryResponse(w http.ResponseWriter) error {
+func (response MarkDeleteCategory404JSONResponse) VisitMarkDeleteCategoryResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteCategory500JSONResponse HTTPError
+type MarkDeleteCategory500JSONResponse HTTPError
 
-func (response DeleteCategory500JSONResponse) VisitDeleteCategoryResponse(w http.ResponseWriter) error {
+func (response MarkDeleteCategory500JSONResponse) VisitMarkDeleteCategoryResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
@@ -3089,53 +3594,53 @@ func (response PostItem500JSONResponse) VisitPostItemResponse(w http.ResponseWri
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteItemRequestObject struct {
+type MarkDeleteItemRequestObject struct {
 	CategoryId UUID `json:"category_id" bson:"category_id"`
 	ItemId     UUID `json:"item_id" bson:"item_id"`
 }
 
-type DeleteItemResponseObject interface {
-	VisitDeleteItemResponse(w http.ResponseWriter) error
+type MarkDeleteItemResponseObject interface {
+	VisitMarkDeleteItemResponse(w http.ResponseWriter) error
 }
 
-type DeleteItem204Response struct {
+type MarkDeleteItem204Response struct {
 }
 
-func (response DeleteItem204Response) VisitDeleteItemResponse(w http.ResponseWriter) error {
+func (response MarkDeleteItem204Response) VisitMarkDeleteItemResponse(w http.ResponseWriter) error {
 	w.WriteHeader(204)
 	return nil
 }
 
-type DeleteItem401JSONResponse HTTPError
+type MarkDeleteItem401JSONResponse HTTPError
 
-func (response DeleteItem401JSONResponse) VisitDeleteItemResponse(w http.ResponseWriter) error {
+func (response MarkDeleteItem401JSONResponse) VisitMarkDeleteItemResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(401)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteItem403JSONResponse HTTPError
+type MarkDeleteItem403JSONResponse HTTPError
 
-func (response DeleteItem403JSONResponse) VisitDeleteItemResponse(w http.ResponseWriter) error {
+func (response MarkDeleteItem403JSONResponse) VisitMarkDeleteItemResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(403)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteItem404JSONResponse HTTPError
+type MarkDeleteItem404JSONResponse HTTPError
 
-func (response DeleteItem404JSONResponse) VisitDeleteItemResponse(w http.ResponseWriter) error {
+func (response MarkDeleteItem404JSONResponse) VisitMarkDeleteItemResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteItem500JSONResponse HTTPError
+type MarkDeleteItem500JSONResponse HTTPError
 
-func (response DeleteItem500JSONResponse) VisitDeleteItemResponse(w http.ResponseWriter) error {
+func (response MarkDeleteItem500JSONResponse) VisitMarkDeleteItemResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
@@ -3297,6 +3802,1086 @@ func (response GetCategoryPicture500JSONResponse) VisitGetCategoryPictureRespons
 	return json.NewEncoder(w).Encode(response)
 }
 
+type GetDeletedAccountsRequestObject struct {
+	Params GetDeletedAccountsParams `bson:"params"`
+}
+
+type GetDeletedAccountsResponseObject interface {
+	VisitGetDeletedAccountsResponse(w http.ResponseWriter) error
+}
+
+type GetDeletedAccounts200JSONResponse struct {
+	Accounts []Account `json:"accounts" bson:"accounts"`
+	Limit    int       `json:"limit" bson:"limit"`
+	MaxPage  int       `json:"max_page" bson:"max_page"`
+	Page     int       `json:"page" bson:"page"`
+}
+
+func (response GetDeletedAccounts200JSONResponse) VisitGetDeletedAccountsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDeletedAccounts401JSONResponse HTTPError
+
+func (response GetDeletedAccounts401JSONResponse) VisitGetDeletedAccountsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDeletedAccounts403JSONResponse HTTPError
+
+func (response GetDeletedAccounts403JSONResponse) VisitGetDeletedAccountsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDeletedAccounts500JSONResponse HTTPError
+
+func (response GetDeletedAccounts500JSONResponse) VisitGetDeletedAccountsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteAccountRequestObject struct {
+	AccountId UUID `json:"account_id" bson:"account_id"`
+}
+
+type DeleteAccountResponseObject interface {
+	VisitDeleteAccountResponse(w http.ResponseWriter) error
+}
+
+type DeleteAccount204Response struct {
+}
+
+func (response DeleteAccount204Response) VisitDeleteAccountResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type DeleteAccount401JSONResponse HTTPError
+
+func (response DeleteAccount401JSONResponse) VisitDeleteAccountResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteAccount403JSONResponse HTTPError
+
+func (response DeleteAccount403JSONResponse) VisitDeleteAccountResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteAccount404JSONResponse HTTPError
+
+func (response DeleteAccount404JSONResponse) VisitDeleteAccountResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteAccount409JSONResponse HTTPError
+
+func (response DeleteAccount409JSONResponse) VisitDeleteAccountResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteAccount500JSONResponse HTTPError
+
+func (response DeleteAccount500JSONResponse) VisitDeleteAccountResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedAccountRequestObject struct {
+	AccountId UUID `json:"account_id" bson:"account_id"`
+}
+
+type RestoreDeletedAccountResponseObject interface {
+	VisitRestoreDeletedAccountResponse(w http.ResponseWriter) error
+}
+
+type RestoreDeletedAccount204Response struct {
+}
+
+func (response RestoreDeletedAccount204Response) VisitRestoreDeletedAccountResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type RestoreDeletedAccount400JSONResponse HTTPError
+
+func (response RestoreDeletedAccount400JSONResponse) VisitRestoreDeletedAccountResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedAccount401JSONResponse HTTPError
+
+func (response RestoreDeletedAccount401JSONResponse) VisitRestoreDeletedAccountResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedAccount403JSONResponse HTTPError
+
+func (response RestoreDeletedAccount403JSONResponse) VisitRestoreDeletedAccountResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedAccount404JSONResponse HTTPError
+
+func (response RestoreDeletedAccount404JSONResponse) VisitRestoreDeletedAccountResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedAccount409JSONResponse HTTPError
+
+func (response RestoreDeletedAccount409JSONResponse) VisitRestoreDeletedAccountResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedAccount500JSONResponse HTTPError
+
+func (response RestoreDeletedAccount500JSONResponse) VisitRestoreDeletedAccountResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDeletedCarouselImagesRequestObject struct {
+	Params GetDeletedCarouselImagesParams `bson:"params"`
+}
+
+type GetDeletedCarouselImagesResponseObject interface {
+	VisitGetDeletedCarouselImagesResponse(w http.ResponseWriter) error
+}
+
+type GetDeletedCarouselImages200JSONResponse struct {
+	Items   []CarouselImage `json:"items" bson:"items"`
+	Limit   int             `json:"limit" bson:"limit"`
+	MaxPage int             `json:"max_page" bson:"max_page"`
+	Page    int             `json:"page" bson:"page"`
+}
+
+func (response GetDeletedCarouselImages200JSONResponse) VisitGetDeletedCarouselImagesResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDeletedCarouselImages401JSONResponse HTTPError
+
+func (response GetDeletedCarouselImages401JSONResponse) VisitGetDeletedCarouselImagesResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDeletedCarouselImages403JSONResponse HTTPError
+
+func (response GetDeletedCarouselImages403JSONResponse) VisitGetDeletedCarouselImagesResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDeletedCarouselImages500JSONResponse HTTPError
+
+func (response GetDeletedCarouselImages500JSONResponse) VisitGetDeletedCarouselImagesResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteCarouselImageRequestObject struct {
+	ImageId UUID `json:"image_id" bson:"image_id"`
+}
+
+type DeleteCarouselImageResponseObject interface {
+	VisitDeleteCarouselImageResponse(w http.ResponseWriter) error
+}
+
+type DeleteCarouselImage204Response struct {
+}
+
+func (response DeleteCarouselImage204Response) VisitDeleteCarouselImageResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type DeleteCarouselImage401JSONResponse HTTPError
+
+func (response DeleteCarouselImage401JSONResponse) VisitDeleteCarouselImageResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteCarouselImage403JSONResponse HTTPError
+
+func (response DeleteCarouselImage403JSONResponse) VisitDeleteCarouselImageResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteCarouselImage404JSONResponse HTTPError
+
+func (response DeleteCarouselImage404JSONResponse) VisitDeleteCarouselImageResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteCarouselImage409JSONResponse HTTPError
+
+func (response DeleteCarouselImage409JSONResponse) VisitDeleteCarouselImageResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteCarouselImage500JSONResponse HTTPError
+
+func (response DeleteCarouselImage500JSONResponse) VisitDeleteCarouselImageResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedCarouselImageRequestObject struct {
+	ImageId UUID `json:"image_id" bson:"image_id"`
+}
+
+type RestoreDeletedCarouselImageResponseObject interface {
+	VisitRestoreDeletedCarouselImageResponse(w http.ResponseWriter) error
+}
+
+type RestoreDeletedCarouselImage204Response struct {
+}
+
+func (response RestoreDeletedCarouselImage204Response) VisitRestoreDeletedCarouselImageResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type RestoreDeletedCarouselImage400JSONResponse HTTPError
+
+func (response RestoreDeletedCarouselImage400JSONResponse) VisitRestoreDeletedCarouselImageResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedCarouselImage401JSONResponse HTTPError
+
+func (response RestoreDeletedCarouselImage401JSONResponse) VisitRestoreDeletedCarouselImageResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedCarouselImage403JSONResponse HTTPError
+
+func (response RestoreDeletedCarouselImage403JSONResponse) VisitRestoreDeletedCarouselImageResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedCarouselImage404JSONResponse HTTPError
+
+func (response RestoreDeletedCarouselImage404JSONResponse) VisitRestoreDeletedCarouselImageResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedCarouselImage409JSONResponse HTTPError
+
+func (response RestoreDeletedCarouselImage409JSONResponse) VisitRestoreDeletedCarouselImageResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedCarouselImage500JSONResponse HTTPError
+
+func (response RestoreDeletedCarouselImage500JSONResponse) VisitRestoreDeletedCarouselImageResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDeletedCarouselTextsRequestObject struct {
+	Params GetDeletedCarouselTextsParams `bson:"params"`
+}
+
+type GetDeletedCarouselTextsResponseObject interface {
+	VisitGetDeletedCarouselTextsResponse(w http.ResponseWriter) error
+}
+
+type GetDeletedCarouselTexts200JSONResponse struct {
+	Items   []CarouselText `json:"items" bson:"items"`
+	Limit   int            `json:"limit" bson:"limit"`
+	MaxPage int            `json:"max_page" bson:"max_page"`
+	Page    int            `json:"page" bson:"page"`
+}
+
+func (response GetDeletedCarouselTexts200JSONResponse) VisitGetDeletedCarouselTextsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDeletedCarouselTexts401JSONResponse HTTPError
+
+func (response GetDeletedCarouselTexts401JSONResponse) VisitGetDeletedCarouselTextsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDeletedCarouselTexts403JSONResponse HTTPError
+
+func (response GetDeletedCarouselTexts403JSONResponse) VisitGetDeletedCarouselTextsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDeletedCarouselTexts500JSONResponse HTTPError
+
+func (response GetDeletedCarouselTexts500JSONResponse) VisitGetDeletedCarouselTextsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteCarouselTextRequestObject struct {
+	TextId UUID `json:"text_id" bson:"text_id"`
+}
+
+type DeleteCarouselTextResponseObject interface {
+	VisitDeleteCarouselTextResponse(w http.ResponseWriter) error
+}
+
+type DeleteCarouselText204Response struct {
+}
+
+func (response DeleteCarouselText204Response) VisitDeleteCarouselTextResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type DeleteCarouselText401JSONResponse HTTPError
+
+func (response DeleteCarouselText401JSONResponse) VisitDeleteCarouselTextResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteCarouselText403JSONResponse HTTPError
+
+func (response DeleteCarouselText403JSONResponse) VisitDeleteCarouselTextResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteCarouselText404JSONResponse HTTPError
+
+func (response DeleteCarouselText404JSONResponse) VisitDeleteCarouselTextResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteCarouselText409JSONResponse HTTPError
+
+func (response DeleteCarouselText409JSONResponse) VisitDeleteCarouselTextResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteCarouselText500JSONResponse HTTPError
+
+func (response DeleteCarouselText500JSONResponse) VisitDeleteCarouselTextResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedCarouselTextRequestObject struct {
+	TextId UUID `json:"text_id" bson:"text_id"`
+}
+
+type RestoreDeletedCarouselTextResponseObject interface {
+	VisitRestoreDeletedCarouselTextResponse(w http.ResponseWriter) error
+}
+
+type RestoreDeletedCarouselText204Response struct {
+}
+
+func (response RestoreDeletedCarouselText204Response) VisitRestoreDeletedCarouselTextResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type RestoreDeletedCarouselText400JSONResponse HTTPError
+
+func (response RestoreDeletedCarouselText400JSONResponse) VisitRestoreDeletedCarouselTextResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedCarouselText401JSONResponse HTTPError
+
+func (response RestoreDeletedCarouselText401JSONResponse) VisitRestoreDeletedCarouselTextResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedCarouselText403JSONResponse HTTPError
+
+func (response RestoreDeletedCarouselText403JSONResponse) VisitRestoreDeletedCarouselTextResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedCarouselText404JSONResponse HTTPError
+
+func (response RestoreDeletedCarouselText404JSONResponse) VisitRestoreDeletedCarouselTextResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedCarouselText409JSONResponse HTTPError
+
+func (response RestoreDeletedCarouselText409JSONResponse) VisitRestoreDeletedCarouselTextResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedCarouselText500JSONResponse HTTPError
+
+func (response RestoreDeletedCarouselText500JSONResponse) VisitRestoreDeletedCarouselTextResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDeletedItemsRequestObject struct {
+	Params GetDeletedItemsParams `bson:"params"`
+}
+
+type GetDeletedItemsResponseObject interface {
+	VisitGetDeletedItemsResponse(w http.ResponseWriter) error
+}
+
+type GetDeletedItems200JSONResponse struct {
+	Items   []Item `json:"items" bson:"items"`
+	Limit   int    `json:"limit" bson:"limit"`
+	MaxPage int    `json:"max_page" bson:"max_page"`
+	Page    int    `json:"page" bson:"page"`
+}
+
+func (response GetDeletedItems200JSONResponse) VisitGetDeletedItemsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDeletedItems401JSONResponse HTTPError
+
+func (response GetDeletedItems401JSONResponse) VisitGetDeletedItemsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDeletedItems403JSONResponse HTTPError
+
+func (response GetDeletedItems403JSONResponse) VisitGetDeletedItemsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDeletedItems500JSONResponse HTTPError
+
+func (response GetDeletedItems500JSONResponse) VisitGetDeletedItemsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteItemRequestObject struct {
+	ItemId UUID `json:"item_id" bson:"item_id"`
+}
+
+type DeleteItemResponseObject interface {
+	VisitDeleteItemResponse(w http.ResponseWriter) error
+}
+
+type DeleteItem204Response struct {
+}
+
+func (response DeleteItem204Response) VisitDeleteItemResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type DeleteItem401JSONResponse HTTPError
+
+func (response DeleteItem401JSONResponse) VisitDeleteItemResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteItem403JSONResponse HTTPError
+
+func (response DeleteItem403JSONResponse) VisitDeleteItemResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteItem404JSONResponse HTTPError
+
+func (response DeleteItem404JSONResponse) VisitDeleteItemResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteItem409JSONResponse HTTPError
+
+func (response DeleteItem409JSONResponse) VisitDeleteItemResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteItem500JSONResponse HTTPError
+
+func (response DeleteItem500JSONResponse) VisitDeleteItemResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedItemRequestObject struct {
+	ItemId UUID `json:"item_id" bson:"item_id"`
+}
+
+type RestoreDeletedItemResponseObject interface {
+	VisitRestoreDeletedItemResponse(w http.ResponseWriter) error
+}
+
+type RestoreDeletedItem204Response struct {
+}
+
+func (response RestoreDeletedItem204Response) VisitRestoreDeletedItemResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type RestoreDeletedItem400JSONResponse HTTPError
+
+func (response RestoreDeletedItem400JSONResponse) VisitRestoreDeletedItemResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedItem401JSONResponse HTTPError
+
+func (response RestoreDeletedItem401JSONResponse) VisitRestoreDeletedItemResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedItem403JSONResponse HTTPError
+
+func (response RestoreDeletedItem403JSONResponse) VisitRestoreDeletedItemResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedItem404JSONResponse HTTPError
+
+func (response RestoreDeletedItem404JSONResponse) VisitRestoreDeletedItemResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedItem409JSONResponse HTTPError
+
+func (response RestoreDeletedItem409JSONResponse) VisitRestoreDeletedItemResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedItem500JSONResponse HTTPError
+
+func (response RestoreDeletedItem500JSONResponse) VisitRestoreDeletedItemResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDeletedRefillsRequestObject struct {
+	Params GetDeletedRefillsParams `bson:"params"`
+}
+
+type GetDeletedRefillsResponseObject interface {
+	VisitGetDeletedRefillsResponse(w http.ResponseWriter) error
+}
+
+type GetDeletedRefills200JSONResponse struct {
+	Limit   int      `json:"limit" bson:"limit"`
+	MaxPage int      `json:"max_page" bson:"max_page"`
+	Page    int      `json:"page" bson:"page"`
+	Refills []Refill `json:"refills" bson:"refills"`
+}
+
+func (response GetDeletedRefills200JSONResponse) VisitGetDeletedRefillsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDeletedRefills401JSONResponse HTTPError
+
+func (response GetDeletedRefills401JSONResponse) VisitGetDeletedRefillsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDeletedRefills403JSONResponse HTTPError
+
+func (response GetDeletedRefills403JSONResponse) VisitGetDeletedRefillsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDeletedRefills500JSONResponse HTTPError
+
+func (response GetDeletedRefills500JSONResponse) VisitGetDeletedRefillsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteRefillRequestObject struct {
+	RefillId UUID `json:"refill_id" bson:"refill_id"`
+}
+
+type DeleteRefillResponseObject interface {
+	VisitDeleteRefillResponse(w http.ResponseWriter) error
+}
+
+type DeleteRefill204Response struct {
+}
+
+func (response DeleteRefill204Response) VisitDeleteRefillResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type DeleteRefill401JSONResponse HTTPError
+
+func (response DeleteRefill401JSONResponse) VisitDeleteRefillResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteRefill403JSONResponse HTTPError
+
+func (response DeleteRefill403JSONResponse) VisitDeleteRefillResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteRefill404JSONResponse HTTPError
+
+func (response DeleteRefill404JSONResponse) VisitDeleteRefillResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteRefill409JSONResponse HTTPError
+
+func (response DeleteRefill409JSONResponse) VisitDeleteRefillResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteRefill500JSONResponse HTTPError
+
+func (response DeleteRefill500JSONResponse) VisitDeleteRefillResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedRefillRequestObject struct {
+	RefillId UUID `json:"refill_id" bson:"refill_id"`
+}
+
+type RestoreDeletedRefillResponseObject interface {
+	VisitRestoreDeletedRefillResponse(w http.ResponseWriter) error
+}
+
+type RestoreDeletedRefill204Response struct {
+}
+
+func (response RestoreDeletedRefill204Response) VisitRestoreDeletedRefillResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type RestoreDeletedRefill400JSONResponse HTTPError
+
+func (response RestoreDeletedRefill400JSONResponse) VisitRestoreDeletedRefillResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedRefill401JSONResponse HTTPError
+
+func (response RestoreDeletedRefill401JSONResponse) VisitRestoreDeletedRefillResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedRefill403JSONResponse HTTPError
+
+func (response RestoreDeletedRefill403JSONResponse) VisitRestoreDeletedRefillResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedRefill404JSONResponse HTTPError
+
+func (response RestoreDeletedRefill404JSONResponse) VisitRestoreDeletedRefillResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedRefill409JSONResponse HTTPError
+
+func (response RestoreDeletedRefill409JSONResponse) VisitRestoreDeletedRefillResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedRefill500JSONResponse HTTPError
+
+func (response RestoreDeletedRefill500JSONResponse) VisitRestoreDeletedRefillResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDeletedTransactionsRequestObject struct {
+	Params GetDeletedTransactionsParams `bson:"params"`
+}
+
+type GetDeletedTransactionsResponseObject interface {
+	VisitGetDeletedTransactionsResponse(w http.ResponseWriter) error
+}
+
+type GetDeletedTransactions200JSONResponse struct {
+	Limit        int           `json:"limit" bson:"limit"`
+	MaxPage      int           `json:"max_page" bson:"max_page"`
+	Page         int           `json:"page" bson:"page"`
+	Transactions []Transaction `json:"transactions" bson:"transactions"`
+}
+
+func (response GetDeletedTransactions200JSONResponse) VisitGetDeletedTransactionsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDeletedTransactions401JSONResponse HTTPError
+
+func (response GetDeletedTransactions401JSONResponse) VisitGetDeletedTransactionsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDeletedTransactions403JSONResponse HTTPError
+
+func (response GetDeletedTransactions403JSONResponse) VisitGetDeletedTransactionsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDeletedTransactions500JSONResponse HTTPError
+
+func (response GetDeletedTransactions500JSONResponse) VisitGetDeletedTransactionsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteTransactionRequestObject struct {
+	TransactionId UUID `json:"transaction_id" bson:"transaction_id"`
+}
+
+type DeleteTransactionResponseObject interface {
+	VisitDeleteTransactionResponse(w http.ResponseWriter) error
+}
+
+type DeleteTransaction204Response struct {
+}
+
+func (response DeleteTransaction204Response) VisitDeleteTransactionResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type DeleteTransaction401JSONResponse HTTPError
+
+func (response DeleteTransaction401JSONResponse) VisitDeleteTransactionResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteTransaction403JSONResponse HTTPError
+
+func (response DeleteTransaction403JSONResponse) VisitDeleteTransactionResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteTransaction404JSONResponse HTTPError
+
+func (response DeleteTransaction404JSONResponse) VisitDeleteTransactionResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteTransaction409JSONResponse HTTPError
+
+func (response DeleteTransaction409JSONResponse) VisitDeleteTransactionResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteTransaction500JSONResponse HTTPError
+
+func (response DeleteTransaction500JSONResponse) VisitDeleteTransactionResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedTransactionRequestObject struct {
+	TransactionId UUID `json:"transaction_id" bson:"transaction_id"`
+}
+
+type RestoreDeletedTransactionResponseObject interface {
+	VisitRestoreDeletedTransactionResponse(w http.ResponseWriter) error
+}
+
+type RestoreDeletedTransaction204Response struct {
+}
+
+func (response RestoreDeletedTransaction204Response) VisitRestoreDeletedTransactionResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type RestoreDeletedTransaction400JSONResponse HTTPError
+
+func (response RestoreDeletedTransaction400JSONResponse) VisitRestoreDeletedTransactionResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedTransaction401JSONResponse HTTPError
+
+func (response RestoreDeletedTransaction401JSONResponse) VisitRestoreDeletedTransactionResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedTransaction403JSONResponse HTTPError
+
+func (response RestoreDeletedTransaction403JSONResponse) VisitRestoreDeletedTransactionResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedTransaction404JSONResponse HTTPError
+
+func (response RestoreDeletedTransaction404JSONResponse) VisitRestoreDeletedTransactionResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedTransaction409JSONResponse HTTPError
+
+func (response RestoreDeletedTransaction409JSONResponse) VisitRestoreDeletedTransactionResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedTransaction500JSONResponse HTTPError
+
+func (response RestoreDeletedTransaction500JSONResponse) VisitRestoreDeletedTransactionResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
 type GetRefillsRequestObject struct {
 	Params GetRefillsParams `bson:"params"`
 }
@@ -3414,7 +4999,7 @@ type StrictServerInterface interface {
 	PostAccounts(ctx context.Context, request PostAccountsRequestObject) (PostAccountsResponseObject, error)
 
 	// (DELETE /accounts/{account_id})
-	DeleteAccountId(ctx context.Context, request DeleteAccountIdRequestObject) (DeleteAccountIdResponseObject, error)
+	MarkDeleteAccountId(ctx context.Context, request MarkDeleteAccountIdRequestObject) (MarkDeleteAccountIdResponseObject, error)
 
 	// (GET /accounts/{account_id})
 	GetAccountId(ctx context.Context, request GetAccountIdRequestObject) (GetAccountIdResponseObject, error)
@@ -3429,13 +5014,13 @@ type StrictServerInterface interface {
 	PostRefill(ctx context.Context, request PostRefillRequestObject) (PostRefillResponseObject, error)
 
 	// (DELETE /accounts/{account_id}/refills/{refill_id})
-	DeleteRefill(ctx context.Context, request DeleteRefillRequestObject) (DeleteRefillResponseObject, error)
+	MarkDeleteRefill(ctx context.Context, request MarkDeleteRefillRequestObject) (MarkDeleteRefillResponseObject, error)
 
 	// (GET /accounts/{account_id}/transactions)
 	GetAccountTransactions(ctx context.Context, request GetAccountTransactionsRequestObject) (GetAccountTransactionsResponseObject, error)
 
 	// (DELETE /accounts/{account_id}/transactions/{transaction_id})
-	DeleteTransactionId(ctx context.Context, request DeleteTransactionIdRequestObject) (DeleteTransactionIdResponseObject, error)
+	MarkDeleteTransactionId(ctx context.Context, request MarkDeleteTransactionIdRequestObject) (MarkDeleteTransactionIdResponseObject, error)
 
 	// (GET /accounts/{account_id}/transactions/{transaction_id})
 	GetTransactionId(ctx context.Context, request GetTransactionIdRequestObject) (GetTransactionIdResponseObject, error)
@@ -3459,7 +5044,7 @@ type StrictServerInterface interface {
 	AddCarouselImage(ctx context.Context, request AddCarouselImageRequestObject) (AddCarouselImageResponseObject, error)
 
 	// (DELETE /carousel/images/{image_id})
-	DeleteCarouselImage(ctx context.Context, request DeleteCarouselImageRequestObject) (DeleteCarouselImageResponseObject, error)
+	MarkDeleteCarouselImage(ctx context.Context, request MarkDeleteCarouselImageRequestObject) (MarkDeleteCarouselImageResponseObject, error)
 
 	// (GET /carousel/texts)
 	GetCarouselTexts(ctx context.Context, request GetCarouselTextsRequestObject) (GetCarouselTextsResponseObject, error)
@@ -3468,7 +5053,7 @@ type StrictServerInterface interface {
 	AddCarouselText(ctx context.Context, request AddCarouselTextRequestObject) (AddCarouselTextResponseObject, error)
 
 	// (DELETE /carousel/texts/{text_id})
-	DeleteCarouselText(ctx context.Context, request DeleteCarouselTextRequestObject) (DeleteCarouselTextResponseObject, error)
+	MarkDeleteCarouselText(ctx context.Context, request MarkDeleteCarouselTextRequestObject) (MarkDeleteCarouselTextResponseObject, error)
 
 	// (GET /categories)
 	GetCategories(ctx context.Context, request GetCategoriesRequestObject) (GetCategoriesResponseObject, error)
@@ -3477,7 +5062,7 @@ type StrictServerInterface interface {
 	PostCategory(ctx context.Context, request PostCategoryRequestObject) (PostCategoryResponseObject, error)
 
 	// (DELETE /categories/{category_id})
-	DeleteCategory(ctx context.Context, request DeleteCategoryRequestObject) (DeleteCategoryResponseObject, error)
+	MarkDeleteCategory(ctx context.Context, request MarkDeleteCategoryRequestObject) (MarkDeleteCategoryResponseObject, error)
 
 	// (GET /categories/{category_id})
 	GetCategory(ctx context.Context, request GetCategoryRequestObject) (GetCategoryResponseObject, error)
@@ -3489,7 +5074,7 @@ type StrictServerInterface interface {
 	PostItem(ctx context.Context, request PostItemRequestObject) (PostItemResponseObject, error)
 
 	// (DELETE /categories/{category_id}/items/{item_id})
-	DeleteItem(ctx context.Context, request DeleteItemRequestObject) (DeleteItemResponseObject, error)
+	MarkDeleteItem(ctx context.Context, request MarkDeleteItemRequestObject) (MarkDeleteItemResponseObject, error)
 
 	// (PATCH /categories/{category_id}/items/{item_id})
 	PatchItem(ctx context.Context, request PatchItemRequestObject) (PatchItemResponseObject, error)
@@ -3499,6 +5084,60 @@ type StrictServerInterface interface {
 
 	// (GET /categories/{category_id}/picture)
 	GetCategoryPicture(ctx context.Context, request GetCategoryPictureRequestObject) (GetCategoryPictureResponseObject, error)
+
+	// (GET /deleted/accounts)
+	GetDeletedAccounts(ctx context.Context, request GetDeletedAccountsRequestObject) (GetDeletedAccountsResponseObject, error)
+
+	// (DELETE /deleted/accounts/{account_id})
+	DeleteAccount(ctx context.Context, request DeleteAccountRequestObject) (DeleteAccountResponseObject, error)
+
+	// (PATCH /deleted/accounts/{account_id})
+	RestoreDeletedAccount(ctx context.Context, request RestoreDeletedAccountRequestObject) (RestoreDeletedAccountResponseObject, error)
+
+	// (GET /deleted/carousel/images)
+	GetDeletedCarouselImages(ctx context.Context, request GetDeletedCarouselImagesRequestObject) (GetDeletedCarouselImagesResponseObject, error)
+
+	// (DELETE /deleted/carousel/images/{image_id})
+	DeleteCarouselImage(ctx context.Context, request DeleteCarouselImageRequestObject) (DeleteCarouselImageResponseObject, error)
+
+	// (PATCH /deleted/carousel/images/{image_id})
+	RestoreDeletedCarouselImage(ctx context.Context, request RestoreDeletedCarouselImageRequestObject) (RestoreDeletedCarouselImageResponseObject, error)
+
+	// (GET /deleted/carousel/texts)
+	GetDeletedCarouselTexts(ctx context.Context, request GetDeletedCarouselTextsRequestObject) (GetDeletedCarouselTextsResponseObject, error)
+
+	// (DELETE /deleted/carousel/texts/{text_id})
+	DeleteCarouselText(ctx context.Context, request DeleteCarouselTextRequestObject) (DeleteCarouselTextResponseObject, error)
+
+	// (PATCH /deleted/carousel/texts/{text_id})
+	RestoreDeletedCarouselText(ctx context.Context, request RestoreDeletedCarouselTextRequestObject) (RestoreDeletedCarouselTextResponseObject, error)
+
+	// (GET /deleted/items)
+	GetDeletedItems(ctx context.Context, request GetDeletedItemsRequestObject) (GetDeletedItemsResponseObject, error)
+
+	// (DELETE /deleted/items/{item_id})
+	DeleteItem(ctx context.Context, request DeleteItemRequestObject) (DeleteItemResponseObject, error)
+
+	// (PATCH /deleted/items/{item_id})
+	RestoreDeletedItem(ctx context.Context, request RestoreDeletedItemRequestObject) (RestoreDeletedItemResponseObject, error)
+
+	// (GET /deleted/refills)
+	GetDeletedRefills(ctx context.Context, request GetDeletedRefillsRequestObject) (GetDeletedRefillsResponseObject, error)
+
+	// (DELETE /deleted/refills/{refill_id})
+	DeleteRefill(ctx context.Context, request DeleteRefillRequestObject) (DeleteRefillResponseObject, error)
+
+	// (PATCH /deleted/refills/{refill_id})
+	RestoreDeletedRefill(ctx context.Context, request RestoreDeletedRefillRequestObject) (RestoreDeletedRefillResponseObject, error)
+
+	// (GET /deleted/transactions)
+	GetDeletedTransactions(ctx context.Context, request GetDeletedTransactionsRequestObject) (GetDeletedTransactionsResponseObject, error)
+
+	// (DELETE /deleted/transactions/{transaction_id})
+	DeleteTransaction(ctx context.Context, request DeleteTransactionRequestObject) (DeleteTransactionResponseObject, error)
+
+	// (PATCH /deleted/transactions/{transaction_id})
+	RestoreDeletedTransaction(ctx context.Context, request RestoreDeletedTransactionRequestObject) (RestoreDeletedTransactionResponseObject, error)
 
 	// (GET /refills)
 	GetRefills(ctx context.Context, request GetRefillsRequestObject) (GetRefillsResponseObject, error)
@@ -3698,25 +5337,25 @@ func (sh *strictHandler) PostAccounts(ctx echo.Context) error {
 	return nil
 }
 
-// DeleteAccountId operation middleware
-func (sh *strictHandler) DeleteAccountId(ctx echo.Context, accountId UUID) error {
-	var request DeleteAccountIdRequestObject
+// MarkDeleteAccountId operation middleware
+func (sh *strictHandler) MarkDeleteAccountId(ctx echo.Context, accountId UUID) error {
+	var request MarkDeleteAccountIdRequestObject
 
 	request.AccountId = accountId
 
 	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.DeleteAccountId(ctx.Request().Context(), request.(DeleteAccountIdRequestObject))
+		return sh.ssi.MarkDeleteAccountId(ctx.Request().Context(), request.(MarkDeleteAccountIdRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "DeleteAccountId")
+		handler = middleware(handler, "MarkDeleteAccountId")
 	}
 
 	response, err := handler(ctx, request)
 
 	if err != nil {
 		return err
-	} else if validResponse, ok := response.(DeleteAccountIdResponseObject); ok {
-		return validResponse.VisitDeleteAccountIdResponse(ctx.Response())
+	} else if validResponse, ok := response.(MarkDeleteAccountIdResponseObject); ok {
+		return validResponse.VisitMarkDeleteAccountIdResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("Unexpected response type: %T", response)
 	}
@@ -3831,26 +5470,26 @@ func (sh *strictHandler) PostRefill(ctx echo.Context, accountId UUID, params Pos
 	return nil
 }
 
-// DeleteRefill operation middleware
-func (sh *strictHandler) DeleteRefill(ctx echo.Context, accountId UUID, refillId UUID) error {
-	var request DeleteRefillRequestObject
+// MarkDeleteRefill operation middleware
+func (sh *strictHandler) MarkDeleteRefill(ctx echo.Context, accountId UUID, refillId UUID) error {
+	var request MarkDeleteRefillRequestObject
 
 	request.AccountId = accountId
 	request.RefillId = refillId
 
 	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.DeleteRefill(ctx.Request().Context(), request.(DeleteRefillRequestObject))
+		return sh.ssi.MarkDeleteRefill(ctx.Request().Context(), request.(MarkDeleteRefillRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "DeleteRefill")
+		handler = middleware(handler, "MarkDeleteRefill")
 	}
 
 	response, err := handler(ctx, request)
 
 	if err != nil {
 		return err
-	} else if validResponse, ok := response.(DeleteRefillResponseObject); ok {
-		return validResponse.VisitDeleteRefillResponse(ctx.Response())
+	} else if validResponse, ok := response.(MarkDeleteRefillResponseObject); ok {
+		return validResponse.VisitMarkDeleteRefillResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("Unexpected response type: %T", response)
 	}
@@ -3883,26 +5522,26 @@ func (sh *strictHandler) GetAccountTransactions(ctx echo.Context, accountId UUID
 	return nil
 }
 
-// DeleteTransactionId operation middleware
-func (sh *strictHandler) DeleteTransactionId(ctx echo.Context, accountId UUID, transactionId UUID) error {
-	var request DeleteTransactionIdRequestObject
+// MarkDeleteTransactionId operation middleware
+func (sh *strictHandler) MarkDeleteTransactionId(ctx echo.Context, accountId UUID, transactionId UUID) error {
+	var request MarkDeleteTransactionIdRequestObject
 
 	request.AccountId = accountId
 	request.TransactionId = transactionId
 
 	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.DeleteTransactionId(ctx.Request().Context(), request.(DeleteTransactionIdRequestObject))
+		return sh.ssi.MarkDeleteTransactionId(ctx.Request().Context(), request.(MarkDeleteTransactionIdRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "DeleteTransactionId")
+		handler = middleware(handler, "MarkDeleteTransactionId")
 	}
 
 	response, err := handler(ctx, request)
 
 	if err != nil {
 		return err
-	} else if validResponse, ok := response.(DeleteTransactionIdResponseObject); ok {
-		return validResponse.VisitDeleteTransactionIdResponse(ctx.Response())
+	} else if validResponse, ok := response.(MarkDeleteTransactionIdResponseObject); ok {
+		return validResponse.VisitMarkDeleteTransactionIdResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("Unexpected response type: %T", response)
 	}
@@ -4092,25 +5731,25 @@ func (sh *strictHandler) AddCarouselImage(ctx echo.Context) error {
 	return nil
 }
 
-// DeleteCarouselImage operation middleware
-func (sh *strictHandler) DeleteCarouselImage(ctx echo.Context, imageId UUID) error {
-	var request DeleteCarouselImageRequestObject
+// MarkDeleteCarouselImage operation middleware
+func (sh *strictHandler) MarkDeleteCarouselImage(ctx echo.Context, imageId UUID) error {
+	var request MarkDeleteCarouselImageRequestObject
 
 	request.ImageId = imageId
 
 	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.DeleteCarouselImage(ctx.Request().Context(), request.(DeleteCarouselImageRequestObject))
+		return sh.ssi.MarkDeleteCarouselImage(ctx.Request().Context(), request.(MarkDeleteCarouselImageRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "DeleteCarouselImage")
+		handler = middleware(handler, "MarkDeleteCarouselImage")
 	}
 
 	response, err := handler(ctx, request)
 
 	if err != nil {
 		return err
-	} else if validResponse, ok := response.(DeleteCarouselImageResponseObject); ok {
-		return validResponse.VisitDeleteCarouselImageResponse(ctx.Response())
+	} else if validResponse, ok := response.(MarkDeleteCarouselImageResponseObject); ok {
+		return validResponse.VisitMarkDeleteCarouselImageResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("Unexpected response type: %T", response)
 	}
@@ -4169,25 +5808,25 @@ func (sh *strictHandler) AddCarouselText(ctx echo.Context) error {
 	return nil
 }
 
-// DeleteCarouselText operation middleware
-func (sh *strictHandler) DeleteCarouselText(ctx echo.Context, textId UUID) error {
-	var request DeleteCarouselTextRequestObject
+// MarkDeleteCarouselText operation middleware
+func (sh *strictHandler) MarkDeleteCarouselText(ctx echo.Context, textId UUID) error {
+	var request MarkDeleteCarouselTextRequestObject
 
 	request.TextId = textId
 
 	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.DeleteCarouselText(ctx.Request().Context(), request.(DeleteCarouselTextRequestObject))
+		return sh.ssi.MarkDeleteCarouselText(ctx.Request().Context(), request.(MarkDeleteCarouselTextRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "DeleteCarouselText")
+		handler = middleware(handler, "MarkDeleteCarouselText")
 	}
 
 	response, err := handler(ctx, request)
 
 	if err != nil {
 		return err
-	} else if validResponse, ok := response.(DeleteCarouselTextResponseObject); ok {
-		return validResponse.VisitDeleteCarouselTextResponse(ctx.Response())
+	} else if validResponse, ok := response.(MarkDeleteCarouselTextResponseObject); ok {
+		return validResponse.VisitMarkDeleteCarouselTextResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("Unexpected response type: %T", response)
 	}
@@ -4246,25 +5885,25 @@ func (sh *strictHandler) PostCategory(ctx echo.Context) error {
 	return nil
 }
 
-// DeleteCategory operation middleware
-func (sh *strictHandler) DeleteCategory(ctx echo.Context, categoryId UUID) error {
-	var request DeleteCategoryRequestObject
+// MarkDeleteCategory operation middleware
+func (sh *strictHandler) MarkDeleteCategory(ctx echo.Context, categoryId UUID) error {
+	var request MarkDeleteCategoryRequestObject
 
 	request.CategoryId = categoryId
 
 	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.DeleteCategory(ctx.Request().Context(), request.(DeleteCategoryRequestObject))
+		return sh.ssi.MarkDeleteCategory(ctx.Request().Context(), request.(MarkDeleteCategoryRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "DeleteCategory")
+		handler = middleware(handler, "MarkDeleteCategory")
 	}
 
 	response, err := handler(ctx, request)
 
 	if err != nil {
 		return err
-	} else if validResponse, ok := response.(DeleteCategoryResponseObject); ok {
-		return validResponse.VisitDeleteCategoryResponse(ctx.Response())
+	} else if validResponse, ok := response.(MarkDeleteCategoryResponseObject); ok {
+		return validResponse.VisitMarkDeleteCategoryResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("Unexpected response type: %T", response)
 	}
@@ -4358,26 +5997,26 @@ func (sh *strictHandler) PostItem(ctx echo.Context, categoryId UUID) error {
 	return nil
 }
 
-// DeleteItem operation middleware
-func (sh *strictHandler) DeleteItem(ctx echo.Context, categoryId UUID, itemId UUID) error {
-	var request DeleteItemRequestObject
+// MarkDeleteItem operation middleware
+func (sh *strictHandler) MarkDeleteItem(ctx echo.Context, categoryId UUID, itemId UUID) error {
+	var request MarkDeleteItemRequestObject
 
 	request.CategoryId = categoryId
 	request.ItemId = itemId
 
 	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.DeleteItem(ctx.Request().Context(), request.(DeleteItemRequestObject))
+		return sh.ssi.MarkDeleteItem(ctx.Request().Context(), request.(MarkDeleteItemRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "DeleteItem")
+		handler = middleware(handler, "MarkDeleteItem")
 	}
 
 	response, err := handler(ctx, request)
 
 	if err != nil {
 		return err
-	} else if validResponse, ok := response.(DeleteItemResponseObject); ok {
-		return validResponse.VisitDeleteItemResponse(ctx.Response())
+	} else if validResponse, ok := response.(MarkDeleteItemResponseObject); ok {
+		return validResponse.VisitMarkDeleteItemResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("Unexpected response type: %T", response)
 	}
@@ -4467,6 +6106,456 @@ func (sh *strictHandler) GetCategoryPicture(ctx echo.Context, categoryId UUID) e
 	return nil
 }
 
+// GetDeletedAccounts operation middleware
+func (sh *strictHandler) GetDeletedAccounts(ctx echo.Context, params GetDeletedAccountsParams) error {
+	var request GetDeletedAccountsRequestObject
+
+	request.Params = params
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetDeletedAccounts(ctx.Request().Context(), request.(GetDeletedAccountsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetDeletedAccounts")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(GetDeletedAccountsResponseObject); ok {
+		return validResponse.VisitGetDeletedAccountsResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("Unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// DeleteAccount operation middleware
+func (sh *strictHandler) DeleteAccount(ctx echo.Context, accountId UUID) error {
+	var request DeleteAccountRequestObject
+
+	request.AccountId = accountId
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteAccount(ctx.Request().Context(), request.(DeleteAccountRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteAccount")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(DeleteAccountResponseObject); ok {
+		return validResponse.VisitDeleteAccountResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("Unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// RestoreDeletedAccount operation middleware
+func (sh *strictHandler) RestoreDeletedAccount(ctx echo.Context, accountId UUID) error {
+	var request RestoreDeletedAccountRequestObject
+
+	request.AccountId = accountId
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.RestoreDeletedAccount(ctx.Request().Context(), request.(RestoreDeletedAccountRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "RestoreDeletedAccount")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(RestoreDeletedAccountResponseObject); ok {
+		return validResponse.VisitRestoreDeletedAccountResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("Unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// GetDeletedCarouselImages operation middleware
+func (sh *strictHandler) GetDeletedCarouselImages(ctx echo.Context, params GetDeletedCarouselImagesParams) error {
+	var request GetDeletedCarouselImagesRequestObject
+
+	request.Params = params
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetDeletedCarouselImages(ctx.Request().Context(), request.(GetDeletedCarouselImagesRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetDeletedCarouselImages")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(GetDeletedCarouselImagesResponseObject); ok {
+		return validResponse.VisitGetDeletedCarouselImagesResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("Unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// DeleteCarouselImage operation middleware
+func (sh *strictHandler) DeleteCarouselImage(ctx echo.Context, imageId UUID) error {
+	var request DeleteCarouselImageRequestObject
+
+	request.ImageId = imageId
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteCarouselImage(ctx.Request().Context(), request.(DeleteCarouselImageRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteCarouselImage")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(DeleteCarouselImageResponseObject); ok {
+		return validResponse.VisitDeleteCarouselImageResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("Unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// RestoreDeletedCarouselImage operation middleware
+func (sh *strictHandler) RestoreDeletedCarouselImage(ctx echo.Context, imageId UUID) error {
+	var request RestoreDeletedCarouselImageRequestObject
+
+	request.ImageId = imageId
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.RestoreDeletedCarouselImage(ctx.Request().Context(), request.(RestoreDeletedCarouselImageRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "RestoreDeletedCarouselImage")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(RestoreDeletedCarouselImageResponseObject); ok {
+		return validResponse.VisitRestoreDeletedCarouselImageResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("Unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// GetDeletedCarouselTexts operation middleware
+func (sh *strictHandler) GetDeletedCarouselTexts(ctx echo.Context, params GetDeletedCarouselTextsParams) error {
+	var request GetDeletedCarouselTextsRequestObject
+
+	request.Params = params
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetDeletedCarouselTexts(ctx.Request().Context(), request.(GetDeletedCarouselTextsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetDeletedCarouselTexts")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(GetDeletedCarouselTextsResponseObject); ok {
+		return validResponse.VisitGetDeletedCarouselTextsResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("Unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// DeleteCarouselText operation middleware
+func (sh *strictHandler) DeleteCarouselText(ctx echo.Context, textId UUID) error {
+	var request DeleteCarouselTextRequestObject
+
+	request.TextId = textId
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteCarouselText(ctx.Request().Context(), request.(DeleteCarouselTextRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteCarouselText")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(DeleteCarouselTextResponseObject); ok {
+		return validResponse.VisitDeleteCarouselTextResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("Unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// RestoreDeletedCarouselText operation middleware
+func (sh *strictHandler) RestoreDeletedCarouselText(ctx echo.Context, textId UUID) error {
+	var request RestoreDeletedCarouselTextRequestObject
+
+	request.TextId = textId
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.RestoreDeletedCarouselText(ctx.Request().Context(), request.(RestoreDeletedCarouselTextRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "RestoreDeletedCarouselText")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(RestoreDeletedCarouselTextResponseObject); ok {
+		return validResponse.VisitRestoreDeletedCarouselTextResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("Unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// GetDeletedItems operation middleware
+func (sh *strictHandler) GetDeletedItems(ctx echo.Context, params GetDeletedItemsParams) error {
+	var request GetDeletedItemsRequestObject
+
+	request.Params = params
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetDeletedItems(ctx.Request().Context(), request.(GetDeletedItemsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetDeletedItems")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(GetDeletedItemsResponseObject); ok {
+		return validResponse.VisitGetDeletedItemsResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("Unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// DeleteItem operation middleware
+func (sh *strictHandler) DeleteItem(ctx echo.Context, itemId UUID) error {
+	var request DeleteItemRequestObject
+
+	request.ItemId = itemId
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteItem(ctx.Request().Context(), request.(DeleteItemRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteItem")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(DeleteItemResponseObject); ok {
+		return validResponse.VisitDeleteItemResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("Unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// RestoreDeletedItem operation middleware
+func (sh *strictHandler) RestoreDeletedItem(ctx echo.Context, itemId UUID) error {
+	var request RestoreDeletedItemRequestObject
+
+	request.ItemId = itemId
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.RestoreDeletedItem(ctx.Request().Context(), request.(RestoreDeletedItemRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "RestoreDeletedItem")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(RestoreDeletedItemResponseObject); ok {
+		return validResponse.VisitRestoreDeletedItemResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("Unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// GetDeletedRefills operation middleware
+func (sh *strictHandler) GetDeletedRefills(ctx echo.Context, params GetDeletedRefillsParams) error {
+	var request GetDeletedRefillsRequestObject
+
+	request.Params = params
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetDeletedRefills(ctx.Request().Context(), request.(GetDeletedRefillsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetDeletedRefills")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(GetDeletedRefillsResponseObject); ok {
+		return validResponse.VisitGetDeletedRefillsResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("Unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// DeleteRefill operation middleware
+func (sh *strictHandler) DeleteRefill(ctx echo.Context, refillId UUID) error {
+	var request DeleteRefillRequestObject
+
+	request.RefillId = refillId
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteRefill(ctx.Request().Context(), request.(DeleteRefillRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteRefill")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(DeleteRefillResponseObject); ok {
+		return validResponse.VisitDeleteRefillResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("Unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// RestoreDeletedRefill operation middleware
+func (sh *strictHandler) RestoreDeletedRefill(ctx echo.Context, refillId UUID) error {
+	var request RestoreDeletedRefillRequestObject
+
+	request.RefillId = refillId
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.RestoreDeletedRefill(ctx.Request().Context(), request.(RestoreDeletedRefillRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "RestoreDeletedRefill")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(RestoreDeletedRefillResponseObject); ok {
+		return validResponse.VisitRestoreDeletedRefillResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("Unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// GetDeletedTransactions operation middleware
+func (sh *strictHandler) GetDeletedTransactions(ctx echo.Context, params GetDeletedTransactionsParams) error {
+	var request GetDeletedTransactionsRequestObject
+
+	request.Params = params
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetDeletedTransactions(ctx.Request().Context(), request.(GetDeletedTransactionsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetDeletedTransactions")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(GetDeletedTransactionsResponseObject); ok {
+		return validResponse.VisitGetDeletedTransactionsResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("Unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// DeleteTransaction operation middleware
+func (sh *strictHandler) DeleteTransaction(ctx echo.Context, transactionId UUID) error {
+	var request DeleteTransactionRequestObject
+
+	request.TransactionId = transactionId
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteTransaction(ctx.Request().Context(), request.(DeleteTransactionRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteTransaction")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(DeleteTransactionResponseObject); ok {
+		return validResponse.VisitDeleteTransactionResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("Unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// RestoreDeletedTransaction operation middleware
+func (sh *strictHandler) RestoreDeletedTransaction(ctx echo.Context, transactionId UUID) error {
+	var request RestoreDeletedTransactionRequestObject
+
+	request.TransactionId = transactionId
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.RestoreDeletedTransaction(ctx.Request().Context(), request.(RestoreDeletedTransactionRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "RestoreDeletedTransaction")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(RestoreDeletedTransactionResponseObject); ok {
+		return validResponse.VisitRestoreDeletedTransactionResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("Unexpected response type: %T", response)
+	}
+	return nil
+}
+
 // GetRefills operation middleware
 func (sh *strictHandler) GetRefills(ctx echo.Context, params GetRefillsParams) error {
 	var request GetRefillsRequestObject
@@ -4520,70 +6609,82 @@ func (sh *strictHandler) GetTransactions(ctx echo.Context, params GetTransaction
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
-	"+Ao971ttfl58Xvw3AAD//0ty7U9pswAA",
+	"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",
+	"xcGOD+X+AAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

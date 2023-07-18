@@ -17,7 +17,7 @@ func (s *Server) PostTransactions(c echo.Context) error {
 	}
 
 	// Get account from database
-	account, err := s.DBackend.GetAccount(accountID)
+	_, err := s.DBackend.GetAccount(accountID)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			// Delete cookie
@@ -55,7 +55,7 @@ func (s *Server) GetCurrentAccountTransactions(c echo.Context, params autogen.Ge
 	}
 
 	// Get account from database
-	account, err := s.DBackend.GetAccount(accountID)
+	_, err := s.DBackend.GetAccount(accountID)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			// Delete cookie
@@ -71,7 +71,7 @@ func (s *Server) GetCurrentAccountTransactions(c echo.Context, params autogen.Ge
 }
 
 // (DELETE /accounts/{account_id}/transactions/{transaction_id})
-func (s *Server) DeleteTransactionId(c echo.Context, accountId autogen.UUID, transactionId autogen.UUID) error {
+func (s *Server) MarkDeleteTransactionId(c echo.Context, accountId autogen.UUID, transactionId autogen.UUID) error {
 	// Get admin account from cookie
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["admin_account_id"].(string)
