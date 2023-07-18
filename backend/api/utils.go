@@ -23,3 +23,12 @@ func Error401(c echo.Context) error {
 	resp.VisitGetAccountsResponse(c.Response())
 	return nil
 }
+
+func ErrorAccNotFound(c echo.Context) error {
+	resp := autogen.GetAccount401JSONResponse{
+		Message:   autogen.MsgAccountNotFound,
+		ErrorCode: autogen.ErrAccountNotFound,
+	}
+	resp.VisitGetAccountResponse(c.Response())
+	return nil
+}

@@ -23,13 +23,7 @@ func (s *Server) GetAccount(c echo.Context) error {
 			// Delete cookie
 			sess.Options.MaxAge = -1
 			sess.Save(c.Request(), c.Response())
-
-			resp := autogen.GetAccount401JSONResponse{
-				Message:   autogen.MsgAccountNotFound,
-				ErrorCode: autogen.ErrAccountNotFound,
-			}
-			resp.VisitGetAccountResponse(c.Response())
-			return nil
+			return ErrorAccNotFound(c)
 		}
 		return Error500(c)
 	}
@@ -46,7 +40,7 @@ func (s *Server) GetAccount(c echo.Context) error {
 func (s *Server) GetAccounts(c echo.Context, params autogen.GetAccountsParams) error {
 	// Get admin account from cookie
 	sess := s.getAdminSess(c)
-	_, ok := sess.Values["account_id"].(string)
+	_, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
 		return Error401(c)
 	}
@@ -92,34 +86,62 @@ func (s *Server) GetAccounts(c echo.Context, params autogen.GetAccountsParams) e
 	}
 
 	autogen.GetAccounts200JSONResponse{
-		Accounts: &ac,
-		Limit:    &limit,
-		Page:     &page,
-		MaxPage:  &maxPage,
+		Accounts: ac,
+		Limit:    limit,
+		Page:     page,
+		MaxPage:  maxPage,
 	}.VisitGetAccountsResponse(c.Response())
 	return nil
 }
 
 // (POST /accounts)
 func (s *Server) PostAccounts(c echo.Context) error {
+	// Get admin account from cookie
+	sess := s.getAdminSess(c)
+	_, ok := sess.Values["admin_account_id"].(string)
+	if !ok {
+		return Error401(c)
+	}
+
 	// TODO: implement
 	return nil
 }
 
 // (DELETE /accounts/{account_id})
 func (s *Server) DeleteAccountId(c echo.Context, accountId autogen.UUID) error {
+	// Get admin account from cookie
+	sess := s.getAdminSess(c)
+	_, ok := sess.Values["admin_account_id"].(string)
+	if !ok {
+		return Error401(c)
+	}
+
 	// TODO: implement
 	return nil
 }
 
 // (GET /accounts/{account_id})
 func (s *Server) GetAccountId(c echo.Context, accountId autogen.UUID) error {
+	// Get admin account from cookie
+	sess := s.getAdminSess(c)
+	_, ok := sess.Values["admin_account_id"].(string)
+	if !ok {
+		return Error401(c)
+	}
+
 	// TODO: implement
 	return nil
 }
 
 // (PATCH /accounts/{account_id})
 func (s *Server) PatchAccountId(c echo.Context, accountId autogen.UUID) error {
+	// Get admin account from cookie
+	sess := s.getAdminSess(c)
+	_, ok := sess.Values["admin_account_id"].(string)
+	if !ok {
+		return Error401(c)
+	}
+
 	// TODO: implement
 	return nil
 }
