@@ -62,7 +62,7 @@ func (b *Backend) UpdateItem(item *models.Item) error {
 	return nil
 }
 
-func (b *Backend) DeleteItem(id, by string) error {
+func (b *Backend) MarkDeleteItem(id, by string) error {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 
@@ -77,6 +77,44 @@ func (b *Backend) DeleteItem(id, by string) error {
 			},
 		},
 		options.FindOneAndUpdate().SetUpsert(false))
+	if res.Err() != nil {
+		return res.Err()
+	}
+
+	return nil
+}
+
+func (b *Backend) DeleteItem(id string) error {
+	ctx, cancel := b.GetContext()
+	defer cancel()
+
+	res := b.db.Collection(ItemsCollection).FindOneAndDelete(ctx,
+		bson.M{
+			"id": id,
+		},
+	)
+	if res.Err() != nil {
+		return res.Err()
+	}
+
+	return nil
+}
+
+func (b *Backend) RestoreItem(id string) error {
+	ctx, cancel := b.GetContext()
+	defer cancel()
+
+	res := b.db.Collection(ItemsCollection).FindOneAndUpdate(ctx,
+		bson.M{
+			"id": id,
+		},
+		bson.M{
+			"$unset": bson.M{
+				"deleted_at": "",
+				"deleted_by": "",
+			},
+		},
+	)
 	if res.Err() != nil {
 		return res.Err()
 	}

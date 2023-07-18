@@ -252,9 +252,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Account'
+                $ref: '#/components/schemas/Account'
         '401':
           description: 'Not authorized'
           content:
@@ -2947,6 +2945,7 @@ components:
     Messages:
       type: string
       enum:
+        - Bad request
         - Not connected
         - Missing fields %v
         - Account already exists
@@ -2957,6 +2956,7 @@ components:
         - Invalid QR Code nonce
         - Internal server error
       x-enum-varnames:
+        - MsgBadRequest
         - MsgNotConnected
         - MsgMissingFields
         - MsgAccountAlreadyExists
@@ -2988,15 +2988,18 @@ components:
         card_id:
           type: string
           format: sha256
-        promotion:
+        balance:
           type: integer
           format: int64
+          example: 1000 (10.00€)
         role:
           $ref: '#/components/schemas/AccountRole'
       required:
         - first_name
         - last_name
         - email_address
+        - role
+        - balance
     UpdateAccountAdmin:
       type: object
       properties:
@@ -3009,9 +3012,6 @@ components:
         card_id:
           type: string
           format: sha256
-        promotion:
-          type: integer
-          format: int64
         balance:
           type: integer
           format: int64
@@ -3076,9 +3076,6 @@ components:
         card_id:
           type: string
           format: sha256
-        promotion:
-          type: integer
-          format: int64
         role:
           $ref: '#/components/schemas/AccountRole'
         restrictions:
@@ -3101,6 +3098,7 @@ components:
         - role
         - restrictions
         - state
+        - card_id
     ItemState:
       type: string
       description: State of the item
@@ -3145,6 +3143,12 @@ components:
           type: integer
           format: int64
           example: 1000
+        promotion:
+          type: integer
+          format: int64
+        promotion_ends_at:
+          type: integer
+          format: int64
         amount_left:
           type: integer
           format: int32
@@ -3186,6 +3190,9 @@ components:
           type: integer
           format: int64
           example: 3000 (-30%)
+        promotion_ends_at:
+          type: integer
+          format: int64
         amount_left:
           type: integer
           format: int32

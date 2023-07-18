@@ -62,7 +62,7 @@ func (b *Backend) UpdateCategory(c *models.Category) error {
 	return nil
 }
 
-func (b *Backend) DeleteCategory(id, by string) error {
+func (b *Backend) MarkDeleteCategory(id, by string) error {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 
@@ -77,6 +77,44 @@ func (b *Backend) DeleteCategory(id, by string) error {
 			},
 		},
 		options.FindOneAndUpdate().SetUpsert(false))
+	if res.Err() != nil {
+		return res.Err()
+	}
+
+	return nil
+}
+
+func (b *Backend) DeleteCategory(id string) error {
+	ctx, cancel := b.GetContext()
+	defer cancel()
+
+	res := b.db.Collection(CategoriesCollection).FindOneAndDelete(ctx,
+		bson.M{
+			"id": id,
+		},
+	)
+	if res.Err() != nil {
+		return res.Err()
+	}
+
+	return nil
+}
+
+func (b *Backend) RestoreCategory(id string) error {
+	ctx, cancel := b.GetContext()
+	defer cancel()
+
+	res := b.db.Collection(CategoriesCollection).FindOneAndUpdate(ctx,
+		bson.M{
+			"id": id,
+		},
+		bson.M{
+			"$unset": bson.M{
+				"deleted_at": "",
+				"deleted_by": "",
+			},
+		},
+	)
 	if res.Err() != nil {
 		return res.Err()
 	}

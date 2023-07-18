@@ -15,12 +15,30 @@ func Error500(c echo.Context) error {
 	return nil
 }
 
+func Error400(c echo.Context) error {
+	resp := autogen.ConnectAccount400JSONResponse{
+		Message:   autogen.MsgBadRequest,
+		ErrorCode: autogen.ErrBadRequest,
+	}
+	resp.VisitConnectAccountResponse(c.Response())
+	return nil
+}
+
 func Error401(c echo.Context) error {
-	resp := autogen.GetAccounts500JSONResponse{
+	resp := autogen.GetAccounts401JSONResponse{
 		Message:   autogen.MsgAccountNotAllowed,
 		ErrorCode: autogen.ErrForbidden,
 	}
 	resp.VisitGetAccountsResponse(c.Response())
+	return nil
+}
+
+func Error409(c echo.Context) error {
+	resp := autogen.PostAccounts409JSONResponse{
+		Message:   autogen.MsgAccountAlreadyExists,
+		ErrorCode: autogen.ErrBadRequest,
+	}
+	resp.VisitPostAccountsResponse(c.Response())
 	return nil
 }
 

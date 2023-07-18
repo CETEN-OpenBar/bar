@@ -62,7 +62,7 @@ func (b *Backend) UpdateRefill(refill *models.Refill) error {
 	return nil
 }
 
-func (b *Backend) DeleteRefill(id, by string) error {
+func (b *Backend) MarkDeleteRefill(id, by string) error {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 
@@ -77,6 +77,44 @@ func (b *Backend) DeleteRefill(id, by string) error {
 			},
 		},
 		options.FindOneAndUpdate().SetUpsert(false))
+	if res.Err() != nil {
+		return res.Err()
+	}
+
+	return nil
+}
+
+func (b *Backend) DeleteRefill(id string) error {
+	ctx, cancel := b.GetContext()
+	defer cancel()
+
+	res := b.db.Collection(RefillsCollection).FindOneAndDelete(ctx,
+		bson.M{
+			"id": id,
+		},
+	)
+	if res.Err() != nil {
+		return res.Err()
+	}
+
+	return nil
+}
+
+func (b *Backend) RestoreRefill(id string) error {
+	ctx, cancel := b.GetContext()
+	defer cancel()
+
+	res := b.db.Collection(RefillsCollection).FindOneAndUpdate(ctx,
+		bson.M{
+			"id": id,
+		},
+		bson.M{
+			"$unset": bson.M{
+				"deleted_at": "",
+				"deleted_by": "",
+			},
+		},
+	)
 	if res.Err() != nil {
 		return res.Err()
 	}

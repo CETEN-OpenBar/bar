@@ -62,7 +62,7 @@ func (b *Backend) UpdateCarouselImage(ci *models.CarouselImage) error {
 	return nil
 }
 
-func (b *Backend) DeleteCarouselImage(id, by string) error {
+func (b *Backend) MarkDeleteCarouselImage(id, by string) error {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 
@@ -77,6 +77,44 @@ func (b *Backend) DeleteCarouselImage(id, by string) error {
 			},
 		},
 		options.FindOneAndUpdate().SetUpsert(false))
+	if res.Err() != nil {
+		return res.Err()
+	}
+
+	return nil
+}
+
+func (b *Backend) DeleteCarouselImage(id string) error {
+	ctx, cancel := b.GetContext()
+	defer cancel()
+
+	res := b.db.Collection(CarouselImagesCollection).FindOneAndDelete(ctx,
+		bson.M{
+			"id": id,
+		},
+	)
+	if res.Err() != nil {
+		return res.Err()
+	}
+
+	return nil
+}
+
+func (b *Backend) RestoreCarouselImage(id string) error {
+	ctx, cancel := b.GetContext()
+	defer cancel()
+
+	res := b.db.Collection(CarouselImagesCollection).FindOneAndUpdate(ctx,
+		bson.M{
+			"id": id,
+		},
+		bson.M{
+			"$unset": bson.M{
+				"deleted_at": "",
+				"deleted_by": "",
+			},
+		},
+	)
 	if res.Err() != nil {
 		return res.Err()
 	}

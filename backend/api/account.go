@@ -2,8 +2,13 @@ package api
 
 import (
 	"bar/autogen"
+	"bar/internal/models"
+	"encoding/csv"
+	"reflect"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
+	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -98,12 +103,44 @@ func (s *Server) GetAccounts(c echo.Context, params autogen.GetAccountsParams) e
 func (s *Server) PostAccounts(c echo.Context) error {
 	// Get admin account from cookie
 	sess := s.getAdminSess(c)
-	_, ok := sess.Values["admin_account_id"].(string)
+	adminID, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
 		return Error401(c)
 	}
 
-	// TODO: implement
+	var req autogen.NewAccount
+	err := c.Bind(&req)
+	if err != nil {
+		return Error400(c)
+	}
+
+	var cardId string
+	if req.CardId != nil {
+		cardId = *req.CardId
+	}
+
+	account := &models.Account{
+		Account: autogen.Account{
+			Balance:      req.Balance,
+			CardId:       cardId,
+			EmailAddress: req.EmailAddress,
+			FirstName:    req.FirstName,
+			LastName:     req.LastName,
+			Role:         req.Role,
+			State:        autogen.AccountOk,
+		},
+	}
+
+	err = s.CreateAccount(account)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return Error409(c)
+		}
+		return Error500(c)
+	}
+
+	logrus.Info("Account created: ", account.Account.Id, " by ", adminID)
+	autogen.PostAccounts200JSONResponse(account.Account).VisitPostAccountsResponse(c.Response())
 	return nil
 }
 
@@ -111,12 +148,21 @@ func (s *Server) PostAccounts(c echo.Context) error {
 func (s *Server) MarkDeleteAccountId(c echo.Context, accountId autogen.UUID) error {
 	// Get admin account from cookie
 	sess := s.getAdminSess(c)
-	_, ok := sess.Values["admin_account_id"].(string)
+	adminID, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
 		return Error401(c)
 	}
 
-	// TODO: implement
+	err := s.DBackend.MarkDeleteAccount(accountId.String(), adminID)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorAccNotFound(c)
+		}
+		return Error500(c)
+	}
+
+	logrus.Info("Account marked as deleted: ", accountId, " by ", adminID)
+	autogen.DeleteAccount204Response{}.VisitDeleteAccountResponse(c.Response())
 	return nil
 }
 
@@ -124,12 +170,21 @@ func (s *Server) MarkDeleteAccountId(c echo.Context, accountId autogen.UUID) err
 func (s *Server) GetAccountId(c echo.Context, accountId autogen.UUID) error {
 	// Get admin account from cookie
 	sess := s.getAdminSess(c)
-	_, ok := sess.Values["admin_account_id"].(string)
+	adminID, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
 		return Error401(c)
 	}
 
-	// TODO: implement
+	account, err := s.DBackend.GetAccount(accountId.String())
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorAccNotFound(c)
+		}
+		return Error500(c)
+	}
+
+	logrus.Info("Account retrieved: ", accountId, " by ", adminID)
+	autogen.GetAccountId200JSONResponse(account.Account).VisitGetAccountIdResponse(c.Response())
 	return nil
 }
 
@@ -137,12 +192,57 @@ func (s *Server) GetAccountId(c echo.Context, accountId autogen.UUID) error {
 func (s *Server) PatchAccountId(c echo.Context, accountId autogen.UUID) error {
 	// Get admin account from cookie
 	sess := s.getAdminSess(c)
-	_, ok := sess.Values["admin_account_id"].(string)
+	adminID, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
 		return Error401(c)
 	}
 
-	// TODO: implement
+	var req autogen.UpdateAccountAdmin
+	err := c.Bind(&req)
+	if err != nil {
+		return Error400(c)
+	}
+
+	account, err := s.DBackend.GetAccount(accountId.String())
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorAccNotFound(c)
+		}
+		return Error500(c)
+	}
+
+	if req.Balance != nil {
+		account.Account.Balance = *req.Balance
+	}
+	if req.CardId != nil {
+		account.Account.CardId = *req.CardId
+	}
+	if req.EmailAddress != nil {
+		account.Account.EmailAddress = *req.EmailAddress
+	}
+	if req.FirstName != nil {
+		account.Account.FirstName = *req.FirstName
+	}
+	if req.LastName != nil {
+		account.Account.LastName = *req.LastName
+	}
+	if req.Role != nil {
+		account.Account.Role = *req.Role
+	}
+	if req.State != nil {
+		account.Account.State = *req.State
+	}
+	if req.Restrictions != nil {
+		account.Account.Restrictions = *req.Restrictions
+	}
+
+	err = s.UpdateAccount(account)
+	if err != nil {
+		return Error500(c)
+	}
+
+	logrus.Info("Account updated: ", accountId, " by ", adminID)
+	autogen.PatchAccountId200JSONResponse(account.Account).VisitPatchAccountIdResponse(c.Response())
 	return nil
 }
 
@@ -150,11 +250,85 @@ func (s *Server) PatchAccountId(c echo.Context, accountId autogen.UUID) error {
 func (s *Server) ImportAccounts(c echo.Context) error {
 	// Get admin account from cookie
 	sess := s.getAdminSess(c)
-	_, ok := sess.Values["admin_account_id"].(string)
+	accountID, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
 		return Error401(c)
 	}
 
-	// TODO: implement
+	// Get file from request
+	file, err := c.FormFile("file")
+	if err != nil {
+		return Error400(c)
+	}
+
+	// Parse CSV file
+	f, err := file.Open()
+	if err != nil {
+		return Error400(c)
+	}
+
+	// Read CSV file
+	r := csv.NewReader(f)
+	colNames, err := r.Read()
+	if err != nil {
+		return Error400(c)
+	}
+
+	// Create assignment map for columns
+	// map[string]int{"email": 0, "first_name": 1, "last_name": 2, "role": 3, "balance": 4} meaning that the email is in the first column
+	// Using reflection to get the field name of the struct
+	var req autogen.NewAccount
+	var assignments = make(map[string]int)
+
+	v := reflect.ValueOf(req)
+
+	for i := 0; i < v.NumField(); i++ {
+		field := v.Type().Field(i)
+		tag := field.Tag.Get("json")
+		for j, colName := range colNames {
+			if tag == colName {
+				assignments[tag] = j
+			}
+		}
+	}
+
+	records, err := r.ReadAll()
+	if err != nil {
+		return Error400(c)
+	}
+
+	var notProcessed []string
+
+	for _, record := range records {
+		// Check balance
+		balance, err := strconv.ParseInt(record[assignments["balance"]], 10, 64)
+		if err != nil {
+			notProcessed = append(notProcessed, record[0])
+			continue
+		}
+
+		account := &models.Account{
+			Account: autogen.Account{
+				Balance:      balance,
+				CardId:       record[assignments["card_id"]],
+				EmailAddress: record[assignments["email"]],
+				FirstName:    record[assignments["first_name"]],
+				LastName:     record[assignments["last_name"]],
+				Role:         autogen.AccountRole(record[assignments["role"]]),
+				State:        autogen.AccountOk,
+			},
+		}
+
+		err = s.CreateAccount(account)
+		if err != nil {
+			notProcessed = append(notProcessed, record[0])
+			continue
+		}
+	}
+
+	logrus.Info("Accounts imported: ", len(records)-len(notProcessed), " by ", accountID)
+	autogen.ImportAccounts200JSONResponse{
+		NotAccepted: &notProcessed,
+	}.VisitImportAccountsResponse(c.Response())
 	return nil
 }
