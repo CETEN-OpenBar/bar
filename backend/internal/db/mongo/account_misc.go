@@ -31,3 +31,11 @@ func (b *Backend) GetAccounts(page int, size int) ([]*models.Account, error) {
 
 	return accounts, nil
 }
+
+func (b *Backend) CountAccounts() (int64, error) {
+	ctx, cancel := b.GetContext()
+	defer cancel()
+
+	// Count all accounts
+	return b.db.Collection(AccountsCollection).CountDocuments(ctx, bson.M{})
+}

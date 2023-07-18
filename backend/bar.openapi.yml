@@ -207,6 +207,11 @@ paths:
                   max_page:
                     type: integer
                     format: int
+                required:
+                  - accounts
+                  - page
+                  - limit
+                  - max_page
         '401':
           description: 'Not authorized'
           content:

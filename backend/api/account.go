@@ -13,12 +13,7 @@ func (s *Server) GetAccount(c echo.Context) error {
 	sess := s.getUserSess(c)
 	accountID, ok := sess.Values["account_id"].(string)
 	if !ok {
-		resp := autogen.GetAccount401JSONResponse{
-			Message:   autogen.MsgAccountNotFound,
-			ErrorCode: autogen.ErrAccountNotFound,
-		}
-		resp.VisitGetAccountResponse(c.Response())
-		return nil
+		return Error401(c)
 	}
 
 	// Get account from database
@@ -36,12 +31,7 @@ func (s *Server) GetAccount(c echo.Context) error {
 			resp.VisitGetAccountResponse(c.Response())
 			return nil
 		}
-		resp := autogen.GetAccount500JSONResponse{
-			Message:   autogen.MsgInternalServerError,
-			ErrorCode: autogen.ErrInternalServerError,
-		}
-		resp.VisitGetAccountResponse(c.Response())
-		return nil
+		return Error500(c)
 	}
 
 	// Return account
@@ -54,7 +44,59 @@ func (s *Server) GetAccount(c echo.Context) error {
 
 // (GET /accounts)
 func (s *Server) GetAccounts(c echo.Context, params autogen.GetAccountsParams) error {
-	// TODO: implement
+	// Get admin account from cookie
+	sess := s.getAdminSess(c)
+	_, ok := sess.Values["account_id"].(string)
+	if !ok {
+		return Error401(c)
+	}
+
+	// Set up parameters
+	var page int = 1
+	var limit int = 10
+	if params.Page != nil {
+		page = *params.Page
+	}
+	if params.Limit != nil {
+		limit = *params.Limit
+	}
+
+	page = page - 1
+	if page < 0 {
+		page = 0
+	}
+	if limit < 0 {
+		limit = 0
+	}
+	if limit > 100 {
+		limit = 100
+	}
+
+	// Calculate max page
+	count, err := s.DBackend.CountAccounts()
+	if err != nil {
+		return Error500(c)
+	}
+
+	maxPage := int(count) / limit
+
+	// Get accounts from database
+	accounts, err := s.DBackend.GetAccounts(page, limit)
+	if err != nil {
+		return Error500(c)
+	}
+
+	var ac []autogen.Account
+	for _, account := range accounts {
+		ac = append(ac, account.Account)
+	}
+
+	autogen.GetAccounts200JSONResponse{
+		Accounts: &ac,
+		Limit:    &limit,
+		Page:     &page,
+		MaxPage:  &maxPage,
+	}.VisitGetAccountsResponse(c.Response())
 	return nil
 }
 

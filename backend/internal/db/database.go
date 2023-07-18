@@ -67,6 +67,7 @@ type DBackend interface {
 
 	// Other requests that are not CRUD but still needed
 	GetAccounts(page int, size int) ([]*models.Account, error)
+	CountAccounts() (int64, error)
 	GetTransactions(account string, page int, size int, state string) ([]*models.Transaction, error)
 	GetRefills(account string, page int, size int, startAt, endAt int64) ([]*models.Refill, error)
 	GetAllRefills(page int, size int, startAt, endAt int64) ([]*models.Refill, error)
