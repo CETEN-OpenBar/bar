@@ -283,6 +283,69 @@ paths:
         - admin_auth: []
       tags:
         - accounts
+  /import/accounts:
+    post:
+      description: Import accounts from a CSV file
+      summary: ''
+      operationId: importAccounts
+      requestBody:
+        description: Import accounts from a CSV file
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Successfully imported accounts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    $ref: '#/components/schemas/Messages'
+                  not_accepted:
+                    type: array
+                    items:
+                      type: string
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: 'Not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: 'Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '409':
+          description: 'Conflict'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - admin_auth: []
+      tags:
+        - accounts
   /accounts/{account_id}:
     description: Get the account's information
     get:
@@ -2922,6 +2985,12 @@ components:
           type: string
         email_address:
           type: string
+        card_id:
+          type: string
+          format: sha256
+        promotion:
+          type: integer
+          format: int64
         role:
           $ref: '#/components/schemas/AccountRole'
       required:
@@ -2937,6 +3006,12 @@ components:
           type: string
         email_address:
           type: string
+        card_id:
+          type: string
+          format: sha256
+        promotion:
+          type: integer
+          format: int64
         balance:
           type: integer
           format: int64
@@ -2952,9 +3027,8 @@ components:
     AccountState:
       type: string
       description: State of the account
-      example: must_set_card
+      example: account_ok
       enum:
-        - account_must_set_card
         - account_ok
     AccountRestrictions:
       type: string
@@ -2975,12 +3049,15 @@ components:
         - student_with_benefits
         - member
         - admin
+        - ghost
         - superadmin
       x-enum-varnames:
         - AccountStudent
         - AccountStudentWithBenefits
         - AccountMember
         - AccountAdmin
+        - AccountGhost
+        - AccountSuperAdmin
     Account:
       type: object
       properties:
@@ -2996,6 +3073,12 @@ components:
           type: integer
           format: int64
           example: 1000
+        card_id:
+          type: string
+          format: sha256
+        promotion:
+          type: integer
+          format: int64
         role:
           $ref: '#/components/schemas/AccountRole'
         restrictions:
@@ -3099,6 +3182,10 @@ components:
           type: integer
           format: int64
           example: 1000
+        promotion:
+          type: integer
+          format: int64
+          example: 3000 (-30%)
         amount_left:
           type: integer
           format: int32
@@ -3379,6 +3466,10 @@ components:
         - image_url
   securitySchemes:
     auth:
+      type: apiKey
+      name: BAR_SESS
+      in: cookie
+    local_auth:
       type: apiKey
       name: BAR_SESS
       in: cookie

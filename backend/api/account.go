@@ -145,3 +145,16 @@ func (s *Server) PatchAccountId(c echo.Context, accountId autogen.UUID) error {
 	// TODO: implement
 	return nil
 }
+
+// (POST /import/accounts)
+func (s *Server) ImportAccounts(c echo.Context) error {
+	// Get admin account from cookie
+	sess := s.getAdminSess(c)
+	_, ok := sess.Values["admin_account_id"].(string)
+	if !ok {
+		return Error401(c)
+	}
+
+	// TODO: implement
+	return nil
+}
