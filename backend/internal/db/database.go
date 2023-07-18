@@ -27,43 +27,43 @@ type DBackend interface {
 	CreateAccount(acc *models.Account) error
 	GetAccount(id string) (*models.Account, error)
 	UpdateAccount(acc *models.Account) error
-	DeleteAccount(id string) error
+	DeleteAccount(id, by string) error
 
 	// CarouselText's CRUD
 	CreateCarouselText(ct *models.CarouselText) error
 	GetCarouselText(id string) (*models.CarouselText, error)
 	UpdateCarouselText(ct *models.CarouselText) error
-	DeleteCarouselText(id string) error
+	DeleteCarouselText(id, by string) error
 
 	// CarouselImage's CRUD
 	CreateCarouselImage(ci *models.CarouselImage) error
 	GetCarouselImage(id string) (*models.CarouselImage, error)
 	UpdateCarouselImage(ci *models.CarouselImage) error
-	DeleteCarouselImage(id string) error
+	DeleteCarouselImage(id, by string) error
 
 	// Category's CRUD
 	CreateCategory(c *models.Category) error
 	GetCategory(id string) (*models.Category, error)
 	UpdateCategory(c *models.Category) error
-	DeleteCategory(id string) error
+	DeleteCategory(id, by string) error
 
 	// Item's CRUD
 	CreateItem(i *models.Item) error
 	GetItem(id string) (*models.Item, error)
 	UpdateItem(i *models.Item) error
-	DeleteItem(id string) error
+	DeleteItem(id, by string) error
 
 	// Refill's CRUD
 	CreateRefill(r *models.Refill) error
 	GetRefill(id string) (*models.Refill, error)
 	UpdateRefill(r *models.Refill) error
-	DeleteRefill(id string) error
+	DeleteRefill(id, by string) error
 
 	// Transaction's CRUD
 	CreateTransaction(t *models.Transaction) error
 	GetTransaction(id string) (*models.Transaction, error)
 	UpdateTransaction(t *models.Transaction) error
-	DeleteTransaction(id string) error
+	DeleteTransaction(id, by string) error
 
 	// Other requests that are not CRUD but still needed
 	GetAccounts(page int, size int) ([]*models.Account, error)

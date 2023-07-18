@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"bar/internal/models"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -27,6 +28,9 @@ func (b *Backend) GetAccount(id string) (*models.Account, error) {
 	err := b.db.Collection(AccountsCollection).FindOne(ctx,
 		bson.M{
 			"id": id,
+			"deleted_at": bson.M{
+				"$exists": false,
+			},
 		},
 	).Decode(&acc)
 	if err != nil {
@@ -43,6 +47,9 @@ func (b *Backend) UpdateAccount(acc *models.Account) error {
 	res := b.db.Collection(AccountsCollection).FindOneAndUpdate(ctx,
 		bson.M{
 			"id": acc.Id,
+			"deleted_at": bson.M{
+				"$exists": false,
+			},
 		},
 		bson.M{
 			"$set": acc,
@@ -55,16 +62,24 @@ func (b *Backend) UpdateAccount(acc *models.Account) error {
 	return nil
 }
 
-func (b *Backend) DeleteAccount(id string) error {
+func (b *Backend) DeleteAccount(id, by string) error {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 
-	_, err := b.db.Collection(AccountsCollection).DeleteOne(ctx,
+	// Mark deleted_at
+	res := b.db.Collection(AccountsCollection).FindOneAndUpdate(ctx,
 		bson.M{
 			"id": id,
-		})
-	if err != nil {
-		return err
+		},
+		bson.M{
+			"$set": bson.M{
+				"deleted_at": time.Now().Unix(),
+				"deleted_by": by,
+			},
+		},
+		options.FindOneAndUpdate().SetUpsert(false))
+	if res.Err() != nil {
+		return res.Err()
 	}
 
 	return nil

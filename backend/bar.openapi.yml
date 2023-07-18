@@ -2005,6 +2005,11 @@ components:
             $ref: '#/components/schemas/AccountRestrictions'
         state:
           $ref: '#/components/schemas/AccountState'
+        deleted_at:
+          type: integer
+          format: int64
+        deleted_by:
+          $ref: '#/components/schemas/UUID'
       required:
         - id
         - first_name
@@ -2114,6 +2119,11 @@ components:
           description: Link to picture of the current item
         state:
           $ref: '#/components/schemas/ItemState'
+        deleted_at:
+          type: integer
+          format: int64
+        deleted_by:
+          $ref: '#/components/schemas/UUID'
       required:
         - id
         - price
@@ -2172,6 +2182,11 @@ components:
           description: Link to picture of the current category
         items:
           $ref: '#/components/schemas/Item'
+        deleted_at:
+          type: integer
+          format: int64
+        deleted_by:
+          $ref: '#/components/schemas/UUID'
       required:
         - id
         - name
@@ -2235,6 +2250,11 @@ components:
           format: int
         state:
           $ref: '#/components/schemas/TransactionState'
+        deleted_at:
+          type: integer
+          format: int64
+        deleted_by:
+          $ref: '#/components/schemas/UUID'
       required:
         - id
         - items
@@ -2288,6 +2308,11 @@ components:
           $ref: '#/components/schemas/UUID'
         canceled_by:
           $ref: '#/components/schemas/UUID'
+        deleted_at:
+          type: integer
+          format: int64
+        deleted_by:
+          $ref: '#/components/schemas/UUID'
       required:
         - id
         - account_id
@@ -2319,6 +2344,11 @@ components:
           type: string
           description: Color of the text
           example: "#FFFFFF"
+        deleted_at:
+          type: integer
+          format: int64
+        deleted_by:
+          $ref: '#/components/schemas/UUID'
       required:
         - id
         - text
@@ -2340,6 +2370,11 @@ components:
         image_url:
           type: string
           description: Image to display
+        deleted_at:
+          type: integer
+          format: int64
+        deleted_by:
+          $ref: '#/components/schemas/UUID'
       required:
         - id
         - image_url

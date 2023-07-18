@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"bar/internal/models"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -27,6 +28,9 @@ func (b *Backend) GetRefill(id string) (*models.Refill, error) {
 	err := b.db.Collection(RefillsCollection).FindOne(ctx,
 		bson.M{
 			"id": id,
+			"deleted_at": bson.M{
+				"$exists": false,
+			},
 		},
 	).Decode(&refill)
 	if err != nil {
@@ -43,6 +47,9 @@ func (b *Backend) UpdateRefill(refill *models.Refill) error {
 	res := b.db.Collection(RefillsCollection).FindOneAndUpdate(ctx,
 		bson.M{
 			"id": refill.Id,
+			"deleted_at": bson.M{
+				"$exists": false,
+			},
 		},
 		bson.M{
 			"$set": refill,
@@ -55,16 +62,23 @@ func (b *Backend) UpdateRefill(refill *models.Refill) error {
 	return nil
 }
 
-func (b *Backend) DeleteRefill(id string) error {
+func (b *Backend) DeleteRefill(id, by string) error {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 
-	_, err := b.db.Collection(RefillsCollection).DeleteOne(ctx,
+	res := b.db.Collection(RefillsCollection).FindOneAndUpdate(ctx,
 		bson.M{
 			"id": id,
-		})
-	if err != nil {
-		return err
+		},
+		bson.M{
+			"$set": bson.M{
+				"deleted_at": time.Now().Unix(),
+				"deleted_by": by,
+			},
+		},
+		options.FindOneAndUpdate().SetUpsert(false))
+	if res.Err() != nil {
+		return res.Err()
 	}
 
 	return nil
