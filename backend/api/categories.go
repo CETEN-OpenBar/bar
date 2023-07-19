@@ -4,7 +4,7 @@ import (
 	"bar/autogen"
 	"bar/internal/models"
 	"bar/internal/storage"
-	"io"
+	"encoding/base64"
 	"net/http"
 	"strings"
 
@@ -51,21 +51,16 @@ func (s *Server) PostCategory(c echo.Context) error {
 		return ErrorNotAuthenticated(c)
 	}
 
+	var p autogen.NewCategory
+	if err := c.Bind(&p); err != nil {
+		return Error400(c)
+	}
+
 	// Get category from request
 	uid := uuid.New()
 
-	// Get image from request
-	image, err := c.FormFile("picture")
-	if err != nil {
-		return Error400(c)
-	}
-
-	file, err := image.Open()
-	if err != nil {
-		return Error400(c)
-	}
-
-	d, err := io.ReadAll(file)
+	// Get image from p.Picture as base64
+	d, err := base64.StdEncoding.DecodeString(p.Picture)
 	if err != nil {
 		return Error400(c)
 	}
@@ -85,7 +80,7 @@ func (s *Server) PostCategory(c echo.Context) error {
 	category := &models.Category{
 		Category: autogen.Category{
 			Id:         uid,
-			Name:       c.FormValue("name"),
+			Name:       p.Name,
 			PictureUri: "/categories/" + uid.String() + "/picture",
 		},
 	}
@@ -171,17 +166,18 @@ func (s *Server) PatchCategory(c echo.Context, categoryId autogen.UUID) error {
 		return Error500(c)
 	}
 
-	if c.FormValue("name") != "" {
-		category.Name = c.FormValue("name")
+	var p autogen.UpdateCategory
+	if err := c.Bind(&p); err != nil {
+		return Error400(c)
 	}
 
-	if image, err := c.FormFile("picture"); err == nil {
-		file, err := image.Open()
-		if err != nil {
-			return Error400(c)
-		}
+	if p.Name != nil {
+		category.Name = *p.Name
+	}
 
-		d, err := io.ReadAll(file)
+	if p.Picture != nil {
+		// Get image from p.Picture as base64
+		d, err := base64.StdEncoding.DecodeString(*p.Picture)
 		if err != nil {
 			return Error400(c)
 		}

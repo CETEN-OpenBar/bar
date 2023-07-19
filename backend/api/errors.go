@@ -77,3 +77,12 @@ func ErrorCategoryNotFound(c echo.Context) error {
 	resp.VisitGetCategoryResponse(c.Response())
 	return nil
 }
+
+func ErrorItemNotFound(c echo.Context) error {
+	resp := autogen.GetCategoryItems404JSONResponse{
+		Message:   autogen.MsgItemNotFound,
+		ErrorCode: autogen.ErrItemNotFound,
+	}
+	resp.VisitGetCategoryItemsResponse(c.Response())
+	return nil
+}

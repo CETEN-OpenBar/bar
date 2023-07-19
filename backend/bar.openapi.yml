@@ -1392,7 +1392,7 @@ paths:
         description: Category object
         required: true
         content:
-          multipart/form-data:
+          application/json:
             schema:
               $ref: '#/components/schemas/NewCategory'
       responses:
@@ -1484,7 +1484,7 @@ paths:
         description: Category object
         required: true
         content:
-          multipart/form-data:
+          application/json:
             schema:
               $ref: '#/components/schemas/UpdateCategory'
       responses:
@@ -1673,7 +1673,7 @@ paths:
         description: Item object
         required: true
         content:
-          multipart/form-data:
+          application/json:
             schema:
               $ref: '#/components/schemas/NewItem'
       responses:
@@ -1738,7 +1738,7 @@ paths:
         description: Item object
         required: true
         content:
-          multipart/form-data:
+          application/json:
             schema:
               $ref: '#/components/schemas/UpdateItem'
       responses:
@@ -3145,6 +3145,7 @@ components:
         - image_not_found
         - text_not_found
         - category_not_found
+        - item_not_found
       x-enum-varnames:
         - ErrBadRequest
         - ErrForbidden
@@ -3156,6 +3157,7 @@ components:
         - ErrImageNotFound
         - ErrTextNotFound
         - ErrCategoryNotFound
+        - ErrItemNotFound
     Messages:
       type: string
       enum:
@@ -3173,6 +3175,7 @@ components:
         - Image does not exists
         - Text does not exists
         - Category does not exists
+        - Item does not exists
       x-enum-varnames:
         - MsgBadRequest
         - MsgNotConnected
@@ -3188,6 +3191,7 @@ components:
         - MsgImageNotFound
         - MsgTextNotFound
         - MsgCategoryNotFound
+        - MsgItemNotFound
     HTTPError:
       type: object
       properties:
@@ -3352,15 +3356,20 @@ components:
           format: int32
           example: 32
         category_id:
-          type: string
-          description: Category of the current item
+          $ref: '#/components/schemas/UUID'
         name:
           type: string
           description: Name of the current item
         picture:
           type: string
-          format: binary
+          format: base64
           description: Picture of the current item
+        promotion:
+          type: integer
+          format: int64
+        promotion_ends_at:
+          type: integer
+          format: int64
         state:
           $ref: '#/components/schemas/ItemState'
     NewItem:
@@ -3384,15 +3393,12 @@ components:
           type: integer
           format: int32
           example: 32
-        category_id:
-          type: string
-          description: Category of the current item
         name:
           type: string
           description: Name of the current item
         picture:
           type: string
-          format: binary
+          format: base64
           description: Picture of the current item
         state:
           $ref: '#/components/schemas/ItemState'
@@ -3429,8 +3435,7 @@ components:
           format: int32
           example: 32
         category_id:
-          type: string
-          description: Category of the current item
+          $ref: '#/components/schemas/UUID'
         name:
           type: string
           description: Name of the current item
@@ -3461,7 +3466,7 @@ components:
           description: Name of the current category
         picture:
           type: string
-          format: binary
+          format: base64
     NewCategory:
       type: object
       properties:
@@ -3470,7 +3475,7 @@ components:
           description: Name of the current category
         picture:
           type: string
-          format: binary
+          format: base64
       required:
         - name
         - picture
