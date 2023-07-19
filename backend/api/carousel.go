@@ -2,8 +2,15 @@ package api
 
 import (
 	"bar/autogen"
+	"bar/internal/models"
+	"bar/internal/storage"
+	"io"
+	"net/http"
+	"strings"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/sirupsen/logrus"
 )
 
 // (GET /carousel/images)
@@ -15,7 +22,21 @@ func (s *Server) GetCarouselImages(c echo.Context) error {
 		return ErrorNotAuthenticated(c)
 	}
 
-	// TODO: implement
+	// Get carousel images from database
+	data, err := s.DBackend.GetAllCarouselImages()
+	if err != nil {
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	var images []autogen.CarouselImage
+
+	for _, image := range data {
+		images = append(images, image.CarouselImage)
+	}
+
+	// Return carousel images
+	autogen.GetCarouselImages200JSONResponse(images).VisitGetCarouselImagesResponse(c.Response())
 	return nil
 }
 
@@ -28,7 +49,75 @@ func (s *Server) AddCarouselImage(c echo.Context) error {
 		return ErrorNotAuthenticated(c)
 	}
 
-	// TODO: implement
+	// Get image from request
+	image, err := c.FormFile("image")
+	if err != nil {
+		return Error400(c)
+	}
+
+	file, err := image.Open()
+	if err != nil {
+		return Error400(c)
+	}
+
+	data, err := io.ReadAll(file)
+	if err != nil {
+		return Error400(c)
+	}
+
+	// Check MIME type
+	if !strings.Contains(http.DetectContentType(data), "image") {
+		return Error400(c)
+	}
+
+	uid := uuid.New()
+	// Save image to storage
+	err = storage.SaveFile("carousel/"+uid.String(), data)
+	if err != nil {
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	// Add image to database
+	carouselImage := &models.CarouselImage{
+		CarouselImage: autogen.CarouselImage{
+			Id:       uid,
+			ImageUrl: "/carousel/images/" + uid.String(),
+		},
+	}
+
+	err = s.DBackend.CreateCarouselImage(carouselImage)
+	if err != nil {
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	autogen.AddCarouselImage201JSONResponse(carouselImage.CarouselImage).VisitAddCarouselImageResponse(c.Response())
+	return nil
+}
+
+// (GET /carousel/images/{image_id})
+func (s *Server) GetCarouselImage(c echo.Context, imageId autogen.UUID) error {
+	_, err := s.DBackend.GetCarouselImage(imageId.String())
+	if err != nil {
+		// Remove cache
+		c.Response().Header().Set("Cache-Control", "max-age=0")
+		c.Response().Header().Set("Expires", "0")
+		return ErrorImageNotFound(c)
+	}
+
+	data, err := storage.GetFile("carousel/" + imageId.String())
+	if err != nil {
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	// Caching
+	c.Response().Header().Set("Cache-Control", "max-age=86400")
+	c.Response().Header().Set("Expires", "86400")
+
+	c.Response().Header().Set("Content-Type", http.DetectContentType(data))
+	c.Response().Write(data)
 	return nil
 }
 
@@ -36,12 +125,24 @@ func (s *Server) AddCarouselImage(c echo.Context) error {
 func (s *Server) MarkDeleteCarouselImage(c echo.Context, imageId autogen.UUID) error {
 	// Get admin account from cookie
 	sess := s.getAdminSess(c)
-	_, ok := sess.Values["admin_account_id"].(string)
+	accountID, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
 		return ErrorNotAuthenticated(c)
 	}
 
-	// TODO: implement
+	_, err := s.DBackend.GetCarouselImage(imageId.String())
+	if err != nil {
+		return ErrorImageNotFound(c)
+	}
+
+	err = s.DBackend.MarkDeleteCarouselImage(imageId.String(), accountID)
+	if err != nil {
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	logrus.Infof("Carousel image %s marked for deletion by admin %s", imageId.String(), accountID)
+	autogen.MarkDeleteAccountId204Response{}.VisitMarkDeleteAccountIdResponse(c.Response())
 	return nil
 }
 
@@ -54,7 +155,20 @@ func (s *Server) GetCarouselTexts(c echo.Context) error {
 		return ErrorNotAuthenticated(c)
 	}
 
-	// TODO: implement
+	// Get carousel images from database
+	data, err := s.DBackend.GetAllCarouselTexts()
+	if err != nil {
+		return Error500(c)
+	}
+
+	var texts []autogen.CarouselText
+
+	for _, image := range data {
+		texts = append(texts, image.CarouselText)
+	}
+
+	// Return carousel images
+	autogen.GetCarouselTexts200JSONResponse(texts).VisitGetCarouselTextsResponse(c.Response())
 	return nil
 }
 
@@ -67,7 +181,33 @@ func (s *Server) AddCarouselText(c echo.Context) error {
 		return ErrorNotAuthenticated(c)
 	}
 
-	// TODO: implement
+	// Get text from request
+	var text autogen.CarouselTextCreate
+	err := c.Bind(&text)
+	if err != nil {
+		return Error400(c)
+	}
+
+	var color = "#000000"
+	if text.Color != nil {
+		color = *text.Color
+	}
+
+	t := &models.CarouselText{
+		CarouselText: autogen.CarouselText{
+			Id:    uuid.New(),
+			Text:  text.Text,
+			Color: color,
+		},
+	}
+
+	err = s.DBackend.CreateCarouselText(t)
+	if err != nil {
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	autogen.AddCarouselText201JSONResponse(t.CarouselText).VisitAddCarouselTextResponse(c.Response())
 	return nil
 }
 
@@ -75,11 +215,22 @@ func (s *Server) AddCarouselText(c echo.Context) error {
 func (s *Server) MarkDeleteCarouselText(c echo.Context, textId autogen.UUID) error {
 	// Get admin account from cookie
 	sess := s.getAdminSess(c)
-	_, ok := sess.Values["admin_account_id"].(string)
+	adminID, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
 		return ErrorNotAuthenticated(c)
 	}
 
-	// TODO: implement
+	_, err := s.DBackend.GetCarouselText(textId.String())
+	if err != nil {
+		return ErrorTextNotFound(c)
+	}
+
+	err = s.DBackend.MarkDeleteCarouselText(textId.String(), adminID)
+	if err != nil {
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	logrus.Infof("Carousel text %s marked for deletion by admin %s", textId.String(), adminID)
 	return nil
 }

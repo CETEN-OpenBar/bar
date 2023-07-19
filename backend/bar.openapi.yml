@@ -1877,6 +1877,38 @@ paths:
       tags:
         - carousel
   /carousel/images/{image_id}:
+    get:
+      description: 'Get a carousel image'
+      operationId: getCarouselImage
+      parameters:
+        - name: image_id
+          in: path
+          description: ID of the image
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '200':
+          description: ''
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: 'Image not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      tags:
+        - carousel
     delete:
       description: 'Delete a carousel image'
       operationId: markDeleteCarouselImage
@@ -3044,6 +3076,8 @@ components:
         - qr_invalid
         - internal_server_error
         - not_authenticated
+        - image_not_found
+        - text_not_found
       x-enum-varnames:
         - ErrBadRequest
         - ErrForbidden
@@ -3052,6 +3086,8 @@ components:
         - ErrQRInvalid
         - ErrInternalServerError
         - ErrNotAuthenticated
+        - ErrImageNotFound
+        - ErrTextNotFound
     Messages:
       type: string
       enum:
@@ -3066,6 +3102,8 @@ components:
         - Invalid QR Code nonce
         - Internal server error
         - You are not authenticated
+        - Image does not exists
+        - Text does not exists
       x-enum-varnames:
         - MsgBadRequest
         - MsgNotConnected
@@ -3078,6 +3116,8 @@ components:
         - MsgQRInvalid
         - MsgInternalServerError
         - MsgNotAuthenticated
+        - MsgImageNotFound
+        - MsgTextNotFound
     HTTPError:
       type: object
       properties:

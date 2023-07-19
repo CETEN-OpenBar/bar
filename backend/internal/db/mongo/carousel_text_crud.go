@@ -90,7 +90,7 @@ func (b *Backend) MarkDeleteCarouselText(id, by string) error {
 		bson.M{
 			"$set": bson.M{
 				"deleted_at": time.Now().Unix(),
-				"deleted_by": by,
+				"deleted_by": uuid.MustParse(id),
 			},
 		},
 		options.FindOneAndUpdate().SetUpsert(false))

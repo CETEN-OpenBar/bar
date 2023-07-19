@@ -27,6 +27,10 @@ type Config struct {
 		GoogleClientSecret string `env:"GOOGLE_CLIENT_SECRET"`
 	} `envPrefix:"BAR_OAUTH_"`
 
+	StorageConfig struct {
+		StoragePath string `env:"STORAGE_PATH" envDefault:"./storage"`
+	} `envPrefix:"BAR_STORAGE_"`
+
 	LogLevel string `env:"BAR_LOG_LEVEL" envDefault:"info"`
 }
 

@@ -7,51 +7,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func Error500(c echo.Context) error {
-	resp := autogen.GetAccounts500JSONResponse{
-		Message:   autogen.MsgInternalServerError,
-		ErrorCode: autogen.ErrInternalServerError,
-	}
-	resp.VisitGetAccountsResponse(c.Response())
-	return nil
-}
-
-func Error400(c echo.Context) error {
-	resp := autogen.ConnectAccount400JSONResponse{
-		Message:   autogen.MsgBadRequest,
-		ErrorCode: autogen.ErrBadRequest,
-	}
-	resp.VisitConnectAccountResponse(c.Response())
-	return nil
-}
-
-func ErrorNotAuthenticated(c echo.Context) error {
-	resp := autogen.GetAccounts401JSONResponse{
-		Message:   autogen.MsgNotAuthenticated,
-		ErrorCode: autogen.ErrNotAuthenticated,
-	}
-	resp.VisitGetAccountsResponse(c.Response())
-	return nil
-}
-
-func Error409(c echo.Context) error {
-	resp := autogen.PostAccounts409JSONResponse{
-		Message:   autogen.MsgAccountAlreadyExists,
-		ErrorCode: autogen.ErrBadRequest,
-	}
-	resp.VisitPostAccountsResponse(c.Response())
-	return nil
-}
-
-func ErrorAccNotFound(c echo.Context) error {
-	resp := autogen.GetAccount401JSONResponse{
-		Message:   autogen.MsgAccountNotFound,
-		ErrorCode: autogen.ErrAccountNotFound,
-	}
-	resp.VisitGetAccountResponse(c.Response())
-	return nil
-}
-
 func (s *Server) SetCookie(c echo.Context, account *models.Account) {
 	sess := s.getUserSess(c)
 	sess.Options.MaxAge = 60 * 60 * 24 * 7 // 1 week
