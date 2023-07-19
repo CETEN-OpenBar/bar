@@ -1,8 +1,6 @@
 package mongo
 
 import (
-	"strings"
-
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -98,7 +96,28 @@ var (
 						"$exists": true,
 					},
 				}),
-			}},
+			},
+			mongo.IndexModel{
+				Keys: bson.M{
+					"card_id": 1,
+				},
+				Options: options.Index().SetUnique(true).SetPartialFilterExpression(bson.M{
+					"card_id": bson.M{
+						"$exists": true,
+					},
+				}),
+			},
+			mongo.IndexModel{
+				Keys: bson.M{
+					"google_id": 1,
+				},
+				Options: options.Index().SetUnique(true).SetPartialFilterExpression(bson.M{
+					"google_id": bson.M{
+						"$exists": true,
+					},
+				}),
+			},
+		},
 	}
 
 	TransactionsCollection   = "transactions"
@@ -115,16 +134,7 @@ func (b *Backend) CreateCollections() error {
 	defer cancel()
 
 	for _, collection := range Collections {
-		err := b.db.CreateCollection(ctx, collection)
-		if err != nil {
-			if strings.Contains(err.Error(), "exists") {
-				if err := b.CreateIndexes(collection); err != nil {
-					return err
-				}
-				return nil
-			}
-			return err
-		}
+		b.db.CreateCollection(ctx, collection)
 
 		if err := b.CreateIndexes(collection); err != nil {
 			return err

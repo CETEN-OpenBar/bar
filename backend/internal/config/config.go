@@ -26,6 +26,8 @@ type Config struct {
 		GoogleClientID     string `env:"GOOGLE_CLIENT_ID"`
 		GoogleClientSecret string `env:"GOOGLE_CLIENT_SECRET"`
 	} `envPrefix:"BAR_OAUTH_"`
+
+	LogLevel string `env:"BAR_LOG_LEVEL" envDefault:"info"`
 }
 
 var config Config
@@ -38,6 +40,11 @@ func init() {
 	godotenv.Load()
 	if err := env.Parse(&config); err != nil {
 		logrus.Fatal(err)
+	}
+
+	logrus.SetLevel(logrus.InfoLevel)
+	if config.LogLevel == "debug" {
+		logrus.SetLevel(logrus.DebugLevel)
 	}
 
 	logrus.Info("Loaded config: ", fmt.Sprintf("%+v", config))

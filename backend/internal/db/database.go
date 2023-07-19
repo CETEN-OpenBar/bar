@@ -80,6 +80,7 @@ type DBackend interface {
 	RestoreTransaction(id string) error
 
 	// Other requests that are not CRUD but still needed
+	GetAccountByGoogle(googleID string) (*models.Account, error)
 	GetAccountByCard(card string) (*models.Account, error)
 	GetAccounts(page int, size int) ([]*models.Account, error)
 	CountAccounts() (int64, error)

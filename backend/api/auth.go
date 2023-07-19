@@ -12,6 +12,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/patrickmn/go-cache"
+	"github.com/sirupsen/logrus"
 	"github.com/skip2/go-qrcode"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/oauth2"
@@ -61,6 +62,8 @@ func (s *Server) GetAccountQR(c echo.Context) error {
 
 	r := bytes.NewReader(png)
 
+	logrus.Debugf("QR code generated for account %s: %s", accountID, url)
+
 	autogen.GetAccountQR200ImagepngResponse{
 		Body:          r,
 		ContentLength: int64(len(png)),
@@ -103,8 +106,9 @@ func (s *Server) ConnectAccount(c echo.Context, qrNonce string) error {
 	// Cache state
 	stateCache.Set(state, accountID, cache.DefaultExpiration)
 
+	hostDomainOption := oauth2.SetAuthURLParam("hd", "telecomnancy.net")
 	// Redirect to Google
-	url := oauth2Config.AuthCodeURL(state)
+	url := oauth2Config.AuthCodeURL(state, oauth2.AccessTypeOffline, hostDomainOption)
 
 	return c.Redirect(301, url)
 }
@@ -130,7 +134,7 @@ func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 	// Get account from state and delete state
 	accountID, found := stateCache.Get(params.State)
 	if !found {
-		return ErrorNotAuthenticated(c)
+		return s.CallbackInpromptu(c, params)
 	}
 	stateCache.Delete(params.State)
 
@@ -206,6 +210,83 @@ func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 	return nil
 }
 
+// (GET /auth/google/callback)
+func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams) error {
+
+	conf := config.GetConfig()
+
+	// Get token from Google
+	oauth2Config := oauth2.Config{
+		ClientID:     conf.OauthConfig.GoogleClientID,
+		ClientSecret: conf.OauthConfig.GoogleClientSecret,
+		RedirectURL:  fmt.Sprintf("%s/auth/google/callback", conf.ApiConfig.BasePath),
+		Scopes:       scopes,
+		Endpoint: oauth2.Endpoint{
+			AuthURL:  "https://accounts.google.com/o/oauth2/auth",
+			TokenURL: "https://oauth2.googleapis.com/token",
+		},
+	}
+
+	token, err := oauth2Config.Exchange(c.Request().Context(), params.Code)
+	if err != nil {
+		return Error500(c)
+	}
+
+	// Get user from Google
+	client := oauth2Config.Client(c.Request().Context(), token)
+	resp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
+	if err != nil {
+		return Error500(c)
+	}
+	defer resp.Body.Close()
+
+	usr := &googleUser{}
+	err = json.NewDecoder(resp.Body).Decode(usr)
+	if err != nil {
+		return Error500(c)
+	}
+
+	account, err := s.DBackend.GetAccountByGoogle(usr.ID)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorAccNotFound(c)
+		}
+		return Error500(c)
+	}
+
+	adminService, err := admin.NewService(c.Request().Context(), option.WithTokenSource(oauth2Config.TokenSource(c.Request().Context(), token)))
+	if err != nil {
+		return Error500(c)
+	}
+
+	t, err := adminService.Users.Get(usr.ID).Projection("custom").CustomFieldMask("Education").ViewType("domain_public").Do()
+	if err != nil {
+		return Error500(c)
+	}
+	edc := &education{}
+	err = json.Unmarshal(t.CustomSchemas["Education"], edc)
+	if err != nil {
+		return Error500(c)
+	}
+
+	account.FirstName = usr.FirstName
+	account.LastName = usr.LastName
+	account.EmailAddress = usr.Email
+	account.GoogleId = usr.ID
+
+	err = s.DBackend.UpdateAccount(account)
+	if err != nil {
+		return Error500(c)
+	}
+
+	s.SetCookie(c, account)
+
+	autogen.Callback200JSONResponse{
+		Account: &account.Account,
+	}.VisitCallbackResponse(c.Response())
+	return nil
+}
+
 // (POST /auth/card)
 func (s *Server) ConnectCard(c echo.Context) error {
 	var param autogen.ConnectCardJSONBody
@@ -236,6 +317,32 @@ func (s *Server) ConnectCard(c echo.Context) error {
 		Account: &account.Account,
 	}.VisitConnectCardResponse(c.Response())
 	return nil
+}
+
+// (GET /auth/google)
+func (s *Server) ConnectGoogle(c echo.Context) error {
+	conf := config.GetConfig()
+
+	// Init OAuth2 flow with Google
+	oauth2Config := oauth2.Config{
+		ClientID:     conf.OauthConfig.GoogleClientID,
+		ClientSecret: conf.OauthConfig.GoogleClientSecret,
+		RedirectURL:  fmt.Sprintf("%s/auth/google/callback", conf.ApiConfig.BasePath),
+		Scopes:       scopes,
+		Endpoint: oauth2.Endpoint{
+			AuthURL:  "https://accounts.google.com/o/oauth2/auth",
+			TokenURL: "https://oauth2.googleapis.com/token",
+		},
+	}
+
+	// state is not nonce
+	state := uuid.NewString()
+
+	hostDomainOption := oauth2.SetAuthURLParam("hd", "telecomnancy.net")
+	// Redirect to Google
+	url := oauth2Config.AuthCodeURL(state, oauth2.AccessTypeOffline, hostDomainOption)
+
+	return c.Redirect(301, url)
 }
 
 // (GET /logout)

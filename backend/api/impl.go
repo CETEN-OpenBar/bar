@@ -5,7 +5,6 @@ import (
 	"bar/internal/config"
 	"bar/internal/db"
 	"os"
-	"time"
 
 	"github.com/gorilla/context"
 	"github.com/gorilla/sessions"
@@ -13,7 +12,6 @@ import (
 	echoLog "github.com/labstack/gommon/log"
 	middleware "github.com/neko-neko/echo-logrus/v2"
 	"github.com/neko-neko/echo-logrus/v2/log"
-	"github.com/sirupsen/logrus"
 )
 
 type Server struct {
@@ -41,9 +39,6 @@ func (s *Server) Serve(c *config.Config) error {
 	// Logger
 	log.Logger().SetOutput(os.Stdout)
 	log.Logger().SetLevel(echoLog.INFO)
-	log.Logger().SetFormatter(&logrus.JSONFormatter{
-		TimestampFormat: time.RFC3339,
-	})
 	e.Logger = log.Logger()
 	e.Use(middleware.Logger())
 

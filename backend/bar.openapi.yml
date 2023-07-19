@@ -6,7 +6,7 @@ info:
     url: https://opensource.org/license/mit/
   version: 1.0.11
 servers:
-  - url: http://localhost:8080/
+  - url: http://localhost:8080
   - url: https://le-bar.telecomnancy.net/api/v1
 tags:
   - name: auth
@@ -100,8 +100,46 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
       tags:
         - auth
+  /auth/google:
+    description: Connect to account with Google
+    get:
+      summary: ''
+      description: Connect account to Google
+      operationId: connectGoogle
+      responses:
+        '200':
+          description: 'Successfully connected'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    $ref: '#/components/schemas/Messages'
+                  account:
+                    $ref: '#/components/schemas/Account'
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: 'Not connected'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      tags:
+        - auth
   /auth/card:
-    description: Connect account to card
+    description: Connect to account with card
     post:
       summary: ''
       description: Connect account to card
@@ -122,7 +160,6 @@ paths:
                 - card_pin
       responses:
         '200':
-          # Also includes cookies
           description: 'Successfully connected'
           content:
             application/json:
@@ -133,11 +170,6 @@ paths:
                     $ref: '#/components/schemas/Messages'
                   account:
                     $ref: '#/components/schemas/Account'
-          headers:
-            Set-Cookie:
-              description: 'Cookies'
-              schema:
-                type: string
         '400':
           description: 'Bad request'
           content:
