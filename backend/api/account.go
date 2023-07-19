@@ -45,9 +45,21 @@ func (s *Server) GetAccount(c echo.Context) error {
 func (s *Server) GetAccounts(c echo.Context, params autogen.GetAccountsParams) error {
 	// Get admin account from cookie
 	sess := s.getAdminSess(c)
-	_, ok := sess.Values["admin_account_id"].(string)
+	adminId, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
 		return ErrorNotAuthenticated(c)
+	}
+
+	// Get account from database
+	_, err := s.DBackend.GetAccount(adminId)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			// Delete cookie
+			sess.Options.MaxAge = -1
+			sess.Save(c.Request(), c.Response())
+			return ErrorAccNotFound(c)
+		}
+		return Error500(c)
 	}
 
 	// Set up parameters
@@ -249,9 +261,21 @@ func (s *Server) PatchAccountId(c echo.Context, accountId autogen.UUID) error {
 func (s *Server) ImportAccounts(c echo.Context) error {
 	// Get admin account from cookie
 	sess := s.getAdminSess(c)
-	accountID, ok := sess.Values["admin_account_id"].(string)
+	adminId, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
 		return ErrorNotAuthenticated(c)
+	}
+
+	// Get account from database
+	_, err := s.DBackend.GetAccount(adminId)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			// Delete cookie
+			sess.Options.MaxAge = -1
+			sess.Save(c.Request(), c.Response())
+			return ErrorAccNotFound(c)
+		}
+		return Error500(c)
 	}
 
 	// Get file from request
@@ -326,7 +350,7 @@ func (s *Server) ImportAccounts(c echo.Context) error {
 		}
 	}
 
-	logrus.Info("Accounts imported: ", len(records)-len(notProcessed), " by ", accountID)
+	logrus.Info("Accounts imported: ", len(records)-len(notProcessed), " by ", adminId)
 	autogen.ImportAccounts200JSONResponse{
 		NotAccepted: &notProcessed,
 	}.VisitImportAccountsResponse(c.Response())

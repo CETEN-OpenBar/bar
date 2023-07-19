@@ -41,6 +41,7 @@ func (s *Server) GetAccountQR(c echo.Context) error {
 			sess.Save(c.Request(), c.Response())
 			return ErrorAccNotFound(c)
 		}
+		logrus.Error(err)
 		return Error500(c)
 	}
 

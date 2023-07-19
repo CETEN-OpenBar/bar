@@ -5,41 +5,32 @@ import (
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (b *Backend) GetRefills(account string, page uint64, size uint64, startAt, endAt int64) ([]*models.Refill, error) {
+func (b *Backend) GetRefills(account string, page uint64, size uint64, startAt, endAt uint64) ([]*models.Refill, error) {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 
 	// Get "size" refills from "page" using aggregation
 	var refills []*models.Refill
-	cursor, err := b.db.Collection(RefillsCollection).Aggregate(ctx, []bson.M{
-		{
-			"$match": bson.M{
-				"account_id": uuid.MustParse(account),
-				"issued_at": bson.M{
-					"$gte": startAt,
-					"$lte": endAt,
-				},
-				"$or": []bson.M{
-					{
-						"deleted_at": bson.M{
-							"$exists": false,
-						},
-					},
-					{
-						"deleted_at": nil,
-					},
+	cursor, err := b.db.Collection(RefillsCollection).Find(ctx, bson.M{
+		"account_id": uuid.MustParse(account),
+		"issued_at": bson.M{
+			"$gte": startAt,
+			"$lte": endAt,
+		},
+		"$or": []bson.M{
+			{
+				"deleted_at": bson.M{
+					"$exists": false,
 				},
 			},
+			{
+				"deleted_at": nil,
+			},
 		},
-		{
-			"$skip": page * size,
-		},
-		{
-			"$limit": size,
-		},
-	})
+	}, options.Find().SetSkip(int64(page*size)).SetLimit(int64(size)))
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +42,7 @@ func (b *Backend) GetRefills(account string, page uint64, size uint64, startAt, 
 	return refills, nil
 }
 
-func (b *Backend) CountRefills(account string, startAt, endAt int64) (int64, error) {
+func (b *Backend) CountRefills(account string, startAt, endAt uint64) (uint64, error) {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 
@@ -76,41 +67,31 @@ func (b *Backend) CountRefills(account string, startAt, endAt int64) (int64, err
 		return 0, err
 	}
 
-	return count, nil
+	return uint64(count), nil
 }
 
-func (b *Backend) GetAllRefills(page uint64, size uint64, startAt, endAt int64) ([]*models.Refill, error) {
+func (b *Backend) GetAllRefills(page uint64, size uint64, startAt, endAt uint64) ([]*models.Refill, error) {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 
 	// Get "size" refills from "page" using aggregation
 	var refills []*models.Refill
-	cursor, err := b.db.Collection(RefillsCollection).Aggregate(ctx, []bson.M{
-		{
-			"$match": bson.M{
-				"issued_at": bson.M{
-					"$gte": startAt,
-					"$lte": endAt,
-				},
-				"$or": []bson.M{
-					{
-						"deleted_at": bson.M{
-							"$exists": false,
-						},
-					},
-					{
-						"deleted_at": nil,
-					},
+	cursor, err := b.db.Collection(RefillsCollection).Find(ctx, bson.M{
+		"issued_at": bson.M{
+			"$gte": startAt,
+			"$lte": endAt,
+		},
+		"$or": []bson.M{
+			{
+				"deleted_at": bson.M{
+					"$exists": false,
 				},
 			},
+			{
+				"deleted_at": nil,
+			},
 		},
-		{
-			"$skip": page * size,
-		},
-		{
-			"$limit": size,
-		},
-	})
+	}, options.Find().SetSkip(int64(page*size)).SetLimit(int64(size)))
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +103,7 @@ func (b *Backend) GetAllRefills(page uint64, size uint64, startAt, endAt int64) 
 	return refills, nil
 }
 
-func (b *Backend) CountAllRefills(startAt, endAt int64) (int64, error) {
+func (b *Backend) CountAllRefills(startAt, endAt uint64) (uint64, error) {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 
@@ -146,5 +127,5 @@ func (b *Backend) CountAllRefills(startAt, endAt int64) (int64, error) {
 		return 0, err
 	}
 
-	return count, nil
+	return uint64(count), nil
 }

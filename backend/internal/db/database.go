@@ -33,7 +33,7 @@ type DBackend interface {
 	RestoreAccount(id string) error
 
 	GetDeletedAccounts(page uint64, size uint64) ([]*models.Account, error)
-	CountDeletedAccounts() (int64, error)
+	CountDeletedAccounts() (uint64, error)
 
 	// CarouselText's CRUD
 	CreateCarouselText(ct *models.CarouselText) error
@@ -45,7 +45,7 @@ type DBackend interface {
 	RestoreCarouselText(id string) error
 
 	GetDeletedCarouselTexts(page uint64, size uint64) ([]*models.CarouselText, error)
-	CountDeletedCarouselTexts() (int64, error)
+	CountDeletedCarouselTexts() (uint64, error)
 
 	// CarouselImage's CRUD
 	CreateCarouselImage(ci *models.CarouselImage) error
@@ -57,7 +57,7 @@ type DBackend interface {
 	RestoreCarouselImage(id string) error
 
 	GetDeletedCarouselImages(page uint64, size uint64) ([]*models.CarouselImage, error)
-	CountDeletedCarouselImages() (int64, error)
+	CountDeletedCarouselImages() (uint64, error)
 
 	// Category's CRUD
 	CreateCategory(c *models.Category) error
@@ -69,7 +69,7 @@ type DBackend interface {
 	RestoreCategory(id string) error
 
 	GetDeletedCategories(page uint64, size uint64) ([]*models.Category, error)
-	CountDeletedCategories() (int64, error)
+	CountDeletedCategories() (uint64, error)
 
 	// Item's CRUD
 	CreateItem(i *models.Item) error
@@ -81,7 +81,7 @@ type DBackend interface {
 	RestoreItem(id string) error
 
 	GetDeletedItems(page uint64, size uint64) ([]*models.Item, error)
-	CountDeletedItems() (int64, error)
+	CountDeletedItems() (uint64, error)
 
 	// Refill's CRUD
 	CreateRefill(r *models.Refill) error
@@ -93,7 +93,7 @@ type DBackend interface {
 	RestoreRefill(id string) error
 
 	GetDeletedRefills(page uint64, size uint64) ([]*models.Refill, error)
-	CountDeletedRefills() (int64, error)
+	CountDeletedRefills() (uint64, error)
 
 	// Transaction's CRUD
 	CreateTransaction(t *models.Transaction) error
@@ -105,21 +105,26 @@ type DBackend interface {
 	RestoreTransaction(id string) error
 
 	GetDeletedTransactions(page uint64, size uint64) ([]*models.Transaction, error)
-	CountDeletedTransactions() (int64, error)
+	CountDeletedTransactions() (uint64, error)
+
+	GetTransactions(account string, page uint64, size uint64, state string) ([]*models.Transaction, error)
+	CountTransactions(account string, state string) (uint64, error)
+
+	GetAllTransactions(page uint64, size uint64, state string) ([]*models.Transaction, error)
+	CountAllTransactions(state string) (uint64, error)
 
 	// Other requests that are not CRUD but still needed
 	GetAccountByGoogle(googleID string) (*models.Account, error)
 	GetAccountByCard(card string) (*models.Account, error)
 	GetAccounts(page uint64, size uint64) ([]*models.Account, error)
-	CountAccounts() (int64, error)
-	GetTransactions(account string, page uint64, size uint64, state string) ([]*models.Transaction, error)
-	GetRefills(account string, page uint64, size uint64, startAt, endAt int64) ([]*models.Refill, error)
-	CountRefills(account string, startAt, endAt int64) (int64, error)
+	CountAccounts() (uint64, error)
+	GetRefills(account string, page uint64, size uint64, startAt, endAt uint64) ([]*models.Refill, error)
+	CountRefills(account string, startAt, endAt uint64) (uint64, error)
 	GetItems(categoryID string, page, size uint64, state string) ([]*models.Item, error)
-	CountItems(categoryID string, state string) (int64, error)
+	CountItems(categoryID string, state string) (uint64, error)
 
-	GetAllRefills(page uint64, size uint64, startAt, endAt int64) ([]*models.Refill, error)
-	CountAllRefills(startAt, endAt int64) (int64, error)
+	GetAllRefills(page uint64, size uint64, startAt, endAt uint64) ([]*models.Refill, error)
+	CountAllRefills(startAt, endAt uint64) (uint64, error)
 	GetAllCategories() ([]*models.Category, error)
 	GetAllCarouselImages() ([]*models.CarouselImage, error)
 	GetAllCarouselTexts() ([]*models.CarouselText, error)

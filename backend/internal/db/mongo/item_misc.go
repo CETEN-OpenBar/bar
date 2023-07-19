@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func (b *Backend) GetItems(categoryID string, page, size uint64, state string) ([]*models.Item, error) {
@@ -30,17 +31,7 @@ func (b *Backend) GetItems(categoryID string, page, size uint64, state string) (
 		filter["state"] = state
 	}
 
-	cursor, err := b.db.Collection(ItemsCollection).Aggregate(ctx, []bson.M{
-		{
-			"$match": filter,
-		},
-		{
-			"$skip": page * size,
-		},
-		{
-			"$limit": size,
-		},
-	})
+	cursor, err := b.db.Collection(ItemsCollection).Find(ctx, filter, options.Find().SetSkip(int64(page*size)).SetLimit(int64(size)))
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +43,7 @@ func (b *Backend) GetItems(categoryID string, page, size uint64, state string) (
 	return items, nil
 }
 
-func (b *Backend) CountItems(categoryID string, state string) (int64, error) {
+func (b *Backend) CountItems(categoryID string, state string) (uint64, error) {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 
@@ -74,5 +65,5 @@ func (b *Backend) CountItems(categoryID string, state string) (int64, error) {
 		return 0, err
 	}
 
-	return count, nil
+	return uint64(count), nil
 }

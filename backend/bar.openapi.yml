@@ -637,11 +637,12 @@ paths:
                   page:
                     type: integer
                     format: uint64
-                    
                   limit:
                     type: integer
                     format: uint64
-                    
+                  max_page:
+                    type: integer
+                    format: uint64
         '401':
           description: 'Not authorized'
           content:
@@ -699,22 +700,19 @@ paths:
               schema:
                 type: object
                 properties:
-                  accounts:
+                  transactions:
                     type: array
                     items:
                       $ref: '#/components/schemas/Transaction'
                   page:
                     type: integer
                     format: uint64
-                    
                   limit:
                     type: integer
                     format: uint64
-                    
                   max_page:
                     type: integer
                     format: uint64
-                    
         '401':
           description: 'Not authorized'
           content:
@@ -816,22 +814,19 @@ paths:
               schema:
                 type: object
                 properties:
-                  accounts:
+                  transactions:
                     type: array
                     items:
                       $ref: '#/components/schemas/Transaction'
                   page:
                     type: integer
                     format: uint64
-                    
                   limit:
                     type: integer
                     format: uint64
-                    
                   max_page:
                     type: integer
                     format: uint64
-                    
         '401':
           description: 'Not authorized'
           content:
@@ -1043,9 +1038,16 @@ paths:
         - name: state
           in: query
           description: New state of the item
-          required: true
+          required: false
           schema:
             $ref: '#/components/schemas/TransactionItemState'
+        - name: amount
+          in: query
+          description: New amount of the item
+          required: false
+          schema:
+            type: integer
+            format: uint64
       responses:
         '200':
           description: ''
@@ -3638,16 +3640,18 @@ components:
         item_amount:
           type: integer
           format: uint64
-          
+        unit_cost:
+          type: integer
+          format: uint64
         total_cost:
           type: integer
           format: uint64
-          
         state:
-          $ref: '#/components/schemas/TransactionState'
+          $ref: '#/components/schemas/TransactionItemState'
       required:
         - item_id
         - item_amount
+        - unit_cost
         - total_cost
         - state
     Transaction:
@@ -3664,7 +3668,6 @@ components:
         total_cost:
           type: integer
           format: uint64
-          
         state:
           $ref: '#/components/schemas/TransactionState'
         deleted_at:

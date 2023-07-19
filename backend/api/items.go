@@ -18,9 +18,22 @@ import (
 func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, params autogen.GetCategoryItemsParams) error {
 	// Get account from cookie
 	sess := s.getUserSess(c)
-	_, ok := sess.Values["account_id"].(string)
+	accountID, ok := sess.Values["account_id"].(string)
 	if !ok {
 		return ErrorNotAuthenticated(c)
+	}
+
+	// Get account from database
+	_, err := s.DBackend.GetAccount(accountID)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			// Delete cookie
+			sess.Options.MaxAge = -1
+			sess.Save(c.Request(), c.Response())
+			return ErrorAccNotFound(c)
+		}
+		logrus.Error(err)
+		return Error500(c)
 	}
 
 	var page uint64 = 1
@@ -46,7 +59,7 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 		state = string(*params.State)
 	}
 
-	_, err := s.DBackend.GetCategory(categoryId.String())
+	_, err = s.DBackend.GetCategory(categoryId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorCategoryNotFound(c)
@@ -90,9 +103,21 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 func (s *Server) PostItem(c echo.Context, categoryId autogen.UUID) error {
 	// Get admin account from cookie
 	sess := s.getAdminSess(c)
-	_, ok := sess.Values["admin_account_id"].(string)
+	adminId, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
 		return ErrorNotAuthenticated(c)
+	}
+
+	// Get account from database
+	_, err := s.DBackend.GetAccount(adminId)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			// Delete cookie
+			sess.Options.MaxAge = -1
+			sess.Save(c.Request(), c.Response())
+			return ErrorAccNotFound(c)
+		}
+		return Error500(c)
 	}
 
 	var p autogen.NewItem
@@ -153,12 +178,24 @@ func (s *Server) PostItem(c echo.Context, categoryId autogen.UUID) error {
 func (s *Server) MarkDeleteItem(c echo.Context, categoryId autogen.UUID, itemId autogen.UUID) error {
 	// Get admin account from cookie
 	sess := s.getAdminSess(c)
-	accountID, ok := sess.Values["admin_account_id"].(string)
+	adminId, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
 		return ErrorNotAuthenticated(c)
 	}
 
-	_, err := s.DBackend.GetItem(itemId.String())
+	// Get account from database
+	_, err := s.DBackend.GetAccount(adminId)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			// Delete cookie
+			sess.Options.MaxAge = -1
+			sess.Save(c.Request(), c.Response())
+			return ErrorAccNotFound(c)
+		}
+		return Error500(c)
+	}
+
+	_, err = s.DBackend.GetItem(itemId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorItemNotFound(c)
@@ -167,13 +204,13 @@ func (s *Server) MarkDeleteItem(c echo.Context, categoryId autogen.UUID, itemId 
 		return Error500(c)
 	}
 
-	err = s.DBackend.MarkDeleteItem(itemId.String(), accountID)
+	err = s.DBackend.MarkDeleteItem(itemId.String(), adminId)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
 	}
 
-	logrus.Infof("Item %s deleted by %s", itemId.String(), accountID)
+	logrus.Infof("Item %s deleted by %s", itemId.String(), adminId)
 	autogen.DeleteItem204Response{}.VisitDeleteItemResponse(c.Response())
 	return nil
 }
@@ -182,9 +219,21 @@ func (s *Server) MarkDeleteItem(c echo.Context, categoryId autogen.UUID, itemId 
 func (s *Server) PatchItem(c echo.Context, categoryId autogen.UUID, itemId autogen.UUID) error {
 	// Get admin account from cookie
 	sess := s.getAdminSess(c)
-	accountID, ok := sess.Values["admin_account_id"].(string)
+	adminId, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
 		return ErrorNotAuthenticated(c)
+	}
+
+	// Get account from database
+	_, err := s.DBackend.GetAccount(adminId)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			// Delete cookie
+			sess.Options.MaxAge = -1
+			sess.Save(c.Request(), c.Response())
+			return ErrorAccNotFound(c)
+		}
+		return Error500(c)
 	}
 
 	item, err := s.DBackend.GetItem(itemId.String())
@@ -253,7 +302,7 @@ func (s *Server) PatchItem(c echo.Context, categoryId autogen.UUID, itemId autog
 		return Error500(c)
 	}
 
-	logrus.Infof("Item %s updated by %s", item.Id.String(), accountID)
+	logrus.Infof("Item %s updated by %s", item.Id.String(), adminId)
 	autogen.PostItem201JSONResponse(item.Item).VisitPostItemResponse(c.Response())
 	return nil
 }
@@ -262,12 +311,25 @@ func (s *Server) PatchItem(c echo.Context, categoryId autogen.UUID, itemId autog
 func (s *Server) GetItemPicture(c echo.Context, categoryId autogen.UUID, itemId autogen.UUID) error {
 	// Get account from cookie
 	sess := s.getUserSess(c)
-	_, ok := sess.Values["account_id"].(string)
+	accountID, ok := sess.Values["account_id"].(string)
 	if !ok {
 		return ErrorNotAuthenticated(c)
 	}
 
-	_, err := s.DBackend.GetItem(itemId.String())
+	// Get account from database
+	_, err := s.DBackend.GetAccount(accountID)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			// Delete cookie
+			sess.Options.MaxAge = -1
+			sess.Save(c.Request(), c.Response())
+			return ErrorAccNotFound(c)
+		}
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	_, err = s.DBackend.GetItem(itemId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			// Remove cache

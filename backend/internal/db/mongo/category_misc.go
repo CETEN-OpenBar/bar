@@ -62,7 +62,7 @@ func (b *Backend) GetDeletedCategories(page uint64, size uint64) ([]*models.Cate
 	return accs, nil
 }
 
-func (b *Backend) CountDeletedCategories() (int64, error) {
+func (b *Backend) CountDeletedCategories() (uint64, error) {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 
@@ -75,5 +75,5 @@ func (b *Backend) CountDeletedCategories() (int64, error) {
 		return 0, err
 	}
 
-	return count, nil
+	return uint64(count), nil
 }

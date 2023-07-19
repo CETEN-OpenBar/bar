@@ -32,12 +32,17 @@ func (b *Backend) GetAccounts(page uint64, size uint64) ([]*models.Account, erro
 	return accounts, nil
 }
 
-func (b *Backend) CountAccounts() (int64, error) {
+func (b *Backend) CountAccounts() (uint64, error) {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 
 	// Count all accounts
-	return b.db.Collection(AccountsCollection).CountDocuments(ctx, bson.M{})
+	count, err := b.db.Collection(AccountsCollection).CountDocuments(ctx, bson.M{})
+	if err != nil {
+		return 0, err
+	}
+
+	return uint64(count), nil
 }
 
 func (b *Backend) GetAccountByCard(card string) (*models.Account, error) {

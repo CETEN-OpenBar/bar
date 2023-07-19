@@ -16,18 +16,30 @@ import (
 func (s *Server) GetRefills(c echo.Context, params autogen.GetRefillsParams) error {
 	// Get admin account from cookie
 	sess := s.getAdminSess(c)
-	accountID, ok := sess.Values["admin_account_id"].(string)
+	adminId, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
 		return ErrorNotAuthenticated(c)
 	}
 
-	var startsAt int64 = 0
-	if params.StartDate != nil {
-		startsAt = params.StartDate.Unix()
+	// Get account from database
+	_, err := s.DBackend.GetAccount(adminId)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			// Delete cookie
+			sess.Options.MaxAge = -1
+			sess.Save(c.Request(), c.Response())
+			return ErrorAccNotFound(c)
+		}
+		return Error500(c)
 	}
-	var endsAt int64 = math.MaxInt64
+
+	var startsAt uint64 = 0
+	if params.StartDate != nil {
+		startsAt = uint64(params.StartDate.Unix())
+	}
+	var endsAt uint64 = math.MaxInt64
 	if params.EndDate != nil {
-		endsAt = params.EndDate.Unix()
+		endsAt = uint64(params.EndDate.Unix())
 	}
 
 	count, err := s.DBackend.CountAllRefills(startsAt, endsAt)
@@ -65,7 +77,7 @@ func (s *Server) GetRefills(c echo.Context, params autogen.GetRefillsParams) err
 		refills = append(refills, refill.Refill)
 	}
 
-	logrus.Infof("Refills have been retrieved by %s", accountID)
+	logrus.Infof("Refills have been retrieved by %s", adminId)
 	autogen.GetRefills200JSONResponse(refills).VisitGetRefillsResponse(c.Response())
 	return nil
 }
@@ -88,17 +100,18 @@ func (s *Server) GetSelfRefills(c echo.Context, params autogen.GetSelfRefillsPar
 			sess.Save(c.Request(), c.Response())
 			return ErrorAccNotFound(c)
 		}
+		logrus.Error(err)
 		return Error500(c)
 	}
 
-	var startsAt int64 = 0
+	var startsAt uint64 = 0
 	if params.StartDate != nil {
-		startsAt = params.StartDate.Unix()
+		startsAt = uint64(params.StartDate.Unix())
 	}
 
-	var endsAt int64 = math.MaxInt64
+	var endsAt uint64 = math.MaxInt64
 	if params.EndDate != nil {
-		endsAt = params.EndDate.Unix()
+		endsAt = uint64(params.EndDate.Unix())
 	}
 
 	count, err := s.DBackend.CountRefills(accountID, startsAt, endsAt)
@@ -154,14 +167,26 @@ func (s *Server) GetAccountRefills(c echo.Context, accountId autogen.UUID, param
 		return ErrorNotAuthenticated(c)
 	}
 
-	var startsAt int64 = 0
-	if params.StartDate != nil {
-		startsAt = params.StartDate.Unix()
+	// Get account from database
+	_, err := s.DBackend.GetAccount(adminId)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			// Delete cookie
+			sess.Options.MaxAge = -1
+			sess.Save(c.Request(), c.Response())
+			return ErrorAccNotFound(c)
+		}
+		return Error500(c)
 	}
 
-	var endsAt int64 = math.MaxInt64
+	var startsAt uint64 = 0
+	if params.StartDate != nil {
+		startsAt = uint64(params.StartDate.Unix())
+	}
+
+	var endsAt uint64 = math.MaxInt64
 	if params.EndDate != nil {
-		endsAt = params.EndDate.Unix()
+		endsAt = uint64(params.EndDate.Unix())
 	}
 
 	count, err := s.DBackend.CountRefills(accountId.String(), startsAt, endsAt)
@@ -218,6 +243,18 @@ func (s *Server) PostRefill(c echo.Context, accountId autogen.UUID, params autog
 		return ErrorNotAuthenticated(c)
 	}
 
+	// Get account from database
+	_, err := s.DBackend.GetAccount(adminId)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			// Delete cookie
+			sess.Options.MaxAge = -1
+			sess.Save(c.Request(), c.Response())
+			return ErrorAccNotFound(c)
+		}
+		return Error500(c)
+	}
+
 	refill := &models.Refill{
 		Refill: autogen.Refill{
 			AccountId: accountId,
@@ -229,7 +266,7 @@ func (s *Server) PostRefill(c echo.Context, accountId autogen.UUID, params autog
 		},
 	}
 
-	err := s.DBackend.CreateRefill(refill)
+	err = s.DBackend.CreateRefill(refill)
 	if err != nil {
 		return Error500(c)
 	}
@@ -248,7 +285,19 @@ func (s *Server) MarkDeleteRefill(c echo.Context, accountId autogen.UUID, refill
 		return ErrorNotAuthenticated(c)
 	}
 
-	_, err := s.DBackend.GetRefill(refillId.String())
+	// Get account from database
+	_, err := s.DBackend.GetAccount(adminId)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			// Delete cookie
+			sess.Options.MaxAge = -1
+			sess.Save(c.Request(), c.Response())
+			return ErrorAccNotFound(c)
+		}
+		return Error500(c)
+	}
+
+	_, err = s.DBackend.GetRefill(refillId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorRefillNotFound(c)

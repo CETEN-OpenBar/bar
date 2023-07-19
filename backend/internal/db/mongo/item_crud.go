@@ -184,7 +184,7 @@ func (b *Backend) GetDeletedItems(page uint64, size uint64) ([]*models.Item, err
 	return accs, nil
 }
 
-func (b *Backend) CountDeletedItems() (int64, error) {
+func (b *Backend) CountDeletedItems() (uint64, error) {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 
@@ -197,5 +197,5 @@ func (b *Backend) CountDeletedItems() (int64, error) {
 		return 0, err
 	}
 
-	return count, nil
+	return uint64(count), nil
 }

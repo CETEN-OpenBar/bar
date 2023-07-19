@@ -186,7 +186,7 @@ func (b *Backend) GetDeletedAccounts(page uint64, size uint64) ([]*models.Accoun
 	return accs, nil
 }
 
-func (b *Backend) CountDeletedAccounts() (int64, error) {
+func (b *Backend) CountDeletedAccounts() (uint64, error) {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 
@@ -199,5 +199,5 @@ func (b *Backend) CountDeletedAccounts() (int64, error) {
 		return 0, err
 	}
 
-	return count, nil
+	return uint64(count), nil
 }
