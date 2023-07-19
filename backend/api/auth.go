@@ -64,6 +64,10 @@ func (s *Server) GetAccountQR(c echo.Context) error {
 
 	logrus.Debugf("QR code generated for account %s: %s", accountID, url)
 
+	// Add headers for caching
+	c.Response().Header().Set("Cache-Control", "max-age=300, public")
+	c.Response().Header().Set("Expires", time.Now().Add(300*time.Second).Format(time.RFC1123))
+
 	autogen.GetAccountQR200ImagepngResponse{
 		Body:          r,
 		ContentLength: int64(len(png)),
