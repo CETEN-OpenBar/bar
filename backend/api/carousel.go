@@ -35,6 +35,10 @@ func (s *Server) GetCarouselImages(c echo.Context) error {
 		images = append(images, image.CarouselImage)
 	}
 
+	// Caching for 10 minutes
+	c.Response().Header().Set("Cache-Control", "max-age=600")
+	c.Response().Header().Set("Expires", "600")
+
 	// Return carousel images
 	autogen.GetCarouselImages200JSONResponse(images).VisitGetCarouselImagesResponse(c.Response())
 	return nil
@@ -166,6 +170,10 @@ func (s *Server) GetCarouselTexts(c echo.Context) error {
 	for _, image := range data {
 		texts = append(texts, image.CarouselText)
 	}
+
+	// Caching for 10 minutes
+	c.Response().Header().Set("Cache-Control", "max-age=600")
+	c.Response().Header().Set("Expires", "600")
 
 	// Return carousel images
 	autogen.GetCarouselTexts200JSONResponse(texts).VisitGetCarouselTextsResponse(c.Response())
