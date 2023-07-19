@@ -4,8 +4,6 @@ import (
 	"bar/autogen"
 	"bar/internal/config"
 	"bar/internal/db"
-	"fmt"
-	"net/http"
 	"os"
 	"time"
 
@@ -67,9 +65,16 @@ func (s *Server) Serve(c *config.Config) error {
 		}
 	})
 
-	// Generate an admin cookie to test the admin endpoints
-	adminSess, err := adminStore.Get(&http.Request{}, "BAR_ADMIN_SESS")
-	fmt.Println(adminSess, err)
+	// CORS
+	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			c.Response().Header().Set("Access-Control-Allow-Origin", c.Request().Header.Get("Origin"))
+			c.Response().Header().Set("Access-Control-Allow-Credentials", "true")
+			c.Response().Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+			c.Response().Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, Cookie, Cookies")
+			return next(c)
+		}
+	})
 
 	// You can use h for intellisense and get the handlers' names
 	e.Use(s.AuthMiddleware)

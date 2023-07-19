@@ -5,7 +5,6 @@ import (
 	"bar/internal/config"
 	"bytes"
 	"crypto/sha256"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -29,7 +28,7 @@ func (s *Server) GetAccountQR(c echo.Context) error {
 	sess := s.getUserSess(c)
 	accountID, ok := sess.Values["account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// Get account from database
@@ -80,7 +79,7 @@ func (s *Server) ConnectAccount(c echo.Context, qrNonce string) error {
 	// Get account from nonce and delete nonce
 	accountID, found := qrCache.Get(qrNonce)
 	if !found {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 	qrCache.Delete(qrNonce)
 
@@ -131,7 +130,7 @@ func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 	// Get account from state and delete state
 	accountID, found := stateCache.Get(params.State)
 	if !found {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 	stateCache.Delete(params.State)
 
@@ -208,31 +207,39 @@ func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 }
 
 // (POST /auth/card)
-func (s *Server) ConnectCard(ctx echo.Context) error {
+func (s *Server) ConnectCard(c echo.Context) error {
 	var param autogen.ConnectCardJSONBody
-	err := ctx.Bind(&param)
+	err := c.Bind(&param)
 	if err != nil {
-		return Error400(ctx)
+		return Error400(c)
 	}
 
 	account, err := s.DBackend.GetAccountByCard(param.CardId)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			return ErrorAccNotFound(ctx)
+			return ErrorAccNotFound(c)
 		}
-		return Error500(ctx)
+		return Error500(c)
 	}
 
 	// SHA256 hash of the card ID
-	hash := sha256.Sum256([]byte(param.CardId))
-	digest := hex.EncodeToString(hash[:])
+	hash := sha256.Sum256([]byte(param.CardPin))
+	digest := fmt.Sprintf("%x", hash)
 
 	if account.CardPin != digest {
-		return ErrorAccNotFound(ctx)
+		return ErrorAccNotFound(c)
 	}
+
+	s.SetCookie(c, account)
 
 	autogen.ConnectCard200JSONResponse{
 		Account: &account.Account,
-	}.VisitConnectCardResponse(ctx.Response())
+	}.VisitConnectCardResponse(c.Response())
+	return nil
+}
+
+// (GET /logout)
+func (s *Server) Logout(c echo.Context) error {
+	s.RemoveCookie(c)
 	return nil
 }

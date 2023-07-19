@@ -9,10 +9,14 @@ import (
 
 type (
 	Account struct {
-		PrivateID primitive.ObjectID `bson:"_id,omitempty" json:"-"`
-		autogen.Account
+		PrivateID       primitive.ObjectID `bson:"_id,omitempty" json:"-"`
+		autogen.Account `bson:",inline"`
 	}
 )
+
+func (o *Account) IsAdmin() bool {
+	return o.Role == autogen.AccountAdmin || o.Role == autogen.AccountSuperAdmin || o.Role == autogen.AccountMember
+}
 
 // ToJSON converts the model to JSON
 func (o *Account) ToJSON() []byte {

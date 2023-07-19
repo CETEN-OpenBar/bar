@@ -6,7 +6,8 @@ info:
     url: https://opensource.org/license/mit/
   version: 1.0.11
 servers:
-  - url: http://localhost:8080/api/v1
+  - url: http://localhost:8080/
+  - url: https://le-bar.telecomnancy.net/api/v1
 tags:
   - name: auth
     description: Related to user's authentication
@@ -121,6 +122,7 @@ paths:
                 - card_pin
       responses:
         '200':
+          # Also includes cookies
           description: 'Successfully connected'
           content:
             application/json:
@@ -131,6 +133,11 @@ paths:
                     $ref: '#/components/schemas/Messages'
                   account:
                     $ref: '#/components/schemas/Account'
+          headers:
+            Set-Cookie:
+              description: 'Cookies'
+              schema:
+                type: string
         '400':
           description: 'Bad request'
           content:
@@ -165,6 +172,38 @@ paths:
               schema:
                 type: string
                 format: binary
+        '401':
+          description: 'Not connected'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - auth: []
+      tags:
+        - auth
+  /logout:
+    description: Logout
+    get:
+      summary: ''
+      description: Logout
+      operationId: logout
+      responses:
+        '200':
+          description: Successfully logged out
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    $ref: '#/components/schemas/Messages'
         '401':
           description: 'Not connected'
           content:
@@ -2983,6 +3022,7 @@ components:
         - transaction_not_found
         - qr_invalid
         - internal_server_error
+        - not_authenticated
       x-enum-varnames:
         - ErrBadRequest
         - ErrForbidden
@@ -2990,6 +3030,7 @@ components:
         - ErrTransactionNotFound
         - ErrQRInvalid
         - ErrInternalServerError
+        - ErrNotAuthenticated
     Messages:
       type: string
       enum:
@@ -3003,6 +3044,7 @@ components:
         - Account cannot use ressource at the time being
         - Invalid QR Code nonce
         - Internal server error
+        - You are not authenticated
       x-enum-varnames:
         - MsgBadRequest
         - MsgNotConnected
@@ -3014,6 +3056,7 @@ components:
         - MsgAccountNotAvailable
         - MsgQRInvalid
         - MsgInternalServerError
+        - MsgNotAuthenticated
     HTTPError:
       type: object
       properties:

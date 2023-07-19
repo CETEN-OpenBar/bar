@@ -18,7 +18,7 @@ func (s *Server) DeleteAccount(c echo.Context, accountId autogen.UUID) error {
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["super_admin"].(bool)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// TODO: implement
@@ -43,7 +43,7 @@ func (s *Server) DeleteCarouselImage(c echo.Context, imageId autogen.UUID) error
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["super_admin"].(bool)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// TODO: implement
@@ -68,7 +68,7 @@ func (s *Server) DeleteCarouselText(c echo.Context, textId autogen.UUID) error {
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["super_admin"].(bool)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// TODO: implement
@@ -93,7 +93,7 @@ func (s *Server) DeleteItem(c echo.Context, itemId autogen.UUID) error {
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["super_admin"].(bool)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// TODO: implement
@@ -118,7 +118,7 @@ func (s *Server) DeleteRefill(c echo.Context, refillId autogen.UUID) error {
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["super_admin"].(bool)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// TODO: implement
@@ -143,7 +143,7 @@ func (s *Server) DeleteTransaction(c echo.Context, transactionId autogen.UUID) e
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["super_admin"].(bool)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// TODO: implement

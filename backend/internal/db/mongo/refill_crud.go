@@ -4,6 +4,7 @@ import (
 	"bar/internal/models"
 	"time"
 
+	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -27,9 +28,17 @@ func (b *Backend) GetRefill(id string) (*models.Refill, error) {
 	var refill models.Refill
 	err := b.db.Collection(RefillsCollection).FindOne(ctx,
 		bson.M{
-			"id": id,
-			"deleted_at": bson.M{
-				"$exists": false,
+			"id": uuid.MustParse(id),
+
+			"$or": []bson.M{
+				{
+					"deleted_at": bson.M{
+						"$exists": false,
+					},
+				},
+				{
+					"deleted_at": nil,
+				},
 			},
 		},
 	).Decode(&refill)
@@ -47,8 +56,16 @@ func (b *Backend) UpdateRefill(refill *models.Refill) error {
 	res := b.db.Collection(RefillsCollection).FindOneAndUpdate(ctx,
 		bson.M{
 			"id": refill.Id,
-			"deleted_at": bson.M{
-				"$exists": false,
+
+			"$or": []bson.M{
+				{
+					"deleted_at": bson.M{
+						"$exists": false,
+					},
+				},
+				{
+					"deleted_at": nil,
+				},
 			},
 		},
 		bson.M{
@@ -68,7 +85,7 @@ func (b *Backend) MarkDeleteRefill(id, by string) error {
 
 	res := b.db.Collection(RefillsCollection).FindOneAndUpdate(ctx,
 		bson.M{
-			"id": id,
+			"id": uuid.MustParse(id),
 		},
 		bson.M{
 			"$set": bson.M{
@@ -90,7 +107,7 @@ func (b *Backend) DeleteRefill(id string) error {
 
 	res := b.db.Collection(RefillsCollection).FindOneAndDelete(ctx,
 		bson.M{
-			"id": id,
+			"id": uuid.MustParse(id),
 		},
 	)
 	if res.Err() != nil {
@@ -106,7 +123,7 @@ func (b *Backend) RestoreRefill(id string) error {
 
 	res := b.db.Collection(RefillsCollection).FindOneAndUpdate(ctx,
 		bson.M{
-			"id": id,
+			"id": uuid.MustParse(id),
 		},
 		bson.M{
 			"$unset": bson.M{

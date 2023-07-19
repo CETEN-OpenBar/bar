@@ -9,8 +9,8 @@ import (
 
 type (
 	Refill struct {
-		PrivateID primitive.ObjectID `bson:"_id,omitempty" json:"-"`
-		autogen.Refill
+		PrivateID      primitive.ObjectID `bson:"_id,omitempty" json:"-"`
+		autogen.Refill `bson:",inline"`
 	}
 )
 

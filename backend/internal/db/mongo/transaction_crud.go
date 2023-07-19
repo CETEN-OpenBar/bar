@@ -4,6 +4,7 @@ import (
 	"bar/internal/models"
 	"time"
 
+	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -27,9 +28,17 @@ func (b *Backend) GetTransaction(id string) (*models.Transaction, error) {
 	var tx models.Transaction
 	err := b.db.Collection(TransactionsCollection).FindOne(ctx,
 		bson.M{
-			"id": id,
-			"deleted_at": bson.M{
-				"$exists": false,
+			"id": uuid.MustParse(id),
+
+			"$or": []bson.M{
+				{
+					"deleted_at": bson.M{
+						"$exists": false,
+					},
+				},
+				{
+					"deleted_at": nil,
+				},
 			},
 		},
 	).Decode(&tx)
@@ -47,8 +56,16 @@ func (b *Backend) UpdateTransaction(tx *models.Transaction) error {
 	res := b.db.Collection(TransactionsCollection).FindOneAndUpdate(ctx,
 		bson.M{
 			"id": tx.Id,
-			"deleted_at": bson.M{
-				"$exists": false,
+
+			"$or": []bson.M{
+				{
+					"deleted_at": bson.M{
+						"$exists": false,
+					},
+				},
+				{
+					"deleted_at": nil,
+				},
 			},
 		},
 		bson.M{
@@ -68,7 +85,7 @@ func (b *Backend) MarkDeleteTransaction(id, by string) error {
 
 	res := b.db.Collection(TransactionsCollection).FindOneAndUpdate(ctx,
 		bson.M{
-			"id": id,
+			"id": uuid.MustParse(id),
 		},
 		bson.M{
 			"$set": bson.M{
@@ -90,7 +107,7 @@ func (b *Backend) DeleteTransaction(id string) error {
 
 	res := b.db.Collection(TransactionsCollection).FindOneAndDelete(ctx,
 		bson.M{
-			"id": id,
+			"id": uuid.MustParse(id),
 		},
 	)
 	if res.Err() != nil {
@@ -106,7 +123,7 @@ func (b *Backend) RestoreTransaction(id string) error {
 
 	res := b.db.Collection(TransactionsCollection).FindOneAndUpdate(ctx,
 		bson.M{
-			"id": id,
+			"id": uuid.MustParse(id),
 		},
 		bson.M{
 			"$unset": bson.M{

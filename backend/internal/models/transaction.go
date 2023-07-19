@@ -9,8 +9,8 @@ import (
 
 type (
 	Transaction struct {
-		PrivateID primitive.ObjectID `bson:"_id,omitempty" json:"-"`
-		autogen.Transaction
+		PrivateID           primitive.ObjectID `bson:"_id,omitempty" json:"-"`
+		autogen.Transaction `bson:",inline"`
 	}
 )
 

@@ -18,7 +18,7 @@ func (s *Server) PostCategory(c echo.Context) error {
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// TODO: implement
@@ -31,7 +31,7 @@ func (s *Server) MarkDeleteCategory(c echo.Context, categoryId autogen.UUID) err
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// TODO: implement
@@ -50,7 +50,7 @@ func (s *Server) PatchCategory(c echo.Context, categoryId autogen.UUID) error {
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// TODO: implement
@@ -63,7 +63,7 @@ func (s *Server) GetCategoryPicture(c echo.Context, categoryId autogen.UUID) err
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// TODO: implement

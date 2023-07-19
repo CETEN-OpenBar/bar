@@ -13,7 +13,7 @@ func (s *Server) GetRefills(c echo.Context, params autogen.GetRefillsParams) err
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// TODO: implement
@@ -26,7 +26,7 @@ func (s *Server) GetSelfRefills(c echo.Context, params autogen.GetSelfRefillsPar
 	sess := s.getUserSess(c)
 	accountID, ok := sess.Values["account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// Get account from database
@@ -51,7 +51,7 @@ func (s *Server) GetAccountRefills(c echo.Context, accountId autogen.UUID, param
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// TODO: implement
@@ -64,7 +64,7 @@ func (s *Server) PostRefill(c echo.Context, accountId autogen.UUID, params autog
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// TODO: implement
@@ -77,7 +77,7 @@ func (s *Server) MarkDeleteRefill(c echo.Context, accountId autogen.UUID, refill
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// TODO: implement

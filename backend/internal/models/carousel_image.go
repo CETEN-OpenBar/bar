@@ -9,8 +9,8 @@ import (
 
 type (
 	CarouselImage struct {
-		PrivateID primitive.ObjectID `bson:"_id,omitempty" json:"-"`
-		autogen.CarouselImage
+		PrivateID             primitive.ObjectID `bson:"_id,omitempty" json:"-"`
+		autogen.CarouselImage `bson:",inline"`
 	}
 )
 

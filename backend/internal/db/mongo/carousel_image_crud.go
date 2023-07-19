@@ -4,6 +4,7 @@ import (
 	"bar/internal/models"
 	"time"
 
+	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -27,9 +28,17 @@ func (b *Backend) GetCarouselImage(id string) (*models.CarouselImage, error) {
 	var ci models.CarouselImage
 	err := b.db.Collection(CarouselImagesCollection).FindOne(ctx,
 		bson.M{
-			"id": id,
-			"deleted_at": bson.M{
-				"$exists": false,
+			"id": uuid.MustParse(id),
+
+			"$or": []bson.M{
+				{
+					"deleted_at": bson.M{
+						"$exists": false,
+					},
+				},
+				{
+					"deleted_at": nil,
+				},
 			},
 		},
 	).Decode(&ci)
@@ -47,8 +56,16 @@ func (b *Backend) UpdateCarouselImage(ci *models.CarouselImage) error {
 	res := b.db.Collection(CarouselImagesCollection).FindOneAndUpdate(ctx,
 		bson.M{
 			"id": ci.Id,
-			"deleted_at": bson.M{
-				"$exists": false,
+
+			"$or": []bson.M{
+				{
+					"deleted_at": bson.M{
+						"$exists": false,
+					},
+				},
+				{
+					"deleted_at": nil,
+				},
 			},
 		},
 		bson.M{
@@ -68,7 +85,7 @@ func (b *Backend) MarkDeleteCarouselImage(id, by string) error {
 
 	res := b.db.Collection(CarouselImagesCollection).FindOneAndUpdate(ctx,
 		bson.M{
-			"id": id,
+			"id": uuid.MustParse(id),
 		},
 		bson.M{
 			"$set": bson.M{
@@ -90,7 +107,7 @@ func (b *Backend) DeleteCarouselImage(id string) error {
 
 	res := b.db.Collection(CarouselImagesCollection).FindOneAndDelete(ctx,
 		bson.M{
-			"id": id,
+			"id": uuid.MustParse(id),
 		},
 	)
 	if res.Err() != nil {
@@ -106,7 +123,7 @@ func (b *Backend) RestoreCarouselImage(id string) error {
 
 	res := b.db.Collection(CarouselImagesCollection).FindOneAndUpdate(ctx,
 		bson.M{
-			"id": id,
+			"id": uuid.MustParse(id),
 		},
 		bson.M{
 			"$unset": bson.M{

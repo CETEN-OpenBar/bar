@@ -9,8 +9,8 @@ import (
 
 type (
 	Item struct {
-		PrivateID primitive.ObjectID `bson:"_id,omitempty" json:"-"`
-		autogen.Item
+		PrivateID    primitive.ObjectID `bson:"_id,omitempty" json:"-"`
+		autogen.Item `bson:",inline"`
 	}
 )
 

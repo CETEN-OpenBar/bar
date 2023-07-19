@@ -12,7 +12,7 @@ func (s *Server) GetCarouselImages(c echo.Context) error {
 	sess := s.getUserSess(c)
 	_, ok := sess.Values["account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// TODO: implement
@@ -25,7 +25,7 @@ func (s *Server) AddCarouselImage(c echo.Context) error {
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// TODO: implement
@@ -38,7 +38,7 @@ func (s *Server) MarkDeleteCarouselImage(c echo.Context, imageId autogen.UUID) e
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// TODO: implement
@@ -51,7 +51,7 @@ func (s *Server) GetCarouselTexts(c echo.Context) error {
 	sess := s.getUserSess(c)
 	_, ok := sess.Values["account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// TODO: implement
@@ -64,7 +64,7 @@ func (s *Server) AddCarouselText(c echo.Context) error {
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// TODO: implement
@@ -77,7 +77,7 @@ func (s *Server) MarkDeleteCarouselText(c echo.Context, textId autogen.UUID) err
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// TODO: implement

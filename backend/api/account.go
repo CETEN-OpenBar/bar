@@ -18,7 +18,7 @@ func (s *Server) GetAccount(c echo.Context) error {
 	sess := s.getUserSess(c)
 	accountID, ok := sess.Values["account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// Get account from database
@@ -47,7 +47,7 @@ func (s *Server) GetAccounts(c echo.Context, params autogen.GetAccountsParams) e
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// Set up parameters
@@ -105,7 +105,7 @@ func (s *Server) PostAccounts(c echo.Context) error {
 	sess := s.getAdminSess(c)
 	adminID, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	var req autogen.NewAccount
@@ -151,7 +151,7 @@ func (s *Server) MarkDeleteAccountId(c echo.Context, accountId autogen.UUID) err
 	sess := s.getAdminSess(c)
 	adminID, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	err := s.DBackend.MarkDeleteAccount(accountId.String(), adminID)
@@ -173,7 +173,7 @@ func (s *Server) GetAccountId(c echo.Context, accountId autogen.UUID) error {
 	sess := s.getAdminSess(c)
 	adminID, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	account, err := s.DBackend.GetAccount(accountId.String())
@@ -195,7 +195,7 @@ func (s *Server) PatchAccountId(c echo.Context, accountId autogen.UUID) error {
 	sess := s.getAdminSess(c)
 	adminID, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	var req autogen.UpdateAccountAdmin
@@ -254,7 +254,7 @@ func (s *Server) ImportAccounts(c echo.Context) error {
 	sess := s.getAdminSess(c)
 	accountID, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// Get file from request

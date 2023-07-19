@@ -4,6 +4,7 @@ import (
 	"bar/internal/models"
 	"time"
 
+	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -27,9 +28,17 @@ func (b *Backend) GetAccount(id string) (*models.Account, error) {
 	var acc models.Account
 	err := b.db.Collection(AccountsCollection).FindOne(ctx,
 		bson.M{
-			"id": id,
-			"deleted_at": bson.M{
-				"$exists": false,
+			"id": uuid.MustParse(id),
+
+			"$or": []bson.M{
+				{
+					"deleted_at": bson.M{
+						"$exists": false,
+					},
+				},
+				{
+					"deleted_at": nil,
+				},
 			},
 		},
 	).Decode(&acc)
@@ -47,8 +56,16 @@ func (b *Backend) UpdateAccount(acc *models.Account) error {
 	res := b.db.Collection(AccountsCollection).FindOneAndUpdate(ctx,
 		bson.M{
 			"id": acc.Id,
-			"deleted_at": bson.M{
-				"$exists": false,
+
+			"$or": []bson.M{
+				{
+					"deleted_at": bson.M{
+						"$exists": false,
+					},
+				},
+				{
+					"deleted_at": nil,
+				},
 			},
 		},
 		bson.M{
@@ -69,7 +86,7 @@ func (b *Backend) MarkDeleteAccount(id, by string) error {
 	// Mark deleted_at
 	res := b.db.Collection(AccountsCollection).FindOneAndUpdate(ctx,
 		bson.M{
-			"id": id,
+			"id": uuid.MustParse(id),
 		},
 		bson.M{
 			"$set": bson.M{
@@ -91,7 +108,7 @@ func (b *Backend) DeleteAccount(id string) error {
 
 	res := b.db.Collection(AccountsCollection).FindOneAndDelete(ctx,
 		bson.M{
-			"id": id,
+			"id": uuid.MustParse(id),
 		},
 	)
 	if res.Err() != nil {
@@ -107,7 +124,7 @@ func (b *Backend) RestoreAccount(id string) error {
 
 	res := b.db.Collection(AccountsCollection).FindOneAndUpdate(ctx,
 		bson.M{
-			"id": id,
+			"id": uuid.MustParse(id),
 		},
 		bson.M{
 			"$unset": bson.M{

@@ -13,7 +13,7 @@ func (s *Server) PostTransactions(c echo.Context) error {
 	sess := s.getUserSess(c)
 	accountID, ok := sess.Values["account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// Get account from database
@@ -38,7 +38,7 @@ func (s *Server) GetAccountTransactions(c echo.Context, accountId autogen.UUID, 
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// TODO: implement
@@ -51,7 +51,7 @@ func (s *Server) GetCurrentAccountTransactions(c echo.Context, params autogen.Ge
 	sess := s.getUserSess(c)
 	accountID, ok := sess.Values["account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// Get account from database
@@ -76,7 +76,7 @@ func (s *Server) MarkDeleteTransactionId(c echo.Context, accountId autogen.UUID,
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// TODO: implement
@@ -89,7 +89,7 @@ func (s *Server) GetTransactionId(c echo.Context, accountId autogen.UUID, transa
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// TODO: implement
@@ -102,7 +102,7 @@ func (s *Server) PatchTransactionId(c echo.Context, accountId autogen.UUID, tran
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// TODO: implement
@@ -115,7 +115,7 @@ func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, 
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// TODO: implement
@@ -128,7 +128,7 @@ func (s *Server) GetTransactions(c echo.Context, params autogen.GetTransactionsP
 	sess := s.getAdminSess(c)
 	_, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
-		return Error401(c)
+		return ErrorNotAuthenticated(c)
 	}
 
 	// TODO: implement
