@@ -348,5 +348,7 @@ func (s *Server) ConnectGoogle(c echo.Context) error {
 // (GET /logout)
 func (s *Server) Logout(c echo.Context) error {
 	s.RemoveCookie(c)
+
+	autogen.Logout204Response{}.VisitLogoutResponse(c.Response())
 	return nil
 }

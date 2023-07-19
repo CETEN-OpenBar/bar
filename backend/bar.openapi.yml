@@ -107,17 +107,13 @@ paths:
       description: Connect account to Google
       operationId: connectGoogle
       responses:
-        '200':
-          description: 'Successfully connected'
-          content:
-            application/json:
+        '301':
+          description: 'Redirect to the google oauth page'
+          headers:
+            Location:
+              description: 'Redirect to the google oauth page'
               schema:
-                type: object
-                properties:
-                  message:
-                    $ref: '#/components/schemas/Messages'
-                  account:
-                    $ref: '#/components/schemas/Account'
+                type: string
         '400':
           description: 'Bad request'
           content:
@@ -227,15 +223,8 @@ paths:
       description: Logout
       operationId: logout
       responses:
-        '200':
+        '204':
           description: Successfully logged out
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    $ref: '#/components/schemas/Messages'
         '401':
           description: 'Not connected'
           content:
