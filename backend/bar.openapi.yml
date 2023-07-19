@@ -1374,7 +1374,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MinifiedCategory'
+                  $ref: '#/components/schemas/Category'
         '500':
           description: 'Internal server error'
           content:
@@ -1593,6 +1593,72 @@ paths:
       tags:
         - categories
   /categories/{category_id}/items:
+    get:
+      description: Get all items of a category
+      operationId: getCategoryItems
+      parameters:
+        - name: category_id
+          in: path
+          description: ID of the category
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+        - name: state
+          in: query
+          description: Filter by state
+          required: false
+          schema:
+            type: string
+            $ref: '#/components/schemas/ItemState'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Item'
+                  page:
+                    type: integer
+                    format: int
+                  limit:
+                    type: integer
+                    format: int
+                  max_page:
+                    type: integer
+                    format: int
+        '404':
+          description: 'Category not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError' 
+      security:
+        - auth: []
+      tags:
+        - items
     post:
       description: Create a new item
       operationId: postItem
@@ -3408,21 +3474,6 @@ components:
       required:
         - name
         - picture
-    MinifiedCategory:
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/UUID'
-        name:
-          type: string
-          description: Name of the current category
-        picture_uri:
-          type: string
-          description: Link to picture of the current category
-      required:
-        - id
-        - name
-        - picture_uri
     Category:
       type: object
       properties:
@@ -3434,10 +3485,6 @@ components:
         picture_uri:
           type: string
           description: Link to picture of the current category
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/Item'
         deleted_at:
           type: integer
           format: int64

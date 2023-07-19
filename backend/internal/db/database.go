@@ -88,6 +88,7 @@ type DBackend interface {
 	GetRefills(account string, page int, size int, startAt, endAt int64) ([]*models.Refill, error)
 	GetAllRefills(page int, size int, startAt, endAt int64) ([]*models.Refill, error)
 	GetAllCategories() ([]*models.Category, error)
+	GetAllItems(categoryID string) ([]*models.Item, error)
 	GetAllCarouselImages() ([]*models.CarouselImage, error)
 	GetAllCarouselTexts() ([]*models.CarouselText, error)
 }

@@ -29,13 +29,9 @@ func (s *Server) GetCategories(c echo.Context) error {
 		return Error500(c)
 	}
 
-	var categories []autogen.MinifiedCategory
+	var categories []autogen.Category
 	for _, category := range data {
-		categories = append(categories, autogen.MinifiedCategory{
-			Id:         category.Id,
-			Name:       category.Name,
-			PictureUri: category.PictureUri,
-		})
+		categories = append(categories, category.Category)
 	}
 
 	// Caching for 10 minutes
@@ -89,7 +85,6 @@ func (s *Server) PostCategory(c echo.Context) error {
 	category := &models.Category{
 		Category: autogen.Category{
 			Id:         uid,
-			Items:      []autogen.Item{},
 			Name:       c.FormValue("name"),
 			PictureUri: "/categories/" + uid.String() + "/picture",
 		},
