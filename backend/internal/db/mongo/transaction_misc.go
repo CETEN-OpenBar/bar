@@ -6,7 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (b *Backend) GetTransactions(accountID string, page int, size int, state string) ([]*models.Transaction, error) {
+func (b *Backend) GetTransactions(accountID string, page uint64, size uint64, state string) ([]*models.Transaction, error) {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 

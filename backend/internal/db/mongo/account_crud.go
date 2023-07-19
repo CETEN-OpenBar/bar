@@ -163,7 +163,7 @@ func (b *Backend) RestoreAccount(id string) error {
 	return nil
 }
 
-func (b *Backend) GetDeletedAccounts(page int, size int) ([]*models.Account, error) {
+func (b *Backend) GetDeletedAccounts(page uint64, size uint64) ([]*models.Account, error) {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 

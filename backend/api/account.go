@@ -51,8 +51,8 @@ func (s *Server) GetAccounts(c echo.Context, params autogen.GetAccountsParams) e
 	}
 
 	// Set up parameters
-	var page int = 1
-	var limit int = 10
+	var page uint64 = 1
+	var limit uint64 = 10
 	if params.Page != nil {
 		page = *params.Page
 	}
@@ -60,13 +60,10 @@ func (s *Server) GetAccounts(c echo.Context, params autogen.GetAccountsParams) e
 		limit = *params.Limit
 	}
 
-	page = page - 1
-	if page < 0 {
-		page = 0
+	if page > 0 {
+		page -= 1
 	}
-	if limit < 0 {
-		limit = 0
-	}
+
 	if limit > 100 {
 		limit = 100
 	}
@@ -77,7 +74,7 @@ func (s *Server) GetAccounts(c echo.Context, params autogen.GetAccountsParams) e
 		return Error500(c)
 	}
 
-	maxPage := int(count) / limit
+	maxPage := uint64(count) / limit
 
 	// Get accounts from database
 	accounts, err := s.DBackend.GetAccounts(page, limit)
@@ -277,7 +274,7 @@ func (s *Server) ImportAccounts(c echo.Context) error {
 	}
 
 	// Create assignment map for columns
-	// map[string]int{"email": 0, "first_name": 1, "last_name": 2, "role": 3, "balance": 4} meaning that the email is in the first column
+	// map[string]uint64{"email": 0, "first_name": 1, "last_name": 2, "role": 3, "balance": 4} meaning that the email is in the first column
 	// Using reflection to get the field name of the struct
 	var req autogen.NewAccount
 	var assignments = make(map[string]int)
@@ -303,7 +300,7 @@ func (s *Server) ImportAccounts(c echo.Context) error {
 
 	for _, record := range records {
 		// Check balance
-		balance, err := strconv.ParseInt(record[assignments["balance"]], 10, 64)
+		balance, err := strconv.ParseUint(record[assignments["balance"]], 10, 64)
 		if err != nil {
 			notProcessed = append(notProcessed, record[0])
 			continue

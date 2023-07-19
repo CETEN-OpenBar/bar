@@ -2,6 +2,7 @@ package api
 
 import (
 	"bar/autogen"
+	"bar/internal/models"
 
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -28,7 +29,40 @@ func (s *Server) PostTransactions(c echo.Context) error {
 		return Error500(c)
 	}
 
-	// TODO: implement
+	var transaction models.Transaction
+	var potentialTransaction autogen.NewTransaction
+	var transactionCost uint64
+	for _, potentialItem := range potentialTransaction.Items {
+		// Verify that item exists, can be bought, is in stock, and can be bought for that amount
+		item, err := s.DBackend.GetItem(potentialItem.ItemId.String())
+		if err != nil {
+			if err == mongo.ErrNoDocuments {
+				return ErrorItemNotFound(c)
+			}
+			return Error500(c)
+		}
+
+		if item.State == autogen.ItemNotBuyable {
+			return Error400(c)
+		}
+		if item.AmountLeft < potentialItem.Amount {
+			return Error400(c)
+		}
+		if item.BuyLimit < potentialItem.Amount {
+			return Error400(c)
+		}
+
+		transaction.Items = append(transaction.Items, autogen.TransactionItem{
+			ItemAmount: potentialItem.Amount,
+			ItemId:     potentialItem.ItemId,
+			State:      autogen.TransactionStarted,
+			TotalCost:  item.Price * potentialItem.Amount,
+		})
+
+		transactionCost += item.Price * potentialItem.Amount
+
+	}
+
 	return nil
 }
 

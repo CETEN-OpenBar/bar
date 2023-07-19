@@ -12,7 +12,7 @@ type Config struct {
 	MongoConfig struct {
 		ConnectionURI string `env:"URI" envDefault:"mongodb://localhost:27017"`
 		Database      string `env:"DB" envDefault:"bar"`
-		Timeout       int    `env:"TIMEOUT" envDefault:"30"`
+		Timeout       uint64 `env:"TIMEOUT" envDefault:"30"`
 	} `envPrefix:"BAR_MONGO_"`
 
 	ApiConfig struct {

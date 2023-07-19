@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (b *Backend) GetRefills(account string, page int, size int, startAt, endAt int64) ([]*models.Refill, error) {
+func (b *Backend) GetRefills(account string, page uint64, size uint64, startAt, endAt int64) ([]*models.Refill, error) {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 
@@ -79,7 +79,7 @@ func (b *Backend) CountRefills(account string, startAt, endAt int64) (int64, err
 	return count, nil
 }
 
-func (b *Backend) GetAllRefills(page int, size int, startAt, endAt int64) ([]*models.Refill, error) {
+func (b *Backend) GetAllRefills(page uint64, size uint64, startAt, endAt int64) ([]*models.Refill, error) {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 

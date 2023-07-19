@@ -161,7 +161,7 @@ func (b *Backend) RestoreRefill(id string) error {
 	return nil
 }
 
-func (b *Backend) GetDeletedRefills(page int, size int) ([]*models.Refill, error) {
+func (b *Backend) GetDeletedRefills(page uint64, size uint64) ([]*models.Refill, error) {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 

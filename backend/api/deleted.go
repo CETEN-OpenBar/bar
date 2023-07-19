@@ -18,12 +18,12 @@ func (s *Server) GetDeletedAccounts(c echo.Context, params autogen.GetDeletedAcc
 		return ErrorNotAuthenticated(c)
 	}
 
-	var page int
+	var page uint64
 	if params.Page != nil {
 		page = *params.Page
 	}
 
-	var limit = 10
+	var limit uint64 = 10
 	if params.Limit != nil {
 		limit = *params.Limit
 	}
@@ -34,18 +34,14 @@ func (s *Server) GetDeletedAccounts(c echo.Context, params autogen.GetDeletedAcc
 		return Error500(c)
 	}
 
-	var maxPage = int(count) / limit
+	var maxPage = uint64(count) / limit
 
 	if page > maxPage {
 		page = maxPage
 	}
 
-	if page < 0 {
-		page = 0
-	}
-
-	if limit < 0 {
-		limit = 0
+	if page > 0 {
+		page -= 1
 	}
 
 	if limit > 100 {
@@ -125,12 +121,12 @@ func (s *Server) GetDeletedCarouselImages(c echo.Context, params autogen.GetDele
 		return ErrorNotAuthenticated(c)
 	}
 
-	var page int
+	var page uint64
 	if params.Page != nil {
 		page = *params.Page
 	}
 
-	var limit = 10
+	var limit uint64 = 10
 	if params.Limit != nil {
 		limit = *params.Limit
 	}
@@ -141,18 +137,14 @@ func (s *Server) GetDeletedCarouselImages(c echo.Context, params autogen.GetDele
 		return Error500(c)
 	}
 
-	var maxPage = int(count) / limit
+	var maxPage = uint64(count) / limit
 
 	if page > maxPage {
 		page = maxPage
 	}
 
-	if page < 0 {
-		page = 0
-	}
-
-	if limit < 0 {
-		limit = 0
+	if page > 0 {
+		page -= 1
 	}
 
 	if limit > 100 {
@@ -238,12 +230,12 @@ func (s *Server) GetDeletedCarouselTexts(c echo.Context, params autogen.GetDelet
 		return ErrorNotAuthenticated(c)
 	}
 
-	var page int
+	var page uint64
 	if params.Page != nil {
 		page = *params.Page
 	}
 
-	var limit = 10
+	var limit uint64 = 10
 	if params.Limit != nil {
 		limit = *params.Limit
 	}
@@ -254,18 +246,14 @@ func (s *Server) GetDeletedCarouselTexts(c echo.Context, params autogen.GetDelet
 		return Error500(c)
 	}
 
-	var maxPage = int(count) / limit
+	var maxPage = uint64(count) / limit
 
 	if page > maxPage {
 		page = maxPage
 	}
 
-	if page < 0 {
-		page = 0
-	}
-
-	if limit < 0 {
-		limit = 0
+	if page > 0 {
+		page -= 1
 	}
 
 	if limit > 100 {
@@ -345,12 +333,12 @@ func (s *Server) GetDeletedItems(c echo.Context, params autogen.GetDeletedItemsP
 		return ErrorNotAuthenticated(c)
 	}
 
-	var page int
+	var page uint64
 	if params.Page != nil {
 		page = *params.Page
 	}
 
-	var limit = 10
+	var limit uint64 = 10
 	if params.Limit != nil {
 		limit = *params.Limit
 	}
@@ -361,18 +349,14 @@ func (s *Server) GetDeletedItems(c echo.Context, params autogen.GetDeletedItemsP
 		return Error500(c)
 	}
 
-	var maxPage = int(count) / limit
+	var maxPage = uint64(count) / limit
 
 	if page > maxPage {
 		page = maxPage
 	}
 
-	if page < 0 {
-		page = 0
-	}
-
-	if limit < 0 {
-		limit = 0
+	if page > 0 {
+		page -= 1
 	}
 
 	if limit > 100 {
@@ -458,12 +442,12 @@ func (s *Server) GetDeletedRefills(c echo.Context, params autogen.GetDeletedRefi
 		return ErrorNotAuthenticated(c)
 	}
 
-	var page int
+	var page uint64
 	if params.Page != nil {
 		page = *params.Page
 	}
 
-	var limit = 10
+	var limit uint64 = 10
 	if params.Limit != nil {
 		limit = *params.Limit
 	}
@@ -474,18 +458,14 @@ func (s *Server) GetDeletedRefills(c echo.Context, params autogen.GetDeletedRefi
 		return Error500(c)
 	}
 
-	var maxPage = int(count) / limit
+	var maxPage = uint64(count) / limit
 
 	if page > maxPage {
 		page = maxPage
 	}
 
-	if page < 0 {
-		page = 0
-	}
-
-	if limit < 0 {
-		limit = 0
+	if page > 0 {
+		page -= 1
 	}
 
 	if limit > 100 {
@@ -565,12 +545,12 @@ func (s *Server) GetDeletedTransactions(c echo.Context, params autogen.GetDelete
 		return ErrorNotAuthenticated(c)
 	}
 
-	var page int
+	var page uint64
 	if params.Page != nil {
 		page = *params.Page
 	}
 
-	var limit = 10
+	var limit uint64 = 10
 	if params.Limit != nil {
 		limit = *params.Limit
 	}
@@ -581,18 +561,14 @@ func (s *Server) GetDeletedTransactions(c echo.Context, params autogen.GetDelete
 		return Error500(c)
 	}
 
-	var maxPage = int(count) / limit
+	var maxPage = uint64(count) / limit
 
 	if page > maxPage {
 		page = maxPage
 	}
 
-	if page < 0 {
-		page = 0
-	}
-
-	if limit < 0 {
-		limit = 0
+	if page > 0 {
+		page -= 1
 	}
 
 	if limit > 100 {

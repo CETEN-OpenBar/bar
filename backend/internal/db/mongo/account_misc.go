@@ -6,7 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (b *Backend) GetAccounts(page int, size int) ([]*models.Account, error) {
+func (b *Backend) GetAccounts(page uint64, size uint64) ([]*models.Account, error) {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 

@@ -161,7 +161,7 @@ func (b *Backend) RestoreTransaction(id string) error {
 	return nil
 }
 
-func (b *Backend) GetDeletedTransactions(page int, size int) ([]*models.Transaction, error) {
+func (b *Backend) GetDeletedTransactions(page uint64, size uint64) ([]*models.Transaction, error) {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 

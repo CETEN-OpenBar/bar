@@ -23,23 +23,18 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 		return ErrorNotAuthenticated(c)
 	}
 
-	var page = 1
+	var page uint64 = 1
 	if params.Page != nil {
-		page = int(*params.Page)
+		page = uint64(*params.Page)
 	}
 
-	var size = 50
+	var size uint64 = 50
 	if params.Limit != nil {
-		size = int(*params.Limit)
+		size = uint64(*params.Limit)
 	}
 
-	page -= 1
-	if page < 0 {
-		page = 0
-	}
-
-	if size < 0 {
-		size = 50
+	if page > 0 {
+		page -= 1
 	}
 
 	if size > 100 {
@@ -64,7 +59,7 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 	if err != nil {
 		return Error500(c)
 	}
-	var maxPage = int(count) / size
+	var maxPage = uint64(count) / size
 
 	if page > maxPage {
 		page = maxPage

@@ -39,7 +39,7 @@ func (b *Backend) GetAllCategories() ([]*models.Category, error) {
 	return categories, nil
 }
 
-func (b *Backend) GetDeletedCategories(page int, size int) ([]*models.Category, error) {
+func (b *Backend) GetDeletedCategories(page uint64, size uint64) ([]*models.Category, error) {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 

@@ -117,9 +117,9 @@ func (s *Server) ConnectAccount(c echo.Context, qrNonce string) error {
 }
 
 type education struct {
-	Promo  int    `json:"Promotion"`
+	Promo  uint64 `json:"Promotion"`
 	Spé    string `json:"Approfondissement"`
-	Statut int    `json:"Statut"`
+	Statut uint64 `json:"Statut"`
 }
 
 type googleUser struct {

@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (b *Backend) GetItems(categoryID string, page, size int, state string) ([]*models.Item, error) {
+func (b *Backend) GetItems(categoryID string, page, size uint64, state string) ([]*models.Item, error) {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 

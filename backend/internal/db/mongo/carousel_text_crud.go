@@ -161,7 +161,7 @@ func (b *Backend) RestoreCarouselText(id string) error {
 	return nil
 }
 
-func (b *Backend) GetDeletedCarouselTexts(page int, size int) ([]*models.CarouselText, error) {
+func (b *Backend) GetDeletedCarouselTexts(page uint64, size uint64) ([]*models.CarouselText, error) {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 

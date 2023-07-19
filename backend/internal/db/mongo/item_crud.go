@@ -161,7 +161,7 @@ func (b *Backend) RestoreItem(id string) error {
 	return nil
 }
 
-func (b *Backend) GetDeletedItems(page int, size int) ([]*models.Item, error) {
+func (b *Backend) GetDeletedItems(page uint64, size uint64) ([]*models.Item, error) {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 

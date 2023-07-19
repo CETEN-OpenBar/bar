@@ -287,12 +287,14 @@ paths:
           description: page to get
           schema:
             type: integer
+            format: uint64
             default: 0
         - name: limit
           in: query
           description: number of accounts to get
           schema:
             type: integer
+            format: uint64
             default: 10
       responses:
         '200':
@@ -310,13 +312,13 @@ paths:
                       $ref: '#/components/schemas/Account'
                   page:
                     type: integer
-                    format: int
+                    format: uint64
                   limit:
                     type: integer
-                    format: int
+                    format: uint64
                   max_page:
                     type: integer
-                    format: int
+                    format: uint64
                 required:
                   - accounts
                   - page
@@ -605,12 +607,14 @@ paths:
           required: false
           schema:
             type: integer
+            format: uint64
         - name: limit
           in: query
           description: Number of transactions per page
           required: false
           schema:
             type: integer
+            format: uint64
         - name: state
           in: query
           description: Filter by state
@@ -632,10 +636,12 @@ paths:
                       $ref: '#/components/schemas/Transaction'
                   page:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                   limit:
                     type: integer
-                    format: int
+                    format: uint64
+                    
         '401':
           description: 'Not authorized'
           content:
@@ -670,12 +676,14 @@ paths:
           required: false
           schema:
             type: integer
+            format: uint64
         - name: limit
           in: query
           description: Number of transactions per page
           required: false
           schema:
             type: integer
+            format: uint64
         - name: state
           in: query
           description: Filter by state
@@ -697,13 +705,16 @@ paths:
                       $ref: '#/components/schemas/Transaction'
                   page:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                   limit:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                   max_page:
                     type: integer
-                    format: int
+                    format: uint64
+                    
         '401':
           description: 'Not authorized'
           content:
@@ -782,12 +793,14 @@ paths:
           required: false
           schema:
             type: integer
+            format: uint64
         - name: limit
           in: query
           description: Number of transactions per page
           required: false
           schema:
             type: integer
+            format: uint64
         - name: state
           in: query
           description: Filter by state
@@ -809,13 +822,16 @@ paths:
                       $ref: '#/components/schemas/Transaction'
                   page:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                   limit:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                   max_page:
                     type: integer
-                    format: int
+                    format: uint64
+                    
         '401':
           description: 'Not authorized'
           content:
@@ -1076,12 +1092,14 @@ paths:
           required: false
           schema:
             type: integer
+            format: uint64
         - name: limit
           in: query
           description: Number of transactions per page
           required: false
           schema:
             type: integer
+            format: uint64
         - name: start_date
           in: query
           description: Start date of the refill
@@ -1138,12 +1156,14 @@ paths:
           required: false
           schema:
             type: integer
+            format: uint64
         - name: limit
           in: query
           description: Number of transactions per page
           required: false
           schema:
             type: integer
+            format: uint64
         - name: start_date
           in: query
           description: Start date of the refill
@@ -1172,13 +1192,16 @@ paths:
                       $ref: '#/components/schemas/Refill'
                   page:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                   limit:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                   max_page:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                 required:
                   - items
                   - page
@@ -1217,12 +1240,14 @@ paths:
           required: false
           schema:
             type: integer
+            format: uint64
         - name: limit
           in: query
           description: Number of transactions per page
           required: false
           schema:
             type: integer
+            format: uint64
         - name: start_date
           in: query
           description: Start date of the refill
@@ -1251,13 +1276,16 @@ paths:
                       $ref: '#/components/schemas/Refill'
                   page:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                   limit:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                   max_page:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                 required:
                   - items
                   - page
@@ -1307,6 +1335,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: uint64
       responses:
         '201':
           description: ''
@@ -1643,12 +1672,14 @@ paths:
           required: false
           schema:
             type: integer
+            format: uint64
         - name: limit
           in: query
           description: Number of items per page
           required: false
           schema:
             type: integer
+            format: uint64
         - name: state
           in: query
           description: Filter by state
@@ -1670,13 +1701,16 @@ paths:
                       $ref: '#/components/schemas/Item'
                   page:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                   limit:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                   max_page:
                     type: integer
-                    format: int
+                    format: uint64
+                    
         '404':
           description: 'Category not found'
           content:
@@ -2175,12 +2209,14 @@ paths:
           required: false
           schema:
             type: integer
+            format: uint64
         - name: limit
           in: query
           description: Number of accounts per page
           required: false
           schema:
             type: integer
+            format: uint64
       responses:
         '200':
           description: ''
@@ -2195,13 +2231,16 @@ paths:
                       $ref: '#/components/schemas/Account'
                   page:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                   limit:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                   max_page:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                 required:
                   - accounts
                   - page
@@ -2341,12 +2380,14 @@ paths:
           required: false
           schema:
             type: integer
+            format: uint64
         - name: limit
           in: query
           description: Number of accounts per page
           required: false
           schema:
             type: integer
+            format: uint64
       responses:
         '200':
           description: ''
@@ -2361,13 +2402,16 @@ paths:
                       $ref: '#/components/schemas/Transaction'
                   page:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                   limit:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                   max_page:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                 required:
                   - transactions
                   - page
@@ -2507,12 +2551,14 @@ paths:
           required: false
           schema:
             type: integer
+            format: uint64
         - name: limit
           in: query
           description: Number of accounts per page
           required: false
           schema:
             type: integer
+            format: uint64
       responses:
         '200':
           description: ''
@@ -2527,13 +2573,16 @@ paths:
                       $ref: '#/components/schemas/Refill'
                   page:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                   limit:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                   max_page:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                 required:
                   - refills
                   - page
@@ -2673,12 +2722,14 @@ paths:
           required: false
           schema:
             type: integer
+            format: uint64
         - name: limit
           in: query
           description: Number of accounts per page
           required: false
           schema:
             type: integer
+            format: uint64
       responses:
         '200':
           description: ''
@@ -2693,13 +2744,16 @@ paths:
                       $ref: '#/components/schemas/Item'
                   page:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                   limit:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                   max_page:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                 required:
                   - items
                   - page
@@ -2839,12 +2893,14 @@ paths:
           required: false
           schema:
             type: integer
+            format: uint64
         - name: limit
           in: query
           description: Number of accounts per page
           required: false
           schema:
             type: integer
+            format: uint64
       responses:
         '200':
           description: ''
@@ -2859,13 +2915,16 @@ paths:
                       $ref: '#/components/schemas/CarouselImage'
                   page:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                   limit:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                   max_page:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                 required:
                   - items
                   - page
@@ -3005,12 +3064,14 @@ paths:
           required: false
           schema:
             type: integer
+            format: uint64
         - name: limit
           in: query
           description: Number of accounts per page
           required: false
           schema:
             type: integer
+            format: uint64
       responses:
         '200':
           description: ''
@@ -3025,13 +3086,16 @@ paths:
                       $ref: '#/components/schemas/CarouselText'
                   page:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                   limit:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                   max_page:
                     type: integer
-                    format: int
+                    format: uint64
+                    
                 required:
                   - items
                   - page
@@ -3257,7 +3321,7 @@ components:
           type: string
         balance:
           type: integer
-          format: int64
+          format: uint64
           example: 1000 (10.00€)
         role:
           $ref: '#/components/schemas/AccountRole'
@@ -3280,7 +3344,7 @@ components:
           type: string
         balance:
           type: integer
-          format: int64
+          format: uint64
           example: 1000
         role:
           $ref: '#/components/schemas/AccountRole'
@@ -3339,7 +3403,7 @@ components:
           type: string
         balance:
           type: integer
-          format: int64
+          format: uint64
           example: 1000
         card_id:
           type: string
@@ -3357,7 +3421,7 @@ components:
           $ref: '#/components/schemas/AccountState'
         deleted_at:
           type: integer
-          format: int64
+          format: uint64
         deleted_by:
           $ref: '#/components/schemas/UUID'
       required:
@@ -3387,15 +3451,15 @@ components:
       properties:
         price:
           type: integer
-          format: int64
+          format: uint64
           example: 1000
         amount_left:
           type: integer
-          format: int32
+          format: uint64
           example: 32
         buy_limit:
           type: integer
-          format: int32
+          format: uint64
           example: 32
         category_id:
           $ref: '#/components/schemas/UUID'
@@ -3408,10 +3472,10 @@ components:
           description: Picture of the current item
         promotion:
           type: integer
-          format: int64
+          format: uint64
         promotion_ends_at:
           type: integer
-          format: int64
+          format: uint64
         state:
           $ref: '#/components/schemas/ItemState'
     NewItem:
@@ -3419,21 +3483,21 @@ components:
       properties:
         price:
           type: integer
-          format: int64
+          format: uint64
           example: 1000
         promotion:
           type: integer
-          format: int64
+          format: uint64
         promotion_ends_at:
           type: integer
-          format: int64
+          format: uint64
         amount_left:
           type: integer
-          format: int32
+          format: uint64
           example: 32
         buy_limit:
           type: integer
-          format: int32
+          format: uint64
           example: 32
         name:
           type: string
@@ -3459,22 +3523,22 @@ components:
           $ref: '#/components/schemas/UUID'
         price:
           type: integer
-          format: int64
+          format: uint64
           example: 1000
         promotion:
           type: integer
-          format: int64
+          format: uint64
           example: 3000 (-30%)
         promotion_ends_at:
           type: integer
-          format: int64
+          format: uint64
         amount_left:
           type: integer
-          format: int32
+          format: uint64
           example: 32
         buy_limit:
           type: integer
-          format: int32
+          format: uint64
           example: 32
         category_id:
           $ref: '#/components/schemas/UUID'
@@ -3488,7 +3552,7 @@ components:
           $ref: '#/components/schemas/ItemState'
         deleted_at:
           type: integer
-          format: int64
+          format: uint64
         deleted_by:
           $ref: '#/components/schemas/UUID'
       required:
@@ -3534,7 +3598,7 @@ components:
           description: Link to picture of the current category
         deleted_at:
           type: integer
-          format: int64
+          format: uint64
         deleted_by:
           $ref: '#/components/schemas/UUID'
       required:
@@ -3573,10 +3637,12 @@ components:
           $ref: '#/components/schemas/UUID'
         item_amount:
           type: integer
-          format: int
+          format: uint64
+          
         total_cost:
           type: integer
-          format: int
+          format: uint64
+          
         state:
           $ref: '#/components/schemas/TransactionState'
       required:
@@ -3597,12 +3663,13 @@ components:
           type: string
         total_cost:
           type: integer
-          format: int
+          format: uint64
+          
         state:
           $ref: '#/components/schemas/TransactionState'
         deleted_at:
           type: integer
-          format: int64
+          format: uint64
         deleted_by:
           $ref: '#/components/schemas/UUID'
       required:
@@ -3616,11 +3683,13 @@ components:
       properties:
         item_id:
           $ref: '#/components/schemas/UUID'
+        amount:
+          type: integer
+          format: uint64
+          
       required:
         - item_id
-        - item_amount
-        - total_cost
-        - state
+        - amount
     NewTransaction:
       type: object
       properties:
@@ -3630,9 +3699,6 @@ components:
             $ref: '#/components/schemas/NewTransactionItem'
       required:
         - items
-        - account_id
-        - total_cost
-        - state
     RefillState:
       type: string
       enum:
@@ -3647,20 +3713,21 @@ components:
           $ref: '#/components/schemas/UUID'
         amount:
           type: integer
-          format: int
+          format: uint64
+          
           example: 1050 (10.50€)
         state:
           $ref: '#/components/schemas/RefillState'
         issued_at:
           type: integer
-          format: int64
+          format: uint64
         issued_by:
           $ref: '#/components/schemas/UUID'
         canceled_by:
           $ref: '#/components/schemas/UUID'
         deleted_at:
           type: integer
-          format: int64
+          format: uint64
         deleted_by:
           $ref: '#/components/schemas/UUID'
       required:
@@ -3696,7 +3763,7 @@ components:
           example: "#FFFFFF"
         deleted_at:
           type: integer
-          format: int64
+          format: uint64
         deleted_by:
           $ref: '#/components/schemas/UUID'
       required:
@@ -3722,7 +3789,7 @@ components:
           description: Image to display
         deleted_at:
           type: integer
-          format: int64
+          format: uint64
         deleted_by:
           $ref: '#/components/schemas/UUID'
       required:

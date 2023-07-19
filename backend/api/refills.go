@@ -35,31 +35,23 @@ func (s *Server) GetRefills(c echo.Context, params autogen.GetRefillsParams) err
 		return Error500(c)
 	}
 
-	page := 0
+	var page uint64 = 0
 	if params.Page != nil {
 		page = *params.Page
 	}
 
-	size := 10
+	var size uint64 = 10
 	if params.Limit != nil {
 		size = *params.Limit
-	}
-
-	if size < 0 {
-		size = 10
 	}
 
 	if size > 100 {
 		size = 100
 	}
 
-	maxPage := int(count) / size
+	maxPage := uint64(count) / size
 	if page > maxPage {
 		page = maxPage
-	}
-
-	if page < 0 {
-		page = 0
 	}
 
 	data, err := s.DBackend.GetAllRefills(page, size, startsAt, endsAt)
@@ -114,31 +106,23 @@ func (s *Server) GetSelfRefills(c echo.Context, params autogen.GetSelfRefillsPar
 		return Error500(c)
 	}
 
-	page := 0
+	var page uint64 = 0
 	if params.Page != nil {
 		page = *params.Page
 	}
 
-	size := 10
+	var size uint64 = 10
 	if params.Limit != nil {
 		size = *params.Limit
-	}
-
-	if size < 0 {
-		size = 10
 	}
 
 	if size > 100 {
 		size = 100
 	}
 
-	maxPage := int(count) / size
+	maxPage := uint64(count) / size
 	if page > maxPage {
 		page = maxPage
-	}
-
-	if page < 0 {
-		page = 0
 	}
 
 	data, err := s.DBackend.GetRefills(accountID, page, size, startsAt, endsAt)
@@ -185,31 +169,23 @@ func (s *Server) GetAccountRefills(c echo.Context, accountId autogen.UUID, param
 		return Error500(c)
 	}
 
-	page := 0
+	var page uint64 = 0
 	if params.Page != nil {
 		page = *params.Page
 	}
 
-	size := 10
+	var size uint64 = 10
 	if params.Limit != nil {
 		size = *params.Limit
-	}
-
-	if size < 0 {
-		size = 10
 	}
 
 	if size > 100 {
 		size = 100
 	}
 
-	maxPage := int(count) / size
+	maxPage := uint64(count) / size
 	if page > maxPage {
 		page = maxPage
-	}
-
-	if page < 0 {
-		page = 0
 	}
 
 	data, err := s.DBackend.GetRefills(accountId.String(), page, size, startsAt, endsAt)
@@ -247,7 +223,7 @@ func (s *Server) PostRefill(c echo.Context, accountId autogen.UUID, params autog
 			AccountId: accountId,
 			Amount:    params.Amount,
 			Id:        uuid.New(),
-			IssuedAt:  time.Now().Unix(),
+			IssuedAt:  uint64(time.Now().Unix()),
 			IssuedBy:  uuid.MustParse(adminId),
 			State:     autogen.Valid,
 		},

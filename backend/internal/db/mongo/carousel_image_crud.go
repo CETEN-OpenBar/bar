@@ -161,7 +161,7 @@ func (b *Backend) RestoreCarouselImage(id string) error {
 	return nil
 }
 
-func (b *Backend) GetDeletedCarouselImages(page int, size int) ([]*models.CarouselImage, error) {
+func (b *Backend) GetDeletedCarouselImages(page uint64, size uint64) ([]*models.CarouselImage, error) {
 	ctx, cancel := b.GetContext()
 	defer cancel()
 

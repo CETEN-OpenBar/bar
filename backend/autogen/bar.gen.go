@@ -115,10 +115,10 @@ const (
 
 // Account defines model for Account.
 type Account struct {
-	Balance      int64                 `json:"balance" bson:"balance"`
+	Balance      uint64                `json:"balance" bson:"balance"`
 	CardId       string                `json:"card_id" bson:"card_id"`
 	CardPin      string                `json:"-" bson:"card_pin"`
-	DeletedAt    *int64                `json:"deleted_at,omitempty" bson:"deleted_at"`
+	DeletedAt    *uint64               `json:"deleted_at,omitempty" bson:"deleted_at"`
 	DeletedBy    *UUID                 `json:"deleted_by,omitempty" bson:"deleted_by"`
 	EmailAddress string                `json:"email_address" bson:"email_address"`
 	FirstName    string                `json:"first_name" bson:"first_name"`
@@ -145,9 +145,9 @@ type AccountState string
 
 // CarouselImage defines model for CarouselImage.
 type CarouselImage struct {
-	DeletedAt *int64 `json:"deleted_at,omitempty" bson:"deleted_at"`
-	DeletedBy *UUID  `json:"deleted_by,omitempty" bson:"deleted_by"`
-	Id        UUID   `json:"id" bson:"id"`
+	DeletedAt *uint64 `json:"deleted_at,omitempty" bson:"deleted_at"`
+	DeletedBy *UUID   `json:"deleted_by,omitempty" bson:"deleted_by"`
+	Id        UUID    `json:"id" bson:"id"`
 
 	// ImageUrl Image to display
 	ImageUrl string `json:"image_url" bson:"image_url"`
@@ -162,10 +162,10 @@ type CarouselImageUpload struct {
 // CarouselText defines model for CarouselText.
 type CarouselText struct {
 	// Color Color of the text
-	Color     string `json:"color" bson:"color"`
-	DeletedAt *int64 `json:"deleted_at,omitempty" bson:"deleted_at"`
-	DeletedBy *UUID  `json:"deleted_by,omitempty" bson:"deleted_by"`
-	Id        UUID   `json:"id" bson:"id"`
+	Color     string  `json:"color" bson:"color"`
+	DeletedAt *uint64 `json:"deleted_at,omitempty" bson:"deleted_at"`
+	DeletedBy *UUID   `json:"deleted_by,omitempty" bson:"deleted_by"`
+	Id        UUID    `json:"id" bson:"id"`
 
 	// Text Text to display
 	Text string `json:"text" bson:"text"`
@@ -182,9 +182,9 @@ type CarouselTextCreate struct {
 
 // Category defines model for Category.
 type Category struct {
-	DeletedAt *int64 `json:"deleted_at,omitempty" bson:"deleted_at"`
-	DeletedBy *UUID  `json:"deleted_by,omitempty" bson:"deleted_by"`
-	Id        UUID   `json:"id" bson:"id"`
+	DeletedAt *uint64 `json:"deleted_at,omitempty" bson:"deleted_at"`
+	DeletedBy *UUID   `json:"deleted_by,omitempty" bson:"deleted_by"`
+	Id        UUID    `json:"id" bson:"id"`
 
 	// Name Name of the current category
 	Name string `json:"name" bson:"name"`
@@ -204,21 +204,21 @@ type HTTPError struct {
 
 // Item defines model for Item.
 type Item struct {
-	AmountLeft int32  `json:"amount_left" bson:"amount_left"`
-	BuyLimit   int32  `json:"buy_limit" bson:"buy_limit"`
-	CategoryId UUID   `json:"category_id" bson:"category_id"`
-	DeletedAt  *int64 `json:"deleted_at,omitempty" bson:"deleted_at"`
-	DeletedBy  *UUID  `json:"deleted_by,omitempty" bson:"deleted_by"`
-	Id         UUID   `json:"id" bson:"id"`
+	AmountLeft uint64  `json:"amount_left" bson:"amount_left"`
+	BuyLimit   uint64  `json:"buy_limit" bson:"buy_limit"`
+	CategoryId UUID    `json:"category_id" bson:"category_id"`
+	DeletedAt  *uint64 `json:"deleted_at,omitempty" bson:"deleted_at"`
+	DeletedBy  *UUID   `json:"deleted_by,omitempty" bson:"deleted_by"`
+	Id         UUID    `json:"id" bson:"id"`
 
 	// Name Name of the current item
 	Name string `json:"name" bson:"name"`
 
 	// PictureUri Link to picture of the current item
-	PictureUri      string `json:"picture_uri" bson:"picture_uri"`
-	Price           int64  `json:"price" bson:"price"`
-	Promotion       *int64 `json:"promotion,omitempty" bson:"promotion"`
-	PromotionEndsAt *int64 `json:"promotion_ends_at,omitempty" bson:"promotion_ends_at"`
+	PictureUri      string  `json:"picture_uri" bson:"picture_uri"`
+	Price           uint64  `json:"price" bson:"price"`
+	Promotion       *uint64 `json:"promotion,omitempty" bson:"promotion"`
+	PromotionEndsAt *uint64 `json:"promotion_ends_at,omitempty" bson:"promotion_ends_at"`
 
 	// State State of the item
 	State ItemState `json:"state" bson:"state"`
@@ -232,7 +232,7 @@ type Messages string
 
 // NewAccount defines model for NewAccount.
 type NewAccount struct {
-	Balance      int64   `json:"balance" bson:"balance"`
+	Balance      uint64  `json:"balance" bson:"balance"`
 	CardId       *string `json:"card_id,omitempty" bson:"card_id"`
 	EmailAddress string  `json:"email_address" bson:"email_address"`
 	FirstName    string  `json:"first_name" bson:"first_name"`
@@ -251,17 +251,17 @@ type NewCategory struct {
 
 // NewItem defines model for NewItem.
 type NewItem struct {
-	AmountLeft int32 `json:"amount_left" bson:"amount_left"`
-	BuyLimit   int32 `json:"buy_limit" bson:"buy_limit"`
+	AmountLeft uint64 `json:"amount_left" bson:"amount_left"`
+	BuyLimit   uint64 `json:"buy_limit" bson:"buy_limit"`
 
 	// Name Name of the current item
 	Name string `json:"name" bson:"name"`
 
 	// Picture Picture of the current item
-	Picture         string `json:"picture" bson:"picture"`
-	Price           int64  `json:"price" bson:"price"`
-	Promotion       *int64 `json:"promotion,omitempty" bson:"promotion"`
-	PromotionEndsAt *int64 `json:"promotion_ends_at,omitempty" bson:"promotion_ends_at"`
+	Picture         string  `json:"picture" bson:"picture"`
+	Price           uint64  `json:"price" bson:"price"`
+	Promotion       *uint64 `json:"promotion,omitempty" bson:"promotion"`
+	PromotionEndsAt *uint64 `json:"promotion_ends_at,omitempty" bson:"promotion_ends_at"`
 
 	// State State of the item
 	State ItemState `json:"state" bson:"state"`
@@ -274,18 +274,19 @@ type NewTransaction struct {
 
 // NewTransactionItem defines model for NewTransactionItem.
 type NewTransactionItem struct {
-	ItemId UUID `json:"item_id" bson:"item_id"`
+	Amount uint64 `json:"amount" bson:"amount"`
+	ItemId UUID   `json:"item_id" bson:"item_id"`
 }
 
 // Refill defines model for Refill.
 type Refill struct {
 	AccountId  UUID        `json:"account_id" bson:"account_id"`
-	Amount     int         `json:"amount" bson:"amount"`
+	Amount     uint64      `json:"amount" bson:"amount"`
 	CanceledBy *UUID       `json:"canceled_by,omitempty" bson:"canceled_by"`
-	DeletedAt  *int64      `json:"deleted_at,omitempty" bson:"deleted_at"`
+	DeletedAt  *uint64     `json:"deleted_at,omitempty" bson:"deleted_at"`
 	DeletedBy  *UUID       `json:"deleted_by,omitempty" bson:"deleted_by"`
 	Id         UUID        `json:"id" bson:"id"`
-	IssuedAt   int64       `json:"issued_at" bson:"issued_at"`
+	IssuedAt   uint64      `json:"issued_at" bson:"issued_at"`
 	IssuedBy   UUID        `json:"issued_by" bson:"issued_by"`
 	State      RefillState `json:"state" bson:"state"`
 }
@@ -296,20 +297,20 @@ type RefillState string
 // Transaction defines model for Transaction.
 type Transaction struct {
 	AccountId string            `json:"account_id" bson:"account_id"`
-	DeletedAt *int64            `json:"deleted_at,omitempty" bson:"deleted_at"`
+	DeletedAt *uint64           `json:"deleted_at,omitempty" bson:"deleted_at"`
 	DeletedBy *UUID             `json:"deleted_by,omitempty" bson:"deleted_by"`
 	Id        UUID              `json:"id" bson:"id"`
 	Items     []TransactionItem `json:"items" bson:"items"`
 	State     TransactionState  `json:"state" bson:"state"`
-	TotalCost int               `json:"total_cost" bson:"total_cost"`
+	TotalCost uint64            `json:"total_cost" bson:"total_cost"`
 }
 
 // TransactionItem defines model for TransactionItem.
 type TransactionItem struct {
-	ItemAmount int              `json:"item_amount" bson:"item_amount"`
+	ItemAmount uint64           `json:"item_amount" bson:"item_amount"`
 	ItemId     UUID             `json:"item_id" bson:"item_id"`
 	State      TransactionState `json:"state" bson:"state"`
-	TotalCost  int              `json:"total_cost" bson:"total_cost"`
+	TotalCost  uint64           `json:"total_cost" bson:"total_cost"`
 }
 
 // TransactionItemState defines model for TransactionItemState.
@@ -323,7 +324,7 @@ type UUID = openapi_types.UUID
 
 // UpdateAccountAdmin defines model for UpdateAccountAdmin.
 type UpdateAccountAdmin struct {
-	Balance      *int64                 `json:"balance,omitempty" bson:"balance"`
+	Balance      *uint64                `json:"balance,omitempty" bson:"balance"`
 	CardId       *string                `json:"card_id,omitempty" bson:"card_id"`
 	EmailAddress *string                `json:"email_address,omitempty" bson:"email_address"`
 	FirstName    *string                `json:"first_name,omitempty" bson:"first_name"`
@@ -346,18 +347,18 @@ type UpdateCategory struct {
 
 // UpdateItem defines model for UpdateItem.
 type UpdateItem struct {
-	AmountLeft *int32 `json:"amount_left,omitempty" bson:"amount_left"`
-	BuyLimit   *int32 `json:"buy_limit,omitempty" bson:"buy_limit"`
-	CategoryId *UUID  `json:"category_id,omitempty" bson:"category_id"`
+	AmountLeft *uint64 `json:"amount_left,omitempty" bson:"amount_left"`
+	BuyLimit   *uint64 `json:"buy_limit,omitempty" bson:"buy_limit"`
+	CategoryId *UUID   `json:"category_id,omitempty" bson:"category_id"`
 
 	// Name Name of the current item
 	Name *string `json:"name,omitempty" bson:"name"`
 
 	// Picture Picture of the current item
 	Picture         *string `json:"picture,omitempty" bson:"picture"`
-	Price           *int64  `json:"price,omitempty" bson:"price"`
-	Promotion       *int64  `json:"promotion,omitempty" bson:"promotion"`
-	PromotionEndsAt *int64  `json:"promotion_ends_at,omitempty" bson:"promotion_ends_at"`
+	Price           *uint64 `json:"price,omitempty" bson:"price"`
+	Promotion       *uint64 `json:"promotion,omitempty" bson:"promotion"`
+	PromotionEndsAt *uint64 `json:"promotion_ends_at,omitempty" bson:"promotion_ends_at"`
 
 	// State State of the item
 	State *ItemState `json:"state,omitempty" bson:"state"`
@@ -366,10 +367,10 @@ type UpdateItem struct {
 // GetSelfRefillsParams defines parameters for GetSelfRefills.
 type GetSelfRefillsParams struct {
 	// Page Page number
-	Page *int `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
 
 	// Limit Number of transactions per page
-	Limit *int `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
 
 	// StartDate Start date of the refill
 	StartDate *openapi_types.Date `form:"start_date,omitempty" json:"start_date,omitempty" bson:"start_date"`
@@ -381,10 +382,10 @@ type GetSelfRefillsParams struct {
 // GetCurrentAccountTransactionsParams defines parameters for GetCurrentAccountTransactions.
 type GetCurrentAccountTransactionsParams struct {
 	// Page Page number
-	Page *int `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
 
 	// Limit Number of transactions per page
-	Limit *int `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
 
 	// State Filter by state
 	State *TransactionState `form:"state,omitempty" json:"state,omitempty" bson:"state"`
@@ -393,19 +394,19 @@ type GetCurrentAccountTransactionsParams struct {
 // GetAccountsParams defines parameters for GetAccounts.
 type GetAccountsParams struct {
 	// Page page to get
-	Page *int `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
 
 	// Limit number of accounts to get
-	Limit *int `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
 }
 
 // GetAccountRefillsParams defines parameters for GetAccountRefills.
 type GetAccountRefillsParams struct {
 	// Page Page number
-	Page *int `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
 
 	// Limit Number of transactions per page
-	Limit *int `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
 
 	// StartDate Start date of the refill
 	StartDate *openapi_types.Date `form:"start_date,omitempty" json:"start_date,omitempty" bson:"start_date"`
@@ -417,16 +418,16 @@ type GetAccountRefillsParams struct {
 // PostRefillParams defines parameters for PostRefill.
 type PostRefillParams struct {
 	// Amount Amount of the refill
-	Amount int `form:"amount" json:"amount" bson:"amount"`
+	Amount uint64 `form:"amount" json:"amount" bson:"amount"`
 }
 
 // GetAccountTransactionsParams defines parameters for GetAccountTransactions.
 type GetAccountTransactionsParams struct {
 	// Page Page number
-	Page *int `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
 
 	// Limit Number of transactions per page
-	Limit *int `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
 
 	// State Filter by state
 	State *TransactionState `form:"state,omitempty" json:"state,omitempty" bson:"state"`
@@ -462,10 +463,10 @@ type CallbackParams struct {
 // GetCategoryItemsParams defines parameters for GetCategoryItems.
 type GetCategoryItemsParams struct {
 	// Page Page number
-	Page *int `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
 
 	// Limit Number of items per page
-	Limit *int `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
 
 	// State Filter by state
 	State *ItemState `form:"state,omitempty" json:"state,omitempty" bson:"state"`
@@ -474,55 +475,55 @@ type GetCategoryItemsParams struct {
 // GetDeletedAccountsParams defines parameters for GetDeletedAccounts.
 type GetDeletedAccountsParams struct {
 	// Page Page number
-	Page *int `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
 
 	// Limit Number of accounts per page
-	Limit *int `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
 }
 
 // GetDeletedCarouselImagesParams defines parameters for GetDeletedCarouselImages.
 type GetDeletedCarouselImagesParams struct {
 	// Page Page number
-	Page *int `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
 
 	// Limit Number of accounts per page
-	Limit *int `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
 }
 
 // GetDeletedCarouselTextsParams defines parameters for GetDeletedCarouselTexts.
 type GetDeletedCarouselTextsParams struct {
 	// Page Page number
-	Page *int `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
 
 	// Limit Number of accounts per page
-	Limit *int `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
 }
 
 // GetDeletedItemsParams defines parameters for GetDeletedItems.
 type GetDeletedItemsParams struct {
 	// Page Page number
-	Page *int `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
 
 	// Limit Number of accounts per page
-	Limit *int `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
 }
 
 // GetDeletedRefillsParams defines parameters for GetDeletedRefills.
 type GetDeletedRefillsParams struct {
 	// Page Page number
-	Page *int `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
 
 	// Limit Number of accounts per page
-	Limit *int `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
 }
 
 // GetDeletedTransactionsParams defines parameters for GetDeletedTransactions.
 type GetDeletedTransactionsParams struct {
 	// Page Page number
-	Page *int `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
 
 	// Limit Number of accounts per page
-	Limit *int `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
 }
 
 // ImportAccountsMultipartBody defines parameters for ImportAccounts.
@@ -533,10 +534,10 @@ type ImportAccountsMultipartBody struct {
 // GetRefillsParams defines parameters for GetRefills.
 type GetRefillsParams struct {
 	// Page Page number
-	Page *int `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
 
 	// Limit Number of transactions per page
-	Limit *int `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
 
 	// StartDate Start date of the refill
 	StartDate *openapi_types.Date `form:"start_date,omitempty" json:"start_date,omitempty" bson:"start_date"`
@@ -548,10 +549,10 @@ type GetRefillsParams struct {
 // GetTransactionsParams defines parameters for GetTransactions.
 type GetTransactionsParams struct {
 	// Page Page number
-	Page *int `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
 
 	// Limit Number of transactions per page
-	Limit *int `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
 
 	// State Filter by state
 	State *TransactionState `form:"state,omitempty" json:"state,omitempty" bson:"state"`
@@ -2297,9 +2298,9 @@ type GetSelfRefillsResponseObject interface {
 }
 
 type GetSelfRefills200JSONResponse struct {
-	Limit   int       `json:"limit" bson:"limit"`
-	MaxPage int       `json:"max_page" bson:"max_page"`
-	Page    int       `json:"page" bson:"page"`
+	Limit   uint64    `json:"limit" bson:"limit"`
+	MaxPage uint64    `json:"max_page" bson:"max_page"`
+	Page    uint64    `json:"page" bson:"page"`
 	Refills *[]Refill `json:"refills,omitempty" bson:"refills"`
 }
 
@@ -2338,9 +2339,9 @@ type GetCurrentAccountTransactionsResponseObject interface {
 
 type GetCurrentAccountTransactions200JSONResponse struct {
 	Accounts *[]Transaction `json:"accounts,omitempty" bson:"accounts"`
-	Limit    *int           `json:"limit,omitempty" bson:"limit"`
-	MaxPage  *int           `json:"max_page,omitempty" bson:"max_page"`
-	Page     *int           `json:"page,omitempty" bson:"page"`
+	Limit    *uint64        `json:"limit,omitempty" bson:"limit"`
+	MaxPage  *uint64        `json:"max_page,omitempty" bson:"max_page"`
+	Page     *uint64        `json:"page,omitempty" bson:"page"`
 }
 
 func (response GetCurrentAccountTransactions200JSONResponse) VisitGetCurrentAccountTransactionsResponse(w http.ResponseWriter) error {
@@ -2431,10 +2432,10 @@ type GetAccountsResponseObject interface {
 
 type GetAccounts200JSONResponse struct {
 	Accounts []Account `json:"accounts" bson:"accounts"`
-	Limit    int       `json:"limit" bson:"limit"`
-	MaxPage  int       `json:"max_page" bson:"max_page"`
+	Limit    uint64    `json:"limit" bson:"limit"`
+	MaxPage  uint64    `json:"max_page" bson:"max_page"`
 	Message  *Messages `json:"message,omitempty" bson:"message"`
-	Page     int       `json:"page" bson:"page"`
+	Page     uint64    `json:"page" bson:"page"`
 }
 
 func (response GetAccounts200JSONResponse) VisitGetAccountsResponse(w http.ResponseWriter) error {
@@ -2693,9 +2694,9 @@ type GetAccountRefillsResponseObject interface {
 }
 
 type GetAccountRefills200JSONResponse struct {
-	Limit   int       `json:"limit" bson:"limit"`
-	MaxPage int       `json:"max_page" bson:"max_page"`
-	Page    int       `json:"page" bson:"page"`
+	Limit   uint64    `json:"limit" bson:"limit"`
+	MaxPage uint64    `json:"max_page" bson:"max_page"`
+	Page    uint64    `json:"page" bson:"page"`
 	Refills *[]Refill `json:"refills,omitempty" bson:"refills"`
 }
 
@@ -2869,9 +2870,9 @@ type GetAccountTransactionsResponseObject interface {
 
 type GetAccountTransactions200JSONResponse struct {
 	Accounts *[]Transaction `json:"accounts,omitempty" bson:"accounts"`
-	Limit    *int           `json:"limit,omitempty" bson:"limit"`
-	MaxPage  *int           `json:"max_page,omitempty" bson:"max_page"`
-	Page     *int           `json:"page,omitempty" bson:"page"`
+	Limit    *uint64        `json:"limit,omitempty" bson:"limit"`
+	MaxPage  *uint64        `json:"max_page,omitempty" bson:"max_page"`
+	Page     *uint64        `json:"page,omitempty" bson:"page"`
 }
 
 func (response GetAccountTransactions200JSONResponse) VisitGetAccountTransactionsResponse(w http.ResponseWriter) error {
@@ -3845,9 +3846,9 @@ type GetCategoryItemsResponseObject interface {
 
 type GetCategoryItems200JSONResponse struct {
 	Items   *[]Item `json:"items,omitempty" bson:"items"`
-	Limit   *int    `json:"limit,omitempty" bson:"limit"`
-	MaxPage *int    `json:"max_page,omitempty" bson:"max_page"`
-	Page    *int    `json:"page,omitempty" bson:"page"`
+	Limit   *uint64 `json:"limit,omitempty" bson:"limit"`
+	MaxPage *uint64 `json:"max_page,omitempty" bson:"max_page"`
+	Page    *uint64 `json:"page,omitempty" bson:"page"`
 }
 
 func (response GetCategoryItems200JSONResponse) VisitGetCategoryItemsResponse(w http.ResponseWriter) error {
@@ -4156,9 +4157,9 @@ type GetDeletedAccountsResponseObject interface {
 
 type GetDeletedAccounts200JSONResponse struct {
 	Accounts []Account `json:"accounts" bson:"accounts"`
-	Limit    int       `json:"limit" bson:"limit"`
-	MaxPage  int       `json:"max_page" bson:"max_page"`
-	Page     int       `json:"page" bson:"page"`
+	Limit    uint64    `json:"limit" bson:"limit"`
+	MaxPage  uint64    `json:"max_page" bson:"max_page"`
+	Page     uint64    `json:"page" bson:"page"`
 }
 
 func (response GetDeletedAccounts200JSONResponse) VisitGetDeletedAccountsResponse(w http.ResponseWriter) error {
@@ -4336,9 +4337,9 @@ type GetDeletedCarouselImagesResponseObject interface {
 
 type GetDeletedCarouselImages200JSONResponse struct {
 	Items   []CarouselImage `json:"items" bson:"items"`
-	Limit   int             `json:"limit" bson:"limit"`
-	MaxPage int             `json:"max_page" bson:"max_page"`
-	Page    int             `json:"page" bson:"page"`
+	Limit   uint64          `json:"limit" bson:"limit"`
+	MaxPage uint64          `json:"max_page" bson:"max_page"`
+	Page    uint64          `json:"page" bson:"page"`
 }
 
 func (response GetDeletedCarouselImages200JSONResponse) VisitGetDeletedCarouselImagesResponse(w http.ResponseWriter) error {
@@ -4516,9 +4517,9 @@ type GetDeletedCarouselTextsResponseObject interface {
 
 type GetDeletedCarouselTexts200JSONResponse struct {
 	Items   []CarouselText `json:"items" bson:"items"`
-	Limit   int            `json:"limit" bson:"limit"`
-	MaxPage int            `json:"max_page" bson:"max_page"`
-	Page    int            `json:"page" bson:"page"`
+	Limit   uint64         `json:"limit" bson:"limit"`
+	MaxPage uint64         `json:"max_page" bson:"max_page"`
+	Page    uint64         `json:"page" bson:"page"`
 }
 
 func (response GetDeletedCarouselTexts200JSONResponse) VisitGetDeletedCarouselTextsResponse(w http.ResponseWriter) error {
@@ -4696,9 +4697,9 @@ type GetDeletedItemsResponseObject interface {
 
 type GetDeletedItems200JSONResponse struct {
 	Items   []Item `json:"items" bson:"items"`
-	Limit   int    `json:"limit" bson:"limit"`
-	MaxPage int    `json:"max_page" bson:"max_page"`
-	Page    int    `json:"page" bson:"page"`
+	Limit   uint64 `json:"limit" bson:"limit"`
+	MaxPage uint64 `json:"max_page" bson:"max_page"`
+	Page    uint64 `json:"page" bson:"page"`
 }
 
 func (response GetDeletedItems200JSONResponse) VisitGetDeletedItemsResponse(w http.ResponseWriter) error {
@@ -4875,9 +4876,9 @@ type GetDeletedRefillsResponseObject interface {
 }
 
 type GetDeletedRefills200JSONResponse struct {
-	Limit   int      `json:"limit" bson:"limit"`
-	MaxPage int      `json:"max_page" bson:"max_page"`
-	Page    int      `json:"page" bson:"page"`
+	Limit   uint64   `json:"limit" bson:"limit"`
+	MaxPage uint64   `json:"max_page" bson:"max_page"`
+	Page    uint64   `json:"page" bson:"page"`
 	Refills []Refill `json:"refills" bson:"refills"`
 }
 
@@ -5055,9 +5056,9 @@ type GetDeletedTransactionsResponseObject interface {
 }
 
 type GetDeletedTransactions200JSONResponse struct {
-	Limit        int           `json:"limit" bson:"limit"`
-	MaxPage      int           `json:"max_page" bson:"max_page"`
-	Page         int           `json:"page" bson:"page"`
+	Limit        uint64        `json:"limit" bson:"limit"`
+	MaxPage      uint64        `json:"max_page" bson:"max_page"`
+	Page         uint64        `json:"page" bson:"page"`
 	Transactions []Transaction `json:"transactions" bson:"transactions"`
 }
 
@@ -5377,8 +5378,8 @@ type GetTransactionsResponseObject interface {
 }
 
 type GetTransactions200JSONResponse struct {
-	Limit        *int           `json:"limit,omitempty" bson:"limit"`
-	Page         *int           `json:"page,omitempty" bson:"page"`
+	Limit        *uint64        `json:"limit,omitempty" bson:"limit"`
+	Page         *uint64        `json:"page,omitempty" bson:"page"`
 	Transactions *[]Transaction `json:"transactions,omitempty" bson:"transactions"`
 }
 
@@ -7224,92 +7225,92 @@ func (sh *strictHandler) GetTransactions(ctx echo.Context, params GetTransaction
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
-	"21d5RqkXAQA=",
+	"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",
+	"AAD//7fQMHs9GgEA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
