@@ -56,7 +56,6 @@ func (s *Server) GetAccountQR(c echo.Context) error {
 	// Generate QR code
 	png, err := qrcode.Encode(url, qrcode.Medium, 256)
 	if err != nil {
-		fmt.Println(err)
 		return Error500(c)
 	}
 
