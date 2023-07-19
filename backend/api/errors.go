@@ -68,3 +68,12 @@ func ErrorTextNotFound(c echo.Context) error {
 	resp.VisitMarkDeleteCarouselTextResponse(c.Response())
 	return nil
 }
+
+func ErrorCategoryNotFound(c echo.Context) error {
+	resp := autogen.GetCategory404JSONResponse{
+		Message:   autogen.MsgCategoryNotFound,
+		ErrorCode: autogen.ErrCategoryNotFound,
+	}
+	resp.VisitGetCategoryResponse(c.Response())
+	return nil
+}

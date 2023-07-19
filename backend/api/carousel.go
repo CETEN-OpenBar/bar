@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // (GET /carousel/images)
@@ -48,7 +49,7 @@ func (s *Server) GetCarouselImages(c echo.Context) error {
 func (s *Server) AddCarouselImage(c echo.Context) error {
 	// Get admin account from cookie
 	sess := s.getAdminSess(c)
-	_, ok := sess.Values["admin_account_id"].(string)
+	adminID, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
 		return ErrorNotAuthenticated(c)
 	}
@@ -96,6 +97,7 @@ func (s *Server) AddCarouselImage(c echo.Context) error {
 		return Error500(c)
 	}
 
+	logrus.Infof("Carousel image %s added by admin %s", uid.String(), adminID)
 	autogen.AddCarouselImage201JSONResponse(carouselImage.CarouselImage).VisitAddCarouselImageResponse(c.Response())
 	return nil
 }
@@ -104,10 +106,14 @@ func (s *Server) AddCarouselImage(c echo.Context) error {
 func (s *Server) GetCarouselImage(c echo.Context, imageId autogen.UUID) error {
 	_, err := s.DBackend.GetCarouselImage(imageId.String())
 	if err != nil {
-		// Remove cache
-		c.Response().Header().Set("Cache-Control", "max-age=0")
-		c.Response().Header().Set("Expires", "0")
-		return ErrorImageNotFound(c)
+		if err == mongo.ErrNoDocuments {
+			// Remove cache
+			c.Response().Header().Set("Cache-Control", "max-age=0")
+			c.Response().Header().Set("Expires", "0")
+			return ErrorImageNotFound(c)
+		}
+		logrus.Error(err)
+		return Error500(c)
 	}
 
 	data, err := storage.GetFile("carousel/" + imageId.String())
@@ -184,7 +190,7 @@ func (s *Server) GetCarouselTexts(c echo.Context) error {
 func (s *Server) AddCarouselText(c echo.Context) error {
 	// Get admin account from cookie
 	sess := s.getAdminSess(c)
-	_, ok := sess.Values["admin_account_id"].(string)
+	adminID, ok := sess.Values["admin_account_id"].(string)
 	if !ok {
 		return ErrorNotAuthenticated(c)
 	}
@@ -215,6 +221,7 @@ func (s *Server) AddCarouselText(c echo.Context) error {
 		return Error500(c)
 	}
 
+	logrus.Infof("Carousel text %s added by admin %s", t.Id.String(), adminID)
 	autogen.AddCarouselText201JSONResponse(t.CarouselText).VisitAddCarouselTextResponse(c.Response())
 	return nil
 }

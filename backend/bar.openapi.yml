@@ -3078,6 +3078,7 @@ components:
         - not_authenticated
         - image_not_found
         - text_not_found
+        - category_not_found
       x-enum-varnames:
         - ErrBadRequest
         - ErrForbidden
@@ -3088,6 +3089,7 @@ components:
         - ErrNotAuthenticated
         - ErrImageNotFound
         - ErrTextNotFound
+        - ErrCategoryNotFound
     Messages:
       type: string
       enum:
@@ -3104,6 +3106,7 @@ components:
         - You are not authenticated
         - Image does not exists
         - Text does not exists
+        - Category does not exists
       x-enum-varnames:
         - MsgBadRequest
         - MsgNotConnected
@@ -3118,6 +3121,7 @@ components:
         - MsgNotAuthenticated
         - MsgImageNotFound
         - MsgTextNotFound
+        - MsgCategoryNotFound
     HTTPError:
       type: object
       properties:
@@ -3431,7 +3435,9 @@ components:
           type: string
           description: Link to picture of the current category
         items:
-          $ref: '#/components/schemas/Item'
+          type: array
+          items:
+            $ref: '#/components/schemas/Item'
         deleted_at:
           type: integer
           format: int64
