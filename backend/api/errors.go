@@ -86,3 +86,12 @@ func ErrorItemNotFound(c echo.Context) error {
 	resp.VisitGetCategoryItemsResponse(c.Response())
 	return nil
 }
+
+func ErrorRefillNotFound(c echo.Context) error {
+	resp := autogen.DeleteRefill404JSONResponse{
+		Message:   autogen.MsgRefillNotFound,
+		ErrorCode: autogen.ErrRefillNotFound,
+	}
+	resp.VisitDeleteRefillResponse(c.Response())
+	return nil
+}

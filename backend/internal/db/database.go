@@ -86,10 +86,12 @@ type DBackend interface {
 	CountAccounts() (int64, error)
 	GetTransactions(account string, page int, size int, state string) ([]*models.Transaction, error)
 	GetRefills(account string, page int, size int, startAt, endAt int64) ([]*models.Refill, error)
+	CountRefills(account string, startAt, endAt int64) (int64, error)
 	GetItems(categoryID string, page, size int, state string) ([]*models.Item, error)
 	CountItems(categoryID string, state string) (int64, error)
 
 	GetAllRefills(page int, size int, startAt, endAt int64) ([]*models.Refill, error)
+	CountAllRefills(startAt, endAt int64) (int64, error)
 	GetAllCategories() ([]*models.Category, error)
 	GetAllCarouselImages() ([]*models.CarouselImage, error)
 	GetAllCarouselTexts() ([]*models.CarouselText, error)

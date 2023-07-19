@@ -1164,9 +1164,26 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Refill'
+                type: object
+                properties:
+                  refills:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Refill'
+                  page:
+                    type: integer
+                    format: int
+                  limit:
+                    type: integer
+                    format: int
+                  max_page:
+                    type: integer
+                    format: int
+                required:
+                  - items
+                  - page
+                  - limit
+                  - max_page
         '401':
           description: 'Not authorized'
           content:
@@ -1226,9 +1243,26 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Refill'
+                type: object
+                properties:
+                  refills:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Refill'
+                  page:
+                    type: integer
+                    format: int
+                  limit:
+                    type: integer
+                    format: int
+                  max_page:
+                    type: integer
+                    format: int
+                required:
+                  - items
+                  - page
+                  - limit
+                  - max_page
         '401':
           description: 'Not authorized'
           content:
@@ -3146,6 +3180,7 @@ components:
         - text_not_found
         - category_not_found
         - item_not_found
+        - refill_not_found
       x-enum-varnames:
         - ErrBadRequest
         - ErrForbidden
@@ -3158,6 +3193,7 @@ components:
         - ErrTextNotFound
         - ErrCategoryNotFound
         - ErrItemNotFound
+        - ErrRefillNotFound
     Messages:
       type: string
       enum:
@@ -3176,6 +3212,7 @@ components:
         - Text does not exists
         - Category does not exists
         - Item does not exists
+        - Refill does not exists
       x-enum-varnames:
         - MsgBadRequest
         - MsgNotConnected
@@ -3192,6 +3229,7 @@ components:
         - MsgTextNotFound
         - MsgCategoryNotFound
         - MsgItemNotFound
+        - MsgRefillNotFound
     HTTPError:
       type: object
       properties:
