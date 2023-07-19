@@ -95,3 +95,12 @@ func ErrorRefillNotFound(c echo.Context) error {
 	resp.VisitDeleteRefillResponse(c.Response())
 	return nil
 }
+
+func ErrorTransactionNotFound(c echo.Context) error {
+	resp := autogen.DeleteTransaction404JSONResponse{
+		Message:   autogen.MsgRefillNotFound,
+		ErrorCode: autogen.ErrRefillNotFound,
+	}
+	resp.VisitDeleteTransactionResponse(c.Response())
+	return nil
+}

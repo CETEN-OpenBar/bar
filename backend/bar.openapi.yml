@@ -3181,6 +3181,7 @@ components:
         - category_not_found
         - item_not_found
         - refill_not_found
+        - transaction_not_found
       x-enum-varnames:
         - ErrBadRequest
         - ErrForbidden
@@ -3194,6 +3195,7 @@ components:
         - ErrCategoryNotFound
         - ErrItemNotFound
         - ErrRefillNotFound
+        - ErrTransactionNotFound
     Messages:
       type: string
       enum:
@@ -3213,6 +3215,7 @@ components:
         - Category does not exists
         - Item does not exists
         - Refill does not exists
+        - Transaction does not exists
       x-enum-varnames:
         - MsgBadRequest
         - MsgNotConnected
@@ -3230,6 +3233,7 @@ components:
         - MsgCategoryNotFound
         - MsgItemNotFound
         - MsgRefillNotFound
+        - MsgTransactionNotFound
     HTTPError:
       type: object
       properties:

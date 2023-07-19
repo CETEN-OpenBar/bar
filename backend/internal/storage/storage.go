@@ -21,3 +21,9 @@ func GetFile(name string) ([]byte, error) {
 	name = path.Join(config.StorageConfig.StoragePath, name)
 	return os.ReadFile(name)
 }
+
+func DeleteFile(name string) error {
+	config := config.GetConfig()
+	name = path.Join(config.StorageConfig.StoragePath, name)
+	return os.Remove(name)
+}

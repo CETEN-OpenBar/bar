@@ -2,9 +2,11 @@ package api
 
 import (
 	"bar/autogen"
+	"bar/internal/storage"
 
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // (GET /deleted/accounts)
@@ -82,6 +84,9 @@ func (s *Server) DeleteAccount(c echo.Context, accountId autogen.UUID) error {
 
 	err := s.DBackend.DeleteAccount(accountId.String())
 	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorAccNotFound(c)
+		}
 		logrus.Error(err)
 		return Error500(c)
 	}
@@ -102,6 +107,9 @@ func (s *Server) RestoreDeletedAccount(c echo.Context, accountId autogen.UUID) e
 
 	err := s.DBackend.UnMarkDeleteAccount(accountId.String())
 	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorAccNotFound(c)
+		}
 		logrus.Error(err)
 		return Error500(c)
 	}
@@ -183,6 +191,15 @@ func (s *Server) DeleteCarouselImage(c echo.Context, imageId autogen.UUID) error
 
 	err := s.DBackend.DeleteCarouselImage(imageId.String())
 	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorImageNotFound(c)
+		}
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	err = storage.DeleteFile("carousel/" + imageId.String())
+	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
 	}
@@ -201,6 +218,14 @@ func (s *Server) RestoreDeletedCarouselImage(c echo.Context, imageId autogen.UUI
 		return ErrorNotAuthenticated(c)
 	}
 
+	err := s.DBackend.UnMarkDeleteCarouselImage(imageId.String())
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorImageNotFound(c)
+		}
+		logrus.Error(err)
+		return Error500(c)
+	}
 	return nil
 }
 
@@ -277,7 +302,17 @@ func (s *Server) DeleteCarouselText(c echo.Context, textId autogen.UUID) error {
 		return ErrorNotAuthenticated(c)
 	}
 
-	// TODO: implement
+	err := s.DBackend.DeleteCarouselText(textId.String())
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorTextNotFound(c)
+		}
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	adminId, _ := sess.Values["admin_account_id"].(string)
+	logrus.Infof("Admin %s deleted carousel text %s", adminId, textId)
 	return nil
 }
 
@@ -290,7 +325,14 @@ func (s *Server) RestoreDeletedCarouselText(c echo.Context, textId autogen.UUID)
 		return ErrorNotAuthenticated(c)
 	}
 
-	// TODO: implement
+	err := s.DBackend.UnMarkDeleteCarouselText(textId.String())
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorTextNotFound(c)
+		}
+		logrus.Error(err)
+		return Error500(c)
+	}
 	return nil
 }
 
@@ -367,7 +409,23 @@ func (s *Server) DeleteItem(c echo.Context, itemId autogen.UUID) error {
 		return ErrorNotAuthenticated(c)
 	}
 
-	// TODO: implement
+	err := s.DBackend.DeleteItem(itemId.String())
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorItemNotFound(c)
+		}
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	err = storage.DeleteFile("items/" + itemId.String())
+	if err != nil {
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	adminId, _ := sess.Values["admin_account_id"].(string)
+	logrus.Infof("Admin %s deleted item %s", adminId, itemId)
 	return nil
 }
 
@@ -380,7 +438,14 @@ func (s *Server) RestoreDeletedItem(c echo.Context, itemId autogen.UUID) error {
 		return ErrorNotAuthenticated(c)
 	}
 
-	// TODO: implement
+	err := s.DBackend.UnMarkDeleteItem(itemId.String())
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorItemNotFound(c)
+		}
+		logrus.Error(err)
+		return Error500(c)
+	}
 	return nil
 }
 
@@ -457,7 +522,17 @@ func (s *Server) DeleteRefill(c echo.Context, refillId autogen.UUID) error {
 		return ErrorNotAuthenticated(c)
 	}
 
-	// TODO: implement
+	err := s.DBackend.DeleteRefill(refillId.String())
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorRefillNotFound(c)
+		}
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	adminId, _ := sess.Values["admin_account_id"].(string)
+	logrus.Infof("Admin %s deleted refill %s", adminId, refillId)
 	return nil
 }
 
@@ -470,7 +545,14 @@ func (s *Server) RestoreDeletedRefill(c echo.Context, refillId autogen.UUID) err
 		return ErrorNotAuthenticated(c)
 	}
 
-	// TODO: implement
+	err := s.DBackend.UnMarkDeleteRefill(refillId.String())
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorRefillNotFound(c)
+		}
+		logrus.Error(err)
+		return Error500(c)
+	}
 	return nil
 }
 
@@ -547,7 +629,17 @@ func (s *Server) DeleteTransaction(c echo.Context, transactionId autogen.UUID) e
 		return ErrorNotAuthenticated(c)
 	}
 
-	// TODO: implement
+	err := s.DBackend.DeleteTransaction(transactionId.String())
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorTransactionNotFound(c)
+		}
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	adminId, _ := sess.Values["admin_account_id"].(string)
+	logrus.Infof("Admin %s deleted transaction %s", adminId, transactionId)
 	return nil
 }
 
@@ -560,6 +652,13 @@ func (s *Server) RestoreDeletedTransaction(c echo.Context, transactionId autogen
 		return ErrorNotAuthenticated(c)
 	}
 
-	// TODO: implement
+	err := s.DBackend.UnMarkDeleteTransaction(transactionId.String())
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorTransactionNotFound(c)
+		}
+		logrus.Error(err)
+		return Error500(c)
+	}
 	return nil
 }
