@@ -3189,6 +3189,8 @@ components:
           type: string
         card_pin:
           type: string
+          x-oapi-codegen-extra-tags:
+            json: '-' # ignore this field in json
         role:
           $ref: '#/components/schemas/AccountRole'
         restrictions:
