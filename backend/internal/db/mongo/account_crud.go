@@ -102,6 +102,29 @@ func (b *Backend) MarkDeleteAccount(id, by string) error {
 	return nil
 }
 
+func (b *Backend) UnMarkDeleteAccount(id string) error {
+	ctx, cancel := b.GetContext()
+	defer cancel()
+
+	// Mark deleted_at
+	res := b.db.Collection(AccountsCollection).FindOneAndUpdate(ctx,
+		bson.M{
+			"id": uuid.MustParse(id),
+		},
+		bson.M{
+			"$set": bson.M{
+				"deleted_at": nil,
+				"deleted_by": nil,
+			},
+		},
+		options.FindOneAndUpdate().SetUpsert(false))
+	if res.Err() != nil {
+		return res.Err()
+	}
+
+	return nil
+}
+
 func (b *Backend) DeleteAccount(id string) error {
 	ctx, cancel := b.GetContext()
 	defer cancel()
@@ -138,4 +161,43 @@ func (b *Backend) RestoreAccount(id string) error {
 	}
 
 	return nil
+}
+
+func (b *Backend) GetDeletedAccounts(page int, size int) ([]*models.Account, error) {
+	ctx, cancel := b.GetContext()
+	defer cancel()
+
+	var accs []*models.Account
+	cursor, err := b.db.Collection(AccountsCollection).Find(ctx,
+		bson.M{
+			"deleted_at": bson.M{
+				"$ne": nil,
+			},
+		},
+		options.Find().SetSkip(int64(page*size)).SetLimit(int64(size)))
+	if err != nil {
+		return nil, err
+	}
+
+	if err := cursor.All(ctx, &accs); err != nil {
+		return nil, err
+	}
+
+	return accs, nil
+}
+
+func (b *Backend) CountDeletedAccounts() (int64, error) {
+	ctx, cancel := b.GetContext()
+	defer cancel()
+
+	count, err := b.db.Collection(AccountsCollection).CountDocuments(ctx, bson.M{
+		"deleted_at": bson.M{
+			"$ne": nil,
+		},
+	})
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
 }

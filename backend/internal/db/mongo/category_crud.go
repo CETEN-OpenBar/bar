@@ -90,7 +90,29 @@ func (b *Backend) MarkDeleteCategory(id, by string) error {
 		bson.M{
 			"$set": bson.M{
 				"deleted_at": time.Now().Unix(),
-				"deleted_by": uuid.MustParse(id),
+				"deleted_by": uuid.MustParse(by),
+			},
+		},
+		options.FindOneAndUpdate().SetUpsert(false))
+	if res.Err() != nil {
+		return res.Err()
+	}
+
+	return nil
+}
+
+func (b *Backend) UnMarkDeleteCategory(id string) error {
+	ctx, cancel := b.GetContext()
+	defer cancel()
+
+	res := b.db.Collection(CategoriesCollection).FindOneAndUpdate(ctx,
+		bson.M{
+			"id": uuid.MustParse(id),
+		},
+		bson.M{
+			"$set": bson.M{
+				"deleted_at": nil,
+				"deleted_by": nil,
 			},
 		},
 		options.FindOneAndUpdate().SetUpsert(false))

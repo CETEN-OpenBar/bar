@@ -28,56 +28,84 @@ type DBackend interface {
 	GetAccount(id string) (*models.Account, error)
 	UpdateAccount(acc *models.Account) error
 	MarkDeleteAccount(id, by string) error
+	UnMarkDeleteAccount(id string) error
 	DeleteAccount(id string) error
 	RestoreAccount(id string) error
+
+	GetDeletedAccounts(page int, size int) ([]*models.Account, error)
+	CountDeletedAccounts() (int64, error)
 
 	// CarouselText's CRUD
 	CreateCarouselText(ct *models.CarouselText) error
 	GetCarouselText(id string) (*models.CarouselText, error)
 	UpdateCarouselText(ct *models.CarouselText) error
 	MarkDeleteCarouselText(id, by string) error
+	UnMarkDeleteCarouselText(id string) error
 	DeleteCarouselText(id string) error
 	RestoreCarouselText(id string) error
+
+	GetDeletedCarouselTexts(page int, size int) ([]*models.CarouselText, error)
+	CountDeletedCarouselTexts() (int64, error)
 
 	// CarouselImage's CRUD
 	CreateCarouselImage(ci *models.CarouselImage) error
 	GetCarouselImage(id string) (*models.CarouselImage, error)
 	UpdateCarouselImage(ci *models.CarouselImage) error
 	MarkDeleteCarouselImage(id, by string) error
+	UnMarkDeleteCarouselImage(id string) error
 	DeleteCarouselImage(id string) error
 	RestoreCarouselImage(id string) error
+
+	GetDeletedCarouselImages(page int, size int) ([]*models.CarouselImage, error)
+	CountDeletedCarouselImages() (int64, error)
 
 	// Category's CRUD
 	CreateCategory(c *models.Category) error
 	GetCategory(id string) (*models.Category, error)
 	UpdateCategory(c *models.Category) error
 	MarkDeleteCategory(id, by string) error
+	UnMarkDeleteCategory(id string) error
 	DeleteCategory(id string) error
 	RestoreCategory(id string) error
+
+	GetDeletedCategories(page int, size int) ([]*models.Category, error)
+	CountDeletedCategories() (int64, error)
 
 	// Item's CRUD
 	CreateItem(i *models.Item) error
 	GetItem(id string) (*models.Item, error)
 	UpdateItem(i *models.Item) error
 	MarkDeleteItem(id, by string) error
+	UnMarkDeleteItem(id string) error
 	DeleteItem(id string) error
 	RestoreItem(id string) error
+
+	GetDeletedItems(page int, size int) ([]*models.Item, error)
+	CountDeletedItems() (int64, error)
 
 	// Refill's CRUD
 	CreateRefill(r *models.Refill) error
 	GetRefill(id string) (*models.Refill, error)
 	UpdateRefill(r *models.Refill) error
 	MarkDeleteRefill(id, by string) error
+	UnMarkDeleteRefill(id string) error
 	DeleteRefill(id string) error
 	RestoreRefill(id string) error
+
+	GetDeletedRefills(page int, size int) ([]*models.Refill, error)
+	CountDeletedRefills() (int64, error)
 
 	// Transaction's CRUD
 	CreateTransaction(t *models.Transaction) error
 	GetTransaction(id string) (*models.Transaction, error)
 	UpdateTransaction(t *models.Transaction) error
 	MarkDeleteTransaction(id, by string) error
+	UnMarkDeleteTransaction(id string) error
 	DeleteTransaction(id string) error
 	RestoreTransaction(id string) error
+
+	GetDeletedTransactions(page int, size int) ([]*models.Transaction, error)
+	CountDeletedTransactions() (int64, error)
 
 	// Other requests that are not CRUD but still needed
 	GetAccountByGoogle(googleID string) (*models.Account, error)
