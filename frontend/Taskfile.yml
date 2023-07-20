@@ -9,4 +9,4 @@ tasks:
       - npm install @openapitools/openapi-generator-cli -g
   regen:
     cmds:
-      - openapi-generator-cli generate -i ../backend/bar.openapi.yml -g typescript-axios -o ./src/lib/api
+      - openapi-generator-cli generate -i ../bar.openapi.yml -g typescript-axios -o ./src/lib/api
