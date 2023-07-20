@@ -16,26 +16,6 @@ import (
 
 // (GET /carousel/images)
 func (s *Server) GetCarouselImages(c echo.Context) error {
-	// Get account from cookie
-	sess := s.getUserSess(c)
-	accountID, ok := sess.Values["account_id"].(string)
-	if !ok {
-		return ErrorNotAuthenticated(c)
-	}
-
-	// Get account from database
-	_, err := s.DBackend.GetAccount(accountID)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			// Delete cookie
-			sess.Options.MaxAge = -1
-			sess.Save(c.Request(), c.Response())
-			return ErrorAccNotFound(c)
-		}
-		logrus.Error(err)
-		return Error500(c)
-	}
-
 	// Get carousel images from database
 	data, err := s.DBackend.GetAllCarouselImages()
 	if err != nil {
@@ -183,26 +163,6 @@ func (s *Server) MarkDeleteCarouselImage(c echo.Context, imageId autogen.UUID) e
 
 // (GET /carousel/texts)
 func (s *Server) GetCarouselTexts(c echo.Context) error {
-	// Get account from cookie
-	sess := s.getUserSess(c)
-	accountID, ok := sess.Values["account_id"].(string)
-	if !ok {
-		return ErrorNotAuthenticated(c)
-	}
-
-	// Get account from database
-	_, err := s.DBackend.GetAccount(accountID)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			// Delete cookie
-			sess.Options.MaxAge = -1
-			sess.Save(c.Request(), c.Response())
-			return ErrorAccNotFound(c)
-		}
-		logrus.Error(err)
-		return Error500(c)
-	}
-
 	// Get carousel images from database
 	data, err := s.DBackend.GetAllCarouselTexts()
 	if err != nil {
