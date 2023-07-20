@@ -275,6 +275,69 @@ paths:
         - auth: []
       tags:
         - accounts
+    patch:
+      description: Update's account card pin
+      operationId: patchAccount
+      requestBody:
+        description: Card pin
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                old_card_pin:
+                  type: string
+                new_card_pin:
+                  type: string
+              required:
+                - old_card_pin
+                - new_card_pin
+      responses:
+        '200':
+          description: Successfully updated account's card pin
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    $ref: '#/components/schemas/Messages'
+                  account:
+                    $ref: '#/components/schemas/Account'
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: 'Not connected'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: 'Account not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '409':
+          description: 'Conflict'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - auth: []
+      tags:
+        - accounts
   /accounts:
     description: Get all accounts informations
     get:

@@ -3,7 +3,9 @@ package api
 import (
 	"bar/autogen"
 	"bar/internal/models"
+	"crypto/sha256"
 	"encoding/csv"
+	"fmt"
 	"reflect"
 	"strconv"
 
@@ -38,6 +40,54 @@ func (s *Server) GetAccount(c echo.Context) error {
 		Account: &account.Account,
 	}
 	resp.VisitGetAccountResponse(c.Response())
+	return nil
+}
+
+// (PATCH /account)
+func (s *Server) PatchAccount(c echo.Context) error {
+	// Get account from cookie
+	sess := s.getUserSess(c)
+	accountID, ok := sess.Values["account_id"].(string)
+	if !ok {
+		return ErrorNotAuthenticated(c)
+	}
+
+	// Get account from database
+	account, err := s.DBackend.GetAccount(accountID)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			// Delete cookie
+			sess.Options.MaxAge = -1
+			sess.Save(c.Request(), c.Response())
+			return ErrorAccNotFound(c)
+		}
+		return Error500(c)
+	}
+
+	var param autogen.PatchAccountJSONBody
+	err = c.Bind(&param)
+	if err != nil {
+		return Error400(c)
+	}
+
+	// sha256 both pins
+	oldPin := fmt.Sprintf("%x", sha256.Sum256([]byte(param.OldCardPin)))
+	newPin := fmt.Sprintf("%x", sha256.Sum256([]byte(param.NewCardPin)))
+
+	if oldPin != account.Account.CardPin {
+		return Error400(c)
+	}
+
+	account.Account.CardPin = newPin
+
+	err = s.UpdateAccount(account)
+	if err != nil {
+		return Error500(c)
+	}
+
+	autogen.PatchAccount200JSONResponse{
+		Account: &account.Account,
+	}.VisitPatchAccountResponse(c.Response())
 	return nil
 }
 
