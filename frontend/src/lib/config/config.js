@@ -3,7 +3,11 @@ import axios from "axios";
 
 let c = null;
 
-export const config = async () => {
+export const api = () => {
+    return c.api;
+};
+
+export const loadConfig = async () => {
     if (c != null) {
         return c;
     }

@@ -3301,7 +3301,6 @@ components:
         - bad_request
         - forbidden
         - account_not_found
-        - transaction_not_found
         - qr_invalid
         - internal_server_error
         - not_authenticated
@@ -3315,7 +3314,6 @@ components:
         - ErrBadRequest
         - ErrForbidden
         - ErrAccountNotFound
-        - ErrTransactionNotFound
         - ErrQRInvalid
         - ErrInternalServerError
         - ErrNotAuthenticated
@@ -3333,7 +3331,6 @@ components:
         - Missing fields %v
         - Account already exists
         - Account not found
-        - Transaction not found
         - Account is not allowed to use ressource
         - Account cannot use ressource at the time being
         - Invalid QR Code nonce
@@ -3351,7 +3348,6 @@ components:
         - MsgMissingFields
         - MsgAccountAlreadyExists
         - MsgAccountNotFound
-        - MsgTransactionNotFound
         - MsgAccountNotAllowed
         - MsgAccountNotAvailable
         - MsgQRInvalid
