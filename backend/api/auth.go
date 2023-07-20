@@ -293,6 +293,11 @@ func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams
 
 // (POST /auth/card)
 func (s *Server) ConnectCard(c echo.Context) error {
+	// Check that header "X-Local-Token" is set to the local token
+	if c.Request().Header.Get("X-Local-Token") != config.GetConfig().ApiConfig.LocalToken {
+		return ErrorNotAuthenticated(c)
+	}
+
 	var param autogen.ConnectCardJSONBody
 	err := c.Bind(&param)
 	if err != nil {

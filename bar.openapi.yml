@@ -184,6 +184,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+      security:
+        - local_token: []
       tags:
         - auth
   /account/qr:
@@ -3862,10 +3864,10 @@ components:
       type: apiKey
       name: BAR_SESS
       in: cookie
-    local_auth:
+    local_token:
       type: apiKey
-      name: BAR_SESS
-      in: cookie
+      name: X-Local-Token
+      in: header
     admin_auth:
       type: apiKey
       name: BAR_ADMIN_SESS

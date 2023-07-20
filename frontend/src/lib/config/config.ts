@@ -4,6 +4,7 @@ import axios from "axios";
 // Create type for config
 export type Config = {
     api: string;
+    local_token: string;
 };
 
 // Create variable to store config
@@ -14,6 +15,13 @@ export const api = () => {
         throw new Error("Config not loaded");
     }
     return c.api;
+};
+
+export const local_token = () => {
+    if (c == null) {
+        throw new Error("Config not loaded");
+    }
+    return c.local_token;
 };
 
 export const loadConfig = async () => {

@@ -20,6 +20,7 @@ type Config struct {
 		AdminSessionSecret string `env:"ADMIN_SESSION_SECRET"`
 		Port               string `env:"PORT" envDefault:":8080"`
 		BasePath           string `env:"BASE_PATH" envDefault:"http://localhost:8080"`
+		LocalToken         string `env:"LOCAL_TOKEN"`
 	} `envPrefix:"BAR_API_"`
 
 	OauthConfig struct {

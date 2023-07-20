@@ -2041,6 +2041,9 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication local_token required
+            await setApiKeyToObject(localVarHeaderParameter, "X-Local-Token", configuration)
+
 
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
