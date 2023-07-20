@@ -10,13 +10,13 @@
 			card_id: '1',
 			card_pin: '1234'
 		};
-		authApi
+		authApi()
 			.connectCard(req, {
 				withCredentials: true
 			})
 			.then(() => {
 				// Get account
-				accountsApi
+				accountsApi()
 					.getAccount({
 						withCredentials: true
 					})

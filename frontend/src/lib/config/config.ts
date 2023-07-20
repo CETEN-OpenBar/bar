@@ -24,20 +24,24 @@ export const local_token = () => {
     return c.local_token;
 };
 
-export const loadConfig = async () => {
-    if (c != null) {
-        return c;
-    }
-
-    // Do not render on server
-    if (typeof window === "undefined") {
-        return null;
-    }
+export const loadConfig = () => {
+    return new Promise((resolve, reject) => {
+        if (c != null) {
+            resolve(c);
+        }
     
-    // Use axios get and wait for it to finish
-    await axios.get("/config.json").then((response) => {
-        c = response.data;
+        // Do not render on server
+        if (typeof window === "undefined") {
+            return null;
+        }
+        
+        // Use axios get and wait for it to finish
+        axios.get("/config.json").then((response) => {
+            c = response.data;
+            console.log(c);
+            resolve(c);
+        }).catch((error) => {
+            reject(error);
+        });
     });
-
-    return c;
 };
