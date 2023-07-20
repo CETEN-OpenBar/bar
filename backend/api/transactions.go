@@ -3,6 +3,8 @@ package api
 import (
 	"bar/autogen"
 	"bar/internal/models"
+	"crypto/sha256"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -20,7 +22,7 @@ func (s *Server) PostTransactions(c echo.Context) error {
 	}
 
 	// Get account from database
-	_, err := s.DBackend.GetAccount(accountID)
+	account, err := s.DBackend.GetAccount(accountID)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			// Delete cookie
@@ -41,6 +43,22 @@ func (s *Server) PostTransactions(c echo.Context) error {
 	}
 
 	var potentialTransaction autogen.NewTransaction
+
+	// Check that pin matches
+	err = c.Bind(&potentialTransaction)
+	if err != nil {
+		logrus.Error(err)
+		return Error400(c)
+	}
+
+	if fmt.Sprintf("%x", sha256.Sum256([]byte(potentialTransaction.CardPin))) != account.CardPin {
+		autogen.PostTransactions401JSONResponse{
+			Message:   autogen.MsgNotAuthenticated,
+			ErrorCode: autogen.ErrNotAuthenticated,
+		}.VisitPostTransactionsResponse(c.Response())
+		return nil
+	}
+
 	var transactionCost uint64
 	for _, potentialItem := range potentialTransaction.Items {
 		// Verify that item exists, can be bought, is in stock, and can be bought for that amount
@@ -82,6 +100,7 @@ func (s *Server) PostTransactions(c echo.Context) error {
 		return Error500(c)
 	}
 
+	autogen.PostTransactions201JSONResponse(transaction.Transaction).VisitPostTransactionsResponse(c.Response())
 	return nil
 }
 

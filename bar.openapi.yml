@@ -3761,8 +3761,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/NewTransactionItem'
+        card_pin:
+          type: string
+          description: Pin of the card
       required:
         - items
+        - card_pin
     RefillState:
       type: string
       enum:

@@ -1,9 +1,12 @@
 <script lang="ts">
 	import Carousel from '$lib/components/carousel.svelte';
-    import Pin from '$lib/components/pin.svelte';
-	import type { CarouselImage, CarouselText } from '$lib/api';
-	import { onMount, onDestroy } from 'svelte';
-	import { carouselApi } from '$lib/requests/requests';
+	import Pin from '$lib/components/pin.svelte';
+	import Error from '$lib/components/error.svelte';
+
+	import type { CarouselImage, CarouselText, ConnectCardRequest } from '$lib/api';
+	import { onMount } from 'svelte';
+	import { authApi, carouselApi } from '$lib/requests/requests';
+	import { goto } from '$app/navigation';
 
 	let fakeImages: Array<CarouselImage> = [
 		{
@@ -58,22 +61,46 @@
 		setTimeout(fetchCarousel, 60000);
 	}
 
-    let card = {
-        id: '',
-        pin: ''
-    }
+	let card = {
+		id: '',
+		pin: ''
+	};
 
 	let buffer = '';
 	function onType(e: KeyboardEvent) {
 		if (e.key !== 'Enter') {
 			buffer += e.key;
 		} else {
-            card.id = buffer;
-        }
+			card.id = buffer;
+			buffer = '';
+		}
 	}
 
-	function pinCallback(pin:string) {
+	let incorrectPin = '';
+
+	function pinCallback(pin: string) {
 		card.pin = pin;
+
+		authApi()
+			.connectCard(
+				{
+					card_id: card.id,
+					card_pin: card.pin
+				},
+				{
+					withCredentials: true
+				}
+			)
+			.then((res) => {
+				goto('/borne/index');
+			})
+			.catch(() => {
+				incorrectPin = 'Mauvais code pin';
+				setTimeout(() => {
+					incorrectPin = '';
+				}, 3000);
+			});
+
 		card = {
 			id: '',
 			pin: ''
@@ -83,9 +110,12 @@
 
 <svelte:window on:keydown={onType} />
 
+{#if incorrectPin != ''}
+	<Error error={incorrectPin} />
+{/if}
 
 {#if card.id !== ''}
-    <Pin callback={pinCallback} />
+	<Pin callback={pinCallback} />
 {/if}
 
 <Carousel {images} {texts} />

@@ -959,6 +959,12 @@ export interface NewTransaction {
      * @memberof NewTransaction
      */
     'items': Array<NewTransactionItem>;
+    /**
+     * Pin of the card
+     * @type {string}
+     * @memberof NewTransaction
+     */
+    'card_pin': string;
 }
 /**
  * 
