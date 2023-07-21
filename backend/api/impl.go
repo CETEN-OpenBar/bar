@@ -65,7 +65,7 @@ func (s *Server) Serve(c *config.Config) error {
 		return func(c echo.Context) error {
 			c.Response().Header().Set("Access-Control-Allow-Origin", c.Request().Header.Get("Origin"))
 			c.Response().Header().Set("Access-Control-Allow-Credentials", "true")
-			c.Response().Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+			c.Response().Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH")
 			c.Response().Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, Cookie, Cookies, X-Local-Token")
 			return next(c)
 		}
