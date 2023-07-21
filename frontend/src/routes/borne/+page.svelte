@@ -43,19 +43,15 @@
 		carouselApi()
 			.getCarouselImages()
 			.then((res) => {
-				images = res.data;
-				if (images.length === 0) {
-					images = fakeImages;
-				}
+				if (res.data != null) images = res.data;
+				if (images.length === 0) images = fakeImages;
 			});
 
 		carouselApi()
 			.getCarouselTexts()
 			.then((res) => {
-				texts = res.data;
-				if (texts.length === 0) {
-					texts = fakeTexts;
-				}
+				if (res.data != null)  texts = res.data;
+				if (texts.length === 0) texts = fakeTexts;
 			});
 
 		setTimeout(fetchCarousel, 60000);

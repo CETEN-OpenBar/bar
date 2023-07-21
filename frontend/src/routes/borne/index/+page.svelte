@@ -22,5 +22,7 @@
 {#if account !== undefined}
 	<div id="main" class="w-full h-full">
 		<Profile account={account} logout={() => {goto('/borne')}} />
+		
+		<hr class="border-1 border-gray-300" />
 	</div>
 {/if}

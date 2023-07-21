@@ -88,8 +88,9 @@
 		<img
 			src={account.google_picture}
 			alt="User Avatar"
-			class={`w-${size} h-${size} rounded-full cursor-pointer`}
+			class={`w-${size} h-${size} rounded-full cursor-pointer float-left`}
 		/>
+		<h1 class="text-sm font-bold ml-2">{account.first_name} {account.last_name}</h1>
 	</button>
 
 	{#if popup}

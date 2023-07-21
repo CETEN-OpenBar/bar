@@ -45,8 +45,8 @@ func (s *Server) GetAccountQR(c echo.Context, params autogen.GetAccountQRParams)
 		return Error500(c)
 	}
 
-	cardPin := fmt.Sprintf("%x", sha256.Sum256([]byte(account.CardPin)))
-	if cardPin != params.CardPin {
+	cardPin := fmt.Sprintf("%x", sha256.Sum256([]byte(params.CardPin)))
+	if cardPin != account.CardPin {
 		return ErrorAccNotFound(c)
 	}
 
