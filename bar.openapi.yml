@@ -194,6 +194,13 @@ paths:
       summary: ''
       description: Get the QR code to connect account to Google
       operationId: getAccountQR
+      parameters:
+        - name: card_pin
+          in: query
+          description: Card pin
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: Successfully got QR code
@@ -3462,6 +3469,8 @@ components:
           type: string
         google_id:
           type: string
+        google_picture:
+          type: string
         email_address:
           type: string
         balance:
@@ -3499,6 +3508,7 @@ components:
         - card_id
         - card_pin
         - google_id
+        - google_picture
     ItemState:
       type: string
       description: State of the item

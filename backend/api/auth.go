@@ -24,7 +24,7 @@ var qrCache = cache.New(5*time.Minute, 10*time.Minute)
 var stateCache = cache.New(5*time.Minute, 10*time.Minute)
 
 // (GET /account/qr)
-func (s *Server) GetAccountQR(c echo.Context) error {
+func (s *Server) GetAccountQR(c echo.Context, params autogen.GetAccountQRParams) error {
 	// Get account from cookie
 	sess := s.getUserSess(c)
 	accountID, ok := sess.Values["account_id"].(string)
@@ -33,7 +33,7 @@ func (s *Server) GetAccountQR(c echo.Context) error {
 	}
 
 	// Get account from database
-	_, err := s.DBackend.GetAccount(accountID)
+	account, err := s.DBackend.GetAccount(accountID)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			// Delete cookie
@@ -43,6 +43,11 @@ func (s *Server) GetAccountQR(c echo.Context) error {
 		}
 		logrus.Error(err)
 		return Error500(c)
+	}
+
+	cardPin := fmt.Sprintf("%x", sha256.Sum256([]byte(account.CardPin)))
+	if cardPin != params.CardPin {
+		return ErrorAccNotFound(c)
 	}
 
 	// Generate QR code nonce
@@ -202,6 +207,7 @@ func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 	account.LastName = usr.LastName
 	account.EmailAddress = usr.Email
 	account.GoogleId = usr.ID
+	account.GooglePicture = usr.Picture
 
 	err = s.DBackend.UpdateAccount(account)
 	if err != nil {
@@ -277,6 +283,7 @@ func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams
 	account.LastName = usr.LastName
 	account.EmailAddress = usr.Email
 	account.GoogleId = usr.ID
+	account.GooglePicture = usr.Picture
 
 	err = s.DBackend.UpdateAccount(account)
 	if err != nil {
