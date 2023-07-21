@@ -38,7 +38,6 @@ export const loadConfig = () => {
         // Use axios get and wait for it to finish
         axios.get("/config.json").then((response) => {
             c = response.data;
-            console.log(c);
             resolve(c);
         }).catch((error) => {
             reject(error);

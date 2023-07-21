@@ -16,7 +16,6 @@ export const authApi = () => {
 		new Configuration({
 			basePath: api(),
 			apiKey: (name: string) => {
-				console.log(name);
 				if (name == 'X-Local-Token') {
 					return local_token();
 				} else {

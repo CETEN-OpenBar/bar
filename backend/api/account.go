@@ -35,6 +35,10 @@ func (s *Server) GetAccount(c echo.Context) error {
 		return Error500(c)
 	}
 
+	// Cache for 5 minutes (300 seconds)
+	c.Response().Header().Set("Cache-Control", "max-age=300")
+	c.Response().Header().Set("Expires", "300")
+
 	// Return account
 	resp := autogen.GetAccount200JSONResponse{
 		Account: &account.Account,
