@@ -123,7 +123,13 @@
 						</div>
 					</div>
 					<hr class="my-2" />
-					<button class=" bg-blue-500 text-white rounded-lg p-2 mb-2" on:click={()=> { goto('/borne/index') }}>Mon compte</button>
+					<button
+						class=" bg-blue-500 text-white rounded-lg p-2 mb-2"
+						on:click={() => {
+							popup = false;
+							goto('/borne/index');
+						}}>Mon compte</button
+					>
 					<button
 						class=" bg-blue-500 text-white rounded-lg p-2 mb-2"
 						on:click={() => {
