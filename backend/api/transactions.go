@@ -4,6 +4,7 @@ import (
 	"bar/autogen"
 	"bar/internal/models"
 	"crypto/sha256"
+	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -32,6 +33,7 @@ func (s *Server) PostTransactions(c echo.Context) error {
 	}
 
 	var potentialTransaction autogen.NewTransaction
+	var fetchedItems = make(map[string]*models.Item)
 
 	// Check that pin matches
 	err := c.Bind(&potentialTransaction)
@@ -50,14 +52,18 @@ func (s *Server) PostTransactions(c echo.Context) error {
 
 	var transactionCost uint64
 	for _, potentialItem := range potentialTransaction.Items {
-		// Verify that item exists, can be bought, is in stock, and can be bought for that amount
-		item, err := s.DBackend.GetItem(c.Request().Context(), potentialItem.ItemId.String())
-		if err != nil {
-			if err == mongo.ErrNoDocuments {
-				return ErrorItemNotFound(c)
+		item, ok := fetchedItems[potentialItem.ItemId.String()]
+		if !ok {
+			// Verify that item exists, can be bought, is in stock, and can be bought for that amount
+			item, err = s.DBackend.GetItem(c.Request().Context(), potentialItem.ItemId.String())
+			if err != nil {
+				if err == mongo.ErrNoDocuments {
+					return ErrorItemNotFound(c)
+				}
+				logrus.Error(err)
+				return Error500(c)
 			}
-			logrus.Error(err)
-			return Error500(c)
+			fetchedItems[potentialItem.ItemId.String()] = item
 		}
 
 		if item.State == autogen.ItemNotBuyable {
@@ -66,6 +72,7 @@ func (s *Server) PostTransactions(c echo.Context) error {
 		if item.AmountLeft < potentialItem.Amount {
 			return Error400(c)
 		}
+		item.AmountLeft -= potentialItem.Amount
 		if item.BuyLimit < potentialItem.Amount {
 			return Error400(c)
 		}
@@ -83,7 +90,32 @@ func (s *Server) PostTransactions(c echo.Context) error {
 
 	transaction.TotalCost = transactionCost
 
-	err = s.DBackend.CreateTransaction(c.Request().Context(), transaction)
+	_, err = s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {
+		err = s.DBackend.CreateTransaction(ctx, transaction)
+		if err != nil {
+			logrus.Error(err)
+			return nil, errors.New("failed to create transaction")
+		}
+
+		// update account balance
+		account.Balance -= transactionCost
+		err = s.DBackend.UpdateAccount(ctx, account)
+		if err != nil {
+			logrus.Error(err)
+			return nil, errors.New("failed to update account")
+		}
+
+		// update items
+		for _, item := range fetchedItems {
+			err = s.DBackend.UpdateItem(ctx, item)
+			if err != nil {
+				logrus.Error(err)
+				return nil, errors.New("failed to update item")
+			}
+		}
+
+		return nil, nil
+	})
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -267,6 +299,8 @@ func (s *Server) PatchTransactionId(c echo.Context, accountId autogen.UUID, tran
 		return ErrorNotAuthenticated(c)
 	}
 
+	account := c.Get("userAccount").(*models.Account)
+
 	// Get transaction from database
 	transaction, err := s.DBackend.GetTransaction(c.Request().Context(), transactionId.String())
 	if err != nil {
@@ -277,12 +311,95 @@ func (s *Server) PatchTransactionId(c echo.Context, accountId autogen.UUID, tran
 		return Error500(c)
 	}
 
+	oldState := transaction.State
 	transaction.State = params.State
 
-	err = s.DBackend.UpdateTransaction(c.Request().Context(), transaction)
-	if err != nil {
-		logrus.Error(err)
-		return Error500(c)
+	if oldState != autogen.TransactionCanceled && params.State == autogen.TransactionCanceled {
+		_, err = s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {
+			err = s.DBackend.UpdateTransaction(ctx, transaction)
+			if err != nil {
+				logrus.Error(err)
+				return nil, errors.New("failed to create transaction")
+			}
+
+			// update account balance
+			account.Balance += transaction.TotalCost
+			err = s.DBackend.UpdateAccount(ctx, account)
+			if err != nil {
+				logrus.Error(err)
+				return nil, errors.New("failed to update account")
+			}
+
+			// update items
+			for _, txitem := range transaction.Items {
+				item, err := s.DBackend.GetItem(ctx, txitem.ItemId.String())
+				if err != nil {
+					continue
+				}
+
+				item.AmountLeft += txitem.ItemAmount
+
+				err = s.DBackend.UpdateItem(ctx, item)
+				if err != nil {
+					logrus.Error(err)
+					return nil, errors.New("failed to update item")
+				}
+			}
+
+			return nil, nil
+		})
+		if err != nil {
+			logrus.Error(err)
+			return Error500(c)
+		}
+	} else if oldState == autogen.TransactionCanceled && params.State != autogen.TransactionCanceled {
+		_, err = s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {
+			err = s.DBackend.UpdateTransaction(ctx, transaction)
+			if err != nil {
+				logrus.Error(err)
+				return nil, errors.New("failed to create transaction")
+			}
+
+			// update account balance
+			account.Balance -= transaction.TotalCost
+			err = s.DBackend.UpdateAccount(ctx, account)
+			if err != nil {
+				logrus.Error(err)
+				return nil, errors.New("failed to update account")
+			}
+
+			// update items
+			for _, txitem := range transaction.Items {
+				item, err := s.DBackend.GetItem(ctx, txitem.ItemId.String())
+				if err != nil {
+					continue
+				}
+
+				if item.AmountLeft < txitem.ItemAmount {
+					return nil, errors.New("not enough items")
+				}
+
+				item.AmountLeft -= txitem.ItemAmount
+
+				err = s.DBackend.UpdateItem(ctx, item)
+				if err != nil {
+					logrus.Error(err)
+					return nil, errors.New("failed to update item")
+				}
+			}
+
+			return nil, nil
+		})
+		if err != nil {
+			logrus.Error(err)
+			return Error500(c)
+		}
+	} else {
+		err = s.DBackend.UpdateTransaction(c.Request().Context(), transaction)
+		if err != nil {
+			logrus.Error(err)
+			return Error500(c)
+		}
 	}
 
 	return nil
@@ -295,6 +412,8 @@ func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, 
 		return ErrorNotAuthenticated(c)
 	}
 
+	account := c.Get("userAccount").(*models.Account)
+
 	// Get transaction from database
 	transaction, err := s.DBackend.GetTransaction(c.Request().Context(), transactionId.String())
 	if err != nil {
@@ -305,25 +424,70 @@ func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, 
 		return Error500(c)
 	}
 
-	for i, item := range transaction.Items {
-		if item.ItemId == itemId {
-			if params.State != nil {
-				transaction.Items[i].State = *params.State
-			}
-			if params.Amount != nil {
-				transaction.Items[i].ItemAmount = *params.Amount
-				transaction.Items[i].TotalCost = *params.Amount * transaction.Items[i].UnitCost
-			}
+	var item *autogen.TransactionItem
 
+	for i, titem := range transaction.Items {
+		if titem.ItemId == itemId {
+			item = &transaction.Items[i]
 			break
 		}
 	}
 
-	err = s.DBackend.UpdateTransaction(c.Request().Context(), transaction)
+	oldState := item.State
+	oldAmount := item.ItemAmount
+	oldCost := item.TotalCost
+
+	if params.State != nil {
+		item.State = *params.State
+	} else if params.Amount != nil {
+		item.ItemAmount = *params.Amount
+		item.TotalCost = *params.Amount * item.UnitCost
+	}
+
+	origItem, err := s.DBackend.GetItem(c.Request().Context(), itemId.String())
 	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorItemNotFound(c)
+		}
 		logrus.Error(err)
 		return Error500(c)
 	}
+
+	if oldState != autogen.TransactionItemCanceled && item.State == autogen.TransactionItemCanceled {
+		origItem.AmountLeft += item.ItemAmount
+		account.Balance += item.TotalCost
+		transaction.TotalCost -= item.TotalCost
+	} else if oldState == autogen.TransactionItemCanceled && item.State != autogen.TransactionItemCanceled {
+		origItem.AmountLeft -= item.ItemAmount
+		account.Balance -= item.TotalCost
+		transaction.TotalCost += item.TotalCost
+	} else {
+		origItem.AmountLeft += oldAmount - item.ItemAmount
+		account.Balance += oldCost - item.TotalCost
+		transaction.TotalCost += item.TotalCost - oldCost
+	}
+
+	s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {
+		err = s.DBackend.UpdateTransaction(ctx, transaction)
+		if err != nil {
+			logrus.Error(err)
+			return nil, errors.New("failed to update transaction")
+		}
+
+		err = s.DBackend.UpdateAccount(ctx, account)
+		if err != nil {
+			logrus.Error(err)
+			return nil, errors.New("failed to update account")
+		}
+
+		err = s.DBackend.UpdateItem(ctx, origItem)
+		if err != nil {
+			logrus.Error(err)
+			return nil, errors.New("failed to update item")
+		}
+		return nil, nil
+	})
+
 	return nil
 }
 

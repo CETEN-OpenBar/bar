@@ -32,6 +32,7 @@ func (b *Backend) Connect() error {
 	b.db = client.Database(b.opts.Database)
 
 	// Starts all inits
+	b.CreateCollections()
 
 	return nil
 }
@@ -49,4 +50,14 @@ func (b *Backend) TimeoutContext(ctx context.Context) (context.Context, context.
 
 func (b *Backend) GetContext() (context.Context, context.CancelFunc) {
 	return context.WithTimeout(context.Background(), b.opts.QueryTimeout)
+}
+
+func (b *Backend) WithTransaction(ctx context.Context, fn func(ctx mongo.SessionContext) (interface{}, error), opts ...*options.TransactionOptions) (interface{}, error) {
+	sess, err := b.db.Client().StartSession()
+	if err != nil {
+		return nil, err
+	}
+	defer sess.EndSession(ctx)
+
+	return sess.WithTransaction(ctx, fn, opts...)
 }

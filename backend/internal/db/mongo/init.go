@@ -1,6 +1,7 @@
 package mongo
 
 import (
+	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -20,6 +21,12 @@ var (
 	// Add indexes to index "id" which is text & unique
 	indexes = map[string][]mongo.IndexModel{
 		"transactions": {
+			// index descending by created_at
+			mongo.IndexModel{
+				Keys: bson.M{
+					"created_at": -1,
+				},
+			},
 			mongo.IndexModel{
 				Keys: bson.M{
 					"id": 1,
@@ -34,6 +41,11 @@ var (
 		"refills": {
 			mongo.IndexModel{
 				Keys: bson.M{
+					"created_at": 1,
+				},
+			},
+			mongo.IndexModel{
+				Keys: bson.M{
 					"id": 1,
 				},
 				Options: options.Index().SetUnique(true).SetPartialFilterExpression(bson.M{
@@ -43,6 +55,11 @@ var (
 				}),
 			}},
 		"items": {
+			mongo.IndexModel{
+				Keys: bson.M{
+					"created_at": 1,
+				},
+			},
 			mongo.IndexModel{
 				Keys: bson.M{
 					"id": 1,
@@ -56,6 +73,11 @@ var (
 		"categories": {
 			mongo.IndexModel{
 				Keys: bson.M{
+					"created_at": 1,
+				},
+			},
+			mongo.IndexModel{
+				Keys: bson.M{
 					"id": 1,
 				},
 				Options: options.Index().SetUnique(true).SetPartialFilterExpression(bson.M{
@@ -65,6 +87,11 @@ var (
 				}),
 			}},
 		"carousel_texts": {
+			mongo.IndexModel{
+				Keys: bson.M{
+					"created_at": 1,
+				},
+			},
 			mongo.IndexModel{
 				Keys: bson.M{
 					"id": 1,
@@ -78,6 +105,11 @@ var (
 		"carousel_images": {
 			mongo.IndexModel{
 				Keys: bson.M{
+					"created_at": 1,
+				},
+			},
+			mongo.IndexModel{
+				Keys: bson.M{
 					"id": 1,
 				},
 				Options: options.Index().SetUnique(true).SetPartialFilterExpression(bson.M{
@@ -87,6 +119,11 @@ var (
 				}),
 			}},
 		"accounts": {
+			mongo.IndexModel{
+				Keys: bson.M{
+					"created_at": 1,
+				},
+			},
 			mongo.IndexModel{
 				Keys: bson.M{
 					"id": 1,
@@ -137,7 +174,8 @@ func (b *Backend) CreateCollections() error {
 		b.db.CreateCollection(ctx, collection)
 
 		if err := b.CreateIndexes(collection); err != nil {
-			return err
+			logrus.Error(err)
+			continue
 		}
 	}
 

@@ -6,6 +6,7 @@
 	import { quintOut } from 'svelte/easing';
 	import 'iconify-icon';
 	import Qr from '$lib/components/qr.svelte';
+	import Transactions from '$lib/components/borne/transactions.svelte';
 
 	let account: Account | undefined = undefined;
 	let unsub: () => void;
@@ -62,6 +63,8 @@
 				>
 					<!-- Add content for previous orders here -->
 					<hr class="my-2 border-gray-400" />
+
+					<Transactions />
 				</div>
 			{/if}
 		</div>

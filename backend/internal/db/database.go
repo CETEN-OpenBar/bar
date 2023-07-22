@@ -4,6 +4,9 @@ import (
 	"bar/internal/models"
 	"context"
 	"time"
+
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type DatabaseOptions struct {
@@ -129,4 +132,7 @@ type DBackend interface {
 	GetAllCategories(ctx context.Context) ([]*models.Category, error)
 	GetAllCarouselImages(ctx context.Context) ([]*models.CarouselImage, error)
 	GetAllCarouselTexts(ctx context.Context) ([]*models.CarouselText, error)
+
+	// Mongo transactions
+	WithTransaction(ctx context.Context, fn func(ctx mongo.SessionContext) (interface{}, error), opts ...*options.TransactionOptions) (interface{}, error)
 }
