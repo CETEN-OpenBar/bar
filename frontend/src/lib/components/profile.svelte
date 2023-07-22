@@ -1,12 +1,13 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import type { Account } from '$lib/api';
 	import { accountsApi, authApi } from '$lib/requests/requests';
+	import { formatPrice } from '$lib/utils';
 	import Error from './error.svelte';
 	import Pin from './pin.svelte';
 	import Success from './success.svelte';
 
 	export let account: Account;
-	export let size: string = '10';
 	export let logout: () => void;
 
 	let pin_step = 0;
@@ -16,17 +17,17 @@
 	};
 
 	let popup = false;
-    let errorTimeout: number;
+	let errorTimeout: number;
 
 	if (account.google_picture == '') {
 		account.google_picture = `https://www.gravatar.com/avatar/${account.email_address}?d=retro`;
 	}
 
 	function setNewPin(pin: string) {
-        if (pin == '') {
-            pin_step = 0;
-            return;
-        }
+		if (pin == '') {
+			pin_step = 0;
+			return;
+		}
 		card.new_pin = pin;
 
 		accountsApi()
@@ -55,54 +56,64 @@
 	}
 
 	function nextStep(pin: string) {
-        if (pin == '') {
-            pin_step = 0;
-            return;
-        }
+		if (pin == '') {
+			pin_step = 0;
+			return;
+		}
 		card.old_pin = pin;
 		pin_step = 2;
 	}
 
-    function logoutAccount() {
-        authApi()
-            .logout({
-                withCredentials: true
-            })
-            .then(() => {
-                logout();
-            })
-            .catch(() => {
-                logout();
-            });
-    }
+	function logoutAccount() {
+		authApi()
+			.logout({
+				withCredentials: true
+			})
+			.then(() => {
+				logout();
+			})
+			.catch(() => {
+				logout();
+			});
+	}
 </script>
 
 <!-- Icon with a dropdown menu for the actions possible -->
 <div class="relative">
-	<button
-		on:click={() => {
-			popup = !popup;
-		}}
-		class="{popup ? 'border-gray-200' : 'border-white'} rounded-full border-4"
-	>
-		<img
-			src={account.google_picture}
-			alt="User Avatar"
-			class={`w-${size} h-${size} rounded-full cursor-pointer float-left`}
-		/>
-		<h1 class="text-sm font-bold ml-2">{account.first_name} {account.last_name}</h1>
-	</button>
+	<div class="flex flex-row">
+		<button
+			on:click={() => {
+				popup = !popup;
+			}}
+			class="{popup ? 'border-gray-200' : 'border-transparent'} rounded-full border-4"
+		>
+			<img
+				src={account.google_picture}
+				alt="User Avatar"
+				class={`w-14 rounded-full cursor-pointer`}
+			/>
+		</button>
+		<button
+			on:click={() => {
+				popup = !popup;
+			}}
+			class="ml-2 self-center flex flex-col justify-start"
+		>
+			<h1 class="text-lg text-white font-bold">{account.first_name} {account.last_name}</h1>
+			<h2 class="text-md text-white self-start">{formatPrice(account.balance)}</h2>
+		</button>
+	</div>
 
 	{#if popup}
 		<!-- the button will be on the left of the screen, this pops up underneath -->
-		<div class="absolute bg-gray-200 rounded-xl shadow-lg p-4 z-20">
+		<div class="absolute bg-gray-200 rounded-xl shadow-lg p-4 z-20" style="display:ruby">
 			<div class="bg-white rounded-xl">
 				<div class="flex flex-col p-4">
 					<div class="flex flex-row align-middle">
 						<img
 							src={account.google_picture}
 							alt="User Avatar"
-							class={`w-${size} h-${size} rounded-full cursor-pointer align-middle`}
+							class={`w-11 rounded-full cursor-pointer align-middle`}
 						/>
 						<div class="flex flex-col ml-5">
 							<h4 class="text-md font-bold">{account.first_name} {account.last_name}</h4>
@@ -112,13 +123,13 @@
 						</div>
 					</div>
 					<hr class="my-2" />
-					<button class=" bg-blue-500 text-white rounded-lg p-2 mb-2">Mon compte</button>
+					<button class=" bg-blue-500 text-white rounded-lg p-2 mb-2" on:click={()=> { goto('/borne/index') }}>Mon compte</button>
 					<button
 						class=" bg-blue-500 text-white rounded-lg p-2 mb-2"
 						on:click={() => {
 							pin_step = 1;
-                            popup = false;
-                            clearTimeout(errorTimeout);
+							popup = false;
+							clearTimeout(errorTimeout);
 						}}>Changer de PIN</button
 					>
 					<hr class="my-2" />

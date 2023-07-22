@@ -40,12 +40,12 @@ func (s *Server) GetCarouselImages(c echo.Context) error {
 
 // (POST /carousel/images)
 func (s *Server) AddCarouselImage(c echo.Context) error {
-	// Get admin account from cookie
-	sess := s.getAdminSess(c)
-	adminID, ok := sess.Values["admin_account_id"].(string)
-	if !ok {
+	logged := c.Get("adminLogged").(bool)
+	if !logged {
 		return ErrorNotAuthenticated(c)
 	}
+
+	adminID := c.Get("adminAccountID").(string)
 
 	// Get image from request
 	image, err := c.FormFile("image")
@@ -126,37 +126,25 @@ func (s *Server) GetCarouselImage(c echo.Context, imageId autogen.UUID) error {
 
 // (DELETE /carousel/images/{image_id})
 func (s *Server) MarkDeleteCarouselImage(c echo.Context, imageId autogen.UUID) error {
-	// Get admin account from cookie
-	sess := s.getAdminSess(c)
-	adminId, ok := sess.Values["admin_account_id"].(string)
-	if !ok {
+	logged := c.Get("adminLogged").(bool)
+	if !logged {
 		return ErrorNotAuthenticated(c)
 	}
 
-	// Get account from database
-	_, err := s.DBackend.GetAccount(adminId)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			// Delete cookie
-			sess.Options.MaxAge = -1
-			sess.Save(c.Request(), c.Response())
-			return ErrorAccNotFound(c)
-		}
-		return Error500(c)
-	}
+	adminID := c.Get("adminAccountID").(string)
 
-	_, err = s.DBackend.GetCarouselImage(imageId.String())
+	_, err := s.DBackend.GetCarouselImage(imageId.String())
 	if err != nil {
 		return ErrorImageNotFound(c)
 	}
 
-	err = s.DBackend.MarkDeleteCarouselImage(imageId.String(), adminId)
+	err = s.DBackend.MarkDeleteCarouselImage(imageId.String(), adminID)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
 	}
 
-	logrus.Infof("Carousel image %s marked for deletion by admin %s", imageId.String(), adminId)
+	logrus.Infof("Carousel image %s marked for deletion by admin %s", imageId.String(), adminID)
 	autogen.MarkDeleteAccountId204Response{}.VisitMarkDeleteAccountIdResponse(c.Response())
 	return nil
 }
@@ -186,12 +174,12 @@ func (s *Server) GetCarouselTexts(c echo.Context) error {
 
 // (POST /carousel/texts)
 func (s *Server) AddCarouselText(c echo.Context) error {
-	// Get admin account from cookie
-	sess := s.getAdminSess(c)
-	adminID, ok := sess.Values["admin_account_id"].(string)
-	if !ok {
+	logged := c.Get("adminLogged").(bool)
+	if !logged {
 		return ErrorNotAuthenticated(c)
 	}
+
+	adminID := c.Get("adminAccountID").(string)
 
 	// Get text from request
 	var text autogen.CarouselTextCreate
@@ -226,12 +214,12 @@ func (s *Server) AddCarouselText(c echo.Context) error {
 
 // (DELETE /carousel/texts/{text_id})
 func (s *Server) MarkDeleteCarouselText(c echo.Context, textId autogen.UUID) error {
-	// Get admin account from cookie
-	sess := s.getAdminSess(c)
-	adminID, ok := sess.Values["admin_account_id"].(string)
-	if !ok {
+	logged := c.Get("adminLogged").(bool)
+	if !logged {
 		return ErrorNotAuthenticated(c)
 	}
+
+	adminID := c.Get("adminAccountID").(string)
 
 	_, err := s.DBackend.GetCarouselText(textId.String())
 	if err != nil {

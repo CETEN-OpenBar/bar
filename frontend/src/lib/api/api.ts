@@ -2232,7 +2232,7 @@ export const AuthApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getAccountQR(cardPin: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<File>> {
+        async getAccountQR(cardPin: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getAccountQR(cardPin, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -2303,7 +2303,7 @@ export const AuthApiFactory = function (configuration?: Configuration, basePath?
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAccountQR(cardPin: string, options?: any): AxiosPromise<File> {
+        getAccountQR(cardPin: string, options?: any): AxiosPromise<string> {
             return localVarFp.getAccountQR(cardPin, options).then((request) => request(axios, basePath));
         },
         /**

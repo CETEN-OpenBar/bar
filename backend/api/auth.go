@@ -3,10 +3,13 @@ package api
 import (
 	"bar/autogen"
 	"bar/internal/config"
-	"bytes"
+	"bar/internal/models"
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"image/color"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -26,56 +29,51 @@ var stateCache = cache.New(5*time.Minute, 10*time.Minute)
 // (GET /account/qr)
 func (s *Server) GetAccountQR(c echo.Context, params autogen.GetAccountQRParams) error {
 	// Get account from cookie
-	sess := s.getUserSess(c)
-	accountID, ok := sess.Values["account_id"].(string)
-	if !ok {
+	logged := c.Get("userLogged").(bool)
+	if !logged {
 		return ErrorNotAuthenticated(c)
 	}
 
-	// Get account from database
-	account, err := s.DBackend.GetAccount(accountID)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			// Delete cookie
-			sess.Options.MaxAge = -1
-			sess.Save(c.Request(), c.Response())
-			return ErrorAccNotFound(c)
-		}
-		logrus.Error(err)
-		return Error500(c)
-	}
+	accountID := c.Get("userAccountID").(string)
+	account := c.Get("userAccount").(*models.Account)
 
 	cardPin := fmt.Sprintf("%x", sha256.Sum256([]byte(params.CardPin)))
 	if cardPin != account.CardPin {
 		return ErrorAccNotFound(c)
 	}
 
-	// Generate QR code nonce
-	nonce := uuid.NewString()
+	b64, found := qrCache.Get(accountID)
+	if !found {
+		// Generate QR code nonce
+		nonce := uuid.NewString()
 
-	// Cache nonce
-	qrCache.Set(nonce, accountID, cache.DefaultExpiration)
+		// Cache nonce
+		qrCache.Set(nonce, accountID, cache.DefaultExpiration)
 
-	conf := config.GetConfig()
-	url := fmt.Sprintf("%s/auth/google/begin/%s", conf.ApiConfig.BasePath, nonce)
+		conf := config.GetConfig()
+		url := fmt.Sprintf("%s/auth/google/begin/%s", conf.ApiConfig.BasePath, nonce)
+		qr, err := qrcode.New(url, qrcode.Medium)
+		if err != nil {
+			return Error500(c)
+		}
+		qr.BackgroundColor = color.RGBA{R: 255, G: 255, B: 255, A: 0}
+		// Generate QR code
+		png, err := qr.PNG(200)
+		if err != nil {
+			return Error500(c)
+		}
+		b64 = base64.StdEncoding.EncodeToString(png)
+		qrCache.Set(accountID, b64, cache.DefaultExpiration)
 
-	// Generate QR code
-	png, err := qrcode.Encode(url, qrcode.Medium, 256)
-	if err != nil {
-		return Error500(c)
+		logrus.Debugf("QR code generated for account %s: %s", accountID, url)
 	}
 
-	r := bytes.NewReader(png)
-
-	logrus.Debugf("QR code generated for account %s: %s", accountID, url)
-
-	// Add headers for caching
-	c.Response().Header().Set("Cache-Control", "max-age=300, public")
-	c.Response().Header().Set("Expires", time.Now().Add(300*time.Second).Format(time.RFC1123))
+	// Convert to base64
+	r := strings.NewReader(b64.(string))
 
 	autogen.GetAccountQR200ImagepngResponse{
+		ContentLength: int64(r.Len()),
 		Body:          r,
-		ContentLength: int64(len(png)),
 	}.VisitGetAccountQRResponse(c.Response())
 	return nil
 }

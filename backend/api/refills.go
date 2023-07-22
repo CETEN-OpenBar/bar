@@ -14,24 +14,12 @@ import (
 
 // (GET /refills)
 func (s *Server) GetRefills(c echo.Context, params autogen.GetRefillsParams) error {
-	// Get admin account from cookie
-	sess := s.getAdminSess(c)
-	adminId, ok := sess.Values["admin_account_id"].(string)
-	if !ok {
+	logged := c.Get("adminLogged").(bool)
+	if !logged {
 		return ErrorNotAuthenticated(c)
 	}
 
-	// Get account from database
-	_, err := s.DBackend.GetAccount(adminId)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			// Delete cookie
-			sess.Options.MaxAge = -1
-			sess.Save(c.Request(), c.Response())
-			return ErrorAccNotFound(c)
-		}
-		return Error500(c)
-	}
+	adminID := c.Get("adminAccountID").(string)
 
 	var startsAt uint64 = 0
 	if params.StartDate != nil {
@@ -77,7 +65,7 @@ func (s *Server) GetRefills(c echo.Context, params autogen.GetRefillsParams) err
 		refills = append(refills, refill.Refill)
 	}
 
-	logrus.Infof("Refills have been retrieved by %s", adminId)
+	logrus.Infof("Refills have been retrieved by %s", adminID)
 	autogen.GetRefills200JSONResponse(refills).VisitGetRefillsResponse(c.Response())
 	return nil
 }
@@ -85,24 +73,12 @@ func (s *Server) GetRefills(c echo.Context, params autogen.GetRefillsParams) err
 // (GET /account/refills)
 func (s *Server) GetSelfRefills(c echo.Context, params autogen.GetSelfRefillsParams) error {
 	// Get account from cookie
-	sess := s.getUserSess(c)
-	accountID, ok := sess.Values["account_id"].(string)
-	if !ok {
+	logged := c.Get("userLogged").(bool)
+	if !logged {
 		return ErrorNotAuthenticated(c)
 	}
 
-	// Get account from database
-	_, err := s.DBackend.GetAccount(accountID)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			// Delete cookie
-			sess.Options.MaxAge = -1
-			sess.Save(c.Request(), c.Response())
-			return ErrorAccNotFound(c)
-		}
-		logrus.Error(err)
-		return Error500(c)
-	}
+	accountID := c.Get("userAccountID").(string)
 
 	var startsAt uint64 = 0
 	if params.StartDate != nil {
@@ -160,24 +136,12 @@ func (s *Server) GetSelfRefills(c echo.Context, params autogen.GetSelfRefillsPar
 
 // (GET /accounts/{account_id}/refills)
 func (s *Server) GetAccountRefills(c echo.Context, accountId autogen.UUID, params autogen.GetAccountRefillsParams) error {
-	// Get admin account from cookie
-	sess := s.getAdminSess(c)
-	adminId, ok := sess.Values["admin_account_id"].(string)
-	if !ok {
+	logged := c.Get("adminLogged").(bool)
+	if !logged {
 		return ErrorNotAuthenticated(c)
 	}
 
-	// Get account from database
-	_, err := s.DBackend.GetAccount(adminId)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			// Delete cookie
-			sess.Options.MaxAge = -1
-			sess.Save(c.Request(), c.Response())
-			return ErrorAccNotFound(c)
-		}
-		return Error500(c)
-	}
+	adminID := c.Get("adminAccountID").(string)
 
 	var startsAt uint64 = 0
 	if params.StartDate != nil {
@@ -224,7 +188,7 @@ func (s *Server) GetAccountRefills(c echo.Context, accountId autogen.UUID, param
 		refills = append(refills, refill.Refill)
 	}
 
-	logrus.Infof("Refills have been retrieved by %s", adminId)
+	logrus.Infof("Refills have been retrieved by %s", adminID)
 	autogen.GetAccountRefills200JSONResponse{
 		Refills: &refills,
 		Limit:   size,
@@ -236,24 +200,12 @@ func (s *Server) GetAccountRefills(c echo.Context, accountId autogen.UUID, param
 
 // (POST /accounts/{account_id}/refills)
 func (s *Server) PostRefill(c echo.Context, accountId autogen.UUID, params autogen.PostRefillParams) error {
-	// Get admin account from cookie
-	sess := s.getAdminSess(c)
-	adminId, ok := sess.Values["admin_account_id"].(string)
-	if !ok {
+	logged := c.Get("adminLogged").(bool)
+	if !logged {
 		return ErrorNotAuthenticated(c)
 	}
 
-	// Get account from database
-	_, err := s.DBackend.GetAccount(adminId)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			// Delete cookie
-			sess.Options.MaxAge = -1
-			sess.Save(c.Request(), c.Response())
-			return ErrorAccNotFound(c)
-		}
-		return Error500(c)
-	}
+	adminID := c.Get("adminAccountID").(string)
 
 	refill := &models.Refill{
 		Refill: autogen.Refill{
@@ -261,43 +213,31 @@ func (s *Server) PostRefill(c echo.Context, accountId autogen.UUID, params autog
 			Amount:    params.Amount,
 			Id:        uuid.New(),
 			IssuedAt:  uint64(time.Now().Unix()),
-			IssuedBy:  uuid.MustParse(adminId),
+			IssuedBy:  uuid.MustParse(adminID),
 			State:     autogen.Valid,
 		},
 	}
 
-	err = s.DBackend.CreateRefill(refill)
+	err := s.DBackend.CreateRefill(refill)
 	if err != nil {
 		return Error500(c)
 	}
 
-	logrus.Infof("Refill %s has been created by %s", refill.Id, adminId)
+	logrus.Infof("Refill %s has been created by %s", refill.Id, adminID)
 	autogen.PostRefill201JSONResponse(refill.Refill).VisitPostRefillResponse(c.Response())
 	return nil
 }
 
 // (DELETE /accounts/{account_id}/refills/{refill_id})
 func (s *Server) MarkDeleteRefill(c echo.Context, accountId autogen.UUID, refillId autogen.UUID) error {
-	// Get admin account from cookie
-	sess := s.getAdminSess(c)
-	adminId, ok := sess.Values["admin_account_id"].(string)
-	if !ok {
+	logged := c.Get("adminLogged").(bool)
+	if !logged {
 		return ErrorNotAuthenticated(c)
 	}
 
-	// Get account from database
-	_, err := s.DBackend.GetAccount(adminId)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			// Delete cookie
-			sess.Options.MaxAge = -1
-			sess.Save(c.Request(), c.Response())
-			return ErrorAccNotFound(c)
-		}
-		return Error500(c)
-	}
+	adminID := c.Get("adminAccountID").(string)
 
-	_, err = s.DBackend.GetRefill(refillId.String())
+	_, err := s.DBackend.GetRefill(refillId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorRefillNotFound(c)
@@ -305,12 +245,12 @@ func (s *Server) MarkDeleteRefill(c echo.Context, accountId autogen.UUID, refill
 		return Error500(c)
 	}
 
-	err = s.DBackend.MarkDeleteRefill(refillId.String(), adminId)
+	err = s.DBackend.MarkDeleteRefill(refillId.String(), adminID)
 	if err != nil {
 		return Error500(c)
 	}
 
-	logrus.Infof("Refill %s has been marked deleted by %s", refillId, adminId)
+	logrus.Infof("Refill %s has been marked deleted by %s", refillId, adminID)
 	autogen.MarkDeleteAccountId204Response{}.VisitMarkDeleteAccountIdResponse(c.Response())
 	return nil
 }

@@ -55,7 +55,7 @@
 					<img
 						in:fly={{ x: -window.innerWidth, easing: customEasingIn, duration: 1000, opacity: 1 }}
 						out:fly={{ x: window.innerWidth, easing: customEasingOut, duration: 1000, opacity: 1 }}
-						src={api() + image.image_url}
+						src={image.image_url}
 						alt="dommage"
 						class="w-full h-full object-cover"
 					/>

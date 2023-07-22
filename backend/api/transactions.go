@@ -15,24 +15,13 @@ import (
 // (POST /account/transactions)
 func (s *Server) PostTransactions(c echo.Context) error {
 	// Get account from cookie
-	sess := s.getUserSess(c)
-	accountID, ok := sess.Values["account_id"].(string)
-	if !ok {
+	logged := c.Get("userLogged").(bool)
+	if !logged {
 		return ErrorNotAuthenticated(c)
 	}
 
-	// Get account from database
-	account, err := s.DBackend.GetAccount(accountID)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			// Delete cookie
-			sess.Options.MaxAge = -1
-			sess.Save(c.Request(), c.Response())
-			return ErrorAccNotFound(c)
-		}
-		logrus.Error(err)
-		return Error500(c)
-	}
+	accountID := c.Get("userAccountID").(string)
+	account := c.Get("userAccount").(*models.Account)
 
 	transaction := &models.Transaction{
 		Transaction: autogen.Transaction{
@@ -45,7 +34,7 @@ func (s *Server) PostTransactions(c echo.Context) error {
 	var potentialTransaction autogen.NewTransaction
 
 	// Check that pin matches
-	err = c.Bind(&potentialTransaction)
+	err := c.Bind(&potentialTransaction)
 	if err != nil {
 		logrus.Error(err)
 		return Error400(c)
@@ -106,24 +95,9 @@ func (s *Server) PostTransactions(c echo.Context) error {
 
 // (GET /accounts/{account_id}/transactions)
 func (s *Server) GetAccountTransactions(c echo.Context, accountId autogen.UUID, params autogen.GetAccountTransactionsParams) error {
-	// Get admin account from cookie
-	sess := s.getAdminSess(c)
-	adminId, ok := sess.Values["admin_account_id"].(string)
-	if !ok {
+	logged := c.Get("adminLogged").(bool)
+	if !logged {
 		return ErrorNotAuthenticated(c)
-	}
-
-	// Get account from database
-	_, err := s.DBackend.GetAccount(adminId)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			// Delete cookie
-			sess.Options.MaxAge = -1
-			sess.Save(c.Request(), c.Response())
-			return ErrorAccNotFound(c)
-		}
-		logrus.Error(err)
-		return Error500(c)
 	}
 
 	var page uint64
@@ -181,24 +155,12 @@ func (s *Server) GetAccountTransactions(c echo.Context, accountId autogen.UUID, 
 // (GET /account/transactions)
 func (s *Server) GetCurrentAccountTransactions(c echo.Context, params autogen.GetCurrentAccountTransactionsParams) error {
 	// Get account from cookie
-	sess := s.getUserSess(c)
-	accountID, ok := sess.Values["account_id"].(string)
-	if !ok {
+	logged := c.Get("userLogged").(bool)
+	if !logged {
 		return ErrorNotAuthenticated(c)
 	}
 
-	// Get account from database
-	_, err := s.DBackend.GetAccount(accountID)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			// Delete cookie
-			sess.Options.MaxAge = -1
-			sess.Save(c.Request(), c.Response())
-			return ErrorAccNotFound(c)
-		}
-		logrus.Error(err)
-		return Error500(c)
-	}
+	accountID := c.Get("userAccountID").(string)
 
 	var page uint64
 	if params.Page != nil {
@@ -255,28 +217,15 @@ func (s *Server) GetCurrentAccountTransactions(c echo.Context, params autogen.Ge
 
 // (DELETE /accounts/{account_id}/transactions/{transaction_id})
 func (s *Server) MarkDeleteTransactionId(c echo.Context, accountId autogen.UUID, transactionId autogen.UUID) error {
-	// Get admin account from cookie
-	sess := s.getAdminSess(c)
-	adminId, ok := sess.Values["admin_account_id"].(string)
-	if !ok {
+	logged := c.Get("adminLogged").(bool)
+	if !logged {
 		return ErrorNotAuthenticated(c)
 	}
 
-	// Get account from database
-	_, err := s.DBackend.GetAccount(adminId)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			// Delete cookie
-			sess.Options.MaxAge = -1
-			sess.Save(c.Request(), c.Response())
-			return ErrorAccNotFound(c)
-		}
-		logrus.Error(err)
-		return Error500(c)
-	}
+	adminID := c.Get("adminAccountID").(string)
 
 	// Get transaction from database
-	err = s.DBackend.MarkDeleteTransaction(transactionId.String(), adminId)
+	err := s.DBackend.MarkDeleteTransaction(transactionId.String(), adminID)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorTransactionNotFound(c)
@@ -285,31 +234,16 @@ func (s *Server) MarkDeleteTransactionId(c echo.Context, accountId autogen.UUID,
 		return Error500(c)
 	}
 
-	logrus.Infof("Transaction %s marked as deleted by %s", transactionId.String(), adminId)
+	logrus.Infof("Transaction %s marked as deleted by %s", transactionId.String(), adminID)
 	autogen.MarkDeleteTransactionId200JSONResponse{}.VisitMarkDeleteTransactionIdResponse(c.Response())
 	return nil
 }
 
 // (GET /accounts/{account_id}/transactions/{transaction_id})
 func (s *Server) GetTransactionId(c echo.Context, accountId autogen.UUID, transactionId autogen.UUID) error {
-	// Get admin account from cookie
-	sess := s.getAdminSess(c)
-	adminId, ok := sess.Values["admin_account_id"].(string)
-	if !ok {
+	logged := c.Get("adminLogged").(bool)
+	if !logged {
 		return ErrorNotAuthenticated(c)
-	}
-
-	// Get account from database
-	_, err := s.DBackend.GetAccount(adminId)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			// Delete cookie
-			sess.Options.MaxAge = -1
-			sess.Save(c.Request(), c.Response())
-			return ErrorAccNotFound(c)
-		}
-		logrus.Error(err)
-		return Error500(c)
 	}
 
 	// Get transaction from database
@@ -328,24 +262,9 @@ func (s *Server) GetTransactionId(c echo.Context, accountId autogen.UUID, transa
 
 // (PATCH /accounts/{account_id}/transactions/{transaction_id})
 func (s *Server) PatchTransactionId(c echo.Context, accountId autogen.UUID, transactionId autogen.UUID, params autogen.PatchTransactionIdParams) error {
-	// Get admin account from cookie
-	sess := s.getAdminSess(c)
-	adminId, ok := sess.Values["admin_account_id"].(string)
-	if !ok {
+	logged := c.Get("adminLogged").(bool)
+	if !logged {
 		return ErrorNotAuthenticated(c)
-	}
-
-	// Get account from database
-	_, err := s.DBackend.GetAccount(adminId)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			// Delete cookie
-			sess.Options.MaxAge = -1
-			sess.Save(c.Request(), c.Response())
-			return ErrorAccNotFound(c)
-		}
-		logrus.Error(err)
-		return Error500(c)
 	}
 
 	// Get transaction from database
@@ -371,23 +290,9 @@ func (s *Server) PatchTransactionId(c echo.Context, accountId autogen.UUID, tran
 
 // (PATCH /accounts/{account_id}/transactions/{transaction_id}/{item_id})
 func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, transactionId autogen.UUID, itemId autogen.UUID, params autogen.PatchTransactionItemIdParams) error {
-	// Get admin account from cookie
-	sess := s.getAdminSess(c)
-	adminId, ok := sess.Values["admin_account_id"].(string)
-	if !ok {
+	logged := c.Get("adminLogged").(bool)
+	if !logged {
 		return ErrorNotAuthenticated(c)
-	}
-
-	// Get account from database
-	_, err := s.DBackend.GetAccount(adminId)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			// Delete cookie
-			sess.Options.MaxAge = -1
-			sess.Save(c.Request(), c.Response())
-			return ErrorAccNotFound(c)
-		}
-		return Error500(c)
 	}
 
 	// Get transaction from database
@@ -424,23 +329,9 @@ func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, 
 
 // (GET /transactions)
 func (s *Server) GetTransactions(c echo.Context, params autogen.GetTransactionsParams) error {
-	// Get admin account from cookie
-	sess := s.getAdminSess(c)
-	adminId, ok := sess.Values["admin_account_id"].(string)
-	if !ok {
+	logged := c.Get("adminLogged").(bool)
+	if !logged {
 		return ErrorNotAuthenticated(c)
-	}
-
-	// Get account from database
-	_, err := s.DBackend.GetAccount(adminId)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			// Delete cookie
-			sess.Options.MaxAge = -1
-			sess.Save(c.Request(), c.Response())
-			return ErrorAccNotFound(c)
-		}
-		return Error500(c)
 	}
 
 	var page uint64

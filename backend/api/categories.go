@@ -17,23 +17,9 @@ import (
 // (GET /categories)
 func (s *Server) GetCategories(c echo.Context) error {
 	// Get account from cookie
-	sess := s.getUserSess(c)
-	accountID, ok := sess.Values["account_id"].(string)
-	if !ok {
+	logged := c.Get("userLogged").(bool)
+	if !logged {
 		return ErrorNotAuthenticated(c)
-	}
-
-	// Get account from database
-	_, err := s.DBackend.GetAccount(accountID)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			// Delete cookie
-			sess.Options.MaxAge = -1
-			sess.Save(c.Request(), c.Response())
-			return ErrorAccNotFound(c)
-		}
-		logrus.Error(err)
-		return Error500(c)
 	}
 
 	data, err := s.DBackend.GetAllCategories()
@@ -57,24 +43,12 @@ func (s *Server) GetCategories(c echo.Context) error {
 
 // (POST /categories)
 func (s *Server) PostCategory(c echo.Context) error {
-	// Get admin account from cookie
-	sess := s.getAdminSess(c)
-	adminId, ok := sess.Values["admin_account_id"].(string)
-	if !ok {
+	logged := c.Get("adminLogged").(bool)
+	if !logged {
 		return ErrorNotAuthenticated(c)
 	}
 
-	// Get account from database
-	_, err := s.DBackend.GetAccount(adminId)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			// Delete cookie
-			sess.Options.MaxAge = -1
-			sess.Save(c.Request(), c.Response())
-			return ErrorAccNotFound(c)
-		}
-		return Error500(c)
-	}
+	adminID := c.Get("adminAccountID").(string)
 
 	var p autogen.NewCategory
 	if err := c.Bind(&p); err != nil {
@@ -117,33 +91,21 @@ func (s *Server) PostCategory(c echo.Context) error {
 		return Error500(c)
 	}
 
-	logrus.Infof("Category %s created by %s", category.Id.String(), adminId)
+	logrus.Infof("Category %s created by %s", category.Id.String(), adminID)
 	autogen.PostCategory201JSONResponse(category.Category).VisitPostCategoryResponse(c.Response())
 	return nil
 }
 
 // (DELETE /categories/{category_id})
 func (s *Server) MarkDeleteCategory(c echo.Context, categoryId autogen.UUID) error {
-	// Get admin account from cookie
-	sess := s.getAdminSess(c)
-	adminId, ok := sess.Values["admin_account_id"].(string)
-	if !ok {
+	logged := c.Get("adminLogged").(bool)
+	if !logged {
 		return ErrorNotAuthenticated(c)
 	}
 
-	// Get account from database
-	_, err := s.DBackend.GetAccount(adminId)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			// Delete cookie
-			sess.Options.MaxAge = -1
-			sess.Save(c.Request(), c.Response())
-			return ErrorAccNotFound(c)
-		}
-		return Error500(c)
-	}
+	adminID := c.Get("adminAccountID").(string)
 
-	_, err = s.DBackend.GetCategory(categoryId.String())
+	_, err := s.DBackend.GetCategory(categoryId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorCategoryNotFound(c)
@@ -152,13 +114,13 @@ func (s *Server) MarkDeleteCategory(c echo.Context, categoryId autogen.UUID) err
 		return Error500(c)
 	}
 
-	err = s.DBackend.MarkDeleteCategory(categoryId.String(), adminId)
+	err = s.DBackend.MarkDeleteCategory(categoryId.String(), adminID)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
 	}
 
-	logrus.Infof("Category %s marked deleted by %s", categoryId.String(), adminId)
+	logrus.Infof("Category %s marked deleted by %s", categoryId.String(), adminID)
 	autogen.MarkDeleteCategory204Response{}.VisitMarkDeleteCategoryResponse(c.Response())
 	return nil
 }
@@ -166,23 +128,9 @@ func (s *Server) MarkDeleteCategory(c echo.Context, categoryId autogen.UUID) err
 // (GET /categories/{category_id})
 func (s *Server) GetCategory(c echo.Context, categoryId autogen.UUID) error {
 	// Get account from cookie
-	sess := s.getUserSess(c)
-	accountID, ok := sess.Values["account_id"].(string)
-	if !ok {
+	logged := c.Get("userLogged").(bool)
+	if !logged {
 		return ErrorNotAuthenticated(c)
-	}
-
-	// Get account from database
-	_, err := s.DBackend.GetAccount(accountID)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			// Delete cookie
-			sess.Options.MaxAge = -1
-			sess.Save(c.Request(), c.Response())
-			return ErrorAccNotFound(c)
-		}
-		logrus.Error(err)
-		return Error500(c)
 	}
 
 	category, err := s.DBackend.GetCategory(categoryId.String())
@@ -200,24 +148,13 @@ func (s *Server) GetCategory(c echo.Context, categoryId autogen.UUID) error {
 
 // (PATCH /categories/{category_id})
 func (s *Server) PatchCategory(c echo.Context, categoryId autogen.UUID) error {
-	// Get admin account from cookie
-	sess := s.getAdminSess(c)
-	adminId, ok := sess.Values["admin_account_id"].(string)
-	if !ok {
+	logged := c.Get("adminLogged").(bool)
+	if !logged {
 		return ErrorNotAuthenticated(c)
 	}
 
-	// Get account from database
-	_, err := s.DBackend.GetAccount(adminId)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			// Delete cookie
-			sess.Options.MaxAge = -1
-			sess.Save(c.Request(), c.Response())
-			return ErrorAccNotFound(c)
-		}
-		return Error500(c)
-	}
+	adminID := c.Get("adminAccountID").(string)
+
 	category, err := s.DBackend.GetCategory(categoryId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -262,34 +199,19 @@ func (s *Server) PatchCategory(c echo.Context, categoryId autogen.UUID) error {
 		return Error500(c)
 	}
 
-	logrus.Infof("Category %s updated by %s", categoryId.String(), adminId)
+	logrus.Infof("Category %s updated by %s", categoryId.String(), adminID)
 	autogen.PatchCategory200JSONResponse(category.Category).VisitPatchCategoryResponse(c.Response())
 	return nil
 }
 
 // (GET /categories/{category_id}/picture)
 func (s *Server) GetCategoryPicture(c echo.Context, categoryId autogen.UUID) error {
-	// Get account from cookie
-	sess := s.getUserSess(c)
-	accountID, ok := sess.Values["account_id"].(string)
-	if !ok {
+	logged := c.Get("userLogged").(bool)
+	if !logged {
 		return ErrorNotAuthenticated(c)
 	}
 
-	// Get account from database
-	_, err := s.DBackend.GetAccount(accountID)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			// Delete cookie
-			sess.Options.MaxAge = -1
-			sess.Save(c.Request(), c.Response())
-			return ErrorAccNotFound(c)
-		}
-		logrus.Error(err)
-		return Error500(c)
-	}
-
-	_, err = s.DBackend.GetCategory(categoryId.String())
+	_, err := s.DBackend.GetCategory(categoryId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			// Remove cache
