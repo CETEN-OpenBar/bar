@@ -2,13 +2,14 @@ package mongo
 
 import (
 	"bar/internal/models"
+	"context"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func (b *Backend) GetAllCarouselTexts() ([]*models.CarouselText, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) GetAllCarouselTexts(ctx context.Context) ([]*models.CarouselText, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	var carouselTexts []*models.CarouselText

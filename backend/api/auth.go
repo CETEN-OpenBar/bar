@@ -151,7 +151,7 @@ func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 	}
 	stateCache.Delete(params.State)
 
-	account, err := s.DBackend.GetAccount(accountID.(string))
+	account, err := s.DBackend.GetAccount(c.Request().Context(), accountID.(string))
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorAccNotFound(c)
@@ -213,7 +213,7 @@ func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 	account.GoogleId = usr.ID
 	account.GooglePicture = usr.Picture
 
-	err = s.DBackend.UpdateAccount(account)
+	err = s.DBackend.UpdateAccount(c.Request().Context(), account)
 	if err != nil {
 		return Error500(c)
 	}
@@ -260,7 +260,7 @@ func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams
 		return Error500(c)
 	}
 
-	account, err := s.DBackend.GetAccountByGoogle(usr.ID)
+	account, err := s.DBackend.GetAccountByGoogle(c.Request().Context(), usr.ID)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorAccNotFound(c)
@@ -289,7 +289,7 @@ func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams
 	account.GoogleId = usr.ID
 	account.GooglePicture = usr.Picture
 
-	err = s.DBackend.UpdateAccount(account)
+	err = s.DBackend.UpdateAccount(c.Request().Context(), account)
 	if err != nil {
 		return Error500(c)
 	}
@@ -315,7 +315,7 @@ func (s *Server) ConnectCard(c echo.Context) error {
 		return Error400(c)
 	}
 
-	account, err := s.DBackend.GetAccountByCard(param.CardId)
+	account, err := s.DBackend.GetAccountByCard(c.Request().Context(), param.CardId)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorAccNotFound(c)

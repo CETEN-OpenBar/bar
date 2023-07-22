@@ -22,7 +22,7 @@ func (s *Server) GetCategories(c echo.Context) error {
 		return ErrorNotAuthenticated(c)
 	}
 
-	data, err := s.DBackend.GetAllCategories()
+	data, err := s.DBackend.GetAllCategories(c.Request().Context())
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -85,7 +85,7 @@ func (s *Server) PostCategory(c echo.Context) error {
 	}
 
 	// Save category to database
-	err = s.DBackend.CreateCategory(category)
+	err = s.DBackend.CreateCategory(c.Request().Context(), category)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -105,7 +105,7 @@ func (s *Server) MarkDeleteCategory(c echo.Context, categoryId autogen.UUID) err
 
 	adminID := c.Get("adminAccountID").(string)
 
-	_, err := s.DBackend.GetCategory(categoryId.String())
+	_, err := s.DBackend.GetCategory(c.Request().Context(), categoryId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorCategoryNotFound(c)
@@ -114,7 +114,7 @@ func (s *Server) MarkDeleteCategory(c echo.Context, categoryId autogen.UUID) err
 		return Error500(c)
 	}
 
-	err = s.DBackend.MarkDeleteCategory(categoryId.String(), adminID)
+	err = s.DBackend.MarkDeleteCategory(c.Request().Context(), categoryId.String(), adminID)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -133,7 +133,7 @@ func (s *Server) GetCategory(c echo.Context, categoryId autogen.UUID) error {
 		return ErrorNotAuthenticated(c)
 	}
 
-	category, err := s.DBackend.GetCategory(categoryId.String())
+	category, err := s.DBackend.GetCategory(c.Request().Context(), categoryId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorCategoryNotFound(c)
@@ -155,7 +155,7 @@ func (s *Server) PatchCategory(c echo.Context, categoryId autogen.UUID) error {
 
 	adminID := c.Get("adminAccountID").(string)
 
-	category, err := s.DBackend.GetCategory(categoryId.String())
+	category, err := s.DBackend.GetCategory(c.Request().Context(), categoryId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorCategoryNotFound(c)
@@ -193,7 +193,7 @@ func (s *Server) PatchCategory(c echo.Context, categoryId autogen.UUID) error {
 		}
 	}
 
-	err = s.DBackend.UpdateCategory(category)
+	err = s.DBackend.UpdateCategory(c.Request().Context(), category)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -211,7 +211,7 @@ func (s *Server) GetCategoryPicture(c echo.Context, categoryId autogen.UUID) err
 		return ErrorNotAuthenticated(c)
 	}
 
-	_, err := s.DBackend.GetCategory(categoryId.String())
+	_, err := s.DBackend.GetCategory(c.Request().Context(), categoryId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			// Remove cache

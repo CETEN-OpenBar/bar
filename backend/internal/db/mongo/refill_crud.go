@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"bar/internal/models"
+	"context"
 	"time"
 
 	"github.com/google/uuid"
@@ -9,9 +10,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (b *Backend) CreateRefill(refill *models.Refill) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) CreateRefill(ctx context.Context, refill *models.Refill) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
+
+	refill.CreatedAt = time.Now().Unix()
 
 	_, err := b.db.Collection(RefillsCollection).InsertOne(ctx, refill)
 	if err != nil {
@@ -21,8 +24,8 @@ func (b *Backend) CreateRefill(refill *models.Refill) error {
 	return nil
 }
 
-func (b *Backend) GetRefill(id string) (*models.Refill, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) GetRefill(ctx context.Context, id string) (*models.Refill, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	var refill models.Refill
@@ -49,8 +52,8 @@ func (b *Backend) GetRefill(id string) (*models.Refill, error) {
 	return &refill, nil
 }
 
-func (b *Backend) UpdateRefill(refill *models.Refill) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) UpdateRefill(ctx context.Context, refill *models.Refill) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	res := b.db.Collection(RefillsCollection).FindOneAndUpdate(ctx,
@@ -79,8 +82,8 @@ func (b *Backend) UpdateRefill(refill *models.Refill) error {
 	return nil
 }
 
-func (b *Backend) MarkDeleteRefill(id, by string) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) MarkDeleteRefill(ctx context.Context, id, by string) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	res := b.db.Collection(RefillsCollection).FindOneAndUpdate(ctx,
@@ -101,8 +104,8 @@ func (b *Backend) MarkDeleteRefill(id, by string) error {
 	return nil
 }
 
-func (b *Backend) UnMarkDeleteRefill(id string) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) UnMarkDeleteRefill(ctx context.Context, id string) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	res := b.db.Collection(RefillsCollection).FindOneAndUpdate(ctx,
@@ -123,8 +126,8 @@ func (b *Backend) UnMarkDeleteRefill(id string) error {
 	return nil
 }
 
-func (b *Backend) DeleteRefill(id string) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) DeleteRefill(ctx context.Context, id string) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	res := b.db.Collection(RefillsCollection).FindOneAndDelete(ctx,
@@ -139,8 +142,8 @@ func (b *Backend) DeleteRefill(id string) error {
 	return nil
 }
 
-func (b *Backend) RestoreRefill(id string) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) RestoreRefill(ctx context.Context, id string) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	res := b.db.Collection(RefillsCollection).FindOneAndUpdate(ctx,
@@ -161,8 +164,8 @@ func (b *Backend) RestoreRefill(id string) error {
 	return nil
 }
 
-func (b *Backend) GetDeletedRefills(page uint64, size uint64) ([]*models.Refill, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) GetDeletedRefills(ctx context.Context, page uint64, size uint64) ([]*models.Refill, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	var accs []*models.Refill
@@ -184,8 +187,8 @@ func (b *Backend) GetDeletedRefills(page uint64, size uint64) ([]*models.Refill,
 	return accs, nil
 }
 
-func (b *Backend) CountDeletedRefills() (uint64, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) CountDeletedRefills(ctx context.Context) (uint64, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	count, err := b.db.Collection(RefillsCollection).CountDocuments(ctx, bson.M{

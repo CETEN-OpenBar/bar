@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"bar/internal/models"
+	"context"
 	"time"
 
 	"github.com/google/uuid"
@@ -9,9 +10,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (b *Backend) CreateItem(item *models.Item) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) CreateItem(ctx context.Context, item *models.Item) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
+
+	item.CreatedAt = time.Now().Unix()
 
 	_, err := b.db.Collection(ItemsCollection).InsertOne(ctx, item)
 	if err != nil {
@@ -21,8 +24,8 @@ func (b *Backend) CreateItem(item *models.Item) error {
 	return nil
 }
 
-func (b *Backend) GetItem(id string) (*models.Item, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) GetItem(ctx context.Context, id string) (*models.Item, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	var item models.Item
@@ -49,8 +52,8 @@ func (b *Backend) GetItem(id string) (*models.Item, error) {
 	return &item, nil
 }
 
-func (b *Backend) UpdateItem(item *models.Item) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) UpdateItem(ctx context.Context, item *models.Item) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	res := b.db.Collection(ItemsCollection).FindOneAndUpdate(ctx,
@@ -79,8 +82,8 @@ func (b *Backend) UpdateItem(item *models.Item) error {
 	return nil
 }
 
-func (b *Backend) MarkDeleteItem(id, by string) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) MarkDeleteItem(ctx context.Context, id, by string) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	res := b.db.Collection(ItemsCollection).FindOneAndUpdate(ctx,
@@ -101,8 +104,8 @@ func (b *Backend) MarkDeleteItem(id, by string) error {
 	return nil
 }
 
-func (b *Backend) UnMarkDeleteItem(id string) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) UnMarkDeleteItem(ctx context.Context, id string) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	res := b.db.Collection(ItemsCollection).FindOneAndUpdate(ctx,
@@ -123,8 +126,8 @@ func (b *Backend) UnMarkDeleteItem(id string) error {
 	return nil
 }
 
-func (b *Backend) DeleteItem(id string) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) DeleteItem(ctx context.Context, id string) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	res := b.db.Collection(ItemsCollection).FindOneAndDelete(ctx,
@@ -139,8 +142,8 @@ func (b *Backend) DeleteItem(id string) error {
 	return nil
 }
 
-func (b *Backend) RestoreItem(id string) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) RestoreItem(ctx context.Context, id string) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	res := b.db.Collection(ItemsCollection).FindOneAndUpdate(ctx,
@@ -161,8 +164,8 @@ func (b *Backend) RestoreItem(id string) error {
 	return nil
 }
 
-func (b *Backend) GetDeletedItems(page uint64, size uint64) ([]*models.Item, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) GetDeletedItems(ctx context.Context, page uint64, size uint64) ([]*models.Item, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	var accs []*models.Item
@@ -184,8 +187,8 @@ func (b *Backend) GetDeletedItems(page uint64, size uint64) ([]*models.Item, err
 	return accs, nil
 }
 
-func (b *Backend) CountDeletedItems() (uint64, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) CountDeletedItems(ctx context.Context) (uint64, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	count, err := b.db.Collection(ItemsCollection).CountDocuments(ctx, bson.M{

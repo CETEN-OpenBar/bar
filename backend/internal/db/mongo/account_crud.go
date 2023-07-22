@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"bar/internal/models"
+	"context"
 	"time"
 
 	"github.com/google/uuid"
@@ -9,9 +10,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (b *Backend) CreateAccount(acc *models.Account) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) CreateAccount(ctx context.Context, acc *models.Account) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
+
+	acc.CreatedAt = time.Now().Unix()
 
 	_, err := b.db.Collection(AccountsCollection).InsertOne(ctx, acc)
 	if err != nil {
@@ -21,8 +24,8 @@ func (b *Backend) CreateAccount(acc *models.Account) error {
 	return nil
 }
 
-func (b *Backend) GetAccount(id string) (*models.Account, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) GetAccount(ctx context.Context, id string) (*models.Account, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	var acc models.Account
@@ -49,8 +52,8 @@ func (b *Backend) GetAccount(id string) (*models.Account, error) {
 	return &acc, nil
 }
 
-func (b *Backend) UpdateAccount(acc *models.Account) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) UpdateAccount(ctx context.Context, acc *models.Account) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	res := b.db.Collection(AccountsCollection).FindOneAndUpdate(ctx,
@@ -79,8 +82,8 @@ func (b *Backend) UpdateAccount(acc *models.Account) error {
 	return nil
 }
 
-func (b *Backend) MarkDeleteAccount(id, by string) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) MarkDeleteAccount(ctx context.Context, id, by string) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	// Mark deleted_at
@@ -102,8 +105,8 @@ func (b *Backend) MarkDeleteAccount(id, by string) error {
 	return nil
 }
 
-func (b *Backend) UnMarkDeleteAccount(id string) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) UnMarkDeleteAccount(ctx context.Context, id string) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	// Mark deleted_at
@@ -125,8 +128,8 @@ func (b *Backend) UnMarkDeleteAccount(id string) error {
 	return nil
 }
 
-func (b *Backend) DeleteAccount(id string) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) DeleteAccount(ctx context.Context, id string) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	res := b.db.Collection(AccountsCollection).FindOneAndDelete(ctx,
@@ -141,8 +144,8 @@ func (b *Backend) DeleteAccount(id string) error {
 	return nil
 }
 
-func (b *Backend) RestoreAccount(id string) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) RestoreAccount(ctx context.Context, id string) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	res := b.db.Collection(AccountsCollection).FindOneAndUpdate(ctx,
@@ -163,8 +166,8 @@ func (b *Backend) RestoreAccount(id string) error {
 	return nil
 }
 
-func (b *Backend) GetDeletedAccounts(page uint64, size uint64) ([]*models.Account, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) GetDeletedAccounts(ctx context.Context, page uint64, size uint64) ([]*models.Account, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	var accs []*models.Account
@@ -186,8 +189,8 @@ func (b *Backend) GetDeletedAccounts(page uint64, size uint64) ([]*models.Accoun
 	return accs, nil
 }
 
-func (b *Backend) CountDeletedAccounts() (uint64, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) CountDeletedAccounts(ctx context.Context) (uint64, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	count, err := b.db.Collection(AccountsCollection).CountDocuments(ctx, bson.M{

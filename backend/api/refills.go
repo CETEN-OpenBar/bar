@@ -30,7 +30,7 @@ func (s *Server) GetRefills(c echo.Context, params autogen.GetRefillsParams) err
 		endsAt = uint64(params.EndDate.Unix())
 	}
 
-	count, err := s.DBackend.CountAllRefills(startsAt, endsAt)
+	count, err := s.DBackend.CountAllRefills(c.Request().Context(), startsAt, endsAt)
 	if err != nil {
 		return Error500(c)
 	}
@@ -54,7 +54,7 @@ func (s *Server) GetRefills(c echo.Context, params autogen.GetRefillsParams) err
 		page = maxPage
 	}
 
-	data, err := s.DBackend.GetAllRefills(page, size, startsAt, endsAt)
+	data, err := s.DBackend.GetAllRefills(c.Request().Context(), page, size, startsAt, endsAt)
 	if err != nil {
 		return Error500(c)
 	}
@@ -90,7 +90,7 @@ func (s *Server) GetSelfRefills(c echo.Context, params autogen.GetSelfRefillsPar
 		endsAt = uint64(params.EndDate.Unix())
 	}
 
-	count, err := s.DBackend.CountRefills(accountID, startsAt, endsAt)
+	count, err := s.DBackend.CountRefills(c.Request().Context(), accountID, startsAt, endsAt)
 	if err != nil {
 		return Error500(c)
 	}
@@ -114,7 +114,7 @@ func (s *Server) GetSelfRefills(c echo.Context, params autogen.GetSelfRefillsPar
 		page = maxPage
 	}
 
-	data, err := s.DBackend.GetRefills(accountID, page, size, startsAt, endsAt)
+	data, err := s.DBackend.GetRefills(c.Request().Context(), accountID, page, size, startsAt, endsAt)
 	if err != nil {
 		return Error500(c)
 	}
@@ -153,7 +153,7 @@ func (s *Server) GetAccountRefills(c echo.Context, accountId autogen.UUID, param
 		endsAt = uint64(params.EndDate.Unix())
 	}
 
-	count, err := s.DBackend.CountRefills(accountId.String(), startsAt, endsAt)
+	count, err := s.DBackend.CountRefills(c.Request().Context(), accountId.String(), startsAt, endsAt)
 	if err != nil {
 		return Error500(c)
 	}
@@ -177,7 +177,7 @@ func (s *Server) GetAccountRefills(c echo.Context, accountId autogen.UUID, param
 		page = maxPage
 	}
 
-	data, err := s.DBackend.GetRefills(accountId.String(), page, size, startsAt, endsAt)
+	data, err := s.DBackend.GetRefills(c.Request().Context(), accountId.String(), page, size, startsAt, endsAt)
 	if err != nil {
 		return Error500(c)
 	}
@@ -218,7 +218,7 @@ func (s *Server) PostRefill(c echo.Context, accountId autogen.UUID, params autog
 		},
 	}
 
-	err := s.DBackend.CreateRefill(refill)
+	err := s.DBackend.CreateRefill(c.Request().Context(), refill)
 	if err != nil {
 		return Error500(c)
 	}
@@ -237,7 +237,7 @@ func (s *Server) MarkDeleteRefill(c echo.Context, accountId autogen.UUID, refill
 
 	adminID := c.Get("adminAccountID").(string)
 
-	_, err := s.DBackend.GetRefill(refillId.String())
+	_, err := s.DBackend.GetRefill(c.Request().Context(), refillId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorRefillNotFound(c)
@@ -245,7 +245,7 @@ func (s *Server) MarkDeleteRefill(c echo.Context, accountId autogen.UUID, refill
 		return Error500(c)
 	}
 
-	err = s.DBackend.MarkDeleteRefill(refillId.String(), adminID)
+	err = s.DBackend.MarkDeleteRefill(c.Request().Context(), refillId.String(), adminID)
 	if err != nil {
 		return Error500(c)
 	}

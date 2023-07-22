@@ -43,6 +43,10 @@ func (b *Backend) Disconnect() error {
 	return b.db.Client().Disconnect(ctx)
 }
 
+func (b *Backend) TimeoutContext(ctx context.Context) (context.Context, context.CancelFunc) {
+	return context.WithTimeout(ctx, b.opts.QueryTimeout)
+}
+
 func (b *Backend) GetContext() (context.Context, context.CancelFunc) {
 	return context.WithTimeout(context.Background(), b.opts.QueryTimeout)
 }

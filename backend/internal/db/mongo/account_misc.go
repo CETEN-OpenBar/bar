@@ -2,12 +2,13 @@ package mongo
 
 import (
 	"bar/internal/models"
+	"context"
 
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (b *Backend) GetAccounts(page uint64, size uint64) ([]*models.Account, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) GetAccounts(ctx context.Context, page uint64, size uint64) ([]*models.Account, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	// Get "size" accounts from "page" using aggregation
@@ -32,8 +33,8 @@ func (b *Backend) GetAccounts(page uint64, size uint64) ([]*models.Account, erro
 	return accounts, nil
 }
 
-func (b *Backend) CountAccounts() (uint64, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) CountAccounts(ctx context.Context) (uint64, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	// Count all accounts
@@ -45,8 +46,8 @@ func (b *Backend) CountAccounts() (uint64, error) {
 	return uint64(count), nil
 }
 
-func (b *Backend) GetAccountByCard(card string) (*models.Account, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) GetAccountByCard(ctx context.Context, card string) (*models.Account, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	// Get account by card
@@ -57,8 +58,8 @@ func (b *Backend) GetAccountByCard(card string) (*models.Account, error) {
 
 	return &account, nil
 }
-func (b *Backend) GetAccountByGoogle(googleID string) (*models.Account, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) GetAccountByGoogle(ctx context.Context, googleID string) (*models.Account, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	// Get account by card

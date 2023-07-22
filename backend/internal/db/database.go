@@ -2,6 +2,7 @@ package db
 
 import (
 	"bar/internal/models"
+	"context"
 	"time"
 )
 
@@ -24,108 +25,108 @@ type DBackend interface {
 	Disconnect() error
 
 	// Account's CRUD
-	CreateAccount(acc *models.Account) error
-	GetAccount(id string) (*models.Account, error)
-	UpdateAccount(acc *models.Account) error
-	MarkDeleteAccount(id, by string) error
-	UnMarkDeleteAccount(id string) error
-	DeleteAccount(id string) error
-	RestoreAccount(id string) error
+	CreateAccount(ctx context.Context, acc *models.Account) error
+	GetAccount(ctx context.Context, id string) (*models.Account, error)
+	UpdateAccount(ctx context.Context, acc *models.Account) error
+	MarkDeleteAccount(ctx context.Context, id, by string) error
+	UnMarkDeleteAccount(ctx context.Context, id string) error
+	DeleteAccount(ctx context.Context, id string) error
+	RestoreAccount(ctx context.Context, id string) error
 
-	GetDeletedAccounts(page uint64, size uint64) ([]*models.Account, error)
-	CountDeletedAccounts() (uint64, error)
+	GetDeletedAccounts(ctx context.Context, page uint64, size uint64) ([]*models.Account, error)
+	CountDeletedAccounts(ctx context.Context) (uint64, error)
 
 	// CarouselText's CRUD
-	CreateCarouselText(ct *models.CarouselText) error
-	GetCarouselText(id string) (*models.CarouselText, error)
-	UpdateCarouselText(ct *models.CarouselText) error
-	MarkDeleteCarouselText(id, by string) error
-	UnMarkDeleteCarouselText(id string) error
-	DeleteCarouselText(id string) error
-	RestoreCarouselText(id string) error
+	CreateCarouselText(ctx context.Context, ct *models.CarouselText) error
+	GetCarouselText(ctx context.Context, id string) (*models.CarouselText, error)
+	UpdateCarouselText(ctx context.Context, ct *models.CarouselText) error
+	MarkDeleteCarouselText(ctx context.Context, id, by string) error
+	UnMarkDeleteCarouselText(ctx context.Context, id string) error
+	DeleteCarouselText(ctx context.Context, id string) error
+	RestoreCarouselText(ctx context.Context, id string) error
 
-	GetDeletedCarouselTexts(page uint64, size uint64) ([]*models.CarouselText, error)
-	CountDeletedCarouselTexts() (uint64, error)
+	GetDeletedCarouselTexts(ctx context.Context, page uint64, size uint64) ([]*models.CarouselText, error)
+	CountDeletedCarouselTexts(ctx context.Context) (uint64, error)
 
 	// CarouselImage's CRUD
-	CreateCarouselImage(ci *models.CarouselImage) error
-	GetCarouselImage(id string) (*models.CarouselImage, error)
-	UpdateCarouselImage(ci *models.CarouselImage) error
-	MarkDeleteCarouselImage(id, by string) error
-	UnMarkDeleteCarouselImage(id string) error
-	DeleteCarouselImage(id string) error
-	RestoreCarouselImage(id string) error
+	CreateCarouselImage(ctx context.Context, ci *models.CarouselImage) error
+	GetCarouselImage(ctx context.Context, id string) (*models.CarouselImage, error)
+	UpdateCarouselImage(ctx context.Context, ci *models.CarouselImage) error
+	MarkDeleteCarouselImage(ctx context.Context, id, by string) error
+	UnMarkDeleteCarouselImage(ctx context.Context, id string) error
+	DeleteCarouselImage(ctx context.Context, id string) error
+	RestoreCarouselImage(ctx context.Context, id string) error
 
-	GetDeletedCarouselImages(page uint64, size uint64) ([]*models.CarouselImage, error)
-	CountDeletedCarouselImages() (uint64, error)
+	GetDeletedCarouselImages(ctx context.Context, page uint64, size uint64) ([]*models.CarouselImage, error)
+	CountDeletedCarouselImages(ctx context.Context) (uint64, error)
 
 	// Category's CRUD
-	CreateCategory(c *models.Category) error
-	GetCategory(id string) (*models.Category, error)
-	UpdateCategory(c *models.Category) error
-	MarkDeleteCategory(id, by string) error
-	UnMarkDeleteCategory(id string) error
-	DeleteCategory(id string) error
-	RestoreCategory(id string) error
+	CreateCategory(ctx context.Context, c *models.Category) error
+	GetCategory(ctx context.Context, id string) (*models.Category, error)
+	UpdateCategory(ctx context.Context, c *models.Category) error
+	MarkDeleteCategory(ctx context.Context, id, by string) error
+	UnMarkDeleteCategory(ctx context.Context, id string) error
+	DeleteCategory(ctx context.Context, id string) error
+	RestoreCategory(ctx context.Context, id string) error
 
-	GetDeletedCategories(page uint64, size uint64) ([]*models.Category, error)
-	CountDeletedCategories() (uint64, error)
+	GetDeletedCategories(ctx context.Context, page uint64, size uint64) ([]*models.Category, error)
+	CountDeletedCategories(ctx context.Context) (uint64, error)
 
 	// Item's CRUD
-	CreateItem(i *models.Item) error
-	GetItem(id string) (*models.Item, error)
-	UpdateItem(i *models.Item) error
-	MarkDeleteItem(id, by string) error
-	UnMarkDeleteItem(id string) error
-	DeleteItem(id string) error
-	RestoreItem(id string) error
+	CreateItem(ctx context.Context, i *models.Item) error
+	GetItem(ctx context.Context, id string) (*models.Item, error)
+	UpdateItem(ctx context.Context, i *models.Item) error
+	MarkDeleteItem(ctx context.Context, id, by string) error
+	UnMarkDeleteItem(ctx context.Context, id string) error
+	DeleteItem(ctx context.Context, id string) error
+	RestoreItem(ctx context.Context, id string) error
 
-	GetDeletedItems(page uint64, size uint64) ([]*models.Item, error)
-	CountDeletedItems() (uint64, error)
+	GetDeletedItems(ctx context.Context, page uint64, size uint64) ([]*models.Item, error)
+	CountDeletedItems(ctx context.Context) (uint64, error)
 
 	// Refill's CRUD
-	CreateRefill(r *models.Refill) error
-	GetRefill(id string) (*models.Refill, error)
-	UpdateRefill(r *models.Refill) error
-	MarkDeleteRefill(id, by string) error
-	UnMarkDeleteRefill(id string) error
-	DeleteRefill(id string) error
-	RestoreRefill(id string) error
+	CreateRefill(ctx context.Context, r *models.Refill) error
+	GetRefill(ctx context.Context, id string) (*models.Refill, error)
+	UpdateRefill(ctx context.Context, r *models.Refill) error
+	MarkDeleteRefill(ctx context.Context, id, by string) error
+	UnMarkDeleteRefill(ctx context.Context, id string) error
+	DeleteRefill(ctx context.Context, id string) error
+	RestoreRefill(ctx context.Context, id string) error
 
-	GetDeletedRefills(page uint64, size uint64) ([]*models.Refill, error)
-	CountDeletedRefills() (uint64, error)
+	GetDeletedRefills(ctx context.Context, page uint64, size uint64) ([]*models.Refill, error)
+	CountDeletedRefills(ctx context.Context) (uint64, error)
 
 	// Transaction's CRUD
-	CreateTransaction(t *models.Transaction) error
-	GetTransaction(id string) (*models.Transaction, error)
-	UpdateTransaction(t *models.Transaction) error
-	MarkDeleteTransaction(id, by string) error
-	UnMarkDeleteTransaction(id string) error
-	DeleteTransaction(id string) error
-	RestoreTransaction(id string) error
+	CreateTransaction(ctx context.Context, t *models.Transaction) error
+	GetTransaction(ctx context.Context, id string) (*models.Transaction, error)
+	UpdateTransaction(ctx context.Context, t *models.Transaction) error
+	MarkDeleteTransaction(ctx context.Context, id, by string) error
+	UnMarkDeleteTransaction(ctx context.Context, id string) error
+	DeleteTransaction(ctx context.Context, id string) error
+	RestoreTransaction(ctx context.Context, id string) error
 
-	GetDeletedTransactions(page uint64, size uint64) ([]*models.Transaction, error)
-	CountDeletedTransactions() (uint64, error)
+	GetDeletedTransactions(ctx context.Context, page uint64, size uint64) ([]*models.Transaction, error)
+	CountDeletedTransactions(ctx context.Context) (uint64, error)
 
-	GetTransactions(account string, page uint64, size uint64, state string) ([]*models.Transaction, error)
-	CountTransactions(account string, state string) (uint64, error)
+	GetTransactions(ctx context.Context, account string, page uint64, size uint64, state string) ([]*models.Transaction, error)
+	CountTransactions(ctx context.Context, account string, state string) (uint64, error)
 
-	GetAllTransactions(page uint64, size uint64, state string) ([]*models.Transaction, error)
-	CountAllTransactions(state string) (uint64, error)
+	GetAllTransactions(ctx context.Context, page uint64, size uint64, state string) ([]*models.Transaction, error)
+	CountAllTransactions(ctx context.Context, state string) (uint64, error)
 
 	// Other requests that are not CRUD but still needed
-	GetAccountByGoogle(googleID string) (*models.Account, error)
-	GetAccountByCard(card string) (*models.Account, error)
-	GetAccounts(page uint64, size uint64) ([]*models.Account, error)
-	CountAccounts() (uint64, error)
-	GetRefills(account string, page uint64, size uint64, startAt, endAt uint64) ([]*models.Refill, error)
-	CountRefills(account string, startAt, endAt uint64) (uint64, error)
-	GetItems(categoryID string, page, size uint64, state string) ([]*models.Item, error)
-	CountItems(categoryID string, state string) (uint64, error)
+	GetAccountByGoogle(ctx context.Context, googleID string) (*models.Account, error)
+	GetAccountByCard(ctx context.Context, card string) (*models.Account, error)
+	GetAccounts(ctx context.Context, page uint64, size uint64) ([]*models.Account, error)
+	CountAccounts(ctx context.Context) (uint64, error)
+	GetRefills(ctx context.Context, account string, page uint64, size uint64, startAt, endAt uint64) ([]*models.Refill, error)
+	CountRefills(ctx context.Context, account string, startAt, endAt uint64) (uint64, error)
+	GetItems(ctx context.Context, categoryID string, page, size uint64, state string) ([]*models.Item, error)
+	CountItems(ctx context.Context, categoryID string, state string) (uint64, error)
 
-	GetAllRefills(page uint64, size uint64, startAt, endAt uint64) ([]*models.Refill, error)
-	CountAllRefills(startAt, endAt uint64) (uint64, error)
-	GetAllCategories() ([]*models.Category, error)
-	GetAllCarouselImages() ([]*models.CarouselImage, error)
-	GetAllCarouselTexts() ([]*models.CarouselText, error)
+	GetAllRefills(ctx context.Context, page uint64, size uint64, startAt, endAt uint64) ([]*models.Refill, error)
+	CountAllRefills(ctx context.Context, startAt, endAt uint64) (uint64, error)
+	GetAllCategories(ctx context.Context) ([]*models.Category, error)
+	GetAllCarouselImages(ctx context.Context) ([]*models.CarouselImage, error)
+	GetAllCarouselTexts(ctx context.Context) ([]*models.CarouselText, error)
 }

@@ -11,6 +11,8 @@ type (
 	Account struct {
 		PrivateID       primitive.ObjectID `bson:"_id,omitempty" json:"-"`
 		autogen.Account `bson:",inline"`
+
+		CreatedAt int64 `bson:"created_at" json:"created_at"`
 	}
 )
 

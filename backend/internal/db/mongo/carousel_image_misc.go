@@ -2,13 +2,14 @@ package mongo
 
 import (
 	"bar/internal/models"
+	"context"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func (b *Backend) GetAllCarouselImages() ([]*models.CarouselImage, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) GetAllCarouselImages(ctx context.Context) ([]*models.CarouselImage, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	var carouselImages []*models.CarouselImage

@@ -2,14 +2,15 @@ package mongo
 
 import (
 	"bar/internal/models"
+	"context"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (b *Backend) GetAllCategories() ([]*models.Category, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) GetAllCategories(ctx context.Context) ([]*models.Category, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	var categories []*models.Category
@@ -39,8 +40,8 @@ func (b *Backend) GetAllCategories() ([]*models.Category, error) {
 	return categories, nil
 }
 
-func (b *Backend) GetDeletedCategories(page uint64, size uint64) ([]*models.Category, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) GetDeletedCategories(ctx context.Context, page uint64, size uint64) ([]*models.Category, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	var accs []*models.Category
@@ -62,8 +63,8 @@ func (b *Backend) GetDeletedCategories(page uint64, size uint64) ([]*models.Cate
 	return accs, nil
 }
 
-func (b *Backend) CountDeletedCategories() (uint64, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) CountDeletedCategories(ctx context.Context) (uint64, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	count, err := b.db.Collection(CategoriesCollection).CountDocuments(ctx, bson.M{

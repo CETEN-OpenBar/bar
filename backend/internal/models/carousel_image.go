@@ -11,6 +11,8 @@ type (
 	CarouselImage struct {
 		PrivateID             primitive.ObjectID `bson:"_id,omitempty" json:"-"`
 		autogen.CarouselImage `bson:",inline"`
+
+		CreatedAt int64 `bson:"created_at" json:"created_at"`
 	}
 )
 

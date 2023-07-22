@@ -51,7 +51,7 @@ func (s *Server) PostTransactions(c echo.Context) error {
 	var transactionCost uint64
 	for _, potentialItem := range potentialTransaction.Items {
 		// Verify that item exists, can be bought, is in stock, and can be bought for that amount
-		item, err := s.DBackend.GetItem(potentialItem.ItemId.String())
+		item, err := s.DBackend.GetItem(c.Request().Context(), potentialItem.ItemId.String())
 		if err != nil {
 			if err == mongo.ErrNoDocuments {
 				return ErrorItemNotFound(c)
@@ -83,7 +83,7 @@ func (s *Server) PostTransactions(c echo.Context) error {
 
 	transaction.TotalCost = transactionCost
 
-	err = s.DBackend.CreateTransaction(transaction)
+	err = s.DBackend.CreateTransaction(c.Request().Context(), transaction)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -121,7 +121,7 @@ func (s *Server) GetAccountTransactions(c echo.Context, accountId autogen.UUID, 
 		state = string(*params.State)
 	}
 
-	count, err := s.DBackend.CountTransactions(accountId.String(), state)
+	count, err := s.DBackend.CountTransactions(c.Request().Context(), accountId.String(), state)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -133,7 +133,7 @@ func (s *Server) GetAccountTransactions(c echo.Context, accountId autogen.UUID, 
 		page = maxPage
 	}
 
-	data, err := s.DBackend.GetTransactions(accountId.String(), page, limit, state)
+	data, err := s.DBackend.GetTransactions(c.Request().Context(), accountId.String(), page, limit, state)
 	if err != nil {
 		return Error500(c)
 	}
@@ -183,7 +183,7 @@ func (s *Server) GetCurrentAccountTransactions(c echo.Context, params autogen.Ge
 		state = string(*params.State)
 	}
 
-	count, err := s.DBackend.CountTransactions(accountID, state)
+	count, err := s.DBackend.CountTransactions(c.Request().Context(), accountID, state)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -195,7 +195,7 @@ func (s *Server) GetCurrentAccountTransactions(c echo.Context, params autogen.Ge
 		page = maxPage
 	}
 
-	data, err := s.DBackend.GetTransactions(accountID, page, limit, state)
+	data, err := s.DBackend.GetTransactions(c.Request().Context(), accountID, page, limit, state)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -225,7 +225,7 @@ func (s *Server) MarkDeleteTransactionId(c echo.Context, accountId autogen.UUID,
 	adminID := c.Get("adminAccountID").(string)
 
 	// Get transaction from database
-	err := s.DBackend.MarkDeleteTransaction(transactionId.String(), adminID)
+	err := s.DBackend.MarkDeleteTransaction(c.Request().Context(), transactionId.String(), adminID)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorTransactionNotFound(c)
@@ -247,7 +247,7 @@ func (s *Server) GetTransactionId(c echo.Context, accountId autogen.UUID, transa
 	}
 
 	// Get transaction from database
-	transaction, err := s.DBackend.GetTransaction(transactionId.String())
+	transaction, err := s.DBackend.GetTransaction(c.Request().Context(), transactionId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorTransactionNotFound(c)
@@ -268,7 +268,7 @@ func (s *Server) PatchTransactionId(c echo.Context, accountId autogen.UUID, tran
 	}
 
 	// Get transaction from database
-	transaction, err := s.DBackend.GetTransaction(transactionId.String())
+	transaction, err := s.DBackend.GetTransaction(c.Request().Context(), transactionId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorTransactionNotFound(c)
@@ -279,7 +279,7 @@ func (s *Server) PatchTransactionId(c echo.Context, accountId autogen.UUID, tran
 
 	transaction.State = params.State
 
-	err = s.DBackend.UpdateTransaction(transaction)
+	err = s.DBackend.UpdateTransaction(c.Request().Context(), transaction)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -296,7 +296,7 @@ func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, 
 	}
 
 	// Get transaction from database
-	transaction, err := s.DBackend.GetTransaction(transactionId.String())
+	transaction, err := s.DBackend.GetTransaction(c.Request().Context(), transactionId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorTransactionNotFound(c)
@@ -319,7 +319,7 @@ func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, 
 		}
 	}
 
-	err = s.DBackend.UpdateTransaction(transaction)
+	err = s.DBackend.UpdateTransaction(c.Request().Context(), transaction)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -355,7 +355,7 @@ func (s *Server) GetTransactions(c echo.Context, params autogen.GetTransactionsP
 		state = string(*params.State)
 	}
 
-	count, err := s.DBackend.CountAllTransactions(state)
+	count, err := s.DBackend.CountAllTransactions(c.Request().Context(), state)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -367,7 +367,7 @@ func (s *Server) GetTransactions(c echo.Context, params autogen.GetTransactionsP
 		page = maxPage
 	}
 
-	data, err := s.DBackend.GetAllTransactions(page, limit, state)
+	data, err := s.DBackend.GetAllTransactions(c.Request().Context(), page, limit, state)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)

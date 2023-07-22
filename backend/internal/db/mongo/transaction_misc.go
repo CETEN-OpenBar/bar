@@ -2,21 +2,27 @@ package mongo
 
 import (
 	"bar/internal/models"
+	"context"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (b *Backend) GetTransactions(accountID string, page uint64, size uint64, state string) ([]*models.Transaction, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) GetTransactions(ctx context.Context, accountID string, page uint64, size uint64, state string) ([]*models.Transaction, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
+
+	filter := bson.M{
+		"account_id": accountID,
+	}
+
+	if state != "" {
+		filter["state"] = state
+	}
 
 	// Get "size" transactions from "page" using aggregation
 	var transactions []*models.Transaction
-	cursor, err := b.db.Collection(TransactionsCollection).Find(ctx, bson.M{
-		"account_id": accountID,
-		"state":      state,
-	}, options.Find().SetSkip(int64(page*size)).SetLimit(int64(size)))
+	cursor, err := b.db.Collection(TransactionsCollection).Find(ctx, filter, options.Find().SetSkip(int64(page*size)).SetLimit(int64(size)))
 	if err != nil {
 		return nil, err
 	}
@@ -29,14 +35,19 @@ func (b *Backend) GetTransactions(accountID string, page uint64, size uint64, st
 	return transactions, nil
 }
 
-func (b *Backend) CountTransactions(accountID string, state string) (uint64, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) CountTransactions(ctx context.Context, accountID string, state string) (uint64, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
-	count, err := b.db.Collection(TransactionsCollection).CountDocuments(ctx, bson.M{
+	filter := bson.M{
 		"account_id": accountID,
-		"state":      state,
-	})
+	}
+
+	if state != "" {
+		filter["state"] = state
+	}
+
+	count, err := b.db.Collection(TransactionsCollection).CountDocuments(ctx, filter)
 	if err != nil {
 		return 0, err
 	}
@@ -44,15 +55,19 @@ func (b *Backend) CountTransactions(accountID string, state string) (uint64, err
 	return uint64(count), nil
 }
 
-func (b *Backend) GetAllTransactions(page uint64, size uint64, state string) ([]*models.Transaction, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) GetAllTransactions(ctx context.Context, page uint64, size uint64, state string) ([]*models.Transaction, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
+
+	filter := bson.M{}
+
+	if state != "" {
+		filter["state"] = state
+	}
 
 	// Get "size" transactions from "page" using aggregation
 	var transactions []*models.Transaction
-	cursor, err := b.db.Collection(TransactionsCollection).Find(ctx, bson.M{
-		"state": state,
-	}, options.Find().SetSkip(int64(page*size)).SetLimit(int64(size)))
+	cursor, err := b.db.Collection(TransactionsCollection).Find(ctx, filter, options.Find().SetSkip(int64(page*size)).SetLimit(int64(size)))
 	if err != nil {
 		return nil, err
 	}
@@ -65,13 +80,17 @@ func (b *Backend) GetAllTransactions(page uint64, size uint64, state string) ([]
 	return transactions, nil
 }
 
-func (b *Backend) CountAllTransactions(state string) (uint64, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) CountAllTransactions(ctx context.Context, state string) (uint64, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
-	count, err := b.db.Collection(TransactionsCollection).CountDocuments(ctx, bson.M{
-		"state": state,
-	})
+	filter := bson.M{}
+
+	if state != "" {
+		filter["state"] = state
+	}
+
+	count, err := b.db.Collection(TransactionsCollection).CountDocuments(ctx, filter)
 	if err != nil {
 		return 0, err
 	}

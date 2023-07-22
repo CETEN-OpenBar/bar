@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"bar/internal/models"
+	"context"
 	"time"
 
 	"github.com/google/uuid"
@@ -9,9 +10,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (b *Backend) CreateCategory(c *models.Category) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) CreateCategory(ctx context.Context, c *models.Category) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
+
+	c.CreatedAt = time.Now().Unix()
 
 	_, err := b.db.Collection(CategoriesCollection).InsertOne(ctx, c)
 	if err != nil {
@@ -21,8 +24,8 @@ func (b *Backend) CreateCategory(c *models.Category) error {
 	return nil
 }
 
-func (b *Backend) GetCategory(id string) (*models.Category, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) GetCategory(ctx context.Context, id string) (*models.Category, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	var c models.Category
@@ -49,8 +52,8 @@ func (b *Backend) GetCategory(id string) (*models.Category, error) {
 	return &c, nil
 }
 
-func (b *Backend) UpdateCategory(c *models.Category) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) UpdateCategory(ctx context.Context, c *models.Category) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	res := b.db.Collection(CategoriesCollection).FindOneAndUpdate(ctx,
@@ -79,8 +82,8 @@ func (b *Backend) UpdateCategory(c *models.Category) error {
 	return nil
 }
 
-func (b *Backend) MarkDeleteCategory(id, by string) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) MarkDeleteCategory(ctx context.Context, id, by string) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	res := b.db.Collection(CategoriesCollection).FindOneAndUpdate(ctx,
@@ -101,8 +104,8 @@ func (b *Backend) MarkDeleteCategory(id, by string) error {
 	return nil
 }
 
-func (b *Backend) UnMarkDeleteCategory(id string) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) UnMarkDeleteCategory(ctx context.Context, id string) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	res := b.db.Collection(CategoriesCollection).FindOneAndUpdate(ctx,
@@ -123,8 +126,8 @@ func (b *Backend) UnMarkDeleteCategory(id string) error {
 	return nil
 }
 
-func (b *Backend) DeleteCategory(id string) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) DeleteCategory(ctx context.Context, id string) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	res := b.db.Collection(CategoriesCollection).FindOneAndDelete(ctx,
@@ -139,8 +142,8 @@ func (b *Backend) DeleteCategory(id string) error {
 	return nil
 }
 
-func (b *Backend) RestoreCategory(id string) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) RestoreCategory(ctx context.Context, id string) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	res := b.db.Collection(CategoriesCollection).FindOneAndUpdate(ctx,

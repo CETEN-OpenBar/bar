@@ -39,7 +39,7 @@ func (s *Server) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		accountID, ok := userSess.Values["account_id"].(string)
 		if ok {
 			// Get account from database
-			account, err := s.DBackend.GetAccount(accountID)
+			account, err := s.DBackend.GetAccount(c.Request().Context(), accountID)
 			if err != nil {
 				if err == mongo.ErrNoDocuments {
 					// Delete cookie
@@ -60,7 +60,7 @@ func (s *Server) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		adminId, ok := adminSess.Values["admin_account_id"].(string)
 		if ok {
 			// Get account from database
-			account, err := s.DBackend.GetAccount(adminId)
+			account, err := s.DBackend.GetAccount(c.Request().Context(), adminId)
 			if err != nil {
 				if err == mongo.ErrNoDocuments {
 					// Delete cookie

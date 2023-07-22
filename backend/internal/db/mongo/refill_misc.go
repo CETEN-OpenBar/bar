@@ -2,14 +2,15 @@ package mongo
 
 import (
 	"bar/internal/models"
+	"context"
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (b *Backend) GetRefills(account string, page uint64, size uint64, startAt, endAt uint64) ([]*models.Refill, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) GetRefills(ctx context.Context, account string, page uint64, size uint64, startAt, endAt uint64) ([]*models.Refill, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	// Get "size" refills from "page" using aggregation
@@ -42,8 +43,8 @@ func (b *Backend) GetRefills(account string, page uint64, size uint64, startAt, 
 	return refills, nil
 }
 
-func (b *Backend) CountRefills(account string, startAt, endAt uint64) (uint64, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) CountRefills(ctx context.Context, account string, startAt, endAt uint64) (uint64, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	count, err := b.db.Collection(RefillsCollection).CountDocuments(ctx, bson.M{
@@ -70,8 +71,8 @@ func (b *Backend) CountRefills(account string, startAt, endAt uint64) (uint64, e
 	return uint64(count), nil
 }
 
-func (b *Backend) GetAllRefills(page uint64, size uint64, startAt, endAt uint64) ([]*models.Refill, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) GetAllRefills(ctx context.Context, page uint64, size uint64, startAt, endAt uint64) ([]*models.Refill, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	// Get "size" refills from "page" using aggregation
@@ -103,8 +104,8 @@ func (b *Backend) GetAllRefills(page uint64, size uint64, startAt, endAt uint64)
 	return refills, nil
 }
 
-func (b *Backend) CountAllRefills(startAt, endAt uint64) (uint64, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) CountAllRefills(ctx context.Context, startAt, endAt uint64) (uint64, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	count, err := b.db.Collection(RefillsCollection).CountDocuments(ctx, bson.M{

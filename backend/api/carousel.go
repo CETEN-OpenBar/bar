@@ -17,7 +17,7 @@ import (
 // (GET /carousel/images)
 func (s *Server) GetCarouselImages(c echo.Context) error {
 	// Get carousel images from database
-	data, err := s.DBackend.GetAllCarouselImages()
+	data, err := s.DBackend.GetAllCarouselImages(c.Request().Context())
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -84,7 +84,7 @@ func (s *Server) AddCarouselImage(c echo.Context) error {
 		},
 	}
 
-	err = s.DBackend.CreateCarouselImage(carouselImage)
+	err = s.DBackend.CreateCarouselImage(c.Request().Context(), carouselImage)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -97,7 +97,7 @@ func (s *Server) AddCarouselImage(c echo.Context) error {
 
 // (GET /carousel/images/{image_id})
 func (s *Server) GetCarouselImage(c echo.Context, imageId autogen.UUID) error {
-	_, err := s.DBackend.GetCarouselImage(imageId.String())
+	_, err := s.DBackend.GetCarouselImage(c.Request().Context(), imageId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			// Remove cache
@@ -133,12 +133,12 @@ func (s *Server) MarkDeleteCarouselImage(c echo.Context, imageId autogen.UUID) e
 
 	adminID := c.Get("adminAccountID").(string)
 
-	_, err := s.DBackend.GetCarouselImage(imageId.String())
+	_, err := s.DBackend.GetCarouselImage(c.Request().Context(), imageId.String())
 	if err != nil {
 		return ErrorImageNotFound(c)
 	}
 
-	err = s.DBackend.MarkDeleteCarouselImage(imageId.String(), adminID)
+	err = s.DBackend.MarkDeleteCarouselImage(c.Request().Context(), imageId.String(), adminID)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -152,7 +152,7 @@ func (s *Server) MarkDeleteCarouselImage(c echo.Context, imageId autogen.UUID) e
 // (GET /carousel/texts)
 func (s *Server) GetCarouselTexts(c echo.Context) error {
 	// Get carousel images from database
-	data, err := s.DBackend.GetAllCarouselTexts()
+	data, err := s.DBackend.GetAllCarouselTexts(c.Request().Context())
 	if err != nil {
 		return Error500(c)
 	}
@@ -201,7 +201,7 @@ func (s *Server) AddCarouselText(c echo.Context) error {
 		},
 	}
 
-	err = s.DBackend.CreateCarouselText(t)
+	err = s.DBackend.CreateCarouselText(c.Request().Context(), t)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -221,12 +221,12 @@ func (s *Server) MarkDeleteCarouselText(c echo.Context, textId autogen.UUID) err
 
 	adminID := c.Get("adminAccountID").(string)
 
-	_, err := s.DBackend.GetCarouselText(textId.String())
+	_, err := s.DBackend.GetCarouselText(c.Request().Context(), textId.String())
 	if err != nil {
 		return ErrorTextNotFound(c)
 	}
 
-	err = s.DBackend.MarkDeleteCarouselText(textId.String(), adminID)
+	err = s.DBackend.MarkDeleteCarouselText(c.Request().Context(), textId.String(), adminID)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)

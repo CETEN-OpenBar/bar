@@ -56,7 +56,7 @@ func (s *Server) PatchAccount(c echo.Context) error {
 
 	account.Account.CardPin = newPin
 
-	err = s.UpdateAccount(account)
+	err = s.UpdateAccount(c.Request().Context(), account)
 	if err != nil {
 		return Error500(c)
 	}
@@ -93,7 +93,7 @@ func (s *Server) GetAccounts(c echo.Context, params autogen.GetAccountsParams) e
 	}
 
 	// Calculate max page
-	count, err := s.DBackend.CountAccounts()
+	count, err := s.DBackend.CountAccounts(c.Request().Context())
 	if err != nil {
 		return Error500(c)
 	}
@@ -101,7 +101,7 @@ func (s *Server) GetAccounts(c echo.Context, params autogen.GetAccountsParams) e
 	maxPage := uint64(count) / limit
 
 	// Get accounts from database
-	accounts, err := s.DBackend.GetAccounts(page, limit)
+	accounts, err := s.DBackend.GetAccounts(c.Request().Context(), page, limit)
 	if err != nil {
 		return Error500(c)
 	}
@@ -153,7 +153,7 @@ func (s *Server) PostAccounts(c echo.Context) error {
 		},
 	}
 
-	err = s.CreateAccount(account)
+	err = s.CreateAccount(c.Request().Context(), account)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return Error409(c)
@@ -175,7 +175,7 @@ func (s *Server) MarkDeleteAccountId(c echo.Context, accountId autogen.UUID) err
 
 	adminID := c.Get("adminAccountID").(string)
 
-	err := s.DBackend.MarkDeleteAccount(accountId.String(), adminID)
+	err := s.DBackend.MarkDeleteAccount(c.Request().Context(), accountId.String(), adminID)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorAccNotFound(c)
@@ -197,7 +197,7 @@ func (s *Server) GetAccountId(c echo.Context, accountId autogen.UUID) error {
 
 	adminID := c.Get("adminAccountID").(string)
 
-	account, err := s.DBackend.GetAccount(accountId.String())
+	account, err := s.DBackend.GetAccount(c.Request().Context(), accountId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorAccNotFound(c)
@@ -225,7 +225,7 @@ func (s *Server) PatchAccountId(c echo.Context, accountId autogen.UUID) error {
 		return Error400(c)
 	}
 
-	account, err := s.DBackend.GetAccount(accountId.String())
+	account, err := s.DBackend.GetAccount(c.Request().Context(), accountId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorAccNotFound(c)
@@ -259,7 +259,7 @@ func (s *Server) PatchAccountId(c echo.Context, accountId autogen.UUID) error {
 		account.Account.Restrictions = *req.Restrictions
 	}
 
-	err = s.UpdateAccount(account)
+	err = s.UpdateAccount(c.Request().Context(), account)
 	if err != nil {
 		return Error500(c)
 	}
@@ -343,7 +343,7 @@ func (s *Server) ImportAccounts(c echo.Context) error {
 			},
 		}
 
-		err = s.CreateAccount(account)
+		err = s.CreateAccount(c.Request().Context(), account)
 		if err != nil {
 			notProcessed = append(notProcessed, record[0])
 			continue

@@ -11,6 +11,8 @@ type (
 	Category struct {
 		PrivateID        primitive.ObjectID `bson:"_id,omitempty" json:"-"`
 		autogen.Category `bson:",inline"`
+
+		CreatedAt int64 `bson:"created_at" json:"created_at"`
 	}
 )
 

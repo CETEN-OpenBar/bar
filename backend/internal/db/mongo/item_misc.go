@@ -2,14 +2,15 @@ package mongo
 
 import (
 	"bar/internal/models"
+	"context"
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (b *Backend) GetItems(categoryID string, page, size uint64, state string) ([]*models.Item, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) GetItems(ctx context.Context, categoryID string, page, size uint64, state string) ([]*models.Item, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	var items []*models.Item
@@ -43,8 +44,8 @@ func (b *Backend) GetItems(categoryID string, page, size uint64, state string) (
 	return items, nil
 }
 
-func (b *Backend) CountItems(categoryID string, state string) (uint64, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) CountItems(ctx context.Context, categoryID string, state string) (uint64, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	count, err := b.db.Collection(ItemsCollection).CountDocuments(ctx, bson.M{

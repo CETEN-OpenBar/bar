@@ -45,7 +45,7 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 		state = string(*params.State)
 	}
 
-	_, err := s.DBackend.GetCategory(categoryId.String())
+	_, err := s.DBackend.GetCategory(c.Request().Context(), categoryId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorCategoryNotFound(c)
@@ -54,7 +54,7 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 		return Error500(c)
 	}
 
-	count, err := s.DBackend.CountItems(categoryId.String(), state)
+	count, err := s.DBackend.CountItems(c.Request().Context(), categoryId.String(), state)
 	if err != nil {
 		return Error500(c)
 	}
@@ -64,7 +64,7 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 		page = maxPage
 	}
 
-	data, err := s.DBackend.GetItems(categoryId.String(), page, size, state)
+	data, err := s.DBackend.GetItems(c.Request().Context(), categoryId.String(), page, size, state)
 	if err != nil {
 		return Error500(c)
 	}
@@ -135,7 +135,7 @@ func (s *Server) PostItem(c echo.Context, categoryId autogen.UUID) error {
 	}
 
 	// Save item to database
-	err = s.DBackend.CreateItem(item)
+	err = s.DBackend.CreateItem(c.Request().Context(), item)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -155,7 +155,7 @@ func (s *Server) MarkDeleteItem(c echo.Context, categoryId autogen.UUID, itemId 
 
 	adminID := c.Get("adminAccountID").(string)
 
-	_, err := s.DBackend.GetItem(itemId.String())
+	_, err := s.DBackend.GetItem(c.Request().Context(), itemId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorItemNotFound(c)
@@ -164,7 +164,7 @@ func (s *Server) MarkDeleteItem(c echo.Context, categoryId autogen.UUID, itemId 
 		return Error500(c)
 	}
 
-	err = s.DBackend.MarkDeleteItem(itemId.String(), adminID)
+	err = s.DBackend.MarkDeleteItem(c.Request().Context(), itemId.String(), adminID)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -184,7 +184,7 @@ func (s *Server) PatchItem(c echo.Context, categoryId autogen.UUID, itemId autog
 
 	adminID := c.Get("adminAccountID").(string)
 
-	item, err := s.DBackend.GetItem(itemId.String())
+	item, err := s.DBackend.GetItem(c.Request().Context(), itemId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorItemNotFound(c)
@@ -244,7 +244,7 @@ func (s *Server) PatchItem(c echo.Context, categoryId autogen.UUID, itemId autog
 	}
 
 	// Save item to database
-	err = s.DBackend.UpdateItem(item)
+	err = s.DBackend.UpdateItem(c.Request().Context(), item)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -263,7 +263,7 @@ func (s *Server) GetItemPicture(c echo.Context, categoryId autogen.UUID, itemId 
 		return ErrorNotAuthenticated(c)
 	}
 
-	_, err := s.DBackend.GetItem(itemId.String())
+	_, err := s.DBackend.GetItem(c.Request().Context(), itemId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			// Remove cache

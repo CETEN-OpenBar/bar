@@ -32,7 +32,7 @@ func (s *Server) GetDeletedAccounts(c echo.Context, params autogen.GetDeletedAcc
 		limit = *params.Limit
 	}
 
-	count, err := s.DBackend.CountDeletedAccounts()
+	count, err := s.DBackend.CountDeletedAccounts(c.Request().Context())
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -52,7 +52,7 @@ func (s *Server) GetDeletedAccounts(c echo.Context, params autogen.GetDeletedAcc
 		limit = 100
 	}
 
-	data, err := s.DBackend.GetDeletedAccounts(page, limit)
+	data, err := s.DBackend.GetDeletedAccounts(c.Request().Context(), page, limit)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -88,7 +88,7 @@ func (s *Server) DeleteAccount(c echo.Context, accountId autogen.UUID) error {
 
 	adminId := c.Get("adminAccountID").(string)
 
-	err := s.DBackend.DeleteAccount(accountId.String())
+	err := s.DBackend.DeleteAccount(c.Request().Context(), accountId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorAccNotFound(c)
@@ -114,7 +114,7 @@ func (s *Server) RestoreDeletedAccount(c echo.Context, accountId autogen.UUID) e
 		return ErrorNotAuthenticated(c)
 	}
 
-	err := s.DBackend.UnMarkDeleteAccount(accountId.String())
+	err := s.DBackend.UnMarkDeleteAccount(c.Request().Context(), accountId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorAccNotFound(c)
@@ -148,7 +148,7 @@ func (s *Server) GetDeletedCarouselImages(c echo.Context, params autogen.GetDele
 		limit = *params.Limit
 	}
 
-	count, err := s.DBackend.CountDeletedCarouselImages()
+	count, err := s.DBackend.CountDeletedCarouselImages(c.Request().Context())
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -168,7 +168,7 @@ func (s *Server) GetDeletedCarouselImages(c echo.Context, params autogen.GetDele
 		limit = 100
 	}
 
-	data, err := s.DBackend.GetDeletedCarouselImages(page, limit)
+	data, err := s.DBackend.GetDeletedCarouselImages(c.Request().Context(), page, limit)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -204,7 +204,7 @@ func (s *Server) DeleteCarouselImage(c echo.Context, imageId autogen.UUID) error
 
 	adminId := c.Get("adminAccountID").(string)
 
-	err := s.DBackend.DeleteCarouselImage(imageId.String())
+	err := s.DBackend.DeleteCarouselImage(c.Request().Context(), imageId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorImageNotFound(c)
@@ -236,7 +236,7 @@ func (s *Server) RestoreDeletedCarouselImage(c echo.Context, imageId autogen.UUI
 		return ErrorNotAuthenticated(c)
 	}
 
-	err := s.DBackend.UnMarkDeleteCarouselImage(imageId.String())
+	err := s.DBackend.UnMarkDeleteCarouselImage(c.Request().Context(), imageId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorImageNotFound(c)
@@ -270,7 +270,7 @@ func (s *Server) GetDeletedCarouselTexts(c echo.Context, params autogen.GetDelet
 		limit = *params.Limit
 	}
 
-	count, err := s.DBackend.CountDeletedCarouselTexts()
+	count, err := s.DBackend.CountDeletedCarouselTexts(c.Request().Context())
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -290,7 +290,7 @@ func (s *Server) GetDeletedCarouselTexts(c echo.Context, params autogen.GetDelet
 		limit = 100
 	}
 
-	data, err := s.DBackend.GetDeletedCarouselTexts(page, limit)
+	data, err := s.DBackend.GetDeletedCarouselTexts(c.Request().Context(), page, limit)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -326,7 +326,7 @@ func (s *Server) DeleteCarouselText(c echo.Context, textId autogen.UUID) error {
 
 	adminId := c.Get("adminAccountID").(string)
 
-	err := s.DBackend.DeleteCarouselText(textId.String())
+	err := s.DBackend.DeleteCarouselText(c.Request().Context(), textId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorTextNotFound(c)
@@ -352,7 +352,7 @@ func (s *Server) RestoreDeletedCarouselText(c echo.Context, textId autogen.UUID)
 		return ErrorNotAuthenticated(c)
 	}
 
-	err := s.DBackend.UnMarkDeleteCarouselText(textId.String())
+	err := s.DBackend.UnMarkDeleteCarouselText(c.Request().Context(), textId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorTextNotFound(c)
@@ -386,7 +386,7 @@ func (s *Server) GetDeletedItems(c echo.Context, params autogen.GetDeletedItemsP
 		limit = *params.Limit
 	}
 
-	count, err := s.DBackend.CountDeletedItems()
+	count, err := s.DBackend.CountDeletedItems(c.Request().Context())
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -406,7 +406,7 @@ func (s *Server) GetDeletedItems(c echo.Context, params autogen.GetDeletedItemsP
 		limit = 100
 	}
 
-	data, err := s.DBackend.GetDeletedItems(page, limit)
+	data, err := s.DBackend.GetDeletedItems(c.Request().Context(), page, limit)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -442,7 +442,7 @@ func (s *Server) DeleteItem(c echo.Context, itemId autogen.UUID) error {
 
 	adminId := c.Get("adminAccountID").(string)
 
-	err := s.DBackend.DeleteItem(itemId.String())
+	err := s.DBackend.DeleteItem(c.Request().Context(), itemId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorItemNotFound(c)
@@ -474,7 +474,7 @@ func (s *Server) RestoreDeletedItem(c echo.Context, itemId autogen.UUID) error {
 		return ErrorNotAuthenticated(c)
 	}
 
-	err := s.DBackend.UnMarkDeleteItem(itemId.String())
+	err := s.DBackend.UnMarkDeleteItem(c.Request().Context(), itemId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorItemNotFound(c)
@@ -508,7 +508,7 @@ func (s *Server) GetDeletedRefills(c echo.Context, params autogen.GetDeletedRefi
 		limit = *params.Limit
 	}
 
-	count, err := s.DBackend.CountDeletedRefills()
+	count, err := s.DBackend.CountDeletedRefills(c.Request().Context())
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -528,7 +528,7 @@ func (s *Server) GetDeletedRefills(c echo.Context, params autogen.GetDeletedRefi
 		limit = 100
 	}
 
-	data, err := s.DBackend.GetDeletedRefills(page, limit)
+	data, err := s.DBackend.GetDeletedRefills(c.Request().Context(), page, limit)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -564,7 +564,7 @@ func (s *Server) DeleteRefill(c echo.Context, refillId autogen.UUID) error {
 
 	adminId := c.Get("adminAccountID").(string)
 
-	err := s.DBackend.DeleteRefill(refillId.String())
+	err := s.DBackend.DeleteRefill(c.Request().Context(), refillId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorRefillNotFound(c)
@@ -590,7 +590,7 @@ func (s *Server) RestoreDeletedRefill(c echo.Context, refillId autogen.UUID) err
 		return ErrorNotAuthenticated(c)
 	}
 
-	err := s.DBackend.UnMarkDeleteRefill(refillId.String())
+	err := s.DBackend.UnMarkDeleteRefill(c.Request().Context(), refillId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorRefillNotFound(c)
@@ -624,7 +624,7 @@ func (s *Server) GetDeletedTransactions(c echo.Context, params autogen.GetDelete
 		limit = *params.Limit
 	}
 
-	count, err := s.DBackend.CountDeletedTransactions()
+	count, err := s.DBackend.CountDeletedTransactions(c.Request().Context())
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -644,7 +644,7 @@ func (s *Server) GetDeletedTransactions(c echo.Context, params autogen.GetDelete
 		limit = 100
 	}
 
-	data, err := s.DBackend.GetDeletedTransactions(page, limit)
+	data, err := s.DBackend.GetDeletedTransactions(c.Request().Context(), page, limit)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -680,7 +680,7 @@ func (s *Server) DeleteTransaction(c echo.Context, transactionId autogen.UUID) e
 
 	adminId := c.Get("adminAccountID").(string)
 
-	err := s.DBackend.DeleteTransaction(transactionId.String())
+	err := s.DBackend.DeleteTransaction(c.Request().Context(), transactionId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorTransactionNotFound(c)
@@ -706,7 +706,7 @@ func (s *Server) RestoreDeletedTransaction(c echo.Context, transactionId autogen
 		return ErrorNotAuthenticated(c)
 	}
 
-	err := s.DBackend.UnMarkDeleteTransaction(transactionId.String())
+	err := s.DBackend.UnMarkDeleteTransaction(c.Request().Context(), transactionId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorTransactionNotFound(c)

@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"bar/internal/models"
+	"context"
 	"time"
 
 	"github.com/google/uuid"
@@ -9,9 +10,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (b *Backend) CreateCarouselImage(ci *models.CarouselImage) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) CreateCarouselImage(ctx context.Context, ci *models.CarouselImage) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
+
+	ci.CreatedAt = time.Now().Unix()
 
 	_, err := b.db.Collection(CarouselImagesCollection).InsertOne(ctx, ci)
 	if err != nil {
@@ -21,8 +24,8 @@ func (b *Backend) CreateCarouselImage(ci *models.CarouselImage) error {
 	return nil
 }
 
-func (b *Backend) GetCarouselImage(id string) (*models.CarouselImage, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) GetCarouselImage(ctx context.Context, id string) (*models.CarouselImage, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	var ci models.CarouselImage
@@ -49,8 +52,8 @@ func (b *Backend) GetCarouselImage(id string) (*models.CarouselImage, error) {
 	return &ci, nil
 }
 
-func (b *Backend) UpdateCarouselImage(ci *models.CarouselImage) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) UpdateCarouselImage(ctx context.Context, ci *models.CarouselImage) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	res := b.db.Collection(CarouselImagesCollection).FindOneAndUpdate(ctx,
@@ -79,8 +82,8 @@ func (b *Backend) UpdateCarouselImage(ci *models.CarouselImage) error {
 	return nil
 }
 
-func (b *Backend) MarkDeleteCarouselImage(id, by string) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) MarkDeleteCarouselImage(ctx context.Context, id, by string) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	res := b.db.Collection(CarouselImagesCollection).FindOneAndUpdate(ctx,
@@ -101,8 +104,8 @@ func (b *Backend) MarkDeleteCarouselImage(id, by string) error {
 	return nil
 }
 
-func (b *Backend) UnMarkDeleteCarouselImage(id string) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) UnMarkDeleteCarouselImage(ctx context.Context, id string) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	res := b.db.Collection(CarouselImagesCollection).FindOneAndUpdate(ctx,
@@ -123,8 +126,8 @@ func (b *Backend) UnMarkDeleteCarouselImage(id string) error {
 	return nil
 }
 
-func (b *Backend) DeleteCarouselImage(id string) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) DeleteCarouselImage(ctx context.Context, id string) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	res := b.db.Collection(CarouselImagesCollection).FindOneAndDelete(ctx,
@@ -139,8 +142,8 @@ func (b *Backend) DeleteCarouselImage(id string) error {
 	return nil
 }
 
-func (b *Backend) RestoreCarouselImage(id string) error {
-	ctx, cancel := b.GetContext()
+func (b *Backend) RestoreCarouselImage(ctx context.Context, id string) error {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	res := b.db.Collection(CarouselImagesCollection).FindOneAndUpdate(ctx,
@@ -161,8 +164,8 @@ func (b *Backend) RestoreCarouselImage(id string) error {
 	return nil
 }
 
-func (b *Backend) GetDeletedCarouselImages(page uint64, size uint64) ([]*models.CarouselImage, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) GetDeletedCarouselImages(ctx context.Context, page uint64, size uint64) ([]*models.CarouselImage, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	var accs []*models.CarouselImage
@@ -184,8 +187,8 @@ func (b *Backend) GetDeletedCarouselImages(page uint64, size uint64) ([]*models.
 	return accs, nil
 }
 
-func (b *Backend) CountDeletedCarouselImages() (uint64, error) {
-	ctx, cancel := b.GetContext()
+func (b *Backend) CountDeletedCarouselImages(ctx context.Context) (uint64, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	count, err := b.db.Collection(CarouselImagesCollection).CountDocuments(ctx, bson.M{

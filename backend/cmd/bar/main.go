@@ -6,6 +6,7 @@ import (
 	"bar/internal/config"
 	"bar/internal/db"
 	"bar/internal/models"
+	"context"
 	"time"
 
 	"bar/internal/db/mongo"
@@ -36,7 +37,7 @@ func main() {
 	}
 
 	// Create default user (ignore errors)
-	err = db.CreateAccount(acc)
+	err = db.CreateAccount(context.Background(), acc)
 	if err == nil {
 		logrus.Infof("Created default user : %#+v", acc)
 	}
