@@ -4,19 +4,19 @@
 	import Error from './error.svelte';
 	import Pin from './pin.svelte';
 
-    let qr: any = undefined;
-    let ask = true;
+	let qr: any = undefined;
+	let ask = true;
 	let error = '';
 
 	function pinCallback(pin: string) {
-        if (pin == '') {
-            ask = false;
-            return;
-        }
+		if (pin == '') {
+			ask = false;
+			return;
+		}
 		authApi()
-			.getAccountQR(pin, { withCredentials: true })
+			.getAccountQR({ card_pin: pin }, { withCredentials: true })
 			.then((res) => {
-                qr = res.data;
+				qr = res.data;
 			})
 			.catch(() => {
 				error = 'Impossible de générer le QR code';
@@ -27,11 +27,10 @@
 	}
 </script>
 
-{#if qr !== undefined && ask}
-	<img class="w-64" src="data:image/png;base64,{qr}" alt="je charge..." />
+{#if qr !== undefined || ask == false}
+	<img class="w-64" src="data:image/png;base64,{qr}" alt="Entrez-votre pin pour voir le code" />
 {:else}
-	<!-- <Pin callback={pinCallback} /> -->
-    {pinCallback("1234")}
+	<Pin callback={pinCallback} />
 {/if}
 
 {#if error !== ''}

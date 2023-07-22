@@ -27,7 +27,7 @@ var qrCache = cache.New(5*time.Minute, 10*time.Minute)
 var stateCache = cache.New(5*time.Minute, 10*time.Minute)
 
 // (GET /account/qr)
-func (s *Server) GetAccountQR(c echo.Context, params autogen.GetAccountQRParams) error {
+func (s *Server) GetAccountQR(c echo.Context) error {
 	// Get account from cookie
 	logged := c.Get("userLogged").(bool)
 	if !logged {
@@ -36,6 +36,12 @@ func (s *Server) GetAccountQR(c echo.Context, params autogen.GetAccountQRParams)
 
 	accountID := c.Get("userAccountID").(string)
 	account := c.Get("userAccount").(*models.Account)
+
+	var params autogen.GetAccountQRJSONBody
+	err := c.Bind(&params)
+	if err != nil {
+		return Error400(c)
+	}
 
 	cardPin := fmt.Sprintf("%x", sha256.Sum256([]byte(params.CardPin)))
 	if cardPin != account.CardPin {

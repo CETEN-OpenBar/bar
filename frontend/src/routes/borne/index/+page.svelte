@@ -47,7 +47,7 @@
 			<button
 				class="p-4 flex flex-col text-lg font-semibold {showPreviousOrders
 					? 'rounded-t'
-					: 'rounded'}  cursor-pointer"
+					: 'rounded'}  cursor-pointer z-10"
 				style="background-color:#EEEEEE"
 				on:click={togglePreviousOrders}
 			>
@@ -56,36 +56,9 @@
 			</button>
 			{#if showPreviousOrders}
 				<div
-					class="flex flex-col rounded-br rounded-bl"
+					class="flex flex-col rounded-br rounded-bl p-10"
 					style="background-color:#EEEEEE"
-					transition:fly={{ y: -10, duration: 300, easing: quintOut }}
-				>
-					<!-- Add content for previous orders here -->
-					<hr class="my-2 border-gray-400" />
-				</div>
-			{/if}
-		</div>
-
-		<!-- Previous refills column -->
-		<div
-			class="flex flex-col flex-grow transition-all ease-in-out"
-			transition:scale={{ delay: 300, duration: 300, easing: quintOut }}
-		>
-			<button
-				class="p-4 flex flex-col text-lg font-semibold {showPreviousRefills
-					? 'rounded-t'
-					: 'rounded'}  cursor-pointer"
-				style="background-color:#EEEEEE"
-				on:click={togglePreviousRefills}
-			>
-				Transactions
-				<iconify-icon class="text-white text-2xl self-center" icon="flat-color-icons:expand" />
-			</button>
-			{#if showPreviousRefills}
-				<div
-					class="flex flex-col rounded-br rounded-bl"
-					style="background-color:#EEEEEE"
-					transition:fly={{ y: -10, duration: 300, easing: quintOut }}
+					transition:fly={{ y: -80, duration: 300, easing: quintOut }}
 				>
 					<!-- Add content for previous orders here -->
 					<hr class="my-2 border-gray-400" />
@@ -101,7 +74,7 @@
 			<button
 				class="p-4 flex flex-col text-lg font-semibold {showLinkWithGoogle
 					? 'rounded-t'
-					: 'rounded'}  cursor-pointer"
+					: 'rounded'}  cursor-pointer z-10"
 				style="background-color:#EEEEEE"
 				on:click={toggleLinkWithGoogle}
 			>
@@ -110,13 +83,45 @@
 			</button>
 			{#if showLinkWithGoogle}
 				<div
-					class="flex flex-col rounded-br rounded-bl"
+					class="flex flex-col rounded-br rounded-bl p-10"
 					style="background-color:#EEEEEE"
-					transition:fly={{ y: -10, duration: 300, easing: quintOut }}
+					transition:fly={{ y: -80, duration: 300, easing: quintOut }}
 				>
 					<!-- Add content for previous orders here -->
 					<hr class="my-2 border-gray-400" />
-					<Qr />
+					<div class="w-full flex justify-center">
+						<div class="flex flex-col gap-5">
+							<Qr />
+							Scan ce code pour lier ton compte !
+						</div>
+					</div>
+				</div>
+			{/if}
+		</div>
+
+		<!-- Previous refills column -->
+		<div
+			class="flex flex-col flex-grow transition-all ease-in-out"
+			transition:scale={{ delay: 300, duration: 300, easing: quintOut }}
+		>
+			<button
+				class="p-4 flex flex-col text-lg font-semibold {showPreviousRefills
+					? 'rounded-t'
+					: 'rounded'}  cursor-pointer z-10"
+				style="background-color:#EEEEEE"
+				on:click={togglePreviousRefills}
+			>
+				Transactions
+				<iconify-icon class="text-white text-2xl self-center" icon="flat-color-icons:expand" />
+			</button>
+			{#if showPreviousRefills}
+				<div
+					class="flex flex-col rounded-br rounded-bl p-10"
+					style="background-color:#EEEEEE"
+					transition:fly={{ y: -80, duration: 300, easing: quintOut }}
+				>
+					<!-- Add content for previous orders here -->
+					<hr class="my-2 border-gray-400" />
 				</div>
 			{/if}
 		</div>

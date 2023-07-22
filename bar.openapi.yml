@@ -190,17 +190,21 @@ paths:
         - auth
   /account/qr:
     description: Get the QR code to connect account to Google
-    get:
+    post:
       summary: ''
       description: Get the QR code to connect account to Google
       operationId: getAccountQR
-      parameters:
-        - name: card_pin
-          in: query
-          description: Card pin
-          required: true
-          schema:
-            type: string
+      requestBody:
+        description: Card pin
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                card_pin:
+                  type: string
+              required:
+                - card_pin
       responses:
         '200':
           description: Successfully got QR code

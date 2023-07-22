@@ -352,6 +352,19 @@ export type ErrorCodes = typeof ErrorCodes[keyof typeof ErrorCodes];
 /**
  * 
  * @export
+ * @interface GetAccountQRRequest
+ */
+export interface GetAccountQRRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof GetAccountQRRequest
+     */
+    'card_pin': string;
+}
+/**
+ * 
+ * @export
  * @interface GetAccounts200Response
  */
 export interface GetAccounts200Response {
@@ -2103,13 +2116,11 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
         /**
          * Get the QR code to connect account to Google
          * @summary 
-         * @param {string} cardPin Card pin
+         * @param {GetAccountQRRequest} [getAccountQRRequest] Card pin
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAccountQR: async (cardPin: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'cardPin' is not null or undefined
-            assertParamExists('getAccountQR', 'cardPin', cardPin)
+        getAccountQR: async (getAccountQRRequest?: GetAccountQRRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/account/qr`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -2118,21 +2129,20 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
             // authentication auth required
 
-            if (cardPin !== undefined) {
-                localVarQueryParameter['card_pin'] = cardPin;
-            }
-
 
     
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(getAccountQRRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -2228,12 +2238,12 @@ export const AuthApiFp = function(configuration?: Configuration) {
         /**
          * Get the QR code to connect account to Google
          * @summary 
-         * @param {string} cardPin Card pin
+         * @param {GetAccountQRRequest} [getAccountQRRequest] Card pin
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getAccountQR(cardPin: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getAccountQR(cardPin, options);
+        async getAccountQR(getAccountQRRequest?: GetAccountQRRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAccountQR(getAccountQRRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -2299,12 +2309,12 @@ export const AuthApiFactory = function (configuration?: Configuration, basePath?
         /**
          * Get the QR code to connect account to Google
          * @summary 
-         * @param {string} cardPin Card pin
+         * @param {GetAccountQRRequest} [getAccountQRRequest] Card pin
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAccountQR(cardPin: string, options?: any): AxiosPromise<string> {
-            return localVarFp.getAccountQR(cardPin, options).then((request) => request(axios, basePath));
+        getAccountQR(getAccountQRRequest?: GetAccountQRRequest, options?: any): AxiosPromise<string> {
+            return localVarFp.getAccountQR(getAccountQRRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Logout
@@ -2376,13 +2386,13 @@ export class AuthApi extends BaseAPI {
     /**
      * Get the QR code to connect account to Google
      * @summary 
-     * @param {string} cardPin Card pin
+     * @param {GetAccountQRRequest} [getAccountQRRequest] Card pin
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuthApi
      */
-    public getAccountQR(cardPin: string, options?: AxiosRequestConfig) {
-        return AuthApiFp(this.configuration).getAccountQR(cardPin, options).then((request) => request(this.axios, this.basePath));
+    public getAccountQR(getAccountQRRequest?: GetAccountQRRequest, options?: AxiosRequestConfig) {
+        return AuthApiFp(this.configuration).getAccountQR(getAccountQRRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
