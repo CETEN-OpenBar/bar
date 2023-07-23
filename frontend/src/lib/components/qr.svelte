@@ -79,8 +79,8 @@
 		/>
 	</div>
 {:else}
-	<!-- <Pin callback={pinCallback} /> -->
-	{pinCallback('1234')}
+	<Pin callback={pinCallback} />
+	<!-- {pinCallback('1234')} -->
 {/if}
 
 {#if error !== ''}
