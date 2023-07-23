@@ -324,7 +324,7 @@ func (s *Server) ImportAccounts(c echo.Context) error {
 
 	for _, record := range records {
 		// Check balance
-		balance, err := strconv.ParseUint(record[assignments["balance"]], 10, 64)
+		balance, err := strconv.ParseInt(record[assignments["balance"]], 10, 64)
 		if err != nil {
 			notProcessed = append(notProcessed, record[0])
 			continue

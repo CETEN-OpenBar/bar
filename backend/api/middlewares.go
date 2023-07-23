@@ -64,8 +64,8 @@ func (s *Server) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			if err != nil {
 				if err == mongo.ErrNoDocuments {
 					// Delete cookie
-					userSess.Options.MaxAge = -1
-					userSess.Save(c.Request(), c.Response())
+					adminSess.Options.MaxAge = -1
+					adminSess.Save(c.Request(), c.Response())
 					return ErrorAccNotFound(c)
 				}
 				logrus.Error(err)

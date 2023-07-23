@@ -84,6 +84,16 @@ func (s *Server) GetAccountQR(c echo.Context) error {
 	return nil
 }
 
+// (GET /account/qr)
+func (s *Server) GetAccountQRWebsocket(c echo.Context) error {
+	logged := c.Get("userLogged").(bool)
+	if !logged {
+		return ErrorNotAuthenticated(c)
+	}
+
+	return Upgrade(c)
+}
+
 var scopes = []string{
 	"https://www.googleapis.com/auth/userinfo.profile",
 	"https://www.googleapis.com/auth/userinfo.email",
@@ -98,6 +108,9 @@ func (s *Server) ConnectAccount(c echo.Context, qrNonce string) error {
 		return ErrorNotAuthenticated(c)
 	}
 	qrCache.Delete(qrNonce)
+	qrCache.Delete(accountID.(string))
+
+	BroadcastToRoom(accountID.(string), []byte("scanned"))
 
 	conf := config.GetConfig()
 
@@ -217,6 +230,8 @@ func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 	if err != nil {
 		return Error500(c)
 	}
+
+	BroadcastToRoom(accountID.(string), []byte("connected"))
 
 	autogen.Callback200JSONResponse{
 		Account: &account.Account,

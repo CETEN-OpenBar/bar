@@ -98,7 +98,7 @@ func (s *Server) PostTransactions(c echo.Context) error {
 		}
 
 		// update account balance
-		account.Balance -= transactionCost
+		account.Balance -= int64(transactionCost)
 		err = s.DBackend.UpdateAccount(ctx, account)
 		if err != nil {
 			logrus.Error(err)
@@ -323,7 +323,7 @@ func (s *Server) PatchTransactionId(c echo.Context, accountId autogen.UUID, tran
 			}
 
 			// update account balance
-			account.Balance += transaction.TotalCost
+			account.Balance += int64(transaction.TotalCost)
 			err = s.DBackend.UpdateAccount(ctx, account)
 			if err != nil {
 				logrus.Error(err)
@@ -361,7 +361,7 @@ func (s *Server) PatchTransactionId(c echo.Context, accountId autogen.UUID, tran
 			}
 
 			// update account balance
-			account.Balance -= transaction.TotalCost
+			account.Balance -= int64(transaction.TotalCost)
 			err = s.DBackend.UpdateAccount(ctx, account)
 			if err != nil {
 				logrus.Error(err)
@@ -455,15 +455,15 @@ func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, 
 
 	if oldState != autogen.TransactionItemCanceled && item.State == autogen.TransactionItemCanceled {
 		origItem.AmountLeft += item.ItemAmount
-		account.Balance += item.TotalCost
+		account.Balance += int64(item.TotalCost)
 		transaction.TotalCost -= item.TotalCost
 	} else if oldState == autogen.TransactionItemCanceled && item.State != autogen.TransactionItemCanceled {
 		origItem.AmountLeft -= item.ItemAmount
-		account.Balance -= item.TotalCost
+		account.Balance -= int64(item.TotalCost)
 		transaction.TotalCost += item.TotalCost
 	} else {
 		origItem.AmountLeft += oldAmount - item.ItemAmount
-		account.Balance += oldCost - item.TotalCost
+		account.Balance += int64(oldCost - item.TotalCost)
 		transaction.TotalCost += item.TotalCost - oldCost
 	}
 

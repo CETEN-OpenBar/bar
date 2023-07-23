@@ -3,6 +3,7 @@ package api
 import (
 	"bar/autogen"
 	"bar/internal/models"
+	"errors"
 	"math"
 	"time"
 
@@ -207,6 +208,14 @@ func (s *Server) PostRefill(c echo.Context, accountId autogen.UUID, params autog
 
 	adminID := c.Get("adminAccountID").(string)
 
+	account, err := s.DBackend.GetAccount(c.Request().Context(), accountId.String())
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorAccNotFound(c)
+		}
+		return Error500(c)
+	}
+
 	refill := &models.Refill{
 		Refill: autogen.Refill{
 			AccountId: accountId,
@@ -218,13 +227,82 @@ func (s *Server) PostRefill(c echo.Context, accountId autogen.UUID, params autog
 		},
 	}
 
-	err := s.DBackend.CreateRefill(c.Request().Context(), refill)
+	account.Balance += int64(params.Amount)
+
+	_, err = s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {
+		err := s.DBackend.CreateRefill(c.Request().Context(), refill)
+		if err != nil {
+			return nil, errors.New("failed to create refill")
+		}
+
+		err = s.DBackend.UpdateAccount(c.Request().Context(), account)
+		if err != nil {
+			return nil, errors.New("failed to update account")
+		}
+		return nil, nil
+	})
 	if err != nil {
 		return Error500(c)
 	}
 
 	logrus.Infof("Refill %s has been created by %s", refill.Id, adminID)
 	autogen.PostRefill201JSONResponse(refill.Refill).VisitPostRefillResponse(c.Response())
+	return nil
+}
+
+// (PATCH /accounts/{account_id}/refills/{refill_id})
+func (s *Server) PatchRefillId(c echo.Context, accountId autogen.UUID, refillId autogen.UUID, params autogen.PatchRefillIdParams) error {
+	logged := c.Get("adminLogged").(bool)
+	if !logged {
+		return ErrorNotAuthenticated(c)
+	}
+
+	adminID := c.Get("adminAccountID").(string)
+
+	account, err := s.DBackend.GetAccount(c.Request().Context(), accountId.String())
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorAccNotFound(c)
+		}
+		return Error500(c)
+	}
+
+	refill, err := s.DBackend.GetRefill(c.Request().Context(), refillId.String())
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorRefillNotFound(c)
+		}
+		return Error500(c)
+	}
+
+	oldState := refill.State
+	refill.State = params.State
+
+	if oldState == autogen.Valid && params.State == autogen.Canceled {
+		account.Balance -= int64(refill.Amount)
+	} else if oldState == autogen.Canceled && params.State == autogen.Valid {
+		account.Balance += int64(refill.Amount)
+	}
+
+	_, err = s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {
+		err := s.DBackend.UpdateRefill(ctx, refill)
+		if err != nil {
+			return nil, errors.New("failed to update refill")
+		}
+
+		err = s.DBackend.UpdateAccount(ctx, account)
+		if err != nil {
+			return nil, errors.New("failed to update account")
+		}
+
+		return nil, nil
+	})
+	if err != nil {
+		return Error500(c)
+	}
+
+	logrus.Infof("Refill %s has been updated by %s", refill.Id, adminID)
+	autogen.PatchRefillId200JSONResponse(refill.Refill).VisitPatchRefillIdResponse(c.Response())
 	return nil
 }
 

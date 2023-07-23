@@ -190,6 +190,30 @@ paths:
         - auth
   /account/qr:
     description: Get the QR code to connect account to Google
+    get:
+      description: Websocket to listen for scan & callback (for cool animations)
+      summary: ''
+      operationId: getAccountQRWebsocket
+      responses:
+        '101':
+          description: 'Switching Protocols'
+          headers:
+            Connection: 
+              schema:
+                type: string
+                enum:
+                  - Upgrade
+              required: true
+            Upgrade:
+              schema:
+                type: string
+                enum:
+                  - websocket
+              required: true
+            Sec-WebSocket-Accept:
+              schema:
+                type: string
+              required: true
     post:
       summary: ''
       description: Get the QR code to connect account to Google
@@ -1456,6 +1480,76 @@ paths:
       tags:
         - refills
   /accounts/{account_id}/refills/{refill_id}:
+    patch:
+      description: Update refill's state
+      operationId: patchRefillId
+      parameters:
+        - name: account_id
+          in: path
+          description: ID of the account
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+        - name: refill_id
+          in: path
+          description: ID of the refill
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+        - name: state
+          in: query
+          description: New state of the refill
+          required: true
+          schema:
+            type: string
+            $ref: '#/components/schemas/RefillState'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Refill'
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: 'Not connected'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: 'Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: 'Account or refill not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '409':
+          description: 'Conflict'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - auth: []
+      tags:
+        - refills
     delete:
       description: Cancels a refill
       operationId: markDeleteRefill
@@ -3395,7 +3489,7 @@ components:
           type: string
         balance:
           type: integer
-          format: uint64
+          format: int64
           example: 1000 (10.00€)
         role:
           $ref: '#/components/schemas/AccountRole'
@@ -3418,7 +3512,7 @@ components:
           type: string
         balance:
           type: integer
-          format: uint64
+          format: int64
           example: 1000
         role:
           $ref: '#/components/schemas/AccountRole'
@@ -3479,7 +3573,7 @@ components:
           type: string
         balance:
           type: integer
-          format: uint64
+          format: int64
           example: 1000
         card_id:
           type: string

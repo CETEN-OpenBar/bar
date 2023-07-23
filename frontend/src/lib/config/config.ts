@@ -3,6 +3,7 @@ import axios from "axios";
 
 // Create type for config
 export type Config = {
+    apiws: string;
     api: string;
     local_token: string;
 };
@@ -15,6 +16,13 @@ export const api = () => {
         throw new Error("Config not loaded");
     }
     return c.api;
+};
+
+export const apiws = () => {
+    if (c == null) {
+        throw new Error("Config not loaded");
+    }
+    return c.apiws;
 };
 
 export const local_token = () => {
