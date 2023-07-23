@@ -80,6 +80,7 @@ func (s *Server) PostTransactions(c echo.Context) error {
 		transaction.Items = append(transaction.Items, autogen.TransactionItem{
 			ItemAmount: potentialItem.Amount,
 			ItemId:     potentialItem.ItemId,
+			PictureUri: item.PictureUri,
 			State:      autogen.TransactionItemStarted,
 			UnitCost:   item.Price,
 			TotalCost:  item.Price * potentialItem.Amount,

@@ -3806,6 +3806,9 @@ components:
       properties:
         item_id:
           $ref: '#/components/schemas/UUID'
+        picture_uri:
+          type: string
+          description: Link to picture of the current item
         item_amount:
           type: integer
           format: uint64
@@ -3823,6 +3826,7 @@ components:
         - unit_cost
         - total_cost
         - state
+        - picture_uri
     Transaction:
       type: object
       properties:

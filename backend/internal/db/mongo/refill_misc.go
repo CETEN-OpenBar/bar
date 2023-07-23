@@ -31,7 +31,7 @@ func (b *Backend) GetRefills(ctx context.Context, account string, page uint64, s
 				"deleted_at": nil,
 			},
 		},
-	}, options.Find().SetSkip(int64(page*size)).SetLimit(int64(size)))
+	}, options.Find().SetSkip(int64(page*size)).SetLimit(int64(size)).SetSort(bson.M{"created_at": -1}))
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +92,7 @@ func (b *Backend) GetAllRefills(ctx context.Context, page uint64, size uint64, s
 				"deleted_at": nil,
 			},
 		},
-	}, options.Find().SetSkip(int64(page*size)).SetLimit(int64(size)))
+	}, options.Find().SetSkip(int64(page*size)).SetLimit(int64(size)).SetSort(bson.M{"created_at": -1}))
 	if err != nil {
 		return nil, err
 	}

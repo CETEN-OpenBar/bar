@@ -1164,6 +1164,12 @@ export interface TransactionItem {
      */
     'item_id': string;
     /**
+     * Link to picture of the current item
+     * @type {string}
+     * @memberof TransactionItem
+     */
+    'picture_uri': string;
+    /**
      * 
      * @type {number}
      * @memberof TransactionItem

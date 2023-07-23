@@ -7,6 +7,7 @@
 	import 'iconify-icon';
 	import Qr from '$lib/components/qr.svelte';
 	import Transactions from '$lib/components/borne/transactions.svelte';
+	import Refills from '$lib/components/borne/refills.svelte';
 
 	let account: Account | undefined = undefined;
 	let unsub: () => void;
@@ -39,7 +40,7 @@
 </script>
 
 {#if account !== undefined}
-	<div class="grid grid-cols-3 gap-16 p-16 w-full">
+	<div class="grid lg:grid-cols-3 grid-cols-1 gap-16 p-16 w-full">
 		<!-- Previous orders column -->
 		<div
 			class="flex flex-col flex-grow transition-all ease-in-out"
@@ -125,6 +126,8 @@
 				>
 					<!-- Add content for previous orders here -->
 					<hr class="my-2 border-gray-400" />
+
+					<Refills />
 				</div>
 			{/if}
 		</div>
