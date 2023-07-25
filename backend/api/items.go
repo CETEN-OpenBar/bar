@@ -75,6 +75,8 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 		items = append(items, item.Item)
 	}
 
+	page += 1
+	maxPage += 1
 	autogen.GetCategoryItems200JSONResponse{
 		Items:   &items,
 		Page:    &page,

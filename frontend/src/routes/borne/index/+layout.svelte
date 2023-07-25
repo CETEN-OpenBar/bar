@@ -4,7 +4,7 @@
 	import type { Account } from '$lib/api';
 	import { onMount } from 'svelte';
 	import { store } from '$lib/store/store';
-	import Profile from '$lib/components/profile.svelte';
+	import Profile from '$lib/components/borne/profile.svelte';
 	import 'iconify-icon';
 
 	let account: Account | undefined = undefined;

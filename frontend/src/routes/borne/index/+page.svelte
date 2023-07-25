@@ -5,7 +5,7 @@
 	import { fly, scale } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 	import 'iconify-icon';
-	import Qr from '$lib/components/qr.svelte';
+	import Qr from '$lib/components/borne/qr.svelte';
 	import Transactions from '$lib/components/borne/transactions.svelte';
 	import Refills from '$lib/components/borne/refills.svelte';
 

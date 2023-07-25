@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { apiws } from '$lib/config/config';
 	import { authApi } from '$lib/requests/requests';
-	import Error from './error.svelte';
+	import Error from '../error.svelte';
 	import Pin from './pin.svelte';
 	import { onMount, onDestroy } from 'svelte';
 

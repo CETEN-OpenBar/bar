@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Carousel from '$lib/components/carousel.svelte';
-	import Pin from '$lib/components/pin.svelte';
+	import Carousel from '$lib/components/borne/carousel.svelte';
+	import Pin from '$lib/components/borne/pin.svelte';
 	import Error from '$lib/components/error.svelte';
 
 	import type { CarouselImage, CarouselText, ConnectCardRequest } from '$lib/api';

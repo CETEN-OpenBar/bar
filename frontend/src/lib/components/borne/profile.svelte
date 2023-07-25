@@ -3,9 +3,9 @@
 	import type { Account } from '$lib/api';
 	import { accountsApi, authApi } from '$lib/requests/requests';
 	import { formatPrice } from '$lib/utils';
-	import Error from './error.svelte';
+	import Error from '../error.svelte';
 	import Pin from './pin.svelte';
-	import Success from './success.svelte';
+	import Success from '../success.svelte';
 
 	export let account: Account;
 	export let logout: () => void;
