@@ -7,7 +7,7 @@
 
 	export let state: ItemState = 'buyable';
 	export let category: string = '';
-	export let click: (item: string) => void;
+	export let click: (item: Item) => void;
 
 	let items: Item[] = [];
 
@@ -68,7 +68,7 @@
 			<button
 				class="w-32 flex-shrink-0 flex flex-col items-center justify-center rounded-lg text-white transition-colors duration-300"
 				on:click={() => {
-					click(item.id);
+					click(item);
 				}}
 			>
 				<img class="w-full" src={api() + item.picture_uri} alt={item.name} />
