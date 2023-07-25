@@ -5,9 +5,21 @@
 	import { formatPrice } from '$lib/utils';
 	import { store } from '$lib/store/store';
 	import { fly } from 'svelte/transition';
-	import type { Account, Item, NewTransactionItem, TransactionItem } from '$lib/api';
+	import type {
+		Account,
+		Item,
+		NewTransaction,
+		NewTransactionItem,
+		TransactionItem
+	} from '$lib/api';
 	import Transactions from '$lib/components/borne/transactions.svelte';
 	import { api } from '$lib/config/config';
+	import Confirm from '$lib/components/borne/confirm.svelte';
+	import { accountsApi, authApi, transactionsApi } from '$lib/requests/requests';
+	import Pin from '$lib/components/borne/pin.svelte';
+	import Error from '$lib/components/error.svelte';
+	import Success from '$lib/components/success.svelte';
+	import { goto } from '$app/navigation';
 
 	let account: Account | undefined = undefined;
 	let unsub: () => void;
@@ -78,8 +90,75 @@
 		};
 	}
 
+	function confirmOrder(response: Boolean) {
+		confirm = false;
+		if (!response) {
+			return;
+		}
+		pin = true;
+	}
+
+	function finalizeTransaction(card_pin: string) {
+		if (card_pin == '') {
+			error = "J'ai besoin de votre code pin pour valider la transaction";
+			setTimeout(() => {
+				error = '';
+			}, 3000);
+			return;
+		}
+		let transaction: NewTransaction = {
+			items: order.map((item) => {
+				return {
+					item_id: item.item_id,
+					amount: item.amount
+				};
+			}),
+			card_pin: card_pin
+		};
+
+		transactionsApi()
+			.postTransactions(transaction, { withCredentials: true })
+			.then((res) => {
+				success = 'Transaction effectuée avec succès';
+				setTimeout(() => {
+					success = '';
+					authApi().logout({ withCredentials: true });
+					goto('/borne');
+				}, 3000);
+				order = [];
+				orderPrice = 0;
+			})
+			.catch((err) => {
+				error = 'Erreur lors de la transaction';
+				setTimeout(() => {
+					error = '';
+				}, 3000);
+			});
+		confirm = false;
+	}
+
+	let error = '';
+	let success = '';
+	let pin = false;
+	let confirm = false;
 	let sidebar = true;
 </script>
+
+{#if confirm}
+	<Confirm custom_text="Envoyer la commande ?" callback={confirmOrder} />
+{/if}
+
+{#if pin}
+	<Pin callback={finalizeTransaction} />
+{/if}
+
+{#if error}
+	<Error {error} />
+{/if}
+
+{#if success}
+	<Success message={success} />
+{/if}
 
 <div
 	id="main"
@@ -170,7 +249,10 @@
 						Restant: {formatPrice((account?.balance ?? 0) - orderPrice)}
 					</h2>
 
-					<button class="w-full h-10 bg-green-500 rounded-lg text-white text-lg font-bold">
+					<button
+						class="w-full h-10 bg-green-500 rounded-lg text-white text-lg font-bold"
+						on:click={() => (confirm = true)}
+					>
 						Valider la commande
 					</button>
 				</div>
