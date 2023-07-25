@@ -13,7 +13,7 @@
 
 	let page: number = 0;
 	let maxPage: number = 0;
-	let limit: number = 21;
+	let limit: number = 15;
 
 	onMount(() => {
 		loadItems();
@@ -25,22 +25,25 @@
 			.then((res) => {
 				maxPage = res.data.max_page ?? 0;
 				page = res.data.page ?? 0;
-				limit = res.data.limit ?? 21;
+				limit = res.data.limit ?? 15;
 
 				let newItems = res.data.items ?? [];
-                items = [];
+				items = [];
                 setTimeout(() => {
                     items = newItems;
-                }, 1000);
+                }, 1);
 			})
 			.catch((err) => {
 				console.log(err);
 			});
 	}
 
+	let direction = 1;
+
 	function nextPage() {
 		if (page < maxPage) {
 			page++;
+			direction = -1;
 			loadItems();
 		}
 	}
@@ -48,6 +51,7 @@
 	function prevPage() {
 		if (page > 1) {
 			page--;
+			direction = 1;
 			loadItems();
 		}
 	}
@@ -59,7 +63,7 @@
 		<span class="text-3xl text-white">Aucun article</span>
 	</div>
 {:else}
-	<div class="grid grid-cols-7 gap-3 w-full p-16" out:fly={{ y: 100, duration: 1000 }}>
+	<div class="grid grid-cols-5 gap-3 w-full p-16" in:fly={{ x: -direction*300, duration: 500 }} out:fly={{ x: direction*300, duration: 500 }}>
 		{#each items as item}
 			<button
 				class="w-32 flex-shrink-0 flex flex-col items-center justify-center rounded-lg text-white transition-colors duration-300"
@@ -75,7 +79,7 @@
 {/if}
 
 <!-- Navigation -->
-<div class="flex flex-col justify-center">
+<div class="absolute bottom-5 left-[50%] -translate-x-[50%] flex flex-col justify-center">
 	<div class="text-3xl text-white text-center">
 		{page}/{maxPage}
 	</div>

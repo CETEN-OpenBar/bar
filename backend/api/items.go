@@ -75,6 +75,10 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 		items = append(items, item.Item)
 	}
 
+	// Caching for 10 minutes
+	c.Response().Header().Set("Cache-Control", "max-age=600")
+	c.Response().Header().Set("Expires", "600")
+
 	page += 1
 	maxPage += 1
 	autogen.GetCategoryItems200JSONResponse{
