@@ -62,16 +62,21 @@ func (s *Server) PostTransactions(c echo.Context) error {
 				return Error500(c)
 			}
 			fetchedItems[potentialItem.ItemId.String()] = item
+		} else {
+			logrus.Warnf("Item %s already fetched", item.Id.String())
+			return Error400(c)
 		}
 
 		if item.State == autogen.ItemNotBuyable {
+			logrus.Warnf("Item %s is not buyable", item.Id.String())
 			return Error400(c)
 		}
 		if item.AmountLeft < potentialItem.Amount {
+			logrus.Warnf("Item %s is not in stock", item.Id.String())
 			return Error400(c)
 		}
-		item.AmountLeft -= potentialItem.Amount
 		if item.BuyLimit < potentialItem.Amount {
+			logrus.Warnf("Item %s cannot be bought for that amount", item.Id.String())
 			return Error400(c)
 		}
 
@@ -85,9 +90,15 @@ func (s *Server) PostTransactions(c echo.Context) error {
 		})
 
 		transactionCost += item.Price * potentialItem.Amount
+		item.AmountLeft -= potentialItem.Amount
 	}
 
 	transaction.TotalCost = transactionCost
+
+	if account.Balance < int64(transactionCost) {
+		logrus.Warnf("Account %s does not have enough money", accountID)
+		return Error400(c)
+	}
 
 	_, err = s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {
 		err = s.DBackend.CreateTransaction(ctx, transaction)
@@ -106,6 +117,7 @@ func (s *Server) PostTransactions(c echo.Context) error {
 
 		// update items
 		for _, item := range fetchedItems {
+			item.BuyLimit += item.AmountLeft
 			err = s.DBackend.UpdateItem(ctx, item)
 			if err != nil {
 				logrus.Error(err)

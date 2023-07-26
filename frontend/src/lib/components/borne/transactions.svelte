@@ -45,7 +45,7 @@
 		</div>
 		<div class="flex flex-col">
 			{#each transactions as transaction}
-				<div class="flex flex-row justify-between mt-5 border-4 border-white rounded-xl {transaction.state=="started" ? "animate-pulse bg-green-100":""}">
+				<div class="flex flex-row justify-between mt-5 border-4 border-white rounded-xl {transaction.state=="started" ? "animate-pulse bg-green-100":""} {transaction.state=="canceled" ? "bg-gray-200":""} {transaction.state=="finished" ? "bg-green-200":""}">
 					<div class="p-5 h-full pr-4 w-full">
 						{#each transaction.items as item}
 							<div class="grid grid-cols-3 gap-2">
