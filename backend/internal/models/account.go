@@ -2,6 +2,7 @@ package models
 
 import (
 	"bar/autogen"
+	"bar/internal/hash"
 	"encoding/json"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -15,6 +16,15 @@ type (
 		CreatedAt int64 `bson:"created_at" json:"created_at"`
 	}
 )
+
+func (o *Account) SetPin(pwd string) {
+	o.Account.CardPin = hash.MustHash(pwd)
+}
+
+func (o *Account) VerifyPin(pwd string) bool {
+	ok, _ := hash.Verify(o.Account.CardPin, pwd)
+	return ok
+}
 
 func (o *Account) IsAdmin() bool {
 	return o.Role == autogen.AccountAdmin || o.Role == autogen.AccountSuperAdmin || o.Role == autogen.AccountMember

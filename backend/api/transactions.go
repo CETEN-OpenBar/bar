@@ -3,9 +3,7 @@ package api
 import (
 	"bar/autogen"
 	"bar/internal/models"
-	"crypto/sha256"
 	"errors"
-	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -42,7 +40,7 @@ func (s *Server) PostTransactions(c echo.Context) error {
 		return Error400(c)
 	}
 
-	if fmt.Sprintf("%x", sha256.Sum256([]byte(potentialTransaction.CardPin))) != account.CardPin {
+	if !account.VerifyPin(potentialTransaction.CardPin) {
 		autogen.PostTransactions401JSONResponse{
 			Message:   autogen.MsgNotAuthenticated,
 			ErrorCode: autogen.ErrNotAuthenticated,

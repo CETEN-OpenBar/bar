@@ -4,7 +4,6 @@ import (
 	"bar/autogen"
 	"bar/internal/config"
 	"bar/internal/models"
-	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -43,8 +42,7 @@ func (s *Server) GetAccountQR(c echo.Context) error {
 		return Error400(c)
 	}
 
-	cardPin := fmt.Sprintf("%x", sha256.Sum256([]byte(params.CardPin)))
-	if cardPin != account.CardPin {
+	if !account.VerifyPin(params.CardPin) {
 		return ErrorAccNotFound(c)
 	}
 
@@ -338,11 +336,7 @@ func (s *Server) ConnectCard(c echo.Context) error {
 		return Error500(c)
 	}
 
-	// SHA256 hash of the card ID
-	hash := sha256.Sum256([]byte(param.CardPin))
-	digest := fmt.Sprintf("%x", hash)
-
-	if account.CardPin != digest {
+	if !account.VerifyPin(param.CardPin) {
 		return ErrorAccNotFound(c)
 	}
 

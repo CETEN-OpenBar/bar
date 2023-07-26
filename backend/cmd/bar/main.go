@@ -28,13 +28,13 @@ func main() {
 
 	acc := &models.Account{
 		Account: autogen.Account{
-			CardId:  "1",
-			CardPin: "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
-			Id:      uuid.New(),
-			Role:    autogen.AccountSuperAdmin,
-			State:   autogen.AccountOk,
+			CardId: "1",
+			Id:     uuid.New(),
+			Role:   autogen.AccountSuperAdmin,
+			State:  autogen.AccountOk,
 		},
 	}
+	acc.SetPin("1234")
 
 	// Create default user (ignore errors)
 	err = db.CreateAccount(context.Background(), acc)
