@@ -1,4 +1,6 @@
 <script lang="ts">
+	import Transactions from "$lib/components/comptoir/transactions.svelte";
+
 </script>
 
 <div class="gap-16 p-5 w-full h-full text-white">
@@ -6,4 +8,6 @@
 		<h1 class="text-3xl">Panneau de contrôle</h1>
     </div>
     <hr class="col-span-3" />
+
+    <Transactions amount={4} />
 </div>

@@ -3809,6 +3809,9 @@ components:
         picture_uri:
           type: string
           description: Link to picture of the current item
+        item_name:
+          type: string
+          description: Name of the current item
         item_amount:
           type: integer
           format: uint64
@@ -3822,6 +3825,7 @@ components:
           $ref: '#/components/schemas/TransactionItemState'
       required:
         - item_id
+        - item_name
         - item_amount
         - unit_cost
         - total_cost

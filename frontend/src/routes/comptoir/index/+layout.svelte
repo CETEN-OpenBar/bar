@@ -4,7 +4,6 @@
 	import type { Account } from '$lib/api';
 	import { onMount } from 'svelte';
 	import { store } from '$lib/store/store';
-	import Profile from '$lib/components/borne/profile.svelte';
 	import 'iconify-icon';
 
 	let account: Account | undefined = undefined;
@@ -19,7 +18,7 @@
 				store.set({ account });
 			})
 			.catch(() => {
-				goto('/borne');
+				goto('/comptoir');
 			});
 	});
 </script>

@@ -83,6 +83,7 @@ func (s *Server) PostTransactions(c echo.Context) error {
 		transaction.Items = append(transaction.Items, autogen.TransactionItem{
 			ItemAmount: potentialItem.Amount,
 			ItemId:     potentialItem.ItemId,
+			ItemName:   item.Name,
 			PictureUri: item.PictureUri,
 			State:      autogen.TransactionItemStarted,
 			UnitCost:   item.Price,
@@ -322,6 +323,10 @@ func (s *Server) PatchTransactionId(c echo.Context, accountId autogen.UUID, tran
 		return Error500(c)
 	}
 
+	if transaction.State == autogen.TransactionFinished {
+		return Error400(c)
+	}
+
 	oldState := transaction.State
 	transaction.State = params.State
 
@@ -343,6 +348,10 @@ func (s *Server) PatchTransactionId(c echo.Context, accountId autogen.UUID, tran
 
 			// update items
 			for _, txitem := range transaction.Items {
+				if txitem.State == autogen.TransactionItemCanceled {
+					continue
+				}
+
 				item, err := s.DBackend.GetItem(ctx, txitem.ItemId.String())
 				if err != nil {
 					continue
@@ -381,6 +390,10 @@ func (s *Server) PatchTransactionId(c echo.Context, accountId autogen.UUID, tran
 
 			// update items
 			for _, txitem := range transaction.Items {
+				if txitem.State == autogen.TransactionItemCanceled {
+					continue
+				}
+
 				item, err := s.DBackend.GetItem(ctx, txitem.ItemId.String())
 				if err != nil {
 					continue
@@ -435,6 +448,10 @@ func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, 
 		return Error500(c)
 	}
 
+	if transaction.State == autogen.TransactionFinished {
+		return Error400(c)
+	}
+
 	var item *autogen.TransactionItem
 
 	for i, titem := range transaction.Items {
@@ -451,6 +468,9 @@ func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, 
 	if params.State != nil {
 		item.State = *params.State
 	} else if params.Amount != nil {
+		if *params.Amount > oldAmount {
+			return Error400(c)
+		}
 		item.ItemAmount = *params.Amount
 		item.TotalCost = *params.Amount * item.UnitCost
 	}

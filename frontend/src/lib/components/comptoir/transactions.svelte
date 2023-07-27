@@ -4,6 +4,7 @@
 	import { transactionsApi } from '$lib/requests/requests';
 	import { formatPrice } from '$lib/utils';
 	import { onMount } from 'svelte';
+	import TransactionPopup from './transactionPopup.svelte';
 
 	export let amount: number = 3;
 
@@ -12,7 +13,7 @@
 
 	onMount(() => {
 		transactionsApi()
-			.getCurrentAccountTransactions(0, amount, undefined, { withCredentials: true })
+			.getTransactions(0, amount, undefined, { withCredentials: true })
 			.then((res) => {
 				if (!(res.data.transactions instanceof Array)) return;
 				let countedItems = 0;
@@ -34,7 +35,13 @@
 				transactions = newTransactions;
 			});
 	});
+
+	let displayTransaction: Transaction|null = null;
 </script>
+
+{#if displayTransaction}
+	<TransactionPopup transaction={displayTransaction} close={()=>displayTransaction=null} />
+{/if}
 
 <!-- Good looking dropdown for transaction -->
 <div class="w-full">
@@ -45,7 +52,7 @@
 		</div>
 		<div class="flex flex-col">
 			{#each transactions as transaction}
-				<div class="flex flex-row justify-between mt-5 border-4 border-white rounded-xl {transaction.state=="started" ? "animate-pulse bg-green-100":""} {transaction.state=="canceled" ? "bg-gray-200":""} {transaction.state=="finished" ? "bg-green-200":""}">
+				<button on:click={()=>displayTransaction=transaction} class="flex flex-row justify-between mt-5 border-4 border-white rounded-xl {transaction.state=="started" ? "animate-pulse bg-green-100":""} {transaction.state=="canceled" ? "bg-gray-200":""} {transaction.state=="finished" ? "bg-green-200":""}">
 					<div class="p-5 h-full pr-4 w-full">
 						{#each transaction.items as item}
 							<div class="grid grid-cols-3 gap-2">
@@ -61,10 +68,10 @@
 						{/each}
 					</div>
 					<div class="border-r border-l border-gray-400" />
-					<div class="p-5 pl-4 w-full text-lg self-center text-center text-red-600">
-						-{formatPrice(transaction.total_cost)}
+					<div class="p-5 pl-4 w-full text-lg self-center text-center text-black">
+						{formatPrice(transaction.total_cost)}
 					</div>
-				</div>
+				</button>
 			{/each}
 		</div>
 	</div>
