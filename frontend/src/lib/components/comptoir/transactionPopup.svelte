@@ -3,13 +3,54 @@
 	import { api } from '$lib/config/config';
 	import { transactionsApi } from '$lib/requests/requests';
 	import { formatPrice } from '$lib/utils';
+	import Error from '../error.svelte';
+	import Success from '../success.svelte';
 
 	export let transaction: Transaction;
 	export let close: () => void;
 
-	let newTransaction: Transaction = transaction;
+	let newTransaction: Transaction = structuredClone(transaction);
+	let success = '';
+	let error = '';
 
+	function saveTransaction() {
+		for (let i = 0; i < newTransaction.items.length; i++) {
+			let item = newTransaction.items[i];
+
+			// @ts-ignore
+			if (item.state == transaction.items[i].state) item.state = undefined
+			console.log(item.state, transaction.items[i].state)
+
+			transactionsApi()
+				.patchTransactionItemId(
+					newTransaction.account_id,
+					newTransaction.id,
+					item.item_id,
+					item.state,
+					item.item_amount,
+					{
+						withCredentials: true
+					}
+				)
+				.then(() => {
+					transaction = newTransaction;
+					success = 'Changements enregistrée';
+					setTimeout(() => {
+						success = '';
+						close();
+					}, 3000);
+				});
+		}
+	}
 </script>
+
+{#if success != ''}
+	<Success message={success} />
+{/if}
+
+{#if error != ''}
+	<Error {error} />
+{/if}
 
 <!-- Popup overlay -->
 <button
@@ -33,40 +74,135 @@
     -->
 	<div class="w-2/3 bg-white rounded-xl z-20 text-black">
 		<div class="p-5 h-full pr-4 w-full">
-			<div class="grid grid-cols-8 gap-2">
-				{#each transaction.items as item, i}
+			<div class="grid grid-cols-6 gap-2">
+				{#each newTransaction.items as item, i}
 					<!-- One for each item.amount -->
-					<div class="flex flex-col justify-center text-center">
-						{item.item_name?item.item_name:"Test"}
-						<img src={api() + item.picture_uri} alt="ca charge" class="self-center w-10 h-10 rounded-2xl" />
-						{newTransaction.items[i].item_amount}
-						<div class="flex flex-row justify-center">
-							<button
-								class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-								on:click={() => {
-									if (newTransaction.items[i].item_amount > 0)
-										newTransaction.items[i].item_amount--;
-								}}
-							>
-								-
-							</button>
-							{#if newTransaction.items[i].item_amount < item.item_amount}
-							<button
-								class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-								on:click={() => {
-									if (newTransaction.items[i].item_amount < item.item_amount)
-										newTransaction.items[i].item_amount++;
-								}}
-							>
-								+
-							</button>
-							{/if}
-						</div>
+					<div
+						class="flex flex-col justify-center text-center break-words rounded-xl {item.state ==
+						'canceled'
+							? 'bg-red-200'
+							: ''}"
+					>
+						{item.item_name ? item.item_name : 'Test'}
+						{#if item.state == 'canceled'}
+							: Annulé
+						{/if}
+						<img
+							src={api() + item.picture_uri}
+							alt="ca charge"
+							class="self-center w-10 h-10 rounded-2xl"
+						/>
+						{item.item_amount}
+						{#if item.state != 'canceled'}
+							<div class="flex flex-row justify-center">
+								<div class="grid grid-cols-3 gap-1">
+									{#if item.item_amount > 0}
+										<button
+											class="bg-red-500 hover:bg-red-700 text-white font-bold p-2 rounded"
+											on:click={() => {
+												if (item.item_amount > 0) item.item_amount--;
+											}}
+										>
+											<iconify-icon
+												class="text-white text-lg self-center align-middle"
+												icon="ic:baseline-minus"
+											/>
+										</button>
+									{/if}
+									<button
+										class="bg-gray-500 hover:bg-gray-700 text-white font-bold p-2 rounded col-start-2"
+										on:click={() => {
+											item.state = 'canceled';
+										}}
+									>
+										<iconify-icon
+											class="text-white text-lg self-center align-middle"
+											icon="mdi:cancel"
+										/>
+									</button>
+									{#if item.item_amount < transaction.items[i].item_amount}
+										<button
+											class="bg-green-500 hover:bg-green-700 text-white font-bold p-2 rounded col-start-3"
+											on:click={() => {
+												if (item.item_amount < transaction.items[i].item_amount) item.item_amount++;
+											}}
+										>
+											<iconify-icon
+												class="text-white text-lg self-center align-middle"
+												icon="ic:baseline-plus"
+											/>
+										</button>
+									{/if}
+								</div>
+							</div>
+						{/if}
 					</div>
 				{/each}
 			</div>
 		</div>
-		<div class="border-r border-l border-gray-400" />
+
+		<div class="grid grid-cols-2 gap-4 p-8">
+			<!-- Save & cancel -->
+			<div class="flex flex-col gap-4 p-8">
+				<button
+					class="bg-green-500 rounded-xl text-white text-md font-bold p-2 h-20 w-full self-center"
+					on:click={() => {
+						saveTransaction();
+					}}
+				>
+					Enregistrer les changements
+				</button>
+				<button
+					class="bg-red-500 rounded-xl text-white text-md font-bold p-2 h-20 w-full self-center"
+					on:click={() => {
+						close();
+					}}
+				>
+					Annuler les changements
+				</button>
+			</div>
+			<div class="flex flex-col gap-4 p-8">
+				<button
+					class="bg-green-500 rounded-xl text-white text-md font-bold p-2 h-20 w-full "
+					on:click={() => {
+						transactionsApi()
+							.patchTransactionId(newTransaction.account_id, newTransaction.id, 'finished', {
+								withCredentials: true
+							})
+							.then(() => {
+								transaction = newTransaction;
+								success = 'Commande terminée';
+								setTimeout(() => {
+									success = '';
+									close();
+								}, 3000);
+							});
+					}}
+				>
+					Terminer la commande (paiement)
+				</button>
+				<button
+					class="bg-gray-500 rounded-xl text-white text-md font-bold p-2 h-20 w-full "
+					on:click={() => {
+						transactionsApi()
+							.patchTransactionId(newTransaction.account_id, newTransaction.id, 'canceled', {
+								withCredentials: true
+							})
+							.then(() => {
+								transaction = newTransaction;
+								success = 'Commande annulée';
+								setTimeout(() => {
+									success = '';
+									close();
+								}, 3000);
+							});
+					}}
+				>
+					Annuler la commande (remboursement)
+				</button>
+			</div>
+		</div>
+
 		<div class="p-5 pl-4 w-full text-lg self-center text-center">
 			Prix: {formatPrice(transaction.total_cost)}
 		</div>

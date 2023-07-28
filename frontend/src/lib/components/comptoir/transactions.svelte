@@ -3,15 +3,27 @@
 	import { api } from '$lib/config/config';
 	import { transactionsApi } from '$lib/requests/requests';
 	import { formatPrice } from '$lib/utils';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import TransactionPopup from './transactionPopup.svelte';
 
 	export let amount: number = 3;
 
 	let transactions: Array<Transaction> = [];
 	let maxItemPerTransaction: number = 6;
+	let interval: number;
 
 	onMount(() => {
+		reloadTransactions();
+		interval = setInterval(() => {
+			reloadTransactions();
+		}, 2000);
+	});
+
+	onDestroy(() => {
+		clearInterval(interval);
+	});
+
+	function reloadTransactions() {
 		transactionsApi()
 			.getTransactions(0, amount, undefined, { withCredentials: true })
 			.then((res) => {
@@ -34,13 +46,16 @@
 				}
 				transactions = newTransactions;
 			});
-	});
+	}
 
 	let displayTransaction: Transaction|null = null;
 </script>
 
 {#if displayTransaction}
-	<TransactionPopup transaction={displayTransaction} close={()=>displayTransaction=null} />
+	<TransactionPopup transaction={displayTransaction} close={()=>{
+		displayTransaction = null;
+
+	}} />
 {/if}
 
 <!-- Good looking dropdown for transaction -->

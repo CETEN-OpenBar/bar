@@ -72,19 +72,24 @@
 		orderPrice += item.price;
 	};
 
-	function removeItem(item: NewTransactionItemWithItem) {
+	function removeItem(item: NewTransactionItemWithItem, amount: number = 1) {
 		return () => {
 			let newOrder = order;
+			let found = newOrder.find((i) => i.item_id == item.item.id)!;
 
-			if (newOrder.find((i) => i.item_id == item.item.id)) {
-				newOrder.find((i) => i.item_id == item.item.id)!.amount--;
+			if (found) {
+				found!.amount -= amount;
 
-				if (newOrder.find((i) => i.item_id == item.item.id)!.amount == 0) {
+				if (found!.amount < 0) {
+					amount += found!.amount;
+				}
+
+				if (found!.amount == 0) {
 					newOrder.splice(newOrder.indexOf(item), 1);
 				}
 
 				order = newOrder;
-				orderPrice -= item.item.price;
+				orderPrice -= amount * item.item.price;
 				return;
 			}
 		};
@@ -167,9 +172,17 @@
 >
 	<div class="{sidebar ? 'w-4/5' : 'w-full'} h-full relative transition-all ease-in-out">
 		<div class="p-4 flex justify-between" style="background-color:#222831">
+			<button
+				class="flex items-center h-1/2 space-x-2 px-4 py-2 mr-2 rounded-lg bg-green-500 hover:bg-green-600 transition-colors duration-300"
+				on:click={() => {
+					goto('/borne/index');
+				}}
+			>
+				<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:chevron-left" />
+			</button>
 			<Categories {changeCategory} />
 			<button
-				class="flex items-center space-x-2 px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 transition-colors duration-300 animate-pulse"
+				class="flex items-center space-x-2 px-4 py-2 ml-2 rounded-lg bg-green-500 hover:bg-green-600 transition-colors duration-300 animate-pulse"
 				on:click={() => {
 					sidebar = !sidebar;
 				}}
@@ -212,6 +225,19 @@
 			<div
 				class="flex flex-col gap-5 justify-center items-center overflow-x-auto overflow-y-visible h-4/6 p-4"
 			>
+				{#if order.length == 0}
+					<h1 class="text-white text-md md:text-md lg:text-2xl">Aucun article</h1>
+				{:else}
+					<button
+						class="w-16 h-16 rounded-full"
+						on:click={() => {
+							order = [];
+							orderPrice = 0;
+						}}
+					>
+					<iconify-icon class="text-white align-middle text-2xl" icon="icomoon-free:bin" />
+					</button>
+				{/if}
 				<div class="grid grid-cols-2 gap-10">
 					{#each order as item}
 						<div class="flex flex-col justify-center gap-5 items-center w-full">
@@ -233,6 +259,12 @@
 							</div>
 							<span class="text-lg text-white">{formatPrice(item.item.price * item.amount)}</span>
 						</div>
+						<button
+							class="-mx-20 -my-4 top-0 left-0 w-6 h-6 rounded-full"
+							on:click={removeItem(item, item.amount)}
+						>
+							<iconify-icon class="text-white align-middle text-2xl" icon="ic:outline-cancel" />
+						</button>
 					{/each}
 				</div>
 			</div>

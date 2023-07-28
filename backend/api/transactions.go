@@ -323,10 +323,6 @@ func (s *Server) PatchTransactionId(c echo.Context, accountId autogen.UUID, tran
 		return Error500(c)
 	}
 
-	if transaction.State == autogen.TransactionFinished {
-		return Error400(c)
-	}
-
 	oldState := transaction.State
 	transaction.State = params.State
 

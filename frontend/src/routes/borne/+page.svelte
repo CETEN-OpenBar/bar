@@ -88,7 +88,7 @@
 				}
 			)
 			.then((res) => {
-				goto('/borne/index');
+				goto('/borne/commande');
 			})
 			.catch(() => {
 				incorrectPin = 'Mauvais code pin';

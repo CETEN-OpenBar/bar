@@ -9,5 +9,5 @@
     </div>
     <hr class="col-span-3" />
 
-    <Transactions amount={4} />
+    <Transactions amount={6} />
 </div>

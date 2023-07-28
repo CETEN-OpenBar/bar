@@ -6,6 +6,7 @@
 	import { store } from '$lib/store/store';
 	import Profile from '$lib/components/borne/profile.svelte';
 	import 'iconify-icon';
+	import { fly } from 'svelte/transition';
 
 	let account: Account | undefined = undefined;
 
