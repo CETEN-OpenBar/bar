@@ -136,13 +136,24 @@ func (s *Server) GetSelfRefills(c echo.Context, params autogen.GetSelfRefillsPar
 }
 
 // (GET /accounts/{account_id}/refills)
-func (s *Server) GetAccountRefills(c echo.Context, accountId autogen.UUID, params autogen.GetAccountRefillsParams) error {
+func (s *Server) GetAccountRefills(c echo.Context, accountId string, params autogen.GetAccountRefillsParams) error {
 	logged := c.Get("adminLogged").(bool)
 	if !logged {
 		return ErrorNotAuthenticated(c)
 	}
 
 	adminID := c.Get("adminAccountID").(string)
+
+	account, err := s.DBackend.GetAccountByCard(c.Request().Context(), accountId)
+	if account == nil {
+		account, err = s.DBackend.GetAccount(c.Request().Context(), accountId)
+	}
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorAccNotFound(c)
+		}
+		return Error500(c)
+	}
 
 	var startsAt uint64 = 0
 	if params.StartDate != nil {
@@ -154,7 +165,7 @@ func (s *Server) GetAccountRefills(c echo.Context, accountId autogen.UUID, param
 		endsAt = uint64(params.EndDate.Unix())
 	}
 
-	count, err := s.DBackend.CountRefills(c.Request().Context(), accountId.String(), startsAt, endsAt)
+	count, err := s.DBackend.CountRefills(c.Request().Context(), account.Id.String(), startsAt, endsAt)
 	if err != nil {
 		return Error500(c)
 	}
@@ -178,7 +189,7 @@ func (s *Server) GetAccountRefills(c echo.Context, accountId autogen.UUID, param
 		page = maxPage
 	}
 
-	data, err := s.DBackend.GetRefills(c.Request().Context(), accountId.String(), page, size, startsAt, endsAt)
+	data, err := s.DBackend.GetRefills(c.Request().Context(), account.Id.String(), page, size, startsAt, endsAt)
 	if err != nil {
 		return Error500(c)
 	}
@@ -200,15 +211,19 @@ func (s *Server) GetAccountRefills(c echo.Context, accountId autogen.UUID, param
 }
 
 // (POST /accounts/{account_id}/refills)
-func (s *Server) PostRefill(c echo.Context, accountId autogen.UUID, params autogen.PostRefillParams) error {
+func (s *Server) PostRefill(c echo.Context, accountId string, params autogen.PostRefillParams) error {
 	logged := c.Get("adminLogged").(bool)
 	if !logged {
 		return ErrorNotAuthenticated(c)
 	}
 
 	adminID := c.Get("adminAccountID").(string)
+	adminAccount := c.Get("adminAccount").(*models.Account)
 
-	account, err := s.DBackend.GetAccount(c.Request().Context(), accountId.String())
+	account, err := s.DBackend.GetAccountByCard(c.Request().Context(), accountId)
+	if account == nil {
+		account, err = s.DBackend.GetAccount(c.Request().Context(), accountId)
+	}
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorAccNotFound(c)
@@ -218,12 +233,14 @@ func (s *Server) PostRefill(c echo.Context, accountId autogen.UUID, params autog
 
 	refill := &models.Refill{
 		Refill: autogen.Refill{
-			AccountId: accountId,
-			Amount:    params.Amount,
-			Id:        uuid.New(),
-			IssuedAt:  uint64(time.Now().Unix()),
-			IssuedBy:  uuid.MustParse(adminID),
-			State:     autogen.Valid,
+			AccountId:    account.Id,
+			AccountName:  account.Name(),
+			Amount:       params.Amount,
+			Id:           uuid.New(),
+			IssuedAt:     uint64(time.Now().Unix()),
+			IssuedBy:     uuid.MustParse(adminID),
+			IssuedByName: adminAccount.Name(),
+			State:        autogen.Valid,
 		},
 	}
 
@@ -258,6 +275,7 @@ func (s *Server) PatchRefillId(c echo.Context, accountId autogen.UUID, refillId 
 	}
 
 	adminID := c.Get("adminAccountID").(string)
+	adminAccount := c.Get("adminAccount").(*models.Account)
 
 	account, err := s.DBackend.GetAccount(c.Request().Context(), accountId.String())
 	if err != nil {
@@ -280,8 +298,16 @@ func (s *Server) PatchRefillId(c echo.Context, accountId autogen.UUID, refillId 
 
 	if oldState == autogen.Valid && params.State == autogen.Canceled {
 		account.Balance -= int64(refill.Amount)
+
+		uid := uuid.MustParse(adminID)
+		name := adminAccount.Name()
+
+		refill.CanceledBy = &uid
+		refill.CanceledByName = &name
 	} else if oldState == autogen.Canceled && params.State == autogen.Valid {
 		account.Balance += int64(refill.Amount)
+		refill.CanceledBy = nil
+		refill.CanceledByName = nil
 	}
 
 	_, err = s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {

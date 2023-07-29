@@ -222,25 +222,29 @@
 			<hr class="w-full border-white" />
 
 			<!-- Items in current commande with buttons for + and - with how much there is and the cost -->
-			<div
-				class="flex flex-col gap-5 justify-center items-center overflow-x-auto overflow-y-visible h-4/6 p-4"
-			>
+			<div class="relative flex flex-col gap-5 justify-center items-center h-4/6 p-4">
 				{#if order.length == 0}
 					<h1 class="text-white text-md md:text-md lg:text-2xl">Aucun article</h1>
 				{:else}
 					<button
-						class="w-16 h-16 rounded-full"
+						class="w-10 h-10 rounded-full absolute top-2 bg-red-500"
 						on:click={() => {
 							order = [];
 							orderPrice = 0;
 						}}
 					>
-					<iconify-icon class="text-white align-middle text-2xl" icon="icomoon-free:bin" />
+						<iconify-icon class="text-white align-middle text-2xl" icon="icomoon-free:bin" />
 					</button>
 				{/if}
-				<div class="grid grid-cols-2 gap-10">
+				<div class="grid grid-cols-2 gap-10 overflow-x-auto overflow-y-scroll">
 					{#each order as item}
 						<div class="flex flex-col justify-center gap-5 items-center w-full">
+							<button
+								class="-mr-20 -my-6 w-6 h-6 rounded-full z-10"
+								on:click={removeItem(item, item.amount)}
+							>
+								<iconify-icon class="text-white align-middle text-2xl" icon="ic:outline-cancel" />
+							</button>
 							<img class="w-16" src={api() + item.item.picture_uri} alt={item.item.name} />
 							<div class="flex flex-row justify-center items-center">
 								<button
@@ -259,12 +263,6 @@
 							</div>
 							<span class="text-lg text-white">{formatPrice(item.item.price * item.amount)}</span>
 						</div>
-						<button
-							class="-mx-20 -my-4 top-0 left-0 w-6 h-6 rounded-full"
-							on:click={removeItem(item, item.amount)}
-						>
-							<iconify-icon class="text-white align-middle text-2xl" icon="ic:outline-cancel" />
-						</button>
 					{/each}
 				</div>
 			</div>

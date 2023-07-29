@@ -90,7 +90,7 @@
 			.then((res) => {
 				if (res.data.account?.role === AccountRole.AccountAdmin || AccountRole.AccountSuperAdmin || AccountRole.AccountMember)
 					goto('/comptoir');
-				goto('/comptoir/index');
+				goto('/comptoir/transactions');
 			})
 			.catch(() => {
 				incorrectPin = 'Mauvais code pin';

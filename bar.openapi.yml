@@ -1332,10 +1332,10 @@ paths:
       parameters:
         - name: account_id
           in: path
-          description: ID of the account
+          description: ID or CardID of the account
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            type: string
         - name: page
           in: query
           description: Page number
@@ -1427,10 +1427,10 @@ paths:
       parameters:
         - name: account_id
           in: path
-          description: ID of the account
+          description: ID or CardID of the account
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            type: string
         - name: amount
           in: query
           description: Amount of the refill
@@ -3895,10 +3895,12 @@ components:
           $ref: '#/components/schemas/UUID'
         account_id:
           $ref: '#/components/schemas/UUID'
+        account_name:
+          type: string
+          description: Name of the account
         amount:
           type: integer
           format: uint64
-          
           example: 1050 (10.50€)
         state:
           $ref: '#/components/schemas/RefillState'
@@ -3907,8 +3909,12 @@ components:
           format: uint64
         issued_by:
           $ref: '#/components/schemas/UUID'
+        issued_by_name:
+          type: string
         canceled_by:
           $ref: '#/components/schemas/UUID'
+        canceled_by_name:
+          type: string
         deleted_at:
           type: integer
           format: uint64
@@ -3917,10 +3923,12 @@ components:
       required:
         - id
         - account_id
+        - account_name
         - amount
         - state
         - issued_at
         - issued_by
+        - issued_by_name
     CarouselTextCreate:
       type: object
       properties:

@@ -69,8 +69,8 @@
 			{#each transactions as transaction}
 				<button on:click={()=>displayTransaction=transaction} class="flex flex-row justify-between mt-5 border-4 border-white rounded-xl {transaction.state=="started" ? "animate-pulse bg-green-100":""} {transaction.state=="canceled" ? "bg-gray-200":""} {transaction.state=="finished" ? "bg-green-200":""}">
 					<div class="p-5 h-full pr-4 w-full">
+						<div class="grid grid-cols-3 gap-2">
 						{#each transaction.items as item}
-							<div class="grid grid-cols-3 gap-2">
 								<!-- One for each item.amount -->
 								{#each Array(item.item_amount) as _}
 									<img
@@ -79,8 +79,8 @@
 										class="w-10 h-10 rounded-2xl"
 									/>
 								{/each}
-							</div>
 						{/each}
+					</div>
 					</div>
 					<div class="border-r border-l border-gray-400" />
 					<div class="p-5 pl-4 w-full text-lg self-center text-center text-black">

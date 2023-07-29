@@ -114,8 +114,9 @@ func (b *Backend) UnMarkDeleteRefill(ctx context.Context, id string) error {
 		},
 		bson.M{
 			"$set": bson.M{
-				"deleted_at": nil,
-				"deleted_by": nil,
+				"deleted_at":      nil,
+				"deleted_by":      nil,
+				"deleted_by_name": nil,
 			},
 		},
 		options.FindOneAndUpdate().SetUpsert(false))

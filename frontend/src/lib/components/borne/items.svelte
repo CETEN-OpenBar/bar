@@ -2,6 +2,7 @@
 	import type { Item, ItemState } from '$lib/api';
 	import { api } from '$lib/config/config';
 	import { itemsApi } from '$lib/requests/requests';
+	import { formatPrice } from '$lib/utils';
 	import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
 
@@ -29,9 +30,9 @@
 
 				let newItems = res.data.items ?? [];
 				items = [];
-                setTimeout(() => {
-                    items = newItems;
-                }, 1);
+				setTimeout(() => {
+					items = newItems;
+				}, 1);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -63,7 +64,11 @@
 		<span class="text-3xl text-white">Aucun article</span>
 	</div>
 {:else}
-	<div class="grid grid-cols-5 gap-3 w-full p-16" in:fly={{ x: -direction*300, duration: 500 }} out:fly={{ x: direction*300, duration: 500 }}>
+	<div
+		class="grid grid-cols-5 gap-3 w-full p-16"
+		in:fly={{ x: -direction * 300, duration: 500 }}
+		out:fly={{ x: direction * 300, duration: 500 }}
+	>
 		{#each items as item}
 			<button
 				class="w-32 flex-shrink-0 flex flex-col items-center justify-center rounded-lg text-white transition-colors duration-300"
@@ -73,7 +78,7 @@
 			>
 				<img class="w-full" src={api() + item.picture_uri} alt={item.name} />
 				<span class="text-lg font-bold">{item.name}</span>
-				<span class="text-sm">Stock: {item.amount_left}</span>
+				<span class="text-sm">Prix: {formatPrice(item.price)}</span>
 			</button>
 		{/each}
 	</div>

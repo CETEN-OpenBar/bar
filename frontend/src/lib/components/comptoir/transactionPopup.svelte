@@ -18,8 +18,8 @@
 			let item = newTransaction.items[i];
 
 			// @ts-ignore
-			if (item.state == transaction.items[i].state) item.state = undefined
-			console.log(item.state, transaction.items[i].state)
+			if (item.state == transaction.items[i].state) item.state = undefined;
+			console.log(item.state, transaction.items[i].state);
 
 			transactionsApi()
 				.patchTransactionItemId(
@@ -37,10 +37,19 @@
 					success = 'Changements enregistrée';
 					setTimeout(() => {
 						success = '';
-						close();
-					}, 3000);
+					}, 1500);
+					reloadTransaction();
 				});
 		}
+	}
+
+	function reloadTransaction() {
+		transactionsApi()
+			.getTransactionId(transaction.account_id, transaction.id, { withCredentials: true })
+			.then((res) => {
+				transaction = res.data;
+				newTransaction = structuredClone(transaction);
+			});
 	}
 </script>
 
@@ -96,11 +105,11 @@
 						{#if item.state != 'canceled'}
 							<div class="flex flex-row justify-center">
 								<div class="grid grid-cols-3 gap-1">
-									{#if item.item_amount > 0}
+									{#if item.item_amount > 1}
 										<button
 											class="bg-red-500 hover:bg-red-700 text-white font-bold p-2 rounded"
 											on:click={() => {
-												if (item.item_amount > 0) item.item_amount--;
+												if (item.item_amount > 1) item.item_amount--;
 											}}
 										>
 											<iconify-icon
@@ -163,7 +172,7 @@
 			</div>
 			<div class="flex flex-col gap-4 p-8">
 				<button
-					class="bg-green-500 rounded-xl text-white text-md font-bold p-2 h-20 w-full "
+					class="bg-green-500 rounded-xl text-white text-md font-bold p-2 h-20 w-full"
 					on:click={() => {
 						transactionsApi()
 							.patchTransactionId(newTransaction.account_id, newTransaction.id, 'finished', {
@@ -175,14 +184,14 @@
 								setTimeout(() => {
 									success = '';
 									close();
-								}, 3000);
+								}, 1500);
 							});
 					}}
 				>
 					Terminer la commande (paiement)
 				</button>
 				<button
-					class="bg-gray-500 rounded-xl text-white text-md font-bold p-2 h-20 w-full "
+					class="bg-gray-500 rounded-xl text-white text-md font-bold p-2 h-20 w-full"
 					on:click={() => {
 						transactionsApi()
 							.patchTransactionId(newTransaction.account_id, newTransaction.id, 'canceled', {
@@ -194,7 +203,7 @@
 								setTimeout(() => {
 									success = '';
 									close();
-								}, 3000);
+								}, 1500);
 							});
 					}}
 				>

@@ -12,7 +12,7 @@
 		refillsApi()
 			.getSelfRefills(0, amount, undefined, undefined, { withCredentials: true })
 			.then((res) => {
-				if (!(res.data.refills instanceof Array)) return
+				if (!(res.data.refills instanceof Array)) return;
 				refills = res.data.refills;
 			});
 	});
@@ -27,14 +27,17 @@
 		</div>
 		<div class="flex flex-col">
 			{#each refills as refill}
-				<div class="flex flex-row justify-between mt-5 border-4 border-white rounded-xl">
+				<div
+					class="flex flex-row justify-between mt-5 border-4 border-white rounded-xl {refill.state ==
+					'canceled'
+						? 'bg-gray-200'
+						: ''} {refill.state == 'valid' ? 'bg-green-200' : ''}"
+				>
 					<div class="p-5 h-full pr-4 w-full">
 						<!-- refill.issued_at is unix seconds -->
-						{new Date(refill.issued_at*1000).toLocaleString()}
+						{new Date(refill.issued_at * 1000).toLocaleString()}
 					</div>
-					<div class="border-r border-l border-gray-400">
-
-					</div>
+					<div class="border-r border-l border-gray-400" />
 					<div class="p-5 pl-4 w-full text-lg text-center self-center text-green-600">
 						+{formatPrice(refill.amount)}
 					</div>

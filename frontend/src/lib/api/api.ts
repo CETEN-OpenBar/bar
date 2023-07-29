@@ -1042,6 +1042,12 @@ export interface Refill {
      */
     'account_id': string;
     /**
+     * Name of the account
+     * @type {string}
+     * @memberof Refill
+     */
+    'account_name': string;
+    /**
      * 
      * @type {number}
      * @memberof Refill
@@ -1070,7 +1076,19 @@ export interface Refill {
      * @type {string}
      * @memberof Refill
      */
+    'issued_by_name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Refill
+     */
     'canceled_by'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Refill
+     */
+    'canceled_by_name'?: string;
     /**
      * 
      * @type {number}
@@ -5128,7 +5146,7 @@ export const RefillsApiAxiosParamCreator = function (configuration?: Configurati
     return {
         /**
          * Get all refills of an account
-         * @param {string} accountId ID of the account
+         * @param {string} accountId ID or CardID of the account
          * @param {number} [page] Page number
          * @param {number} [limit] Number of transactions per page
          * @param {string} [startDate] Start date of the refill
@@ -5382,7 +5400,7 @@ export const RefillsApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * Create a new refill
-         * @param {string} accountId ID of the account
+         * @param {string} accountId ID or CardID of the account
          * @param {number} amount Amount of the refill
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -5434,7 +5452,7 @@ export const RefillsApiFp = function(configuration?: Configuration) {
     return {
         /**
          * Get all refills of an account
-         * @param {string} accountId ID of the account
+         * @param {string} accountId ID or CardID of the account
          * @param {number} [page] Page number
          * @param {number} [limit] Number of transactions per page
          * @param {string} [startDate] Start date of the refill
@@ -5497,7 +5515,7 @@ export const RefillsApiFp = function(configuration?: Configuration) {
         },
         /**
          * Create a new refill
-         * @param {string} accountId ID of the account
+         * @param {string} accountId ID or CardID of the account
          * @param {number} amount Amount of the refill
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -5518,7 +5536,7 @@ export const RefillsApiFactory = function (configuration?: Configuration, basePa
     return {
         /**
          * Get all refills of an account
-         * @param {string} accountId ID of the account
+         * @param {string} accountId ID or CardID of the account
          * @param {number} [page] Page number
          * @param {number} [limit] Number of transactions per page
          * @param {string} [startDate] Start date of the refill
@@ -5576,7 +5594,7 @@ export const RefillsApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * Create a new refill
-         * @param {string} accountId ID of the account
+         * @param {string} accountId ID or CardID of the account
          * @param {number} amount Amount of the refill
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -5596,7 +5614,7 @@ export const RefillsApiFactory = function (configuration?: Configuration, basePa
 export class RefillsApi extends BaseAPI {
     /**
      * Get all refills of an account
-     * @param {string} accountId ID of the account
+     * @param {string} accountId ID or CardID of the account
      * @param {number} [page] Page number
      * @param {number} [limit] Number of transactions per page
      * @param {string} [startDate] Start date of the refill
@@ -5664,7 +5682,7 @@ export class RefillsApi extends BaseAPI {
 
     /**
      * Create a new refill
-     * @param {string} accountId ID of the account
+     * @param {string} accountId ID or CardID of the account
      * @param {number} amount Amount of the refill
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
