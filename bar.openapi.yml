@@ -1222,9 +1222,21 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Refill'
+                type: object
+                properties:
+                  refills:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Refill'
+                  page:
+                    type: integer
+                    format: uint64
+                  limit:
+                    type: integer
+                    format: uint64
+                  max_page:
+                    type: integer
+                    format: uint64
         '401':
           description: 'Not authorized'
           content:

@@ -6,11 +6,14 @@
 	import { onDestroy, onMount } from 'svelte';
 	import TransactionPopup from './transactionPopup.svelte';
 
-	export let amount: number = 3;
+	export let amount: number = 4;
 
 	let transactions: Array<Transaction> = [];
 	let maxItemPerTransaction: number = 6;
 	let interval: number;
+
+	let page: number = 0;
+	let maxPage: number = 0;
 
 	onMount(() => {
 		reloadTransactions();
@@ -25,8 +28,10 @@
 
 	function reloadTransactions() {
 		transactionsApi()
-			.getTransactions(0, amount, undefined, { withCredentials: true })
+			.getTransactions(page, amount, undefined, { withCredentials: true })
 			.then((res) => {
+				page = res.data.page??0;
+				maxPage = res.data.max_page??0;
 				if (!(res.data.transactions instanceof Array)) return;
 				let countedItems = 0;
 				let newTransactions = [];
@@ -89,5 +94,22 @@
 				</button>
 			{/each}
 		</div>
+	</div>
+
+	<!-- Pagination -->
+	<div class="flex flex-row justify-center mt-5">
+		<button class="bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all" on:click={()=>{
+			if(page>0){
+				page--;
+				reloadTransactions();
+			}
+		}}>&lt;</button>
+		<div class="text-lg font-semibold self-center mx-2">{page}/{maxPage+1}</div>
+		<button class="bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all" on:click={()=>{
+			if(page<maxPage){
+				page++;
+				reloadTransactions();
+			}
+		}}>&gt;</button>
 	</div>
 </div>

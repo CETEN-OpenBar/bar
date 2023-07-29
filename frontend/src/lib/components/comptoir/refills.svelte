@@ -11,6 +11,9 @@
 	let refills: Array<Refill> = [];
 	let interval: number;
 
+	let page: number = 0;
+	let maxPage: number = 0;
+
 	onMount(() => {
 		reloadRefills();
 		interval = setInterval(() => {
@@ -24,9 +27,11 @@
 
 	function reloadRefills() {
 		refillsApi()
-			.getRefills(0, amount, undefined, undefined, { withCredentials: true })
+			.getRefills(page, amount, undefined, undefined, { withCredentials: true })
 			.then((res) => {
-				refills = res.data;
+				page = res.data.page??0;
+				maxPage = res.data.max_page??0;
+				refills = res.data.refills??[];
 			});
 	}
 </script>
@@ -75,7 +80,7 @@
 						{/if}
 						{#if refill.state == 'canceled'}
 							<button
-								class="text-sm text-white  self-center bg-red-500 rounded-xl p-2"
+								class="text-sm text-white self-center bg-red-500 rounded-xl p-2"
 								on:click={() => {
 									refillsApi()
 										.patchRefillId(refill.account_id, refill.id, 'valid', { withCredentials: true })
@@ -89,5 +94,28 @@
 				</div>
 			{/each}
 		</div>
+	</div>
+
+	<!-- Pagination -->
+	<div class="flex flex-row justify-center mt-5">
+		<button
+			class="bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
+			on:click={() => {
+				if (page > 0) {
+					page--;
+					reloadRefills();
+				}
+			}}>&lt;</button
+		>
+		<div class="text-lg font-semibold self-center mx-2">{page}/{maxPage}</div>
+		<button
+			class="bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
+			on:click={() => {
+				if (page < maxPage) {
+					page++;
+					reloadRefills();
+				}
+			}}>&gt;</button
+		>
 	</div>
 </div>

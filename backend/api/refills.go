@@ -40,6 +40,9 @@ func (s *Server) GetRefills(c echo.Context, params autogen.GetRefillsParams) err
 	if params.Page != nil {
 		page = *params.Page
 	}
+	if page > 0 {
+		page--
+	}
 
 	var size uint64 = 10
 	if params.Limit != nil {
@@ -67,7 +70,15 @@ func (s *Server) GetRefills(c echo.Context, params autogen.GetRefillsParams) err
 	}
 
 	logrus.Infof("Refills have been retrieved by %s", adminID)
-	autogen.GetRefills200JSONResponse(refills).VisitGetRefillsResponse(c.Response())
+
+	page++
+	maxPage++
+	autogen.GetRefills200JSONResponse{
+		Refills: &refills,
+		Limit:   &size,
+		Page:    &page,
+		MaxPage: &maxPage,
+	}.VisitGetRefillsResponse(c.Response())
 	return nil
 }
 

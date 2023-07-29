@@ -621,6 +621,37 @@ export interface GetDeletedTransactions200Response {
 /**
  * 
  * @export
+ * @interface GetRefills200Response
+ */
+export interface GetRefills200Response {
+    /**
+     * 
+     * @type {Array<Refill>}
+     * @memberof GetRefills200Response
+     */
+    'refills'?: Array<Refill>;
+    /**
+     * 
+     * @type {number}
+     * @memberof GetRefills200Response
+     */
+    'page'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof GetRefills200Response
+     */
+    'limit'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof GetRefills200Response
+     */
+    'max_page'?: number;
+}
+/**
+ * 
+ * @export
  * @interface GetSelfRefills200Response
  */
 export interface GetSelfRefills200Response {
@@ -5473,7 +5504,7 @@ export const RefillsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getRefills(page?: number, limit?: number, startDate?: string, endDate?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Refill>>> {
+        async getRefills(page?: number, limit?: number, startDate?: string, endDate?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetRefills200Response>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getRefills(page, limit, startDate, endDate, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -5556,7 +5587,7 @@ export const RefillsApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getRefills(page?: number, limit?: number, startDate?: string, endDate?: string, options?: any): AxiosPromise<Array<Refill>> {
+        getRefills(page?: number, limit?: number, startDate?: string, endDate?: string, options?: any): AxiosPromise<GetRefills200Response> {
             return localVarFp.getRefills(page, limit, startDate, endDate, options).then((request) => request(axios, basePath));
         },
         /**

@@ -187,6 +187,8 @@ func (s *Server) GetAccountTransactions(c echo.Context, accountId autogen.UUID, 
 		transactions[i] = transaction.Transaction
 	}
 
+	maxPage++
+	page++
 	autogen.GetAccountTransactions200JSONResponse{
 		Transactions: &transactions,
 		Limit:        &limit,
@@ -250,6 +252,8 @@ func (s *Server) GetCurrentAccountTransactions(c echo.Context, params autogen.Ge
 		transactions[i] = transaction.Transaction
 	}
 
+	maxPage++
+	page++
 	autogen.GetCurrentAccountTransactions200JSONResponse{
 		Transactions: &transactions,
 		Limit:        &limit,
@@ -569,6 +573,7 @@ func (s *Server) GetTransactions(c echo.Context, params autogen.GetTransactionsP
 		transactions[i] = transaction.Transaction
 	}
 
+	page++
 	autogen.GetTransactions200JSONResponse{
 		Transactions: &transactions,
 		Limit:        &limit,
