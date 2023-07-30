@@ -58,6 +58,7 @@
 					<div class="flex flex-col">
 						<div class="text-sm">{new Date(refill.issued_at * 1000).toLocaleString()}</div>
 						<div class="text-lg font-semibold">à : {refill.account_name}</div>
+						<div class="text-sm">de : {refill.issued_by_name}</div>
 						{#if refill.canceled_by}
 							<div class="text-sm">Annulé par : {refill.canceled_by_name}</div>
 						{/if}
