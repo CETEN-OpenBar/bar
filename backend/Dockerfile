@@ -6,7 +6,7 @@ RUN --mount=type=ssh go mod download && go mod verify
 COPY . .
 RUN go build -o /app/bar /app/cmd/bar/main.go
 
-FROM scratch
+FROM alpine
 COPY --from=backend /app/bar .
 USER 1000
 ENTRYPOINT ["/bar"]
