@@ -167,6 +167,7 @@ func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 		if err == mongo.ErrNoDocuments {
 			return ErrorAccNotFound(c)
 		}
+		logrus.Error(err)
 		return Error500(c)
 	}
 
@@ -186,6 +187,7 @@ func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 
 	token, err := oauth2Config.Exchange(c.Request().Context(), params.Code)
 	if err != nil {
+		logrus.Error(err)
 		return Error500(c)
 	}
 
@@ -193,6 +195,7 @@ func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 	client := oauth2Config.Client(c.Request().Context(), token)
 	resp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
 	if err != nil {
+		logrus.Error(err)
 		return Error500(c)
 	}
 	defer resp.Body.Close()
@@ -200,21 +203,25 @@ func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 	usr := &googleUser{}
 	err = json.NewDecoder(resp.Body).Decode(usr)
 	if err != nil {
+		logrus.Error(err)
 		return Error500(c)
 	}
 
 	adminService, err := admin.NewService(c.Request().Context(), option.WithTokenSource(oauth2Config.TokenSource(c.Request().Context(), token)))
 	if err != nil {
+		logrus.Error(err)
 		return Error500(c)
 	}
 
 	t, err := adminService.Users.Get(usr.ID).Projection("custom").CustomFieldMask("Education").ViewType("domain_public").Do()
 	if err != nil {
+		logrus.Error(err)
 		return Error500(c)
 	}
 	edc := &education{}
 	err = json.Unmarshal(t.CustomSchemas["Education"], edc)
 	if err != nil {
+		logrus.Error(err)
 		return Error500(c)
 	}
 
@@ -226,6 +233,7 @@ func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 
 	err = s.DBackend.UpdateAccount(c.Request().Context(), account)
 	if err != nil {
+		logrus.Error(err)
 		return Error500(c)
 	}
 
@@ -256,6 +264,7 @@ func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams
 
 	token, err := oauth2Config.Exchange(c.Request().Context(), params.Code)
 	if err != nil {
+		logrus.Error(err)
 		return Error500(c)
 	}
 
@@ -263,6 +272,7 @@ func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams
 	client := oauth2Config.Client(c.Request().Context(), token)
 	resp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
 	if err != nil {
+		logrus.Error(err)
 		return Error500(c)
 	}
 	defer resp.Body.Close()
@@ -270,6 +280,7 @@ func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams
 	usr := &googleUser{}
 	err = json.NewDecoder(resp.Body).Decode(usr)
 	if err != nil {
+		logrus.Error(err)
 		return Error500(c)
 	}
 
@@ -278,21 +289,25 @@ func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams
 		if err == mongo.ErrNoDocuments {
 			return ErrorAccNotFound(c)
 		}
+		logrus.Error(err)
 		return Error500(c)
 	}
 
 	adminService, err := admin.NewService(c.Request().Context(), option.WithTokenSource(oauth2Config.TokenSource(c.Request().Context(), token)))
 	if err != nil {
+		logrus.Error(err)
 		return Error500(c)
 	}
 
 	t, err := adminService.Users.Get(usr.ID).Projection("custom").CustomFieldMask("Education").ViewType("domain_public").Do()
 	if err != nil {
+		logrus.Error(err)
 		return Error500(c)
 	}
 	edc := &education{}
 	err = json.Unmarshal(t.CustomSchemas["Education"], edc)
 	if err != nil {
+		logrus.Error(err)
 		return Error500(c)
 	}
 
@@ -304,6 +319,7 @@ func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams
 
 	err = s.DBackend.UpdateAccount(c.Request().Context(), account)
 	if err != nil {
+		logrus.Error(err)
 		return Error500(c)
 	}
 
