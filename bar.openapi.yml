@@ -8,6 +8,7 @@ info:
 servers:
   - url: http://localhost:8080
   - url: https://le-bar.telecomnancy.net/api/v1
+  - url: https://bar.yewolf.fr/api
 tags:
   - name: auth
     description: Related to user's authentication
