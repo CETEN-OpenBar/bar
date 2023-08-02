@@ -164,27 +164,6 @@ export type AccountState = typeof AccountState[keyof typeof AccountState];
 /**
  * 
  * @export
- * @interface Callback200Response
- */
-export interface Callback200Response {
-    /**
-     * 
-     * @type {Messages}
-     * @memberof Callback200Response
-     */
-    'message'?: Messages;
-    /**
-     * 
-     * @type {Account}
-     * @memberof Callback200Response
-     */
-    'account'?: Account;
-}
-
-
-/**
- * 
- * @export
  * @interface CarouselImage
  */
 export interface CarouselImage {
@@ -309,6 +288,27 @@ export interface Category {
 /**
  * 
  * @export
+ * @interface ConnectCard200Response
+ */
+export interface ConnectCard200Response {
+    /**
+     * 
+     * @type {Messages}
+     * @memberof ConnectCard200Response
+     */
+    'message'?: Messages;
+    /**
+     * 
+     * @type {Account}
+     * @memberof ConnectCard200Response
+     */
+    'account'?: Account;
+}
+
+
+/**
+ * 
+ * @export
  * @interface ConnectCardRequest
  */
 export interface ConnectCardRequest {
@@ -347,6 +347,27 @@ export const ErrorCodes = {
 } as const;
 
 export type ErrorCodes = typeof ErrorCodes[keyof typeof ErrorCodes];
+
+
+/**
+ * 
+ * @export
+ * @interface GetAccountAdmin200Response
+ */
+export interface GetAccountAdmin200Response {
+    /**
+     * 
+     * @type {Messages}
+     * @memberof GetAccountAdmin200Response
+     */
+    'message'?: Messages;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof GetAccountAdmin200Response
+     */
+    'is_allowed': boolean;
+}
 
 
 /**
@@ -1743,7 +1764,7 @@ export const AccountsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getAccount(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Callback200Response>> {
+        async getAccount(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConnectCard200Response>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getAccount(options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -1798,7 +1819,7 @@ export const AccountsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async patchAccount(patchAccountRequest?: PatchAccountRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Callback200Response>> {
+        async patchAccount(patchAccountRequest?: PatchAccountRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConnectCard200Response>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.patchAccount(patchAccountRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -1841,7 +1862,7 @@ export const AccountsApiFactory = function (configuration?: Configuration, baseP
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAccount(options?: any): AxiosPromise<Callback200Response> {
+        getAccount(options?: any): AxiosPromise<ConnectCard200Response> {
             return localVarFp.getAccount(options).then((request) => request(axios, basePath));
         },
         /**
@@ -1891,7 +1912,7 @@ export const AccountsApiFactory = function (configuration?: Configuration, baseP
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        patchAccount(patchAccountRequest?: PatchAccountRequest, options?: any): AxiosPromise<Callback200Response> {
+        patchAccount(patchAccountRequest?: PatchAccountRequest, options?: any): AxiosPromise<ConnectCard200Response> {
             return localVarFp.patchAccount(patchAccountRequest, options).then((request) => request(axios, basePath));
         },
         /**
@@ -2147,10 +2168,13 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
         /**
          * Connect account to Google
          * @summary 
+         * @param {string} r Redirect to this url after connecting
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        connectGoogle: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        connectGoogle: async (r: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'r' is not null or undefined
+            assertParamExists('connectGoogle', 'r', r)
             const localVarPath = `/auth/google`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -2162,6 +2186,10 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            if (r !== undefined) {
+                localVarQueryParameter['r'] = r;
+            }
 
 
     
@@ -2260,7 +2288,7 @@ export const AuthApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async callback(code: string, state: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Callback200Response>> {
+        async callback(code: string, state: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.callback(code, state, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -2282,18 +2310,19 @@ export const AuthApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async connectCard(connectCardRequest?: ConnectCardRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Callback200Response>> {
+        async connectCard(connectCardRequest?: ConnectCardRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConnectCard200Response>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.connectCard(connectCardRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Connect account to Google
          * @summary 
+         * @param {string} r Redirect to this url after connecting
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async connectGoogle(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.connectGoogle(options);
+        async connectGoogle(r: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.connectGoogle(r, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -2335,7 +2364,7 @@ export const AuthApiFactory = function (configuration?: Configuration, basePath?
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        callback(code: string, state: string, options?: any): AxiosPromise<Callback200Response> {
+        callback(code: string, state: string, options?: any): AxiosPromise<void> {
             return localVarFp.callback(code, state, options).then((request) => request(axios, basePath));
         },
         /**
@@ -2355,17 +2384,18 @@ export const AuthApiFactory = function (configuration?: Configuration, basePath?
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        connectCard(connectCardRequest?: ConnectCardRequest, options?: any): AxiosPromise<Callback200Response> {
+        connectCard(connectCardRequest?: ConnectCardRequest, options?: any): AxiosPromise<ConnectCard200Response> {
             return localVarFp.connectCard(connectCardRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Connect account to Google
          * @summary 
+         * @param {string} r Redirect to this url after connecting
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        connectGoogle(options?: any): AxiosPromise<void> {
-            return localVarFp.connectGoogle(options).then((request) => request(axios, basePath));
+        connectGoogle(r: string, options?: any): AxiosPromise<void> {
+            return localVarFp.connectGoogle(r, options).then((request) => request(axios, basePath));
         },
         /**
          * Get the QR code to connect account to Google
@@ -2436,12 +2466,13 @@ export class AuthApi extends BaseAPI {
     /**
      * Connect account to Google
      * @summary 
+     * @param {string} r Redirect to this url after connecting
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuthApi
      */
-    public connectGoogle(options?: AxiosRequestConfig) {
-        return AuthApiFp(this.configuration).connectGoogle(options).then((request) => request(this.axios, this.basePath));
+    public connectGoogle(r: string, options?: AxiosRequestConfig) {
+        return AuthApiFp(this.configuration).connectGoogle(r, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3390,6 +3421,36 @@ export class CategoriesApi extends BaseAPI {
 export const DefaultApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
+         * Check if the current account can access the admin panel
+         * @summary 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAccountAdmin: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/account/admin`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Websocket to listen for scan & callback (for cool animations)
          * @summary 
          * @param {*} [options] Override http request option.
@@ -3430,6 +3491,16 @@ export const DefaultApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = DefaultApiAxiosParamCreator(configuration)
     return {
         /**
+         * Check if the current account can access the admin panel
+         * @summary 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getAccountAdmin(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAccountAdmin200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAccountAdmin(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * Websocket to listen for scan & callback (for cool animations)
          * @summary 
          * @param {*} [options] Override http request option.
@@ -3450,6 +3521,15 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
     const localVarFp = DefaultApiFp(configuration)
     return {
         /**
+         * Check if the current account can access the admin panel
+         * @summary 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAccountAdmin(options?: any): AxiosPromise<GetAccountAdmin200Response> {
+            return localVarFp.getAccountAdmin(options).then((request) => request(axios, basePath));
+        },
+        /**
          * Websocket to listen for scan & callback (for cool animations)
          * @summary 
          * @param {*} [options] Override http request option.
@@ -3468,6 +3548,17 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
  * @extends {BaseAPI}
  */
 export class DefaultApi extends BaseAPI {
+    /**
+     * Check if the current account can access the admin panel
+     * @summary 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getAccountAdmin(options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getAccountAdmin(options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * Websocket to listen for scan & callback (for cool animations)
      * @summary 

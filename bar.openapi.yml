@@ -82,17 +82,13 @@ paths:
           schema:
             type: string
       responses:
-        '200':
-          description: 'Successfully connected'
-          content:
-            application/json:
+        '301':
+          description: 'Redirect to the correct endpoint'
+          headers:
+            Location:
+              description: 'Redirect to the correct endpoint'
               schema:
-                type: object
-                properties:
-                  message:
-                    $ref: '#/components/schemas/Messages'
-                  account:
-                    $ref: '#/components/schemas/Account'
+                type: string
         '500':
           description: 'Internal server error'
           content:
@@ -107,6 +103,13 @@ paths:
       summary: ''
       description: Connect account to Google
       operationId: connectGoogle
+      parameters:
+        - name: r
+          in: query
+          description: Redirect to this url after connecting
+          required: true
+          schema:
+            type: string
       responses:
         '301':
           description: 'Redirect to the google oauth page'
@@ -376,6 +379,49 @@ paths:
         - auth: []
       tags:
         - accounts
+  /account/admin:
+    get:
+      description: Check if the current account can access the admin panel
+      summary: ''
+      operationId: getAccountAdmin
+      responses:
+        '200':
+          description: Successfully got account's info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    $ref: '#/components/schemas/Messages'
+                  is_allowed:
+                    type: boolean
+                required:
+                  - is_allowed
+        '401':
+          description: 'Not connected'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: 'Account not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '409':
+          description: 'Conflict'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
   /accounts:
     description: Get all accounts informations
     get:

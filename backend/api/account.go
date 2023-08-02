@@ -351,3 +351,18 @@ func (s *Server) ImportAccounts(c echo.Context) error {
 	}.VisitImportAccountsResponse(c.Response())
 	return nil
 }
+
+// (GET /account/admin)
+func (s *Server) GetAccountAdmin(ctx echo.Context) error {
+	logged := ctx.Get("adminLogged").(bool)
+	if !logged {
+		return ErrorNotAuthenticated(ctx)
+	}
+
+	// Return account
+	resp := autogen.GetAccountAdmin200JSONResponse{
+		IsAllowed: true,
+	}
+	resp.VisitGetAccountAdminResponse(ctx.Response())
+	return nil
+}

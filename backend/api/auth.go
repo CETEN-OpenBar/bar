@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"image/color"
+	"net/http"
 	"strings"
 	"time"
 
@@ -24,6 +25,7 @@ import (
 
 var qrCache = cache.New(5*time.Minute, 10*time.Minute)
 var stateCache = cache.New(5*time.Minute, 10*time.Minute)
+var redirectCache = cache.New(5*time.Minute, 10*time.Minute)
 
 // (GET /account/qr)
 func (s *Server) GetAccountQR(c echo.Context) error {
@@ -129,6 +131,7 @@ func (s *Server) ConnectAccount(c echo.Context, qrNonce string) error {
 
 	// Cache state
 	stateCache.Set(state, accountID, cache.DefaultExpiration)
+	redirectCache.Set(state, conf.ApiConfig.FrontendBasePath+"/borne/connected", cache.DefaultExpiration)
 
 	hostDomainOption := oauth2.SetAuthURLParam("hd", "telecomnancy.net")
 	// Redirect to Google
@@ -239,15 +242,18 @@ func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 
 	BroadcastToRoom(accountID.(string), []byte("connected"))
 
-	autogen.Callback200JSONResponse{
-		Account: &account.Account,
-	}.VisitCallbackResponse(c.Response())
-	return nil
+	r, found := redirectCache.Get(params.State)
+	if !found {
+		return Error500(c)
+	}
+	redirectCache.Delete(params.State)
+
+	s.SetCookie(c, account)
+	return c.Redirect(http.StatusPermanentRedirect, r.(string))
 }
 
 // (GET /auth/google/callback)
 func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams) error {
-
 	conf := config.GetConfig()
 
 	// Get token from Google
@@ -323,12 +329,15 @@ func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams
 		return Error500(c)
 	}
 
-	s.SetCookie(c, account)
+	r, found := redirectCache.Get(params.State)
+	if !found {
+		logrus.Error("no redirect found")
+		return Error500(c)
+	}
+	redirectCache.Delete(params.State)
 
-	autogen.Callback200JSONResponse{
-		Account: &account.Account,
-	}.VisitCallbackResponse(c.Response())
-	return nil
+	s.SetCookie(c, account)
+	return c.Redirect(http.StatusPermanentRedirect, r.(string))
 }
 
 // (POST /auth/card)
@@ -365,8 +374,16 @@ func (s *Server) ConnectCard(c echo.Context) error {
 }
 
 // (GET /auth/google)
-func (s *Server) ConnectGoogle(c echo.Context) error {
+func (s *Server) ConnectGoogle(c echo.Context, p autogen.ConnectGoogleParams) error {
 	conf := config.GetConfig()
+
+	// Get ?r=
+	redirect := p.R
+
+	// Check if it's a safe redirect (TODO: check if this is correct)
+	if strings.HasPrefix(redirect, conf.ApiConfig.FrontendBasePath) {
+		redirectCache.Set(redirect, true, cache.DefaultExpiration)
+	}
 
 	// Init OAuth2 flow with Google
 	oauth2Config := oauth2.Config{
@@ -383,11 +400,13 @@ func (s *Server) ConnectGoogle(c echo.Context) error {
 	// state is not nonce
 	state := uuid.NewString()
 
+	redirectCache.Set(state, redirect, cache.DefaultExpiration)
+
 	hostDomainOption := oauth2.SetAuthURLParam("hd", "telecomnancy.net")
 	// Redirect to Google
 	url := oauth2Config.AuthCodeURL(state, oauth2.AccessTypeOffline, hostDomainOption)
 
-	return c.Redirect(301, url)
+	return c.Redirect(http.StatusTemporaryRedirect, url)
 }
 
 // (GET /logout)
