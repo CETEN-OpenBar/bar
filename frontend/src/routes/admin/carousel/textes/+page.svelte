@@ -21,14 +21,6 @@
 			});
 	});
 
-	function handleSelectCarouselText(carouselText: CarouselText) {
-		if (selectedCarouselTexts.includes(carouselText)) {
-			selectedCarouselTexts = selectedCarouselTexts.filter((ct) => ct.id !== carouselText.id);
-		} else {
-			selectedCarouselTexts = [...selectedCarouselTexts, carouselText];
-		}
-	}
-
 	function createNewCarouselText() {
 		carouselApi()
 			.addCarouselText(newText, { withCredentials: true })
@@ -204,11 +196,6 @@
 					<table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
 						<thead class="bg-gray-50 dark:bg-slate-800">
 							<tr>
-								<th scope="col" class="pl-6 py-3 text-left">
-									<label for="hs-at-with-checkboxes-main" class="flex">
-										<span class="sr-only">Checkbox</span>
-									</label>
-								</th>
 
 								<th scope="col" class="px-6 py-3 text-left">
 									<div class="flex items-center gap-x-2">
@@ -237,19 +224,6 @@
 						<tbody class="divide-y divide-gray-200 dark:divide-gray-700">
 							{#each carouselTexts.slice(page * textsPerPage, (page + 1) * textsPerPage) as carouselText}
 								<tr>
-									<td class="h-px w-px whitespace-nowrap">
-										<div class="pl-6 py-3">
-											<label for="hs-at-with-checkboxes-1" class="flex">
-												<input
-													type="checkbox"
-													class="shrink-0 border-gray-200 rounded text-blue-600 pointer-events-none focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
-													id="hs-at-with-checkboxes-1"
-													on:click={() => handleSelectCarouselText(carouselText)}
-												/>
-												<span class="sr-only">Checkbox</span>
-											</label>
-										</div>
-									</td>
 									<td class="h-px w-72">
 										<div class="px-6 py-3">
 											<p class="block text-sm text-gray-500 break-words">{carouselText.text}</p>
