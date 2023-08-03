@@ -16,7 +16,7 @@
 		const carouselTextRoll = document.querySelector('.carousel-texts-roll');
 		if (!carouselTextRoll) return;
 		const carouselTextRollLength = carouselTextRoll.clientWidth;
-		const carouselTextRollDuration = carouselTextRollLength / 200;
+		const carouselTextRollDuration = Math.pow(carouselTextRollLength / window.innerWidth, 2) * 10;
 		// @ts-ignore
 		carouselTextRoll.style.animationDuration = `${carouselTextRollDuration}s`;
 	});

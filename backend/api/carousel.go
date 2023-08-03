@@ -23,15 +23,11 @@ func (s *Server) GetCarouselImages(c echo.Context) error {
 		return Error500(c)
 	}
 
-	var images []autogen.CarouselImage
+	var images = make([]autogen.CarouselImage, 0)
 
 	for _, image := range data {
 		images = append(images, image.CarouselImage)
 	}
-
-	// Caching for 10 minutes
-	c.Response().Header().Set("Cache-Control", "max-age=600")
-	c.Response().Header().Set("Expires", "600")
 
 	// Return carousel images
 	autogen.GetCarouselImages200JSONResponse(images).VisitGetCarouselImagesResponse(c.Response())
@@ -100,9 +96,6 @@ func (s *Server) GetCarouselImage(c echo.Context, imageId autogen.UUID) error {
 	_, err := s.DBackend.GetCarouselImage(c.Request().Context(), imageId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			// Remove cache
-			c.Response().Header().Set("Cache-Control", "max-age=0")
-			c.Response().Header().Set("Expires", "0")
 			return ErrorImageNotFound(c)
 		}
 		logrus.Error(err)
@@ -157,15 +150,11 @@ func (s *Server) GetCarouselTexts(c echo.Context) error {
 		return Error500(c)
 	}
 
-	var texts []autogen.CarouselText
+	var texts = make([]autogen.CarouselText, 0)
 
 	for _, image := range data {
 		texts = append(texts, image.CarouselText)
 	}
-
-	// Caching for 10 minutes
-	c.Response().Header().Set("Cache-Control", "max-age=600")
-	c.Response().Header().Set("Expires", "600")
 
 	// Return carousel images
 	autogen.GetCarouselTexts200JSONResponse(texts).VisitGetCarouselTextsResponse(c.Response())

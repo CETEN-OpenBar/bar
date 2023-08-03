@@ -1,5 +1,6 @@
 <script>
 	import '../app.css';
+	import 'preline/dist/preline.js';
 	import { loadConfig } from '$lib/config/config';
 
 	let loading = true;

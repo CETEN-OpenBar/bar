@@ -1483,6 +1483,38 @@ export const AccountsApiAxiosParamCreator = function (configuration?: Configurat
             };
         },
         /**
+         * Check if the current account can access the admin panel
+         * @summary 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAccountAdmin: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/account/admin`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication auth required
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Get the account\'s information
          * @summary 
          * @param {string} accountId ID of the account
@@ -1769,6 +1801,16 @@ export const AccountsApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
+         * Check if the current account can access the admin panel
+         * @summary 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getAccountAdmin(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAccountAdmin200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAccountAdmin(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * Get the account\'s information
          * @summary 
          * @param {string} accountId ID of the account
@@ -1866,6 +1908,15 @@ export const AccountsApiFactory = function (configuration?: Configuration, baseP
             return localVarFp.getAccount(options).then((request) => request(axios, basePath));
         },
         /**
+         * Check if the current account can access the admin panel
+         * @summary 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAccountAdmin(options?: any): AxiosPromise<GetAccountAdmin200Response> {
+            return localVarFp.getAccountAdmin(options).then((request) => request(axios, basePath));
+        },
+        /**
          * Get the account\'s information
          * @summary 
          * @param {string} accountId ID of the account
@@ -1955,6 +2006,17 @@ export class AccountsApi extends BaseAPI {
      */
     public getAccount(options?: AxiosRequestConfig) {
         return AccountsApiFp(this.configuration).getAccount(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Check if the current account can access the admin panel
+     * @summary 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AccountsApi
+     */
+    public getAccountAdmin(options?: AxiosRequestConfig) {
+        return AccountsApiFp(this.configuration).getAccountAdmin(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3421,36 +3483,6 @@ export class CategoriesApi extends BaseAPI {
 export const DefaultApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * Check if the current account can access the admin panel
-         * @summary 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getAccountAdmin: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/account/admin`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
          * Websocket to listen for scan & callback (for cool animations)
          * @summary 
          * @param {*} [options] Override http request option.
@@ -3491,16 +3523,6 @@ export const DefaultApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = DefaultApiAxiosParamCreator(configuration)
     return {
         /**
-         * Check if the current account can access the admin panel
-         * @summary 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async getAccountAdmin(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAccountAdmin200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getAccountAdmin(options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
          * Websocket to listen for scan & callback (for cool animations)
          * @summary 
          * @param {*} [options] Override http request option.
@@ -3521,15 +3543,6 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
     const localVarFp = DefaultApiFp(configuration)
     return {
         /**
-         * Check if the current account can access the admin panel
-         * @summary 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getAccountAdmin(options?: any): AxiosPromise<GetAccountAdmin200Response> {
-            return localVarFp.getAccountAdmin(options).then((request) => request(axios, basePath));
-        },
-        /**
          * Websocket to listen for scan & callback (for cool animations)
          * @summary 
          * @param {*} [options] Override http request option.
@@ -3548,17 +3561,6 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
  * @extends {BaseAPI}
  */
 export class DefaultApi extends BaseAPI {
-    /**
-     * Check if the current account can access the admin panel
-     * @summary 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public getAccountAdmin(options?: AxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).getAccountAdmin(options).then((request) => request(this.axios, this.basePath));
-    }
-
     /**
      * Websocket to listen for scan & callback (for cool animations)
      * @summary 

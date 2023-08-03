@@ -422,6 +422,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPError'
+      security:
+        - auth: []
+      tags:
+        - accounts
   /accounts:
     description: Get all accounts informations
     get:
