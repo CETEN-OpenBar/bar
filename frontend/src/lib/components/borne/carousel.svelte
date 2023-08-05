@@ -9,17 +9,28 @@
 	export let texts: Array<CarouselText>;
 
 	let currentSlideIndex = 0;
+	let reloads = 0;
 
 	onMount(() => {
 		startAutoScroll();
+		reloadSpeed();
+	});
+
+	function reloadSpeed() {
 		// Change carousel-texts-roll animation duration to match the length of the text
 		const carouselTextRoll = document.querySelector('.carousel-texts-roll');
 		if (!carouselTextRoll) return;
 		const carouselTextRollLength = carouselTextRoll.clientWidth;
-		const carouselTextRollDuration = Math.pow(carouselTextRollLength / window.innerWidth, 2) * 10;
+		const carouselTextRollDuration = carouselTextRollLength * (90 / 8122);
+		console.log(carouselTextRollLength, carouselTextRollDuration);
 		// @ts-ignore
 		carouselTextRoll.style.animationDuration = `${carouselTextRollDuration}s`;
-	});
+		reloads++;
+		if (reloads > 4) return;
+		setTimeout(() => {
+			reloadSpeed();
+		}, 100*reloads);
+	}
 
 	function startAutoScroll() {
 		nextSlide();
@@ -52,13 +63,13 @@
 	<div class="carousel-images">
 		{#each images as image, i}
 			{#if i === currentSlideIndex}
-					<img
-						in:fly={{ x: -window.innerWidth, easing: customEasingIn, duration: 1000, opacity: 1 }}
-						out:fly={{ x: window.innerWidth, easing: customEasingOut, duration: 1000, opacity: 1 }}
-						src={api() + image.image_url}
-						alt="dommage"
-						class="w-full h-full object-cover"
-					/>
+				<img
+					in:fly={{ x: -window.innerWidth, easing: customEasingIn, duration: 1000, opacity: 1 }}
+					out:fly={{ x: window.innerWidth, easing: customEasingOut, duration: 1000, opacity: 1 }}
+					src={api() + image.image_url}
+					alt="dommage"
+					class="w-full h-full object-cover"
+				/>
 			{/if}
 		{/each}
 	</div>

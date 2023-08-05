@@ -10,8 +10,8 @@
 		color: ''
 	};
 
-    let page = 0;
-    let textsPerPage = 10;
+	let page = 0;
+	let textsPerPage = 10;
 
 	onMount(() => {
 		carouselApi()
@@ -33,7 +33,7 @@
 		carouselApi()
 			.markDeleteCarouselText(id, { withCredentials: true })
 			.then(() => {
-                carouselTexts = carouselTexts.filter((ct) => ct.id !== id);
+				carouselTexts = carouselTexts.filter((ct) => ct.id !== id);
 			});
 	}
 </script>
@@ -58,11 +58,10 @@
 
 				<div class="mt-5">
 					<!-- Form -->
-					<form>
-						<div class="grid gap-y-4">
-							<!-- Form Group -->
-							<div>
-								<!-- <label for="email" class="block text-sm mb-2 dark:text-white">Email address</label>
+					<div class="grid gap-y-4">
+						<!-- Form Group -->
+						<div>
+							<!-- <label for="email" class="block text-sm mb-2 dark:text-white">Email address</label>
 								<div class="relative">
 									<input
 										type="email"
@@ -93,52 +92,51 @@
 									Please include a valid email address so we can get back to you
 								</p> -->
 
-								<label for="text" class="block text-sm mb-2 dark:text-white">Texte</label>
-								<div class="relative">
-									<input
-										type="text"
-										id="text"
-										name="text"
-										class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-										required
-										aria-describedby="text-error"
-										bind:value={newText.text}
-									/>
+							<label for="text" class="block text-sm mb-2 dark:text-white">Texte</label>
+							<div class="relative">
+								<input
+									type="text"
+									id="text"
+									name="text"
+									class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+									required
+									aria-describedby="text-error"
+									bind:value={newText.text}
+								/>
 
-									<!-- select for color with basic css colors -->
-									<label for="color" class="block text-sm mb-2 dark:text-white">Couleur</label>
-									<select
-										id="color"
-										name="color"
-										class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-										required
-										aria-describedby="color-error"
-										bind:value={newText.color}
-									>
-										<option value="black">Noir</option>
-										<option value="white">Blanc</option>
-										<option value="red">Rouge</option>
-										<option value="blue">Bleu</option>
-										<option value="green">Vert</option>
-										<option value="yellow">Jaune</option>
-										<option value="orange">Orange</option>
-										<option value="purple">Violet</option>
-										<option value="pink">Rose</option>
-										<option value="brown">Marron</option>
-										<option value="gray">Gris</option>
-									</select>
-								</div>
-								<!-- End Form Group -->
-
-								<button
-									type="submit"
-									class="mt-4 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
-									on:click={() => createNewCarouselText()}
-									data-hs-overlay="#hs-modal-new-text">Créer</button
+								<!-- select for color with basic css colors -->
+								<label for="color" class="block text-sm mb-2 dark:text-white">Couleur</label>
+								<select
+									id="color"
+									name="color"
+									class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+									required
+									aria-describedby="color-error"
+									bind:value={newText.color}
 								>
+									<option value="black">Noir</option>
+									<option value="white">Blanc</option>
+									<option value="red">Rouge</option>
+									<option value="blue">Bleu</option>
+									<option value="green">Vert</option>
+									<option value="yellow">Jaune</option>
+									<option value="orange">Orange</option>
+									<option value="purple">Violet</option>
+									<option value="pink">Rose</option>
+									<option value="brown">Marron</option>
+									<option value="gray">Gris</option>
+								</select>
 							</div>
+							<!-- End Form Group -->
+
+							<button
+								type="submit"
+								class="mt-4 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
+								on:click={() => createNewCarouselText()}
+								data-hs-overlay="#hs-modal-new-text">Créer</button
+							>
 						</div>
-					</form>
+					</div>
 					<!-- End Form -->
 				</div>
 			</div>
@@ -196,7 +194,6 @@
 					<table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
 						<thead class="bg-gray-50 dark:bg-slate-800">
 							<tr>
-
 								<th scope="col" class="px-6 py-3 text-left">
 									<div class="flex items-center gap-x-2">
 										<span
@@ -259,7 +256,9 @@
 					>
 						<div>
 							<p class="text-sm text-gray-600 dark:text-gray-400">
-								<span class="font-semibold text-gray-800 dark:text-gray-200">{carouselTexts.length}</span> résultats
+								<span class="font-semibold text-gray-800 dark:text-gray-200"
+									>{carouselTexts.length}</span
+								> résultats
 							</p>
 						</div>
 
@@ -268,8 +267,10 @@
 								<button
 									type="button"
 									class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
-                                    on:click={() => {if (page > 0) page--}}
-                                    >
+									on:click={() => {
+										if (page > 0) page--;
+									}}
+								>
 									<svg
 										class="w-3 h-3"
 										xmlns="http://www.w3.org/2000/svg"
@@ -286,15 +287,17 @@
 									Précédent
 								</button>
 
-                                <p class="text-sm self-center text-gray-600 dark:text-gray-400">
-                                    Page {page + 1} / {Math.ceil(carouselTexts.length / textsPerPage)}
-                                </p>
+								<p class="text-sm self-center text-gray-600 dark:text-gray-400">
+									Page {page + 1} / {Math.ceil(carouselTexts.length / textsPerPage)}
+								</p>
 
 								<button
 									type="button"
 									class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
-                                    on:click={() => {if (page < Math.ceil(carouselTexts.length / textsPerPage)-1) page++}}
-                                    >
+									on:click={() => {
+										if (page < Math.ceil(carouselTexts.length / textsPerPage) - 1) page++;
+									}}
+								>
 									Suivant
 									<svg
 										class="w-3 h-3"

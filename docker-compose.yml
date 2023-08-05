@@ -1,24 +1,24 @@
 version: '3.5'
 
 services:
-  backend:
-    build:
-      dockerfile: Dockerfile
-      network: host
-      context: backend
-    ports:
-      - 9999:8080
-    env_file:
-      - backend/.env
-  frontend:
-    build:
-      dockerfile: Dockerfile
-      network: host
-      context: frontend
-    volumes:
-      - ./frontend/static/config.dev.json:/app/build/config.dev.json:ro
-    ports:
-      - 9998:3000
+  # backend:
+  #   build:
+  #     dockerfile: Dockerfile
+  #     network: host
+  #     context: backend
+  #   ports:
+  #     - 9999:8080
+  #   env_file:
+  #     - backend/.env
+  # frontend:
+  #   build:
+  #     dockerfile: Dockerfile
+  #     network: host
+  #     context: frontend
+  #   volumes:
+  #     - ./frontend/static/config.dev.json:/app/build/config.dev.json:ro
+  #   ports:
+  #     - 9998:3000
   mongo:
     image: mongo
     restart: always
