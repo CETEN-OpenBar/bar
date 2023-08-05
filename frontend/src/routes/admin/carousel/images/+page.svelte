@@ -5,7 +5,6 @@
 	import { onMount } from 'svelte';
 
 	let carouselImages: CarouselImage[] = [];
-	let selectedCarouselImages: CarouselImage[] = [];
 	let newImage: File | null = null;
 
 	let page = 0;
@@ -51,7 +50,7 @@
 			<div class="p-4 sm:p-7">
 				<div class="text-center">
 					<h2 class="block text-2xl font-bold text-gray-800 dark:text-gray-200">
-						Ajouter un image
+						Ajouter une image
 					</h2>
 				</div>
 
@@ -163,7 +162,7 @@
 											stroke-linecap="round"
 										/>
 									</svg>
-									Ajouter un image
+									Ajouter une image
 								</button>
 							</div>
 						</div>

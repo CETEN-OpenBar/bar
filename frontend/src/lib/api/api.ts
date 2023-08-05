@@ -797,6 +797,12 @@ export interface Item {
      * @type {number}
      * @memberof Item
      */
+    'display_price'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof Item
+     */
     'promotion'?: number;
     /**
      * 

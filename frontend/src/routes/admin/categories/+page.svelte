@@ -1,45 +1,88 @@
 <script lang="ts">
-	import type { CarouselText, CarouselTextCreate } from '$lib/api';
-	import { carouselApi } from '$lib/requests/requests';
+	import type { Category, NewCategory } from '$lib/api';
+	import { api } from '$lib/config/config';
+	import { categoriesApi } from '$lib/requests/requests';
 	import { onMount } from 'svelte';
 
-	let carouselTexts: CarouselText[] = [];
-	let newText: CarouselTextCreate = {
-		text: '',
-		color: ''
+	let categories: Category[] = [];
+	let selectedCategories: Category[] = [];
+	let newCategory: NewCategory = {
+		name: '',
+		picture: ''
 	};
 
 	let page = 0;
-	let textsPerPage = 10;
+	let categoriesPerPage = 10;
 
 	onMount(() => {
-		carouselApi()
-			.getCarouselTexts({ withCredentials: true })
+		categoriesApi()
+			.getCategories({ withCredentials: true })
 			.then((res) => {
-				carouselTexts = res.data;
+				categories = res.data ?? [];
 			});
 	});
 
-	function createNewCarouselText() {
-		carouselApi()
-			.addCarouselText(newText, { withCredentials: true })
+	function createNewCategory() {
+		if (!newCategory) return;
+		categoriesApi()
+			.postCategory(newCategory, { withCredentials: true })
 			.then((res) => {
-				carouselTexts = [...carouselTexts, res.data];
+				categories = [...categories, res.data];
 			});
 	}
 
-	function deleteCarouselText(id: string) {
-		carouselApi()
-			.markDeleteCarouselText(id, { withCredentials: true })
-			.then(() => {
-				carouselTexts = carouselTexts.filter((ct) => ct.id !== id);
+	function renameCategory(id: string, newName: string) {
+		if (!newCategory) return;
+		categoriesApi()
+			.patchCategory(id, { name: newName }, { withCredentials: true })
+			.then((res) => {
+				categories = categories.map((ct) => {
+					if (ct.id === id) {
+						ct.name = newName;
+					}
+					return ct;
+				});
 			});
 	}
+
+	function reuploadCategoryPicture(id: string, file: File) {
+		if (!newCategory) return;
+		file2Base64(file).then((base64) => {
+			base64 = base64.replace('data:', '').replace(/^.+,/, '');
+			categoriesApi()
+				.patchCategory(id, { picture: base64 }, { withCredentials: true })
+				.then((res) => {
+					categories = categories.map((ct) => {
+						if (ct.id === id) {
+							ct.picture_uri= res.data.picture_uri+"?"+Math.random();
+						}
+						return ct;
+					});
+				});
+		});
+	}
+
+	function deleteCategory(id: string) {
+		categoriesApi()
+			.markDeleteCategory(id, { withCredentials: true })
+			.then(() => {
+				categories = categories.filter((ct) => ct.id !== id);
+			});
+	}
+
+	const file2Base64 = (file: File): Promise<string> => {
+		return new Promise<string>((resolve, reject) => {
+			const reader = new FileReader();
+			reader.readAsDataURL(file);
+			reader.onload = () => resolve(reader.result?.toString() || '');
+			reader.onerror = (error) => reject(error);
+		});
+	};
 </script>
 
 <!-- Popup -->
 <div
-	id="hs-modal-new-text"
+	id="hs-modal-new-image"
 	class="hs-overlay hidden w-full h-full fixed top-0 left-0 z-[60] overflow-x-hidden overflow-y-auto"
 >
 	<div
@@ -51,7 +94,7 @@
 			<div class="p-4 sm:p-7">
 				<div class="text-center">
 					<h2 class="block text-2xl font-bold text-gray-800 dark:text-gray-200">
-						Ajouter un texte
+						Ajouter une catégorie
 					</h2>
 				</div>
 
@@ -60,79 +103,47 @@
 					<div class="grid gap-y-4">
 						<!-- Form Group -->
 						<div>
-							<!-- <label for="email" class="block text-sm mb-2 dark:text-white">Email address</label>
-								<div class="relative">
-									<input
-										type="email"
-										id="email"
-										name="email"
-										class="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-										required
-										aria-describedby="email-error"
-									/>
-									<div
-										class="hidden absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3"
-									>
-										<svg
-											class="h-5 w-5 text-red-500"
-											width="16"
-											height="16"
-											fill="currentColor"
-											viewBox="0 0 16 16"
-											aria-hidden="true"
-										>
-											<path
-												d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"
-											/>
-										</svg>
-									</div>
-								</div>
-								<p class="hidden text-xs text-red-600 mt-2" id="email-error">
-									Please include a valid email address so we can get back to you
-								</p> -->
-
-							<label for="text" class="block text-sm mb-2 dark:text-white">Texte</label>
+							<!-- name -->
+							<label for="name" class="block text-sm mb-2 dark:text-white">Nom</label>
 							<div class="relative">
 								<input
 									type="text"
-									id="text"
-									name="text"
+									id="name"
+									name="name"
+									placeholder="Nom de la catégorie"
 									class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
 									required
 									aria-describedby="text-error"
-									bind:value={newText.text}
+									bind:value={newCategory.name}
 								/>
+							</div>
 
-								<!-- select for color with basic css colors -->
-								<label for="color" class="block text-sm mb-2 dark:text-white">Couleur</label>
-								<select
-									id="color"
-									name="color"
+							<label for="image" class="block text-sm mb-2 dark:text-white">Image</label>
+							<div class="relative">
+								<input
+									type="file"
+									id="image"
+									name="image"
+									accept=".jpg, .jpeg, .png"
 									class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
 									required
-									aria-describedby="color-error"
-									bind:value={newText.color}
-								>
-									<option value="black">Noir</option>
-									<option value="white">Blanc</option>
-									<option value="red">Rouge</option>
-									<option value="blue">Bleu</option>
-									<option value="green">Vert</option>
-									<option value="yellow">Jaune</option>
-									<option value="orange">Orange</option>
-									<option value="purple">Violet</option>
-									<option value="pink">Rose</option>
-									<option value="brown">Marron</option>
-									<option value="gray">Gris</option>
-								</select>
+									aria-describedby="text-error"
+									on:change={(e) => {
+										// @ts-ignore
+										let file = e.target?.files[0];
+										file2Base64(file).then((res) => {
+											res = res.replace('data:', '').replace(/^.+,/, '');
+											newCategory.picture = res;
+										});
+									}}
+								/>
 							</div>
-							<!-- End Form Group -->
 
 							<button
 								type="submit"
 								class="mt-4 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
-								on:click={() => createNewCarouselText()}
-								data-hs-overlay="#hs-modal-new-text">Créer</button
+								on:click={() => createNewCategory()}
+								data-hs-overlay="#hs-modal-new-image">Créer</button
 							>
 						</div>
 					</div>
@@ -157,15 +168,15 @@
 						class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-b border-gray-200 dark:border-gray-700"
 					>
 						<div>
-							<h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Textes</h2>
-							<p class="text-sm text-gray-600 dark:text-gray-400">Ajouter des textes au carousel</p>
+							<h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Catégories</h2>
+							<p class="text-sm text-gray-600 dark:text-gray-400">Ajouter des catégories</p>
 						</div>
 
 						<div>
 							<div class="inline-flex gap-x-2">
 								<button
 									class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
-									data-hs-overlay="#hs-modal-new-text"
+									data-hs-overlay="#hs-modal-new-image"
 								>
 									<svg
 										class="w-3 h-3"
@@ -182,7 +193,7 @@
 											stroke-linecap="round"
 										/>
 									</svg>
-									Ajouter un texte
+									Ajouter une catégorie
 								</button>
 							</div>
 						</div>
@@ -198,17 +209,16 @@
 										<span
 											class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 										>
-											Texte
+											Nom
 										</span>
 									</div>
 								</th>
-
 								<th scope="col" class="px-6 py-3 text-left">
 									<div class="flex items-center gap-x-2">
 										<span
 											class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 										>
-											Couleur
+											Image
 										</span>
 									</div>
 								</th>
@@ -218,26 +228,59 @@
 						</thead>
 
 						<tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-							{#each carouselTexts.slice(page * textsPerPage, (page + 1) * textsPerPage) as carouselText}
+							{#each categories.slice(page * categoriesPerPage, (page + 1) * categoriesPerPage) as category}
 								<tr>
 									<td class="h-px w-72">
 										<div class="px-6 py-3">
-											<p class="block text-sm text-gray-500 break-words">{carouselText.text}</p>
+											<!-- <p class="block text-sm text-gray-500 break-words">{category.name}</p> -->
+
+											<!-- editable p -->
+
+											<input
+												type="text"
+												class="block text-sm text-white/[.8] active:text-white break-words p-2 bg-transparent"
+												value={category.name}
+												on:input={(e) => {
+													// @ts-ignore
+													let name = e.target?.value;
+													renameCategory(category.id, name);
+												}}
+											/>
 										</div>
 									</td>
-									<td class="h-px w-px whitespace-nowrap">
-										<div class="px-6 py-3">
-											<p
-												class="inline-flex items-center gap-1.5 py-2.5 px-5 rounded-full text-xs font-medium border-2 border-black"
-												style="background-color: {carouselText.color};"
+									<td class="h-px w-72">
+										<!-- Display a miniature of the image -->
+										<div class="px-6 py-3 w-24 relative">
+											<!-- <img
+												src={api() + category.picture_uri}
+												alt="indisponible"
+												class="w-full h-full rounded-md object-cover"
+											/> -->
+
+											<!-- input in front of the image to click & reupload -->
+											<input
+												type="file"
+												class="absolute w-[50%] h-[70%] opacity-0 cursor-pointer"
+												on:change={(e) => {
+													// @ts-ignore
+													let file = e.target?.files[0];
+													reuploadCategoryPicture(category.id, file);
+												}}
 											/>
+											{#if category.picture_uri != ''}
+												<img
+													src={api() + category.picture_uri}
+													alt="indisponible"
+													class="w-full h-full rounded-md object-cover"
+												/>
+											{/if}
 										</div>
 									</td>
 									<td class="h-px w-px whitespace-nowrap">
 										<div class="px-6 py-1.5">
 											<button
 												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
-												on:click={() => deleteCarouselText(carouselText.id)}
+												on:click={() => deleteCategory(category.id)}
 											>
 												Supprimer
 											</button>
@@ -256,7 +299,7 @@
 						<div>
 							<p class="text-sm text-gray-600 dark:text-gray-400">
 								<span class="font-semibold text-gray-800 dark:text-gray-200"
-									>{carouselTexts.length}</span
+									>{categories.length}</span
 								> résultats
 							</p>
 						</div>
@@ -287,14 +330,14 @@
 								</button>
 
 								<p class="text-sm self-center text-gray-600 dark:text-gray-400">
-									Page {page + 1} / {Math.ceil(carouselTexts.length / textsPerPage)}
+									Page {page + 1} / {Math.ceil(categories.length / categoriesPerPage)}
 								</p>
 
 								<button
 									type="button"
 									class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
 									on:click={() => {
-										if (page < Math.ceil(carouselTexts.length / textsPerPage) - 1) page++;
+										if (page < Math.ceil(categories.length / categoriesPerPage) - 1) page++;
 									}}
 								>
 									Suivant

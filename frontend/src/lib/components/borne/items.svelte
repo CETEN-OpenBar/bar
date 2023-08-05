@@ -78,7 +78,7 @@
 			>
 				<img class="w-full" src={api() + item.picture_uri} alt={item.name} />
 				<span class="text-lg font-bold">{item.name}</span>
-				<span class="text-sm">Prix: {formatPrice(item.price)}</span>
+				<span class="text-sm">Prix: {formatPrice(item.display_price??999)}</span>
 			</button>
 		{/each}
 	</div>

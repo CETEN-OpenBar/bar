@@ -3759,6 +3759,10 @@ components:
           type: integer
           format: uint64
           example: 1000
+        display_price:
+          type: integer
+          format: uint64
+          example: 1000
         promotion:
           type: integer
           format: uint64

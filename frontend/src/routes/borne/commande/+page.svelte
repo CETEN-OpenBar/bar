@@ -58,7 +58,7 @@
 			}
 			found.amount++;
 			order = newOrder;
-			orderPrice += item.price;
+			orderPrice += item.display_price??999;
 			return;
 		}
 
@@ -69,7 +69,7 @@
 		};
 		newOrder.push(newTItem);
 		order = newOrder;
-		orderPrice += item.price;
+		orderPrice += item.display_price??999;
 	};
 
 	function removeItem(item: NewTransactionItemWithItem, amount: number = 1) {
@@ -89,7 +89,7 @@
 				}
 
 				order = newOrder;
-				orderPrice -= amount * item.item.price;
+				orderPrice -= amount * (item.item.display_price??999);
 				return;
 			}
 		};
@@ -261,7 +261,7 @@
 									<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:plus" />
 								</button>
 							</div>
-							<span class="text-lg text-white">{formatPrice(item.item.price * item.amount)}</span>
+							<span class="text-lg text-white">{formatPrice((item.item.display_price??999) * item.amount)}</span>
 						</div>
 					{/each}
 				</div>

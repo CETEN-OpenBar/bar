@@ -4,7 +4,9 @@ import (
 	"bar/autogen"
 	"bar/internal/models"
 	"bar/internal/storage"
+	"crypto/sha1"
 	"encoding/base64"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -72,6 +74,8 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 	var items []autogen.Item
 
 	for _, item := range data {
+		var rp = item.RealPrice()
+		item.DisplayPrice = &rp
 		items = append(items, item.Item)
 	}
 
@@ -211,15 +215,12 @@ func (s *Server) PatchItem(c echo.Context, categoryId autogen.UUID, itemId autog
 			return Error400(c)
 		}
 
-		uid := uuid.New()
-
 		// Save image to storage
-		err = storage.SaveFile("items/"+uid.String(), d)
+		err = storage.SaveFile("items/"+item.Id.String(), d)
 		if err != nil {
 			logrus.Error(err)
 			return Error500(c)
 		}
-		item.PictureUri = "/categories/" + categoryId.String() + "/items/" + itemId.String() + "/picture"
 	}
 
 	if p.CategoryId != nil {
@@ -232,8 +233,13 @@ func (s *Server) PatchItem(c echo.Context, categoryId autogen.UUID, itemId autog
 		item.Price = *p.Price
 	}
 
-	item.Promotion = p.Promotion
-	item.PromotionEndsAt = p.PromotionEndsAt
+	if p.Promotion != nil {
+		item.Promotion = p.Promotion
+	}
+
+	if p.PromotionEndsAt != nil {
+		item.PromotionEndsAt = p.PromotionEndsAt
+	}
 
 	if p.State != nil {
 		item.State = *p.State
@@ -244,6 +250,9 @@ func (s *Server) PatchItem(c echo.Context, categoryId autogen.UUID, itemId autog
 	if p.BuyLimit != nil {
 		item.BuyLimit = *p.BuyLimit
 	}
+
+	var rp = item.RealPrice()
+	item.DisplayPrice = &rp
 
 	// Save item to database
 	err = s.DBackend.UpdateItem(c.Request().Context(), item)
@@ -283,8 +292,17 @@ func (s *Server) GetItemPicture(c echo.Context, categoryId autogen.UUID, itemId 
 		return Error500(c)
 	}
 
-	c.Response().Header().Set("Cache-Control", "max-age=86400")
-	c.Response().Header().Set("Expires", "86400")
+	c.Response().Header().Set("Cache-Control", "max-age: 0, must-revalidate")
+	c.Response().Header().Set("Expires", "0")
+
+	// ETag is sha1 of data
+	hash := sha1.Sum(data)
+	c.Response().Header().Set("ETag", fmt.Sprintf("%x", hash))
+	// Check "If-None-Match" header
+	if c.Request().Header.Get("If-None-Match") == fmt.Sprintf("%x", hash) {
+		c.Response().WriteHeader(http.StatusNotModified)
+		return nil
+	}
 
 	c.Response().Header().Set("Content-Type", http.DetectContentType(data))
 	c.Response().Write(data)

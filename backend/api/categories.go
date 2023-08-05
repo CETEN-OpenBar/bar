@@ -4,7 +4,9 @@ import (
 	"bar/autogen"
 	"bar/internal/models"
 	"bar/internal/storage"
+	"crypto/sha1"
 	"encoding/base64"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -32,10 +34,6 @@ func (s *Server) GetCategories(c echo.Context) error {
 	for _, category := range data {
 		categories = append(categories, category.Category)
 	}
-
-	// Caching for 10 minutes
-	c.Response().Header().Set("Cache-Control", "max-age=600")
-	c.Response().Header().Set("Expires", "600")
 
 	autogen.GetCategories200JSONResponse(categories).VisitGetCategoriesResponse(c.Response())
 	return nil
@@ -230,8 +228,17 @@ func (s *Server) GetCategoryPicture(c echo.Context, categoryId autogen.UUID) err
 	}
 
 	// Caching
-	c.Response().Header().Set("Cache-Control", "max-age=86400")
-	c.Response().Header().Set("Expires", "86400")
+	c.Response().Header().Set("Cache-Control", "max-age: 0, must-revalidate")
+	c.Response().Header().Set("Expires", "0")
+
+	// ETag is sha1 of data
+	hash := sha1.Sum(data)
+	c.Response().Header().Set("ETag", fmt.Sprintf("%x", hash))
+	// Check "If-None-Match" header
+	if c.Request().Header.Get("If-None-Match") == fmt.Sprintf("%x", hash) {
+		c.Response().WriteHeader(http.StatusNotModified)
+		return nil
+	}
 
 	c.Response().Header().Set("Content-Type", http.DetectContentType(data))
 	c.Response().Write(data)
