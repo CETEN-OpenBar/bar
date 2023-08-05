@@ -23,5 +23,5 @@
 
 <div class="container">
     <span class="check-icon">✔️</span>
-    <p class="message">Connection réalisé!</p>
+    <p class="message">Connection réalisée!</p>
 </div>
