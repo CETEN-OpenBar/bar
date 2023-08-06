@@ -396,8 +396,11 @@ paths:
                     $ref: '#/components/schemas/Messages'
                   is_allowed:
                     type: boolean
+                  can_restore:
+                    type: boolean
                 required:
                   - is_allowed
+                  - can_restore
         '401':
           description: 'Not connected'
           content:
@@ -2932,6 +2935,174 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
         '409':
           description: 'Refill already exists'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - admin_auth: []
+      tags:
+        - deleted
+  /deleted/categories:
+    get:
+      description: 'Get deleted categories'
+      operationId: getDeletedCategories
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            format: uint64
+        - name: limit
+          in: query
+          description: Number of categories per page
+          required: false
+          schema:
+            type: integer
+            format: uint64
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  categories:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Category'
+                  page:
+                    type: integer
+                    format: uint64
+                  limit:
+                    type: integer
+                    format: uint64
+                  max_page:
+                    type: integer
+                    format: uint64
+                required:
+                  - categories
+                  - page
+                  - limit
+                  - max_page
+        '401':
+          description: 'Not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: 'Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - admin_auth: []
+      tags:
+        - deleted
+  /deleted/categories/{category_id}:
+    patch:
+      description: 'Restore a deleted category'
+      operationId: restoreDeletedCategory
+      parameters:
+        - name: category_id
+          in: path
+          description: ID of the category
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '204':
+          description: 'Success'
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: 'Not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: 'Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: 'Category not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '409':
+          description: 'Category already exists'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - admin_auth: []
+      tags:
+        - deleted
+    delete:
+      description: 'Permanently deletes a category (SUPERADMIN)'
+      operationId: deleteCategory
+      parameters:
+        - name: category_id
+          in: path
+          description: ID of the category
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '204':
+          description: 'Success'
+        '401':
+          description: 'Not authorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: 'Forbidden'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: 'Category not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '409':
+          description: 'Category already exists'
           content:
             application/json:
               schema:

@@ -238,7 +238,7 @@
 
 											<input
 												type="text"
-												class="block text-sm text-white/[.8] active:text-white break-words p-2 bg-transparent"
+												class="block text-sm dark:text-white/[.8] active:text-white break-words p-2 bg-transparent"
 												value={category.name}
 												on:input={(e) => {
 													// @ts-ignore

@@ -209,20 +209,14 @@ func (s *Server) GetCategoryPicture(c echo.Context, categoryId autogen.UUID) err
 		return ErrorNotAuthenticated(c)
 	}
 
-	_, err := s.DBackend.GetCategory(c.Request().Context(), categoryId.String())
+	data, err := storage.GetFile("categories/" + categoryId.String())
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
+		if strings.Contains(err.Error(), "no such file or directory") {
 			// Remove cache
 			c.Response().Header().Set("Cache-Control", "max-age=0")
 			c.Response().Header().Set("Expires", "0")
 			return ErrorCategoryNotFound(c)
 		}
-		logrus.Error(err)
-		return Error500(c)
-	}
-
-	data, err := storage.GetFile("categories/" + categoryId.String())
-	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
 	}

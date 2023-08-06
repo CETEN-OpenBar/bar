@@ -275,7 +275,7 @@
 					<div class="relative flex flex-row">
 						<input
 							type="number"
-							class="block text-sm text-white/[.8] w-16 active:text-white break-words p-2 bg-transparent"
+							class="block text-sm dark:text-white/[.8] w-16 active:text-white break-words p-2 bg-transparent"
 							value={selectedItem?.promotion ?? 0}
 							on:input={(e) => {
 								// @ts-ignore
@@ -323,11 +323,11 @@
 
 <!-- Categories section -->
 <div
-	class="flex flex-row gap-5 items-center overflow-x-auto overflow-y-hidden m-5 p-5 rounded-xl bg-slate-900"
+	class="flex flex-row gap-5 items-center overflow-x-auto overflow-y-hidden m-5 p-5 rounded-xl bg-slate-200 dark:bg-slate-900"
 >
 	{#each categories as category}
 		<button
-			class="w-16 flex-shrink-0 flex flex-col items-center justify-center m-2 rounded-lg text-white transition-colors duration-300"
+			class="w-16 flex-shrink-0 flex flex-col items-center justify-center m-2 rounded-lg dark:text-white transition-colors duration-300"
 			on:click={() => {
 				changeCategory(category.id);
 			}}
@@ -455,7 +455,7 @@
 											<div class="px-6 py-3">
 												<input
 													type="text"
-													class="block text-sm text-white/[.8] active:text-white break-words p-2 bg-transparent"
+													class="block text-sm dark:text-white/[.8] active:text-white break-words p-2 bg-transparent"
 													value={item.name}
 													on:input={(e) => {
 														// @ts-ignore
@@ -496,7 +496,7 @@
 										<td class="h-px w-72">
 											<div class="px-6 py-3">
 												<select
-													class="block text-sm text-white/[.8] active:text-white break-words p-2 bg-transparent"
+													class="block text-sm dark:text-white/[.8] active:text-white break-words p-2 bg-transparent"
 													value={item.state}
 													on:change={(e) => {
 														// @ts-ignore
@@ -513,7 +513,7 @@
 											<div class="px-6 py-3">
 												<input
 													type="number"
-													class="block text-sm text-white/[.8] active:text-white break-words p-2 bg-transparent"
+													class="block text-sm dark:text-white/[.8] active:text-white break-words p-2 bg-transparent"
 													value={item.amount_left}
 													on:input={(e) => {
 														// @ts-ignore
@@ -527,7 +527,7 @@
 											<div class="px-6 py-3">
 												<input
 													type="number"
-													class="block text-sm text-white/[.8] active:text-white break-words p-2 bg-transparent"
+													class="block text-sm dark:text-white/[.8] active:text-white break-words p-2 bg-transparent"
 													value={item.buy_limit}
 													on:input={(e) => {
 														// @ts-ignore

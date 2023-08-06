@@ -44,10 +44,6 @@ func (s *Server) GetDeletedAccounts(c echo.Context, params autogen.GetDeletedAcc
 		page = maxPage
 	}
 
-	if page > 0 {
-		page -= 1
-	}
-
 	if limit > 100 {
 		limit = 100
 	}
@@ -158,10 +154,6 @@ func (s *Server) GetDeletedCarouselImages(c echo.Context, params autogen.GetDele
 
 	if page > maxPage {
 		page = maxPage
-	}
-
-	if page > 0 {
-		page -= 1
 	}
 
 	if limit > 100 {
@@ -282,10 +274,6 @@ func (s *Server) GetDeletedCarouselTexts(c echo.Context, params autogen.GetDelet
 		page = maxPage
 	}
 
-	if page > 0 {
-		page -= 1
-	}
-
 	if limit > 100 {
 		limit = 100
 	}
@@ -363,6 +351,124 @@ func (s *Server) RestoreDeletedCarouselText(c echo.Context, textId autogen.UUID)
 	return nil
 }
 
+// (GET /deleted/categories)
+func (s *Server) GetDeletedCategories(c echo.Context, params autogen.GetDeletedCategoriesParams) error {
+	// Get admin account from cookie
+	logged := c.Get("adminLogged").(bool)
+	if !logged {
+		return ErrorNotAuthenticated(c)
+	}
+
+	role := c.Get("adminAccountRole").(autogen.AccountRole)
+	if role != autogen.AccountSuperAdmin {
+		return ErrorNotAuthenticated(c)
+	}
+
+	var page uint64
+	if params.Page != nil {
+		page = *params.Page
+	}
+
+	var limit uint64 = 10
+	if params.Limit != nil {
+		limit = *params.Limit
+	}
+
+	count, err := s.DBackend.CountDeletedCategories(c.Request().Context())
+	if err != nil {
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	var maxPage = uint64(count) / limit
+
+	if page > maxPage {
+		page = maxPage
+	}
+
+	if limit > 100 {
+		limit = 100
+	}
+
+	data, err := s.DBackend.GetDeletedCategories(c.Request().Context(), page, limit)
+	if err != nil {
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	var items []autogen.Category
+
+	for _, acc := range data {
+		items = append(items, acc.Category)
+	}
+
+	autogen.GetDeletedCategories200JSONResponse{
+		Categories: items,
+		Limit:      limit,
+		Page:       page,
+		MaxPage:    maxPage,
+	}.VisitGetDeletedCategoriesResponse(c.Response())
+	return nil
+}
+
+// (DELETE /deleted/categories/{category_id})
+func (s *Server) DeleteCategory(c echo.Context, categoryId autogen.UUID) error {
+	// Get admin account from cookie
+	logged := c.Get("adminLogged").(bool)
+	if !logged {
+		return ErrorNotAuthenticated(c)
+	}
+
+	role := c.Get("adminAccountRole").(autogen.AccountRole)
+	if role != autogen.AccountSuperAdmin {
+		return ErrorNotAuthenticated(c)
+	}
+
+	adminId := c.Get("adminAccountID").(string)
+
+	err := s.DBackend.DeleteCategory(c.Request().Context(), categoryId.String())
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorItemNotFound(c)
+		}
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	err = storage.DeleteFile("categories/" + categoryId.String())
+	if err != nil {
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	logrus.Infof("Admin %s deleted category %s", adminId, categoryId)
+	return nil
+}
+
+// (PATCH /deleted/categories/{category_id})
+func (s *Server) RestoreDeletedCategory(c echo.Context, categoryId autogen.UUID) error {
+	// Get admin account from cookie
+	logged := c.Get("adminLogged").(bool)
+	if !logged {
+		return ErrorNotAuthenticated(c)
+	}
+
+	role := c.Get("adminAccountRole").(autogen.AccountRole)
+	if role != autogen.AccountSuperAdmin {
+		return ErrorNotAuthenticated(c)
+	}
+
+	err := s.DBackend.UnMarkDeleteCategory(c.Request().Context(), categoryId.String())
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorItemNotFound(c)
+		}
+		logrus.Error(err)
+		return Error500(c)
+	}
+	return nil
+}
+
 // (GET /deleted/items)
 func (s *Server) GetDeletedItems(c echo.Context, params autogen.GetDeletedItemsParams) error {
 	// Get admin account from cookie
@@ -396,10 +502,6 @@ func (s *Server) GetDeletedItems(c echo.Context, params autogen.GetDeletedItemsP
 
 	if page > maxPage {
 		page = maxPage
-	}
-
-	if page > 0 {
-		page -= 1
 	}
 
 	if limit > 100 {
@@ -520,10 +622,6 @@ func (s *Server) GetDeletedRefills(c echo.Context, params autogen.GetDeletedRefi
 		page = maxPage
 	}
 
-	if page > 0 {
-		page -= 1
-	}
-
 	if limit > 100 {
 		limit = 100
 	}
@@ -634,10 +732,6 @@ func (s *Server) GetDeletedTransactions(c echo.Context, params autogen.GetDelete
 
 	if page > maxPage {
 		page = maxPage
-	}
-
-	if page > 0 {
-		page -= 1
 	}
 
 	if limit > 100 {

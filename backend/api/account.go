@@ -359,9 +359,12 @@ func (s *Server) GetAccountAdmin(ctx echo.Context) error {
 		return ErrorNotAuthenticated(ctx)
 	}
 
+	canRestore := ctx.Get("adminAccountRole").(autogen.AccountRole) == autogen.AccountSuperAdmin
+
 	// Return account
 	resp := autogen.GetAccountAdmin200JSONResponse{
-		IsAllowed: true,
+		IsAllowed:  true,
+		CanRestore: canRestore,
 	}
 	resp.VisitGetAccountAdminResponse(ctx.Response())
 	return nil

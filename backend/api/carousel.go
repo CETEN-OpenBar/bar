@@ -4,6 +4,8 @@ import (
 	"bar/autogen"
 	"bar/internal/models"
 	"bar/internal/storage"
+	"crypto/sha1"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -11,7 +13,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // (GET /carousel/images)
@@ -93,24 +94,30 @@ func (s *Server) AddCarouselImage(c echo.Context) error {
 
 // (GET /carousel/images/{image_id})
 func (s *Server) GetCarouselImage(c echo.Context, imageId autogen.UUID) error {
-	_, err := s.DBackend.GetCarouselImage(c.Request().Context(), imageId.String())
+	data, err := storage.GetFile("carousel/" + imageId.String())
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			return ErrorImageNotFound(c)
+		if strings.Contains(err.Error(), "no such file or directory") {
+			// Remove cache
+			c.Response().Header().Set("Cache-Control", "max-age=0")
+			c.Response().Header().Set("Expires", "0")
+			return ErrorCategoryNotFound(c)
 		}
 		logrus.Error(err)
 		return Error500(c)
 	}
 
-	data, err := storage.GetFile("carousel/" + imageId.String())
-	if err != nil {
-		logrus.Error(err)
-		return Error500(c)
-	}
-
 	// Caching
-	c.Response().Header().Set("Cache-Control", "max-age=86400")
-	c.Response().Header().Set("Expires", "86400")
+	c.Response().Header().Set("Cache-Control", "max-age: 0, must-revalidate")
+	c.Response().Header().Set("Expires", "0")
+
+	// ETag is sha1 of data
+	hash := sha1.Sum(data)
+	c.Response().Header().Set("ETag", fmt.Sprintf("%x", hash))
+	// Check "If-None-Match" header
+	if c.Request().Header.Get("If-None-Match") == fmt.Sprintf("%x", hash) {
+		c.Response().WriteHeader(http.StatusNotModified)
+		return nil
+	}
 
 	c.Response().Header().Set("Content-Type", http.DetectContentType(data))
 	c.Response().Write(data)

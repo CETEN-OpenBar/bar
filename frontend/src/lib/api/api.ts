@@ -367,6 +367,12 @@ export interface GetAccountAdmin200Response {
      * @memberof GetAccountAdmin200Response
      */
     'is_allowed': boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof GetAccountAdmin200Response
+     */
+    'can_restore': boolean;
 }
 
 
@@ -543,6 +549,37 @@ export interface GetDeletedCarouselTexts200Response {
      * 
      * @type {number}
      * @memberof GetDeletedCarouselTexts200Response
+     */
+    'max_page': number;
+}
+/**
+ * 
+ * @export
+ * @interface GetDeletedCategories200Response
+ */
+export interface GetDeletedCategories200Response {
+    /**
+     * 
+     * @type {Array<Category>}
+     * @memberof GetDeletedCategories200Response
+     */
+    'categories': Array<Category>;
+    /**
+     * 
+     * @type {number}
+     * @memberof GetDeletedCategories200Response
+     */
+    'page': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof GetDeletedCategories200Response
+     */
+    'limit': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof GetDeletedCategories200Response
      */
     'max_page': number;
 }
@@ -3692,6 +3729,41 @@ export const DeletedApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
+         * Permanently deletes a category (SUPERADMIN)
+         * @param {string} categoryId ID of the category
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteCategory: async (categoryId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'categoryId' is not null or undefined
+            assertParamExists('deleteCategory', 'categoryId', categoryId)
+            const localVarPath = `/deleted/categories/{category_id}`
+                .replace(`{${"category_id"}}`, encodeURIComponent(String(categoryId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Permanently deletes an item (SUPERADMIN)
          * @param {string} itemId ID of the item
          * @param {*} [options] Override http request option.
@@ -3887,6 +3959,47 @@ export const DeletedApiAxiosParamCreator = function (configuration?: Configurati
          */
         getDeletedCarouselTexts: async (page?: number, limit?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/deleted/carousel/texts`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get deleted categories
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of categories per page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getDeletedCategories: async (page?: number, limit?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/deleted/categories`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -4148,6 +4261,41 @@ export const DeletedApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
+         * Restore a deleted category
+         * @param {string} categoryId ID of the category
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        restoreDeletedCategory: async (categoryId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'categoryId' is not null or undefined
+            assertParamExists('restoreDeletedCategory', 'categoryId', categoryId)
+            const localVarPath = `/deleted/categories/{category_id}`
+                .replace(`{${"category_id"}}`, encodeURIComponent(String(categoryId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Restore a deleted item
          * @param {string} itemId ID of the item
          * @param {*} [options] Override http request option.
@@ -4293,6 +4441,16 @@ export const DeletedApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
+         * Permanently deletes a category (SUPERADMIN)
+         * @param {string} categoryId ID of the category
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteCategory(categoryId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteCategory(categoryId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * Permanently deletes an item (SUPERADMIN)
          * @param {string} itemId ID of the item
          * @param {*} [options] Override http request option.
@@ -4356,6 +4514,17 @@ export const DeletedApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
+         * Get deleted categories
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of categories per page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getDeletedCategories(page?: number, limit?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetDeletedCategories200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getDeletedCategories(page, limit, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * Get deleted items
          * @param {number} [page] Page number
          * @param {number} [limit] Number of accounts per page
@@ -4416,6 +4585,16 @@ export const DeletedApiFp = function(configuration?: Configuration) {
          */
         async restoreDeletedCarouselText(textId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.restoreDeletedCarouselText(textId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Restore a deleted category
+         * @param {string} categoryId ID of the category
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async restoreDeletedCategory(categoryId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.restoreDeletedCategory(categoryId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -4486,6 +4665,15 @@ export const DeletedApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.deleteCarouselText(textId, options).then((request) => request(axios, basePath));
         },
         /**
+         * Permanently deletes a category (SUPERADMIN)
+         * @param {string} categoryId ID of the category
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteCategory(categoryId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteCategory(categoryId, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Permanently deletes an item (SUPERADMIN)
          * @param {string} itemId ID of the item
          * @param {*} [options] Override http request option.
@@ -4543,6 +4731,16 @@ export const DeletedApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.getDeletedCarouselTexts(page, limit, options).then((request) => request(axios, basePath));
         },
         /**
+         * Get deleted categories
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of categories per page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getDeletedCategories(page?: number, limit?: number, options?: any): AxiosPromise<GetDeletedCategories200Response> {
+            return localVarFp.getDeletedCategories(page, limit, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Get deleted items
          * @param {number} [page] Page number
          * @param {number} [limit] Number of accounts per page
@@ -4598,6 +4796,15 @@ export const DeletedApiFactory = function (configuration?: Configuration, basePa
          */
         restoreDeletedCarouselText(textId: string, options?: any): AxiosPromise<void> {
             return localVarFp.restoreDeletedCarouselText(textId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Restore a deleted category
+         * @param {string} categoryId ID of the category
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        restoreDeletedCategory(categoryId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.restoreDeletedCategory(categoryId, options).then((request) => request(axios, basePath));
         },
         /**
          * Restore a deleted item
@@ -4670,6 +4877,17 @@ export class DeletedApi extends BaseAPI {
     }
 
     /**
+     * Permanently deletes a category (SUPERADMIN)
+     * @param {string} categoryId ID of the category
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DeletedApi
+     */
+    public deleteCategory(categoryId: string, options?: AxiosRequestConfig) {
+        return DeletedApiFp(this.configuration).deleteCategory(categoryId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
      * Permanently deletes an item (SUPERADMIN)
      * @param {string} itemId ID of the item
      * @param {*} [options] Override http request option.
@@ -4739,6 +4957,18 @@ export class DeletedApi extends BaseAPI {
     }
 
     /**
+     * Get deleted categories
+     * @param {number} [page] Page number
+     * @param {number} [limit] Number of categories per page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DeletedApi
+     */
+    public getDeletedCategories(page?: number, limit?: number, options?: AxiosRequestConfig) {
+        return DeletedApiFp(this.configuration).getDeletedCategories(page, limit, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
      * Get deleted items
      * @param {number} [page] Page number
      * @param {number} [limit] Number of accounts per page
@@ -4805,6 +5035,17 @@ export class DeletedApi extends BaseAPI {
      */
     public restoreDeletedCarouselText(textId: string, options?: AxiosRequestConfig) {
         return DeletedApiFp(this.configuration).restoreDeletedCarouselText(textId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Restore a deleted category
+     * @param {string} categoryId ID of the category
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DeletedApi
+     */
+    public restoreDeletedCategory(categoryId: string, options?: AxiosRequestConfig) {
+        return DeletedApiFp(this.configuration).restoreDeletedCategory(categoryId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
