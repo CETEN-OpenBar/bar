@@ -128,7 +128,11 @@
 							</div>
 						</div>
 					{/if}
-
+					<a
+						class="font-medium text-white/[.8] hover:text-white sm:py-6"
+						href="/admin/accounts"
+						aria-current="page">Comptes</a
+					>
 					<a
 						class="font-medium text-white/[.8] hover:text-white sm:py-6"
 						href="/admin/categories"

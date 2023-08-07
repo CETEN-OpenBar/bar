@@ -86,11 +86,11 @@ func (s *Server) PostTransactions(c echo.Context) error {
 			ItemName:   item.Name,
 			PictureUri: item.PictureUri,
 			State:      autogen.TransactionItemStarted,
-			UnitCost:   item.RealPrice(),
-			TotalCost:  item.RealPrice() * potentialItem.Amount,
+			UnitCost:   item.RealPrice(account.PriceRole),
+			TotalCost:  item.RealPrice(account.PriceRole) * potentialItem.Amount,
 		})
 
-		transactionCost += item.RealPrice() * potentialItem.Amount
+		transactionCost += item.RealPrice(account.PriceRole) * potentialItem.Amount
 		item.AmountLeft -= potentialItem.Amount
 	}
 

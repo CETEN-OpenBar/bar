@@ -24,6 +24,8 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 		return ErrorNotAuthenticated(c)
 	}
 
+	account := c.Get("userAccount").(*models.Account)
+
 	var page uint64 = 1
 	if params.Page != nil {
 		page = uint64(*params.Page)
@@ -74,8 +76,14 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 	var items []autogen.Item
 
 	for _, item := range data {
-		var rp = item.RealPrice()
+		var rp = item.RealPrice(account.PriceRole)
 		item.DisplayPrice = &rp
+
+		if account.HasPrivileges() {
+			var rp = item.RealPrices()
+			item.DisplayPrices = &rp
+		}
+
 		items = append(items, item.Item)
 	}
 
@@ -130,7 +138,7 @@ func (s *Server) PostItem(c echo.Context, categoryId autogen.UUID) error {
 			Id:              uid,
 			CategoryId:      categoryId,
 			Name:            p.Name,
-			Price:           p.Price,
+			Prices:          p.Prices,
 			PictureUri:      "/categories/" + categoryId.String() + "/items/" + uid.String() + "/picture",
 			Promotion:       p.Promotion,
 			PromotionEndsAt: p.PromotionEndsAt,
@@ -229,8 +237,8 @@ func (s *Server) PatchItem(c echo.Context, categoryId autogen.UUID, itemId autog
 	if p.Name != nil {
 		item.Name = *p.Name
 	}
-	if p.Price != nil {
-		item.Price = *p.Price
+	if p.Prices != nil {
+		item.Prices = *p.Prices
 	}
 
 	if p.Promotion != nil {
@@ -251,8 +259,8 @@ func (s *Server) PatchItem(c echo.Context, categoryId autogen.UUID, itemId autog
 		item.BuyLimit = *p.BuyLimit
 	}
 
-	var rp = item.RealPrice()
-	item.DisplayPrice = &rp
+	var rp = item.RealPrices()
+	item.DisplayPrices = &rp
 
 	// Save item to database
 	err = s.DBackend.UpdateItem(c.Request().Context(), item)

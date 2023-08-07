@@ -91,6 +91,12 @@ export interface Account {
     'role': AccountRole;
     /**
      * 
+     * @type {AccountPriceRole}
+     * @memberof Account
+     */
+    'price_role'?: AccountPriceRole;
+    /**
+     * 
      * @type {Array<AccountRestrictions>}
      * @memberof Account
      */
@@ -114,6 +120,23 @@ export interface Account {
      */
     'deleted_by'?: string;
 }
+
+
+/**
+ * Role of the account
+ * @export
+ * @enum {string}
+ */
+
+export const AccountPriceRole = {
+    AccountPriceNormal: 'normal',
+    AccountPriceStaff: 'staff',
+    AccountPriceVIP: 'vip',
+    AccountPriceCeten: 'ceten',
+    AccountPriceExte: 'exte'
+} as const;
+
+export type AccountPriceRole = typeof AccountPriceRole[keyof typeof AccountPriceRole];
 
 
 /**
@@ -825,10 +848,10 @@ export interface Item {
     'id': string;
     /**
      * 
-     * @type {number}
+     * @type {ItemPrices}
      * @memberof Item
      */
-    'price': number;
+    'prices': ItemPrices;
     /**
      * 
      * @type {number}
@@ -898,6 +921,43 @@ export interface Item {
 }
 
 
+/**
+ * 
+ * @export
+ * @interface ItemPrices
+ */
+export interface ItemPrices {
+    /**
+     * 
+     * @type {number}
+     * @memberof ItemPrices
+     */
+    'normal'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ItemPrices
+     */
+    'staff'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ItemPrices
+     */
+    'vip'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ItemPrices
+     */
+    'ceten'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ItemPrices
+     */
+    'exte'?: number;
+}
 /**
  * State of the item
  * @export
@@ -982,6 +1042,12 @@ export interface NewAccount {
      * @memberof NewAccount
      */
     'role': AccountRole;
+    /**
+     * 
+     * @type {AccountPriceRole}
+     * @memberof NewAccount
+     */
+    'price_role'?: AccountPriceRole;
 }
 
 
@@ -1012,10 +1078,10 @@ export interface NewCategory {
 export interface NewItem {
     /**
      * 
-     * @type {number}
+     * @type {ItemPrices}
      * @memberof NewItem
      */
-    'price': number;
+    'prices': ItemPrices;
     /**
      * 
      * @type {number}
@@ -1431,10 +1497,10 @@ export interface UpdateCategory {
 export interface UpdateItem {
     /**
      * 
-     * @type {number}
+     * @type {ItemPrices}
      * @memberof UpdateItem
      */
-    'price'?: number;
+    'prices'?: ItemPrices;
     /**
      * 
      * @type {number}

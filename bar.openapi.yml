@@ -3727,6 +3727,8 @@ components:
           example: 1000 (10.00€)
         role:
           $ref: '#/components/schemas/AccountRole'
+        price_role:
+          $ref: '#/components/schemas/AccountPriceRole'
       required:
         - first_name
         - last_name
@@ -3790,6 +3792,22 @@ components:
         - AccountAdmin
         - AccountGhost
         - AccountSuperAdmin
+    AccountPriceRole:
+      type: string
+      description: Role of the account
+      example: student
+      enum:
+        - normal
+        - staff
+        - vip
+        - ceten
+        - exte
+      x-enum-varnames:
+        - AccountPriceNormal
+        - AccountPriceStaff
+        - AccountPriceVIP
+        - AccountPriceCeten
+        - AccountPriceExte
     Account:
       type: object
       properties:
@@ -3817,6 +3835,8 @@ components:
             json: '-' # ignore this field in json
         role:
           $ref: '#/components/schemas/AccountRole'
+        price_role:
+          $ref: '#/components/schemas/AccountPriceRole'
         restrictions:
           type: array
           items:
@@ -3835,6 +3855,7 @@ components:
         - email_address
         - balance
         - role
+        - price_role
         - restrictions
         - state
         - card_id
@@ -3854,10 +3875,8 @@ components:
     UpdateItem:
       type: object
       properties:
-        price:
-          type: integer
-          format: uint64
-          example: 1000
+        prices:
+          $ref: '#/components/schemas/ItemPrices'
         amount_left:
           type: integer
           format: uint64
@@ -3883,13 +3902,40 @@ components:
           format: uint64
         state:
           $ref: '#/components/schemas/ItemState'
-    NewItem:
+    ItemPrices:
       type: object
       properties:
-        price:
+        normal:
           type: integer
           format: uint64
           example: 1000
+        staff:
+          type: integer
+          format: uint64
+          example: 1000
+        vip:
+          type: integer
+          format: uint64
+          example: 1000
+        ceten:
+          type: integer
+          format: uint64
+          example: 1000
+        exte:
+          type: integer
+          format: uint64
+          example: 1000
+      required:
+        - normal
+        - staff
+        - vip
+        - ceten
+        - exte
+    NewItem:
+      type: object
+      properties:
+        prices:
+          $ref: '#/components/schemas/ItemPrices'
         promotion:
           type: integer
           format: uint64
@@ -3914,7 +3960,7 @@ components:
         state:
           $ref: '#/components/schemas/ItemState'
       required:
-        - price
+        - prices
         - amount_left
         - buy_limit
         - category_id
@@ -3926,10 +3972,10 @@ components:
       properties:
         id:
           $ref: '#/components/schemas/UUID'
-        price:
-          type: integer
-          format: uint64
-          example: 1000
+        prices:
+          $ref: '#/components/schemas/ItemPrices'
+        display_prices:
+          $ref: '#/components/schemas/ItemPrices'
         display_price:
           type: integer
           format: uint64
@@ -3966,7 +4012,7 @@ components:
           $ref: '#/components/schemas/UUID'
       required:
         - id
-        - price
+        - prices
         - amount_left
         - buy_limit
         - category_id
