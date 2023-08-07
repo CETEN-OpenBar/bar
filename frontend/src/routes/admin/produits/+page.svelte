@@ -1,6 +1,5 @@
 <script lang="ts">
-	import type { Category, Item, NewItem, UpdateItem } from '$lib/api';
-	import Categories from '$lib/components/borne/categories.svelte';
+	import type { Category, Item, NewItem, ItemPrices, UpdateItem, AccountPriceRole } from '$lib/api';
 	import { api } from '$lib/config/config';
 	import { categoriesApi, itemsApi } from '$lib/requests/requests';
 	import { formatPrice } from '$lib/utils';
@@ -13,11 +12,20 @@
 	let newItem: NewItem = {
 		name: '',
 		picture: '',
-		price: 0,
+		prices: {
+			exte: 0,
+			ceten: 0,
+			normal: 0,
+			staff: 0,
+			vip: 0
+		} as ItemPrices,
 		amount_left: 0,
 		buy_limit: 0,
 		state: 'buyable'
 	};
+	let newItemPriceRole: AccountPriceRole = 'normal';
+	let editItemPriceRole: AccountPriceRole = 'normal';
+	let promoItemPriceRole: AccountPriceRole = 'normal';
 
 	let page = 0;
 	let maxPage = 0;
@@ -163,85 +171,108 @@
 								/>
 							</div>
 
-							<label for="price" class="block text-sm mb-2 dark:text-white">Prix</label>
-							<div class="relative">
-								<input
-									type="number"
-									id="price"
-									name="price"
-									placeholder="Prix du produit"
-									class="py-3 px-4 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-									required
-									aria-describedby="text-error"
-									on:input={(e) => {
-										// @ts-ignore
-										let price = e.target?.value;
-										// split and parse price[0]
-										if (price.includes(',')) price = price.split(',');
-										else if (price.includes('.')) price = price.split('.');
+							<!-- Price role selector -->
+							<label for="role" class="block text-sm mb-2 dark:text-white">
+								<div class="relative">
+									<select
+										id="role"
+										name="role"
+										class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+										required
+										aria-describedby="text-error"
+										bind:value={newItemPriceRole}
+									>
+										<option value="normal">Prix de base</option>
+										<option value="exte">Prix externe</option>
+										<option value="ceten">Prix ceten</option>
+										<option value="staff">Prix staff</option>
+										<option value="vip">Prix VIP</option>
+									</select>
+								</div>
 
-										if (price.length > 1) price = parseInt(price[0]) * 100 + parseInt(price[1]);
-										else price = parseInt(price[0]) * 100;
-										newItem.price = price;
-									}}
-								/>
-
-								<span class="absolute top-3 right-4 text-sm text-gray-400"> € </span>
-							</div>
-
-							<label for="description" class="block text-sm mb-2 dark:text-white"
-								>Stock disponible</label
-							>
-							<div class="relative">
-								<input
-									type="number"
-									id="stock"
-									name="stock"
-									placeholder="Stock disponible"
-									class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-									required
-									aria-describedby="text-error"
-									bind:value={newItem.amount_left}
-								/>
-							</div>
-
-							<label for="description" class="block text-sm mb-2 dark:text-white"
-								>Max par commande</label
-							>
-							<div class="relative">
-								<input
-									type="number"
-									id="max"
-									name="max"
-									placeholder="Max par commande"
-									class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-									required
-									aria-describedby="text-error"
-									bind:value={newItem.buy_limit}
-								/>
-							</div>
-
-							<label for="description" class="block text-sm mb-2 dark:text-white">Status</label>
-							<div class="relative">
-								<select
-									id="status"
-									name="status"
-									class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-									required
-									aria-describedby="text-error"
-									bind:value={newItem.state}
+								<label for="price" class="block text-sm mb-2 dark:text-white"
+									>Prix ({newItemPriceRole})</label
 								>
-									<option value="buyable">Achetable</option>
-									<option value="not_buyable">Non achetable</option>
-								</select>
-							</div>
+								<div class="relative">
+									<input
+										type="number"
+										id="price"
+										name="price"
+										placeholder="Prix du produit"
+										class="py-3 px-4 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+										required
+										aria-describedby="text-error"
+										on:input={(e) => {
+											// @ts-ignore
+											let price = e.target?.value;
+											// split and parse price[0]
+											if (price.includes(',')) price = price.split(',');
+											else if (price.includes('.')) price = price.split('.');
 
-							<button
-								type="submit"
-								class="mt-4 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
-								on:click={() => createNewItem()}
-								data-hs-overlay="#hs-modal-new-item">Créer</button
-							>
+											if (price.length > 1) price = parseInt(price[0]) * 100 + parseInt(price[1]);
+											else price = parseInt(price[0]) * 100;
+
+											newItem.prices[newItemPriceRole] = price;
+										}}
+									/>
+
+									<span class="absolute top-3 right-4 text-sm text-gray-400"> € </span>
+								</div>
+
+								<label for="description" class="block text-sm mb-2 dark:text-white"
+									>Stock disponible</label
+								>
+								<div class="relative">
+									<input
+										type="number"
+										id="stock"
+										name="stock"
+										placeholder="Stock disponible"
+										class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+										required
+										aria-describedby="text-error"
+										bind:value={newItem.amount_left}
+									/>
+								</div>
+
+								<label for="description" class="block text-sm mb-2 dark:text-white"
+									>Max par commande</label
+								>
+								<div class="relative">
+									<input
+										type="number"
+										id="max"
+										name="max"
+										placeholder="Max par commande"
+										class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+										required
+										aria-describedby="text-error"
+										bind:value={newItem.buy_limit}
+									/>
+								</div>
+
+								<label for="description" class="block text-sm mb-2 dark:text-white">Status</label>
+								<div class="relative">
+									<select
+										id="status"
+										name="status"
+										class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+										required
+										aria-describedby="text-error"
+										bind:value={newItem.state}
+									>
+										<option value="buyable">Achetable</option>
+										<option value="not_buyable">Non achetable</option>
+									</select>
+								</div>
+
+								<button
+									type="submit"
+									class="mt-4 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
+									on:click={() => createNewItem()}
+									data-hs-overlay="#hs-modal-new-item">Créer</button
+								>
+							</label>
 						</div>
 					</div>
 					<!-- End Form -->
@@ -308,11 +339,23 @@
 						/>
 					</div>
 
-					<!-- real price with promo applied -->
-					<label for="real-price" class="block text-sm dark:text-white">Prix réel</label>
+					<select
+						id="role"
+						name="role"
+						class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+						required
+						aria-describedby="text-error"
+						bind:value={promoItemPriceRole}
+					>
+						<option value="normal">Prix réel de base</option>
+						<option value="exte">Prix réel externe</option>
+						<option value="ceten">Prix réel ceten</option>
+						<option value="staff">Prix réel staff</option>
+						<option value="vip">Prix réel VIP</option>
+					</select>
 					<div class="relative">
 						<span class="self-center text-sm text-gray-400"
-							>{formatPrice(selectedItem?.display_price ?? 0)}</span
+							>{formatPrice((selectedItem?.display_prices ?? {})[promoItemPriceRole] ?? 0)}</span
 						>
 					</div>
 				</div>
@@ -436,14 +479,31 @@
 									</th>
 									<th scope="col" class="px-6 py-3 text-left">
 										<div class="flex items-center gap-x-2">
-											<span
-												class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+											<select
+												id="role"
+												name="role"
+												class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+												required
+												aria-describedby="text-error"
+												bind:value={editItemPriceRole}
+												on:change={()=>{
+													// Remove the value of elems with id "price"
+													let elems = document.querySelectorAll('[id=price]');
+													elems.forEach((elem) => {
+														// @ts-ignore
+														elem.value = "";
+													});
+
+												}}
 											>
-												Prix
-											</span>
+												<option value="normal">Prix de base</option>
+												<option value="exte">Prix externe</option>
+												<option value="ceten">Prix ceten</option>
+												<option value="staff">Prix staff</option>
+												<option value="vip">Prix VIP</option>
+											</select>
 										</div>
 									</th>
-
 									<th scope="col" class="px-6 py-3 text-right" />
 								</tr>
 							</thead>
@@ -543,7 +603,7 @@
 													type="number"
 													id="price"
 													name="price"
-													placeholder={formatPrice(item.price)}
+													placeholder={formatPrice(item.prices[editItemPriceRole])}
 													class="py-3 px-4 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
 													required
 													aria-describedby="text-error"
@@ -557,7 +617,11 @@
 														if (price.length > 1)
 															price = parseInt(price[0]) * 100 + parseInt(price[1]);
 														else price = parseInt(price[0]) * 100;
-														editItem(item.id, { price: price });
+
+														let prices = item.prices;
+														prices[editItemPriceRole] = price;
+
+														editItem(item.id, { prices: prices });
 													}}
 												/>
 											</div>
@@ -565,7 +629,9 @@
 										<td class="h-px w-px whitespace-nowrap">
 											<div class="px-6 py-1.5">
 												<button
-													class="{item.promotion_ends_at??0 > (new Date().getTime()/1000) ? "animate-pulse":""} inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
+													class="{item.promotion_ends_at ?? 0 > new Date().getTime() / 1000
+														? 'animate-pulse'
+														: ''} inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
 													data-hs-overlay="#hs-modal-edit-item"
 													on:click={() => (selectedItem = item)}
 												>

@@ -94,7 +94,7 @@ export interface Account {
      * @type {AccountPriceRole}
      * @memberof Account
      */
-    'price_role'?: AccountPriceRole;
+    'price_role': AccountPriceRole;
     /**
      * 
      * @type {Array<AccountRestrictions>}
@@ -854,6 +854,12 @@ export interface Item {
     'prices': ItemPrices;
     /**
      * 
+     * @type {ItemPrices}
+     * @memberof Item
+     */
+    'display_prices'?: ItemPrices;
+    /**
+     * 
      * @type {number}
      * @memberof Item
      */
@@ -932,31 +938,31 @@ export interface ItemPrices {
      * @type {number}
      * @memberof ItemPrices
      */
-    'normal'?: number;
+    'normal': number;
     /**
      * 
      * @type {number}
      * @memberof ItemPrices
      */
-    'staff'?: number;
+    'staff': number;
     /**
      * 
      * @type {number}
      * @memberof ItemPrices
      */
-    'vip'?: number;
+    'vip': number;
     /**
      * 
      * @type {number}
      * @memberof ItemPrices
      */
-    'ceten'?: number;
+    'ceten': number;
     /**
      * 
      * @type {number}
      * @memberof ItemPrices
      */
-    'exte'?: number;
+    'exte': number;
 }
 /**
  * State of the item
