@@ -3,12 +3,14 @@
 	import { carouselApi } from '$lib/requests/requests';
 	import { onMount } from 'svelte';
 
+	let allCarouselTexts: CarouselText[] = [];
 	let carouselTexts: CarouselText[] = [];
 	let newText: CarouselTextCreate = {
 		text: '',
 		color: ''
 	};
 
+	let searchQuery = '';
 	let page = 0;
 	let textsPerPage = 10;
 
@@ -17,6 +19,7 @@
 			.getCarouselTexts({ withCredentials: true })
 			.then((res) => {
 				carouselTexts = res.data;
+				allCarouselTexts = res.data;
 			});
 	});
 
@@ -25,6 +28,7 @@
 			.addCarouselText(newText, { withCredentials: true })
 			.then((res) => {
 				carouselTexts = [...carouselTexts, res.data];
+				allCarouselTexts = [...allCarouselTexts, res.data];
 			});
 	}
 
@@ -33,6 +37,7 @@
 			.markDeleteCarouselText(id, { withCredentials: true })
 			.then(() => {
 				carouselTexts = carouselTexts.filter((ct) => ct.id !== id);
+				allCarouselTexts = allCarouselTexts.filter((ct) => ct.id !== id);
 			});
 	}
 </script>
@@ -60,37 +65,6 @@
 					<div class="grid gap-y-4">
 						<!-- Form Group -->
 						<div>
-							<!-- <label for="email" class="block text-sm mb-2 dark:text-white">Email address</label>
-								<div class="relative">
-									<input
-										type="email"
-										id="email"
-										name="email"
-										class="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-										required
-										aria-describedby="email-error"
-									/>
-									<div
-										class="hidden absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3"
-									>
-										<svg
-											class="h-5 w-5 text-red-500"
-											width="16"
-											height="16"
-											fill="currentColor"
-											viewBox="0 0 16 16"
-											aria-hidden="true"
-										>
-											<path
-												d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"
-											/>
-										</svg>
-									</div>
-								</div>
-								<p class="hidden text-xs text-red-600 mt-2" id="email-error">
-									Please include a valid email address so we can get back to you
-								</p> -->
-
 							<label for="text" class="block text-sm mb-2 dark:text-white">Texte</label>
 							<div class="relative">
 								<input
@@ -159,6 +133,50 @@
 						<div>
 							<h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Textes</h2>
 							<p class="text-sm text-gray-600 dark:text-gray-400">Ajouter des textes au carousel</p>
+						</div>
+
+
+
+						<!-- search bar -->
+						<div class="relative mt-4 w-96 md:mt-0">
+							<input
+								type="text"
+								class="py-3 px-4 w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+								placeholder="Rechercher"
+								aria-label="Rechercher"
+								on:input={(e) => {
+									// @ts-ignore
+									searchQuery = e.target.value.toLowerCase();
+									
+									// filter the carousel texts
+									carouselTexts = allCarouselTexts.filter((text) => {
+										return text.text.toLowerCase().includes(searchQuery);
+									});
+								}}
+							/>
+							<svg
+								class="absolute w-4 h-4 right-3 top-3 text-gray-400 dark:text-gray-300 pointer-events-none"
+								xmlns="http://www.w3.org/2000/svg"
+								width="16"
+								height="16"
+								viewBox="0 0 16 16"
+								fill="none"
+							>
+								<path
+									d="M11.6667 11.6667L15.3333 15.3333"
+									stroke="currentColor"
+									stroke-width="1.5"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								/>
+								<path
+									d="M6.66663 12.6667C9.53763 12.6667 12 10.2037 12 7.33337C12 4.46337 9.53763 2.00004 6.66663 2.00004C3.79563 2.00004 1.33329 4.46337 1.33329 7.33337C1.33329 10.2037 3.79563 12.6667 6.66663 12.6667Z"
+									stroke="currentColor"
+									stroke-width="1.5"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								/>
+							</svg>
 						</div>
 
 						<div>
