@@ -2,8 +2,10 @@
 	import { goto } from '$app/navigation';
 	import { apiws } from '$lib/config/config';
 	import { authApi } from '$lib/requests/requests';
+	import { fly } from 'svelte/transition';
 	import Error from '../error.svelte';
 	import { onMount, onDestroy } from 'svelte';
+	import { cubicIn, elasticIn } from 'svelte/easing';
 
 	let qr: any = undefined;
 	let error = '';
@@ -27,7 +29,6 @@
 			}
 		};
 
-
 		authApi()
 			.getAccountQR({ card_pin: '1234' }, { withCredentials: true })
 			.then((res) => {
@@ -47,7 +48,7 @@
 </script>
 
 {#if qr !== undefined}
-	<div class="grid">
+	<div class="grid" in:fly={{ x: -200, easing: cubicIn, duration: 200, opacity: 0.75 }}>
 		{#if spinner}
 			<div id="overlay" class="w-full" style="background-color: #0009; grid-area: 1 / 1 / 2 / 2;">
 				<div class="spinner" />
@@ -65,7 +66,7 @@
 			</div>
 		{/if}
 		<img
-			class="top-0 left-0 w-full"
+			class="top-0 left-0 w-full bg-white"
 			style="grid-area: 1 / 1 / 2 / 2;"
 			src="data:image/png;base64,{qr}"
 			alt="Entrez-votre pin pour voir le code"

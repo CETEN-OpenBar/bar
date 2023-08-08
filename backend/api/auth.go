@@ -98,7 +98,8 @@ func (s *Server) GetAccountQR(c echo.Context) error {
 // (GET /account/qr)
 func (s *Server) GetAccountQRWebsocket(c echo.Context) error {
 	logged := c.Get("userLogged").(bool)
-	if !logged {
+	loggedOnBoard := c.Get("onBoardLogged").(bool)
+	if !logged && !loggedOnBoard {
 		return ErrorNotAuthenticated(c)
 	}
 
@@ -398,6 +399,13 @@ func (s *Server) ConnectCard(c echo.Context) error {
 			},
 		}
 		account.SetPin("1234")
+
+		_, found := onBoardCache.Get(account.Account.Id.String())
+		if found {
+			return ErrorAccNotFound(c)
+		}
+
+		onBoardCache.Set(account.Account.Id.String(), account, cache.DefaultExpiration)
 	}
 
 	if !account.VerifyPin(param.CardPin) {

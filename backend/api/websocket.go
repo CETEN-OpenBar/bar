@@ -60,11 +60,20 @@ var upgrader = websocket.Upgrader{
 
 func Upgrade(c echo.Context) error {
 	logged := c.Get("userLogged").(bool)
-	if !logged {
+	loggedOnBoard := c.Get("onBoardLogged").(bool)
+	if !logged && !loggedOnBoard {
 		return ErrorNotAuthenticated(c)
 	}
 
-	accountID := c.Get("userAccountID").(string)
+	var accountID string
+
+	if logged {
+		accountID = c.Get("userAccountID").(string)
+	}
+
+	if loggedOnBoard {
+		accountID = c.Get("onBoardAccountID").(string)
+	}
 
 	conn, err := upgrader.Upgrade(c.Response(), c.Request(), nil)
 	if err != nil {
