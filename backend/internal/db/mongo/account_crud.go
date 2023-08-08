@@ -166,13 +166,33 @@ func (b *Backend) RestoreAccount(ctx context.Context, id string) error {
 	return nil
 }
 
-func (b *Backend) GetDeletedAccounts(ctx context.Context, page uint64, size uint64) ([]*models.Account, error) {
+func (b *Backend) GetDeletedAccounts(ctx context.Context, page uint64, size uint64, query string) ([]*models.Account, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	var accs []*models.Account
 	cursor, err := b.db.Collection(AccountsCollection).Find(ctx,
 		bson.M{
+			"$or": []bson.M{
+				{
+					"first_name": bson.M{
+						"$regex":   query,
+						"$options": "i",
+					},
+				},
+				{
+					"last_name": bson.M{
+						"$regex":   query,
+						"$options": "i",
+					},
+				},
+				{
+					"email": bson.M{
+						"$regex":   query,
+						"$options": "i",
+					},
+				},
+			},
 			"deleted_at": bson.M{
 				"$ne": nil,
 			},
@@ -189,11 +209,31 @@ func (b *Backend) GetDeletedAccounts(ctx context.Context, page uint64, size uint
 	return accs, nil
 }
 
-func (b *Backend) CountDeletedAccounts(ctx context.Context) (uint64, error) {
+func (b *Backend) CountDeletedAccounts(ctx context.Context, query string) (uint64, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	count, err := b.db.Collection(AccountsCollection).CountDocuments(ctx, bson.M{
+		"$or": []bson.M{
+			{
+				"first_name": bson.M{
+					"$regex":   query,
+					"$options": "i",
+				},
+			},
+			{
+				"last_name": bson.M{
+					"$regex":   query,
+					"$options": "i",
+				},
+			},
+			{
+				"email": bson.M{
+					"$regex":   query,
+					"$options": "i",
+				},
+			},
+		},
 		"deleted_at": bson.M{
 			"$ne": nil,
 		},

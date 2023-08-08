@@ -32,7 +32,12 @@ func (s *Server) GetDeletedAccounts(c echo.Context, params autogen.GetDeletedAcc
 		limit = *params.Limit
 	}
 
-	count, err := s.DBackend.CountDeletedAccounts(c.Request().Context())
+	var search string
+	if params.Search != nil {
+		search = *params.Search
+	}
+
+	count, err := s.DBackend.CountDeletedAccounts(c.Request().Context(), search)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -48,7 +53,7 @@ func (s *Server) GetDeletedAccounts(c echo.Context, params autogen.GetDeletedAcc
 		limit = 100
 	}
 
-	data, err := s.DBackend.GetDeletedAccounts(c.Request().Context(), page, limit)
+	data, err := s.DBackend.GetDeletedAccounts(c.Request().Context(), page, limit, search)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)

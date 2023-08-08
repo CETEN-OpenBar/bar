@@ -7,13 +7,53 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (b *Backend) GetAccounts(ctx context.Context, page uint64, size uint64) ([]*models.Account, error) {
+func (b *Backend) GetAccounts(ctx context.Context, page uint64, size uint64, query string) ([]*models.Account, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	// Get "size" accounts from "page" using aggregation
 	var accounts []*models.Account
 	cursor, err := b.db.Collection(AccountsCollection).Aggregate(ctx, []bson.M{
+		{
+			"$match": bson.M{
+				"$and": []bson.M{
+					{
+						"$or": []bson.M{
+							{
+								"first_name": bson.M{
+									"$regex":   query,
+									"$options": "i",
+								},
+							},
+							{
+								"last_name": bson.M{
+									"$regex":   query,
+									"$options": "i",
+								},
+							},
+							{
+								"email": bson.M{
+									"$regex":   query,
+									"$options": "i",
+								},
+							},
+						},
+					},
+					{
+						"$or": []bson.M{
+							{
+								"deleted_at": bson.M{
+									"$exists": false,
+								},
+							},
+							{
+								"deleted_at": nil,
+							},
+						},
+					},
+				},
+			},
+		},
 		{
 			"$skip": page * size,
 		},
@@ -33,12 +73,49 @@ func (b *Backend) GetAccounts(ctx context.Context, page uint64, size uint64) ([]
 	return accounts, nil
 }
 
-func (b *Backend) CountAccounts(ctx context.Context) (uint64, error) {
+func (b *Backend) CountAccounts(ctx context.Context, query string) (uint64, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	// Count all accounts
-	count, err := b.db.Collection(AccountsCollection).CountDocuments(ctx, bson.M{})
+	count, err := b.db.Collection(AccountsCollection).CountDocuments(ctx, bson.M{
+		"$and": []bson.M{
+			{
+				"$or": []bson.M{
+					{
+						"first_name": bson.M{
+							"$regex":   query,
+							"$options": "i",
+						},
+					},
+					{
+						"last_name": bson.M{
+							"$regex":   query,
+							"$options": "i",
+						},
+					},
+					{
+						"email": bson.M{
+							"$regex":   query,
+							"$options": "i",
+						},
+					},
+				},
+			},
+			{
+				"$or": []bson.M{
+					{
+						"deleted_at": bson.M{
+							"$exists": false,
+						},
+					},
+					{
+						"deleted_at": nil,
+					},
+				},
+			},
+		},
+	})
 	if err != nil {
 		return 0, err
 	}

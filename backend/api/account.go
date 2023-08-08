@@ -87,8 +87,13 @@ func (s *Server) GetAccounts(c echo.Context, params autogen.GetAccountsParams) e
 		limit = 100
 	}
 
+	var search string
+	if params.Search != nil {
+		search = *params.Search
+	}
+
 	// Calculate max page
-	count, err := s.DBackend.CountAccounts(c.Request().Context())
+	count, err := s.DBackend.CountAccounts(c.Request().Context(), search)
 	if err != nil {
 		return Error500(c)
 	}
@@ -96,7 +101,7 @@ func (s *Server) GetAccounts(c echo.Context, params autogen.GetAccountsParams) e
 	maxPage := uint64(count) / limit
 
 	// Get accounts from database
-	accounts, err := s.DBackend.GetAccounts(c.Request().Context(), page, limit)
+	accounts, err := s.DBackend.GetAccounts(c.Request().Context(), page, limit, search)
 	if err != nil {
 		return Error500(c)
 	}
@@ -135,6 +140,11 @@ func (s *Server) PostAccounts(c echo.Context) error {
 		cardId = *req.CardId
 	}
 
+	var priceRole = autogen.AccountPriceNormal
+	if req.PriceRole != nil {
+		priceRole = *req.PriceRole
+	}
+
 	account := &models.Account{
 		Account: autogen.Account{
 			Balance:      req.Balance,
@@ -143,10 +153,11 @@ func (s *Server) PostAccounts(c echo.Context) error {
 			FirstName:    req.FirstName,
 			LastName:     req.LastName,
 			Role:         req.Role,
+			PriceRole:    priceRole,
 			State:        autogen.AccountOK,
 		},
 	}
-	account.SetPin("0000")
+	account.SetPin("1234")
 
 	err = s.CreateAccount(c.Request().Context(), account)
 	if err != nil {
@@ -233,7 +244,7 @@ func (s *Server) PatchAccountId(c echo.Context, accountId autogen.UUID) error {
 	}
 	if req.CardId != nil {
 		account.Account.CardId = *req.CardId
-		account.SetPin("0000")
+		account.SetPin("1234")
 	}
 	if req.EmailAddress != nil {
 		account.Account.EmailAddress = *req.EmailAddress
@@ -357,10 +368,11 @@ func (s *Server) ImportAccounts(c echo.Context) error {
 				FirstName:    record[assignments["first_name"]],
 				LastName:     record[assignments["last_name"]],
 				Role:         autogen.AccountRole(record[assignments["role"]]),
+				PriceRole:    autogen.AccountPriceRole(record[assignments["price_role"]]),
 				State:        autogen.AccountOK,
 			},
 		}
-		account.SetPin("0000")
+		account.SetPin("1234")
 
 		err = s.CreateAccount(c.Request().Context(), account)
 		if err != nil {

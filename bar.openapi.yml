@@ -452,6 +452,11 @@ paths:
             type: integer
             format: uint64
             default: 10
+        - name: search
+          in: query
+          description: search string
+          schema:
+            type: string
       responses:
         '200':
           description: Returns new account's info
@@ -2457,6 +2462,11 @@ paths:
           schema:
             type: integer
             format: uint64
+        - name: search
+          in: query
+          description: search string
+          schema:
+            type: string
       responses:
         '200':
           description: ''

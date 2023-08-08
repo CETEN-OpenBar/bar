@@ -1,20 +1,11 @@
 <script lang="ts">
 	import type { Account, NewAccount, NewCategory } from '$lib/api';
 	import { api } from '$lib/config/config';
-	import { accountsApi } from '$lib/requests/requests';
+	import { accountsApi, deletedApi } from '$lib/requests/requests';
 	import { formatPrice } from '$lib/utils';
 	import { onMount } from 'svelte';
 
 	let accounts: Account[] = [];
-	let newAccount: NewAccount = {
-		first_name: '',
-		last_name: '',
-		email_address: '',
-		card_id: '',
-		balance: 0,
-		role: 'student',
-		price_role: 'ceten'
-	};
 
 	let searchQuery = '';
 	let page = 0;
@@ -26,8 +17,8 @@
 	});
 
 	function reloadAccounts() {
-		accountsApi()
-			.getAccounts(page, accounts_per_page, searchQuery, { withCredentials: true })
+		deletedApi()
+			.getDeletedAccounts(page, accounts_per_page, searchQuery, { withCredentials: true })
 			.then((res) => {
 				accounts = res.data.accounts ?? [];
 				page = res.data.page;
@@ -36,122 +27,22 @@
 			});
 	}
 
-	function createNewAccount() {
-		if (!newAccount) return;
-		accountsApi()
-			.postAccounts(newAccount, { withCredentials: true })
-			.then((res) => {
-				accounts = [...accounts, res.data];
+	function restoreAccount(id: string) {
+		deletedApi()
+			.restoreDeletedAccount(id, { withCredentials: true })
+			.then(() => {
+				accounts = accounts.filter((ct) => ct.id !== id);
 			});
 	}
 
 	function deleteAccount(id: string) {
-		accountsApi()
-			.markDeleteAccountId(id, { withCredentials: true })
+		deletedApi()
+			.deleteAccount(id, { withCredentials: true })
 			.then(() => {
 				accounts = accounts.filter((ct) => ct.id !== id);
 			});
 	}
 </script>
-
-<!-- Popup -->
-<div
-	id="hs-modal-new-account"
-	class="hs-overlay hidden w-full h-full fixed top-0 left-0 z-[60] overflow-x-hidden overflow-y-auto"
->
-	<div
-		class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto"
-	>
-		<div
-			class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-gray-800 dark:border-gray-700"
-		>
-			<div class="p-4 sm:p-7">
-				<div class="text-center">
-					<h2 class="block text-2xl font-bold text-gray-800 dark:text-gray-200">
-						Ajouter un compte
-					</h2>
-				</div>
-
-				<div class="mt-5">
-					<!-- Form -->
-					<div class="grid gap-y-4">
-						<!-- Form Group -->
-						<div>
-							<!-- name -->
-							<label for="first_name" class="block text-sm mb-2 dark:text-white">Prénom</label>
-							<div class="relative">
-								<input
-									type="text"
-									id="first_name"
-									name="first_name"
-									placeholder="Prénom"
-									class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-									required
-									aria-describedby="text-error"
-									bind:value={newAccount.first_name}
-								/>
-							</div>
-
-							<label for="last_name" class="block text-sm mb-2 dark:text-white">Nom</label>
-							<div class="relative mt-3">
-								<input
-									type="text"
-									id="last_name"
-									name="last_name"
-									placeholder="Nom"
-									class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-									required
-									aria-describedby="text-error"
-									bind:value={newAccount.last_name}
-								/>
-							</div>
-
-							<label for="email_address" class="block text-sm mb-2 dark:text-white"
-								>Adresse E-Mail</label
-							>
-							<div class="relative mt-3">
-								<input
-									type="text"
-									id="email_address"
-									name="email_address"
-									placeholder="Adresse email"
-									class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-									required
-									aria-describedby="text-error"
-									bind:value={newAccount.email_address}
-								/>
-							</div>
-
-							<label for="card_id" class="block text-sm mb-2 dark:text-white"
-								>Identifiant de la carte</label
-							>
-							<div class="relative mt-3">
-								<input
-									type="text"
-									id="card_id"
-									name="card_id"
-									placeholder="ID de la carte"
-									class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-									required
-									aria-describedby="text-error"
-									bind:value={newAccount.card_id}
-								/>
-							</div>
-
-							<button
-								type="submit"
-								class="mt-4 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
-								on:click={() => createNewAccount()}
-								data-hs-overlay="#hs-modal-new-account">Créer</button
-							>
-						</div>
-					</div>
-					<!-- End Form -->
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
 
 <!-- Table Section -->
 <div class="max-w-[95%] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
@@ -168,7 +59,7 @@
 					>
 						<div>
 							<h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Comptes</h2>
-							<p class="text-sm text-gray-600 dark:text-gray-400">Ajouter des comptes</p>
+							<p class="text-sm text-gray-600 dark:text-gray-400">Restorer des comptes</p>
 						</div>
 
 						<!-- search bar -->
@@ -208,32 +99,6 @@
 									stroke-linejoin="round"
 								/>
 							</svg>
-						</div>
-
-						<div>
-							<div class="inline-flex gap-x-2">
-								<button
-									class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
-									data-hs-overlay="#hs-modal-new-account"
-								>
-									<svg
-										class="w-3 h-3"
-										xmlns="http://www.w3.org/2000/svg"
-										width="16"
-										height="16"
-										viewBox="0 0 16 16"
-										fill="none"
-									>
-										<path
-											d="M2.63452 7.50001L13.6345 7.5M8.13452 13V2"
-											stroke="currentColor"
-											stroke-width="2"
-											stroke-linecap="round"
-										/>
-									</svg>
-									Ajouter un compte
-								</button>
-							</div>
 						</div>
 					</div>
 					<!-- End Header -->
@@ -305,83 +170,29 @@
 								<tr>
 									<td class="h-px w-72">
 										<div class="px-6 py-3">
-											<input
-												type="text"
-												class="block text-sm dark:text-white/[.8]  break-words p-2 bg-transparent"
-												value={account.last_name}
-												on:input={(e) => {
-													// @ts-ignore
-													let name = e.target?.value;
-													accountsApi()
-														.patchAccountId(
-															account.id,
-															{
-																last_name: name
-															},
-															{ withCredentials: true }
-														)
-														.then((res) => {
-															account = res.data ?? account;
-														})
-														.catch((err) => {
-															account.last_name = account.last_name ?? '';
-														});
-												}}
-											/>
+											<p
+												class="w-72 block text-sm dark:text-white/[.8]  break-words p-2 bg-transparent"
+											>
+												{account.last_name}
+											<p/>
 										</div>
 									</td>
 									<td class="h-px w-72">
 										<div class="px-6 py-3">
-											<input
-												type="text"
-												class="block text-sm dark:text-white/[.8]  break-words p-2 bg-transparent"
-												value={account.first_name}
-												on:input={(e) => {
-													// @ts-ignore
-													let name = e.target?.value;
-													accountsApi()
-														.patchAccountId(
-															account.id,
-															{
-																first_name: name
-															},
-															{ withCredentials: true }
-														)
-														.then((res) => {
-															account = res.data ?? account;
-														})
-														.catch((err) => {
-															account.first_name = account.first_name ?? '';
-														});
-												}}
-											/>
+											<p
+												class="w-72 block text-sm dark:text-white/[.8]  break-words p-2 bg-transparent"
+											>
+												{account.first_name}
+											<p/>
 										</div>
 									</td>
 									<td class="h-px w-96">
 										<div class="px-6 py-3">
-											<input
-												type="text"
+											<p
 												class="w-72 block text-sm dark:text-white/[.8]  break-words p-2 bg-transparent"
-												value={account.email_address}
-												on:input={(e) => {
-													// @ts-ignore
-													let name = e.target?.value;
-													accountsApi()
-														.patchAccountId(
-															account.id,
-															{
-																email_address: name
-															},
-															{ withCredentials: true }
-														)
-														.then((res) => {
-															account = res.data ?? account;
-														})
-														.catch((err) => {
-															account.email_address = account.email_address ?? '';
-														});
-												}}
-											/>
+											>
+												{account.email_address}
+											<p/>
 										</div>
 									</td>
 									<td class="h-px w-72">
@@ -398,24 +209,7 @@
 											<select
 												class="block text-sm dark:text-white/[.8]  break-words p-2 bg-transparent"
 												value={account.role}
-												on:change={(e) => {
-													// @ts-ignore
-													let role = e.target?.value;
-													accountsApi()
-														.patchAccountId(
-															account.id,
-															{
-																role: role
-															},
-															{ withCredentials: true }
-														)
-														.then((res) => {
-															account = res.data ?? account;
-														})
-														.catch((err) => {
-															account.role = account.role ?? '';
-														});
-												}}
+												disabled
 											>
 												<option value="student">Étudiant</option>
 												<option value="student_with_benefits">Étudiant avec avantages</option>
@@ -431,24 +225,7 @@
 											<select
 												class="block text-sm dark:text-white/[.8]  break-words p-2 bg-transparent"
 												value={account.price_role}
-												on:change={(e) => {
-													// @ts-ignore
-													let role = e.target?.value;
-													accountsApi()
-														.patchAccountId(
-															account.id,
-															{
-																price_role: role
-															},
-															{ withCredentials: true }
-														)
-														.then((res) => {
-															account = res.data ?? account;
-														})
-														.catch((err) => {
-															account.price_role = account.price_role ?? '';
-														});
-												}}
+												disabled
 											>
 												<option value="normal">Normal</option>
 												<option value="exte">Exte</option>
@@ -460,6 +237,12 @@
 									</td>
 									<td class="h-px w-px whitespace-nowrap">
 										<div class="px-6 py-1.5">
+											<button
+												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
+												on:click={() => restoreAccount(account.id)}
+											>
+												Restorer
+											</button>
 											<button
 												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
 												on:click={() => deleteAccount(account.id)}

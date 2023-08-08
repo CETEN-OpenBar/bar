@@ -1677,10 +1677,11 @@ export const AccountsApiAxiosParamCreator = function (configuration?: Configurat
          * @summary 
          * @param {number} [page] page to get
          * @param {number} [limit] number of accounts to get
+         * @param {string} [search] search string
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAccounts: async (page?: number, limit?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getAccounts: async (page?: number, limit?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/accounts`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1701,6 +1702,10 @@ export const AccountsApiAxiosParamCreator = function (configuration?: Configurat
 
             if (limit !== undefined) {
                 localVarQueryParameter['limit'] = limit;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
             }
 
 
@@ -1948,11 +1953,12 @@ export const AccountsApiFp = function(configuration?: Configuration) {
          * @summary 
          * @param {number} [page] page to get
          * @param {number} [limit] number of accounts to get
+         * @param {string} [search] search string
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getAccounts(page?: number, limit?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAccounts200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getAccounts(page, limit, options);
+        async getAccounts(page?: number, limit?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAccounts200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAccounts(page, limit, search, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -2053,11 +2059,12 @@ export const AccountsApiFactory = function (configuration?: Configuration, baseP
          * @summary 
          * @param {number} [page] page to get
          * @param {number} [limit] number of accounts to get
+         * @param {string} [search] search string
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAccounts(page?: number, limit?: number, options?: any): AxiosPromise<GetAccounts200Response> {
-            return localVarFp.getAccounts(page, limit, options).then((request) => request(axios, basePath));
+        getAccounts(page?: number, limit?: number, search?: string, options?: any): AxiosPromise<GetAccounts200Response> {
+            return localVarFp.getAccounts(page, limit, search, options).then((request) => request(axios, basePath));
         },
         /**
          * Import accounts from a CSV file
@@ -2158,12 +2165,13 @@ export class AccountsApi extends BaseAPI {
      * @summary 
      * @param {number} [page] page to get
      * @param {number} [limit] number of accounts to get
+     * @param {string} [search] search string
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AccountsApi
      */
-    public getAccounts(page?: number, limit?: number, options?: AxiosRequestConfig) {
-        return AccountsApiFp(this.configuration).getAccounts(page, limit, options).then((request) => request(this.axios, this.basePath));
+    public getAccounts(page?: number, limit?: number, search?: string, options?: AxiosRequestConfig) {
+        return AccountsApiFp(this.configuration).getAccounts(page, limit, search, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3955,10 +3963,11 @@ export const DeletedApiAxiosParamCreator = function (configuration?: Configurati
          * Get deleted accounts
          * @param {number} [page] Page number
          * @param {number} [limit] Number of accounts per page
+         * @param {string} [search] search string
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getDeletedAccounts: async (page?: number, limit?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getDeletedAccounts: async (page?: number, limit?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/deleted/accounts`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -3979,6 +3988,10 @@ export const DeletedApiAxiosParamCreator = function (configuration?: Configurati
 
             if (limit !== undefined) {
                 localVarQueryParameter['limit'] = limit;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
             }
 
 
@@ -4567,11 +4580,12 @@ export const DeletedApiFp = function(configuration?: Configuration) {
          * Get deleted accounts
          * @param {number} [page] Page number
          * @param {number} [limit] Number of accounts per page
+         * @param {string} [search] search string
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getDeletedAccounts(page?: number, limit?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetDeletedAccounts200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getDeletedAccounts(page, limit, options);
+        async getDeletedAccounts(page?: number, limit?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetDeletedAccounts200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getDeletedAccounts(page, limit, search, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -4787,11 +4801,12 @@ export const DeletedApiFactory = function (configuration?: Configuration, basePa
          * Get deleted accounts
          * @param {number} [page] Page number
          * @param {number} [limit] Number of accounts per page
+         * @param {string} [search] search string
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getDeletedAccounts(page?: number, limit?: number, options?: any): AxiosPromise<GetDeletedAccounts200Response> {
-            return localVarFp.getDeletedAccounts(page, limit, options).then((request) => request(axios, basePath));
+        getDeletedAccounts(page?: number, limit?: number, search?: string, options?: any): AxiosPromise<GetDeletedAccounts200Response> {
+            return localVarFp.getDeletedAccounts(page, limit, search, options).then((request) => request(axios, basePath));
         },
         /**
          * Get deleted carousel images
@@ -5007,12 +5022,13 @@ export class DeletedApi extends BaseAPI {
      * Get deleted accounts
      * @param {number} [page] Page number
      * @param {number} [limit] Number of accounts per page
+     * @param {string} [search] search string
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DeletedApi
      */
-    public getDeletedAccounts(page?: number, limit?: number, options?: AxiosRequestConfig) {
-        return DeletedApiFp(this.configuration).getDeletedAccounts(page, limit, options).then((request) => request(this.axios, this.basePath));
+    public getDeletedAccounts(page?: number, limit?: number, search?: string, options?: AxiosRequestConfig) {
+        return DeletedApiFp(this.configuration).getDeletedAccounts(page, limit, search, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

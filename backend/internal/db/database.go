@@ -36,8 +36,8 @@ type DBackend interface {
 	DeleteAccount(ctx context.Context, id string) error
 	RestoreAccount(ctx context.Context, id string) error
 
-	GetDeletedAccounts(ctx context.Context, page uint64, size uint64) ([]*models.Account, error)
-	CountDeletedAccounts(ctx context.Context) (uint64, error)
+	GetDeletedAccounts(ctx context.Context, page uint64, size uint64, query string) ([]*models.Account, error)
+	CountDeletedAccounts(ctx context.Context, query string) (uint64, error)
 
 	// CarouselText's CRUD
 	CreateCarouselText(ctx context.Context, ct *models.CarouselText) error
@@ -120,8 +120,8 @@ type DBackend interface {
 	// Other requests that are not CRUD but still needed
 	GetAccountByGoogle(ctx context.Context, googleID string) (*models.Account, error)
 	GetAccountByCard(ctx context.Context, card string) (*models.Account, error)
-	GetAccounts(ctx context.Context, page uint64, size uint64) ([]*models.Account, error)
-	CountAccounts(ctx context.Context) (uint64, error)
+	GetAccounts(ctx context.Context, page uint64, size uint64, query string) ([]*models.Account, error)
+	CountAccounts(ctx context.Context, query string) (uint64, error)
 	GetRefills(ctx context.Context, account string, page uint64, size uint64, startAt, endAt uint64) ([]*models.Refill, error)
 	CountRefills(ctx context.Context, account string, startAt, endAt uint64) (uint64, error)
 	GetItems(ctx context.Context, categoryID string, page, size uint64, state string) ([]*models.Item, error)
