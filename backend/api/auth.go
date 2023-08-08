@@ -31,12 +31,23 @@ var redirectCache = cache.New(5*time.Minute, 10*time.Minute)
 func (s *Server) GetAccountQR(c echo.Context) error {
 	// Get account from cookie
 	logged := c.Get("userLogged").(bool)
-	if !logged {
+	loggedOnBoard := c.Get("onBoardLogged").(bool)
+	if !logged && !loggedOnBoard {
 		return ErrorNotAuthenticated(c)
 	}
 
-	accountID := c.Get("userAccountID").(string)
-	account := c.Get("userAccount").(*models.Account)
+	var accountID string
+	var account *models.Account
+
+	if logged {
+		accountID = c.Get("userAccountID").(string)
+		account = c.Get("userAccount").(*models.Account)
+	}
+
+	if loggedOnBoard {
+		accountID = c.Get("onBoardAccountID").(string)
+		account = c.Get("onBoardAccount").(*models.Account)
+	}
 
 	var params autogen.GetAccountQRJSONBody
 	err := c.Bind(&params)
@@ -167,11 +178,16 @@ func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 
 	account, err := s.DBackend.GetAccount(c.Request().Context(), accountID.(string))
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
+		if err != mongo.ErrNoDocuments {
+			logrus.Error(err)
+			return Error500(c)
+		}
+		// Check if account is onBoard
+		acc, found := onBoardCache.Get(accountID.(string))
+		if !found {
 			return ErrorAccNotFound(c)
 		}
-		logrus.Error(err)
-		return Error500(c)
+		account = acc.(*models.Account)
 	}
 
 	conf := config.GetConfig()
@@ -234,10 +250,23 @@ func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 	account.GoogleId = usr.ID
 	account.GooglePicture = usr.Picture
 
-	err = s.DBackend.UpdateAccount(c.Request().Context(), account)
-	if err != nil {
-		logrus.Error(err)
-		return Error500(c)
+	if account.State == autogen.AccountNotOnBoarded {
+		account.State = autogen.AccountOK
+
+		err = s.DBackend.CreateAccount(c.Request().Context(), account)
+		if err != nil {
+			logrus.Error(err)
+			return Error500(c)
+		}
+
+		// Delete ONBOARD cookie
+		s.RemoveOnBoardCookie(c)
+	} else {
+		err = s.DBackend.UpdateAccount(c.Request().Context(), account)
+		if err != nil {
+			logrus.Error(err)
+			return Error500(c)
+		}
 	}
 
 	BroadcastToRoom(accountID.(string), []byte("connected"))
@@ -355,10 +384,20 @@ func (s *Server) ConnectCard(c echo.Context) error {
 
 	account, err := s.DBackend.GetAccountByCard(c.Request().Context(), param.CardId)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			return ErrorAccNotFound(c)
+		if err != mongo.ErrNoDocuments {
+			return Error500(c)
 		}
-		return Error500(c)
+		// Create default account with 1234 pin
+		account = &models.Account{
+			Account: autogen.Account{
+				CardId:    param.CardId,
+				Id:        uuid.New(),
+				Role:      autogen.AccountStudent,
+				PriceRole: autogen.AccountPriceNormal,
+				State:     autogen.AccountNotOnBoarded,
+			},
+		}
+		account.SetPin("1234")
 	}
 
 	if !account.VerifyPin(param.CardPin) {
@@ -411,7 +450,7 @@ func (s *Server) ConnectGoogle(c echo.Context, p autogen.ConnectGoogleParams) er
 
 // (GET /logout)
 func (s *Server) Logout(c echo.Context) error {
-	s.RemoveCookie(c)
+	s.RemoveCookies(c)
 
 	autogen.Logout204Response{}.VisitLogoutResponse(c.Response())
 	return nil

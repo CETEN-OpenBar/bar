@@ -3,7 +3,7 @@
 	import Pin from '$lib/components/borne/pin.svelte';
 	import Error from '$lib/components/error.svelte';
 
-	import type { CarouselImage, CarouselText, ConnectCardRequest } from '$lib/api';
+	import { AccountState, type CarouselImage, type CarouselText, type ConnectCardRequest } from '$lib/api';
 	import { onMount } from 'svelte';
 	import { authApi, carouselApi } from '$lib/requests/requests';
 	import { goto } from '$app/navigation';
@@ -88,7 +88,8 @@
 				}
 			)
 			.then((res) => {
-				goto('/borne/commande');
+				if (res.data.account?.state == AccountState.AccountOK) goto('/borne/commande');
+				if (res.data.account?.state == AccountState.AccountNotOnBoarded) goto('/borne/onboarding');
 			})
 			.catch(() => {
 				incorrectPin = 'Mauvais code pin';

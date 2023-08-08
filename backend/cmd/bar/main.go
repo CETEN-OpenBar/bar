@@ -31,7 +31,7 @@ func main() {
 			CardId: "1",
 			Id:     uuid.New(),
 			Role:   autogen.AccountSuperAdmin,
-			State:  autogen.AccountOk,
+			State:  autogen.AccountOK,
 		},
 	}
 	acc.SetPin("1234")

@@ -1,12 +1,11 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { apiws } from '$lib/config/config';
 	import { authApi } from '$lib/requests/requests';
 	import Error from '../error.svelte';
-	import Pin from './pin.svelte';
 	import { onMount, onDestroy } from 'svelte';
 
 	let qr: any = undefined;
-	let ask = true;
 	let error = '';
 	let ws: WebSocket;
 
@@ -23,23 +22,14 @@
 				connected = true;
 				// Send refresh command in 2 seconds
 				setTimeout(() => {
-					window.location.reload();
+					goto('/borne');
 				}, 2000);
 			}
 		};
-	});
 
-	onDestroy(() => {
-		ws.close();
-	});
 
-	function pinCallback(pin: string) {
-		if (pin == '') {
-			ask = false;
-			return;
-		}
 		authApi()
-			.getAccountQR({ card_pin: pin }, { withCredentials: true })
+			.getAccountQR({ card_pin: '1234' }, { withCredentials: true })
 			.then((res) => {
 				qr = res.data;
 			})
@@ -49,10 +39,14 @@
 					error = '';
 				}, 3000);
 			});
-	}
+	});
+
+	onDestroy(() => {
+		ws.close();
+	});
 </script>
 
-{#if qr !== undefined || ask == false}
+{#if qr !== undefined}
 	<div class="grid">
 		{#if spinner}
 			<div id="overlay" class="w-full" style="background-color: #0009; grid-area: 1 / 1 / 2 / 2;">
@@ -77,9 +71,6 @@
 			alt="Entrez-votre pin pour voir le code"
 		/>
 	</div>
-{:else}
-	<Pin callback={pinCallback} />
-	<!-- {pinCallback('1234')} -->
 {/if}
 
 {#if error !== ''}

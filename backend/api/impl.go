@@ -32,6 +32,9 @@ func (s *Server) getUserSess(c echo.Context) *sessions.Session {
 func (s *Server) getAdminSess(c echo.Context) *sessions.Session {
 	return c.Get("adminSess").(*sessions.Session)
 }
+func (s *Server) getOnboardSess(c echo.Context) *sessions.Session {
+	return c.Get("onBoardSess").(*sessions.Session)
+}
 
 func (s *Server) Serve(c *config.Config) error {
 	e := echo.New()
@@ -43,19 +46,14 @@ func (s *Server) Serve(c *config.Config) error {
 	e.Use(middleware.Logger())
 
 	userStore := sessions.NewCookieStore([]byte(c.ApiConfig.SessionSecret))
+	adminStore := sessions.NewCookieStore([]byte(c.ApiConfig.AdminSessionSecret))
+	onBoardStore := sessions.NewCookieStore([]byte(c.ApiConfig.AdminSessionSecret))
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			defer context.Clear(c.Request())
 			c.Set("userStore", userStore)
-			return next(c)
-		}
-	})
-
-	adminStore := sessions.NewCookieStore([]byte(c.ApiConfig.AdminSessionSecret))
-	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			defer context.Clear(c.Request())
 			c.Set("adminStore", adminStore)
+			c.Set("onBoardStore", onBoardStore)
 			return next(c)
 		}
 	})

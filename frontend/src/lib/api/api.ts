@@ -178,7 +178,8 @@ export type AccountRole = typeof AccountRole[keyof typeof AccountRole];
  */
 
 export const AccountState = {
-    AccountOk: 'account_ok'
+    AccountNotOnBoarded: 'not_onboarded',
+    AccountOK: 'account_ok'
 } as const;
 
 export type AccountState = typeof AccountState[keyof typeof AccountState];
@@ -2399,6 +2400,8 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication not_onboarded required
+
             // authentication auth required
 
 
@@ -2433,6 +2436,8 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication not_onboarded required
 
             // authentication auth required
 

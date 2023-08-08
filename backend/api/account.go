@@ -143,7 +143,7 @@ func (s *Server) PostAccounts(c echo.Context) error {
 			FirstName:    req.FirstName,
 			LastName:     req.LastName,
 			Role:         req.Role,
-			State:        autogen.AccountOk,
+			State:        autogen.AccountOK,
 		},
 	}
 	account.SetPin("0000")
@@ -333,7 +333,7 @@ func (s *Server) ImportAccounts(c echo.Context) error {
 				FirstName:    record[assignments["first_name"]],
 				LastName:     record[assignments["last_name"]],
 				Role:         autogen.AccountRole(record[assignments["role"]]),
-				State:        autogen.AccountOk,
+				State:        autogen.AccountOK,
 			},
 		}
 		account.SetPin("0000")

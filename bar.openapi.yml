@@ -255,6 +255,7 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
       security:
         - auth: []
+        - not_onboarded: []
       tags:
         - auth
   /logout:
@@ -280,6 +281,7 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
       security:
         - auth: []
+        - not_onboarded: []
       tags:
         - auth
   /account:
@@ -3763,7 +3765,11 @@ components:
       description: State of the account
       example: account_ok
       enum:
+        - not_onboarded
         - account_ok
+      x-enum-varnames:
+        - AccountNotOnBoarded
+        - AccountOK
     AccountRestrictions:
       type: string
       description: Restrictions of the account
@@ -4283,4 +4289,8 @@ components:
     admin_auth:
       type: apiKey
       name: BAR_ADMIN_SESS
+      in: cookie
+    not_onboarded:
+      type: apiKey
+      name: BAR_ONBOARD_SESS
       in: cookie

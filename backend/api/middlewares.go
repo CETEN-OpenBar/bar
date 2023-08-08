@@ -1,11 +1,17 @@
 package api
 
 import (
+	"bar/internal/models"
+	"time"
+
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo/v4"
+	"github.com/patrickmn/go-cache"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 )
+
+var onBoardCache = cache.New(5*time.Minute, 10*time.Minute)
 
 func (s *Server) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) (err error) {
@@ -19,6 +25,11 @@ func (s *Server) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		if !ok {
 			return echo.NewHTTPError(500, "adminStore not found")
 		}
+		v = c.Get("onBoardStore")
+		onBoardStore, ok := v.(sessions.Store)
+		if !ok {
+			return echo.NewHTTPError(500, "onBoardStore not found")
+		}
 
 		userSess, err := userStore.Get(c.Request(), "BAR_SESS")
 		if err != nil {
@@ -28,12 +39,34 @@ func (s *Server) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		if err != nil {
 			return echo.NewHTTPError(500, "session not found")
 		}
+		onBoardSess, err := onBoardStore.Get(c.Request(), "BAR_ONBOARD_SESS")
+		if err != nil {
+			return echo.NewHTTPError(500, "session not found")
+		}
 
 		c.Set("userSess", userSess)
 		c.Set("adminSess", adminSess)
+		c.Set("onBoardSess", onBoardSess)
 
 		c.Set("userLogged", false)
 		c.Set("adminLogged", false)
+		c.Set("onBoardLogged", false)
+
+		onBoardID, ok := onBoardSess.Values["onboard_account_id"].(string)
+		if ok {
+			// Get account from database
+			acc, found := onBoardCache.Get(onBoardID)
+			if !found {
+				// Remove cookie and go on
+				onBoardSess.Options.MaxAge = -1
+				onBoardSess.Save(c.Request(), c.Response())
+			} else {
+				account := acc.(*models.Account)
+				c.Set("onBoardLogged", true)
+				c.Set("onBoardAccountID", onBoardID)
+				c.Set("onBoardAccount", account)
+			}
+		}
 
 		// Get user account from cookie
 		accountID, ok := userSess.Values["account_id"].(string)
