@@ -1464,6 +1464,12 @@ export interface UpdateAccountAdmin {
     'role'?: AccountRole;
     /**
      * 
+     * @type {AccountPriceRole}
+     * @memberof UpdateAccountAdmin
+     */
+    'price_role'?: AccountPriceRole;
+    /**
+     * 
      * @type {Array<AccountRestrictions>}
      * @memberof UpdateAccountAdmin
      */

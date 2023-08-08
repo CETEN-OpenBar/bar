@@ -3754,6 +3754,8 @@ components:
           example: 1000
         role:
           $ref: '#/components/schemas/AccountRole'
+        price_role:
+          $ref: '#/components/schemas/AccountPriceRole'
         restrictions:
           type: array
           items:

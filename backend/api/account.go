@@ -245,7 +245,31 @@ func (s *Server) PatchAccountId(c echo.Context, accountId autogen.UUID) error {
 		account.Account.LastName = *req.LastName
 	}
 	if req.Role != nil {
-		account.Account.Role = *req.Role
+		r := *req.Role
+
+		// Can only set the roles to something below the current role
+		switch account.Role {
+		case autogen.AccountSuperAdmin:
+			account.Account.Role = r
+		case autogen.AccountAdmin:
+			if r == autogen.AccountSuperAdmin {
+				return Error400(c)
+			}
+			account.Account.Role = r
+		case autogen.AccountGhost:
+			// Can't set to anything
+			return Error400(c)
+		case autogen.AccountMember:
+			if r == autogen.AccountSuperAdmin || r == autogen.AccountAdmin {
+				return Error400(c)
+			}
+			account.Account.Role = r
+		}
+	}
+	if req.PriceRole != nil {
+		r := *req.PriceRole
+
+		account.Account.PriceRole = r
 	}
 	if req.State != nil {
 		account.Account.State = *req.State

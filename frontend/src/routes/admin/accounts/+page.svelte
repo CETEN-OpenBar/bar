@@ -2,6 +2,7 @@
 	import type { Account, NewAccount, NewCategory } from '$lib/api';
 	import { api } from '$lib/config/config';
 	import { accountsApi } from '$lib/requests/requests';
+	import { formatPrice } from '$lib/utils';
 	import { onMount } from 'svelte';
 
 	let accounts: Account[] = [];
@@ -11,7 +12,8 @@
 		email_address: '',
 		card_id: '',
 		balance: 0,
-		role: "student",
+		role: 'student',
+		price_role: 'ceten'
 	};
 
 	let page = 0;
@@ -79,6 +81,66 @@
 					<div class="grid gap-y-4">
 						<!-- Form Group -->
 						<div>
+							<!-- name -->
+							<label for="first_name" class="block text-sm mb-2 dark:text-white">Prénom</label>
+							<div class="relative">
+								<input
+									type="text"
+									id="first_name"
+									name="first_name"
+									placeholder="Prénom"
+									class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+									required
+									aria-describedby="text-error"
+									bind:value={newAccount.first_name}
+								/>
+							</div>
+
+							<label for="last_name" class="block text-sm mb-2 dark:text-white">Nom</label>
+							<div class="relative mt-3">
+								<input
+									type="text"
+									id="last_name"
+									name="last_name"
+									placeholder="Nom"
+									class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+									required
+									aria-describedby="text-error"
+									bind:value={newAccount.last_name}
+								/>
+							</div>
+
+							<label for="email_address" class="block text-sm mb-2 dark:text-white"
+								>Adresse E-Mail</label
+							>
+							<div class="relative mt-3">
+								<input
+									type="text"
+									id="email_address"
+									name="email_address"
+									placeholder="Adresse email"
+									class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+									required
+									aria-describedby="text-error"
+									bind:value={newAccount.email_address}
+								/>
+							</div>
+
+							<label for="card_id" class="block text-sm mb-2 dark:text-white"
+								>Identifiant de la carte</label
+							>
+							<div class="relative mt-3">
+								<input
+									type="text"
+									id="card_id"
+									name="card_id"
+									placeholder="ID de la carte"
+									class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+									required
+									aria-describedby="text-error"
+									bind:value={newAccount.card_id}
+								/>
+							</div>
 
 							<button
 								type="submit"
@@ -96,7 +158,7 @@
 </div>
 
 <!-- Table Section -->
-<div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+<div class="max-w-[95%] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
 	<!-- Card -->
 	<div class="flex flex-col">
 		<div class="-m-1.5 overflow-x-auto">
@@ -109,15 +171,15 @@
 						class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-b border-gray-200 dark:border-gray-700"
 					>
 						<div>
-							<h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Catégories</h2>
-							<p class="text-sm text-gray-600 dark:text-gray-400">Ajouter des catégories</p>
+							<h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Comptes</h2>
+							<p class="text-sm text-gray-600 dark:text-gray-400">Ajouter des comptes</p>
 						</div>
 
 						<div>
 							<div class="inline-flex gap-x-2">
 								<button
 									class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
-									data-hs-overlay="#hs-modal-new-image"
+									data-hs-overlay="#hs-modal-new-account"
 								>
 									<svg
 										class="w-3 h-3"
@@ -134,7 +196,7 @@
 											stroke-linecap="round"
 										/>
 									</svg>
-									Ajouter une catégorie
+									Ajouter un compte
 								</button>
 							</div>
 						</div>
@@ -159,69 +221,213 @@
 										<span
 											class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 										>
-											Image
+											Prénom
 										</span>
 									</div>
 								</th>
-
+								<th scope="col" class="px-6 py-3 text-left">
+									<div class="flex items-center gap-x-2">
+										<span
+											class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+										>
+											Adresse E-Mail
+										</span>
+									</div>
+								</th>
+								<th scope="col" class="px-6 py-3 text-left">
+									<div class="flex items-center gap-x-2">
+										<span
+											class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+										>
+											Solde
+										</span>
+									</div>
+								</th>
+								<th scope="col" class="px-6 py-3 text-left">
+									<div class="flex items-center gap-x-2">
+										<span
+											class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+										>
+											Rôle
+										</span>
+									</div>
+								</th>
+								<th scope="col" class="px-6 py-3 text-left">
+									<div class="flex items-center gap-x-2">
+										<span
+											class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+										>
+											Prix
+										</span>
+									</div>
+								</th>
 								<th scope="col" class="px-6 py-3 text-right" />
 							</tr>
 						</thead>
 
 						<tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-							{#each accounts.slice(page * categoriesPerPage, (page + 1) * categoriesPerPage) as category}
+							{#each accounts as account}
 								<tr>
 									<td class="h-px w-72">
 										<div class="px-6 py-3">
-											<!-- <p class="block text-sm text-gray-500 break-words">{category.name}</p> -->
-
-											<!-- editable p -->
-
 											<input
 												type="text"
 												class="block text-sm dark:text-white/[.8] active:text-white break-words p-2 bg-transparent"
-												value={category.name}
+												value={account.last_name}
 												on:input={(e) => {
 													// @ts-ignore
 													let name = e.target?.value;
-													renameCategory(category.id, name);
+													accountsApi()
+														.patchAccountId(
+															account.id,
+															{
+																last_name: name
+															},
+															{ withCredentials: true }
+														)
+														.then((res) => {
+															account = res.data ?? account;
+														})
+														.catch((err) => {
+															account.last_name = account.last_name ?? '';
+														});
 												}}
 											/>
 										</div>
 									</td>
 									<td class="h-px w-72">
-										<!-- Display a miniature of the image -->
-										<div class="px-6 py-3 w-24 relative">
-											<!-- <img
-												src={api() + category.picture_uri}
-												alt="indisponible"
-												class="w-full h-full rounded-md object-cover"
-											/> -->
-
-											<!-- input in front of the image to click & reupload -->
+										<div class="px-6 py-3">
 											<input
-												type="file"
-												class="absolute w-[50%] h-[70%] opacity-0 cursor-pointer"
-												on:change={(e) => {
+												type="text"
+												class="block text-sm dark:text-white/[.8] active:text-white break-words p-2 bg-transparent"
+												value={account.first_name}
+												on:input={(e) => {
 													// @ts-ignore
-													let file = e.target?.files[0];
-													reuploadCategoryPicture(category.id, file);
+													let name = e.target?.value;
+													accountsApi()
+														.patchAccountId(
+															account.id,
+															{
+																first_name: name
+															},
+															{ withCredentials: true }
+														)
+														.then((res) => {
+															account = res.data ?? account;
+														})
+														.catch((err) => {
+															account.first_name = account.first_name ?? '';
+														});
 												}}
 											/>
-											{#if category.picture_uri != ''}
-												<img
-													src={api() + category.picture_uri}
-													alt="indisponible"
-													class="w-full h-full rounded-md object-cover"
-												/>
-											{/if}
+										</div>
+									</td>
+									<td class="h-px w-96">
+										<div class="px-6 py-3">
+											<input
+												type="text"
+												class="w-72 block text-sm dark:text-white/[.8] active:text-white break-words p-2 bg-transparent"
+												value={account.email_address}
+												on:input={(e) => {
+													// @ts-ignore
+													let name = e.target?.value;
+													accountsApi()
+														.patchAccountId(
+															account.id,
+															{
+																email_address: name
+															},
+															{ withCredentials: true }
+														)
+														.then((res) => {
+															account = res.data ?? account;
+														})
+														.catch((err) => {
+															account.email_address = account.email_address ?? '';
+														});
+												}}
+											/>
+										</div>
+									</td>
+									<td class="h-px w-72">
+										<div class="px-6 py-3">
+											<p
+												class="text-sm dark:text-white/[.8] active:text-white break-words p-2 bg-transparent"
+											>
+												{formatPrice(account.balance)}
+											</p>
+										</div>
+									</td>
+									<td class="h-px w-72">
+										<div class="px-6 py-3">
+											<select
+												class="block text-sm dark:text-white/[.8] active:text-white break-words p-2 bg-transparent"
+												value={account.role}
+												on:change={(e) => {
+													// @ts-ignore
+													let role = e.target?.value;
+													accountsApi()
+														.patchAccountId(
+															account.id,
+															{
+																role: role
+															},
+															{ withCredentials: true }
+														)
+														.then((res) => {
+															account = res.data ?? account;
+														})
+														.catch((err) => {
+															account.role = account.role ?? '';
+														});
+												}}
+											>
+												<option value="student">Étudiant</option>
+												<option value="student_with_benefits">Étudiant avec avantages</option>
+												<option value="member">Membre</option>
+												<option value="admin">Admin</option>
+												<option value="ghost">Fantôme</option>
+												<option value="superadmin">Superadmin</option>
+											</select>
+										</div>
+									</td>
+									<td class="h-px w-72">
+										<div class="px-6 py-3">
+											<select
+												class="block text-sm dark:text-white/[.8] active:text-white break-words p-2 bg-transparent"
+												value={account.price_role}
+												on:change={(e) => {
+													// @ts-ignore
+													let role = e.target?.value;
+													accountsApi()
+														.patchAccountId(
+															account.id,
+															{
+																price_role: role
+															},
+															{ withCredentials: true }
+														)
+														.then((res) => {
+															account = res.data ?? account;
+														})
+														.catch((err) => {
+															account.price_role = account.price_role ?? '';
+														});
+												}}
+											>
+												<option value="normal">Normal</option>
+												<option value="exte">Exte</option>
+												<option value="ceten">CETEN</option>
+												<option value="vip">VIP</option>
+												<option value="staff">Staff</option>
+											</select>
 										</div>
 									</td>
 									<td class="h-px w-px whitespace-nowrap">
 										<div class="px-6 py-1.5">
 											<button
 												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
-												on:click={() => deleteCategory(category.id)}
+												on:click={() => deleteAccount(account.id)}
 											>
 												Supprimer
 											</button>
@@ -250,7 +456,7 @@
 									type="button"
 									class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
 									on:click={() => {
-										if (page > 0) page--;
+										if (page > 1) page--;
 									}}
 								>
 									<svg
@@ -270,14 +476,14 @@
 								</button>
 
 								<p class="text-sm self-center text-gray-600 dark:text-gray-400">
-									Page {page + 1} / {Math.ceil(accounts.length / categoriesPerPage)}
+									Page {page + 1} / {max_page + 1}
 								</p>
 
 								<button
 									type="button"
 									class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
 									on:click={() => {
-										if (page < Math.ceil(accounts.length / categoriesPerPage) - 1) page++;
+										if (page < Math.ceil(accounts.length / accounts_per_page) - 1) page++;
 									}}
 								>
 									Suivant
