@@ -154,6 +154,16 @@ var (
 					},
 				}),
 			},
+			mongo.IndexModel{
+				Keys: bson.M{
+					"email_address": 1,
+				},
+				Options: options.Index().SetUnique(true).SetPartialFilterExpression(bson.M{
+					"email_address": bson.M{
+						"$exists": true,
+					},
+				}),
+			},
 		},
 	}
 

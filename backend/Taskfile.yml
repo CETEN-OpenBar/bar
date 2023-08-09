@@ -12,4 +12,4 @@ tasks:
     cmds:
       - oapi-codegen -generate="types,server,strict-server,spec" -package autogen ../bar.openapi.yml > autogen/bar.gen.go
       - go mod tidy
-      - gomodifytags -all -file ./autogen/bar.gen.go -add-tags bson -w > /dev/null
+      - gomodifytags -all -file ./autogen/bar.gen.go -add-tags bson -add-options bson=omitempty -w > /dev/null

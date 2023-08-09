@@ -248,8 +248,8 @@ func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 	account.FirstName = usr.FirstName
 	account.LastName = usr.LastName
 	account.EmailAddress = usr.Email
-	account.GoogleId = usr.ID
-	account.GooglePicture = usr.Picture
+	account.GoogleId = &usr.ID
+	account.GooglePicture = &usr.Picture
 
 	if account.State == autogen.AccountNotOnBoarded {
 		account.State = autogen.AccountOK
@@ -350,8 +350,8 @@ func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams
 	account.FirstName = usr.FirstName
 	account.LastName = usr.LastName
 	account.EmailAddress = usr.Email
-	account.GoogleId = usr.ID
-	account.GooglePicture = usr.Picture
+	account.GoogleId = &usr.ID
+	account.GooglePicture = &usr.Picture
 
 	err = s.DBackend.UpdateAccount(c.Request().Context(), account)
 	if err != nil {

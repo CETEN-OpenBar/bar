@@ -3878,8 +3878,6 @@ components:
         - state
         - card_id
         - card_pin
-        - google_id
-        - google_picture
     ItemState:
       type: string
       description: State of the item

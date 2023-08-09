@@ -127,27 +127,27 @@ const (
 
 // Account defines model for Account.
 type Account struct {
-	Balance       int64   `json:"balance" bson:"balance"`
-	CardId        string  `json:"card_id" bson:"card_id"`
-	CardPin       string  `json:"-" bson:"card_pin"`
-	DeletedAt     *uint64 `json:"deleted_at,omitempty" bson:"deleted_at"`
-	DeletedBy     *UUID   `json:"deleted_by,omitempty" bson:"deleted_by"`
-	EmailAddress  string  `json:"email_address" bson:"email_address"`
-	FirstName     string  `json:"first_name" bson:"first_name"`
-	GoogleId      string  `json:"google_id" bson:"google_id"`
-	GooglePicture string  `json:"google_picture" bson:"google_picture"`
-	Id            UUID    `json:"id" bson:"id"`
-	LastName      string  `json:"last_name" bson:"last_name"`
+	Balance       int64   `json:"balance" bson:"balance,omitempty"`
+	CardId        string  `json:"card_id" bson:"card_id,omitempty"`
+	CardPin       string  `json:"-" bson:"card_pin,omitempty"`
+	DeletedAt     *uint64 `json:"deleted_at,omitempty" bson:"deleted_at,omitempty"`
+	DeletedBy     *UUID   `json:"deleted_by,omitempty" bson:"deleted_by,omitempty"`
+	EmailAddress  string  `json:"email_address" bson:"email_address,omitempty"`
+	FirstName     string  `json:"first_name" bson:"first_name,omitempty"`
+	GoogleId      *string `json:"google_id,omitempty" bson:"google_id,omitempty"`
+	GooglePicture *string `json:"google_picture,omitempty" bson:"google_picture,omitempty"`
+	Id            UUID    `json:"id" bson:"id,omitempty"`
+	LastName      string  `json:"last_name" bson:"last_name,omitempty"`
 
 	// PriceRole Role of the account
-	PriceRole    AccountPriceRole      `json:"price_role" bson:"price_role"`
-	Restrictions []AccountRestrictions `json:"restrictions" bson:"restrictions"`
+	PriceRole    AccountPriceRole      `json:"price_role" bson:"price_role,omitempty"`
+	Restrictions []AccountRestrictions `json:"restrictions" bson:"restrictions,omitempty"`
 
 	// Role Role of the account
-	Role AccountRole `json:"role" bson:"role"`
+	Role AccountRole `json:"role" bson:"role,omitempty"`
 
 	// State State of the account
-	State AccountState `json:"state" bson:"state"`
+	State AccountState `json:"state" bson:"state,omitempty"`
 }
 
 // AccountPriceRole Role of the account
@@ -164,52 +164,52 @@ type AccountState string
 
 // CarouselImage defines model for CarouselImage.
 type CarouselImage struct {
-	DeletedAt *uint64 `json:"deleted_at,omitempty" bson:"deleted_at"`
-	DeletedBy *UUID   `json:"deleted_by,omitempty" bson:"deleted_by"`
-	Id        UUID    `json:"id" bson:"id"`
+	DeletedAt *uint64 `json:"deleted_at,omitempty" bson:"deleted_at,omitempty"`
+	DeletedBy *UUID   `json:"deleted_by,omitempty" bson:"deleted_by,omitempty"`
+	Id        UUID    `json:"id" bson:"id,omitempty"`
 
 	// ImageUrl Image to display
-	ImageUrl string `json:"image_url" bson:"image_url"`
+	ImageUrl string `json:"image_url" bson:"image_url,omitempty"`
 }
 
 // CarouselImageUpload defines model for CarouselImageUpload.
 type CarouselImageUpload struct {
 	// Image Image to display
-	Image openapi_types.File `json:"image" bson:"image"`
+	Image openapi_types.File `json:"image" bson:"image,omitempty"`
 }
 
 // CarouselText defines model for CarouselText.
 type CarouselText struct {
 	// Color Color of the text
-	Color     string  `json:"color" bson:"color"`
-	DeletedAt *uint64 `json:"deleted_at,omitempty" bson:"deleted_at"`
-	DeletedBy *UUID   `json:"deleted_by,omitempty" bson:"deleted_by"`
-	Id        UUID    `json:"id" bson:"id"`
+	Color     string  `json:"color" bson:"color,omitempty"`
+	DeletedAt *uint64 `json:"deleted_at,omitempty" bson:"deleted_at,omitempty"`
+	DeletedBy *UUID   `json:"deleted_by,omitempty" bson:"deleted_by,omitempty"`
+	Id        UUID    `json:"id" bson:"id,omitempty"`
 
 	// Text Text to display
-	Text string `json:"text" bson:"text"`
+	Text string `json:"text" bson:"text,omitempty"`
 }
 
 // CarouselTextCreate defines model for CarouselTextCreate.
 type CarouselTextCreate struct {
 	// Color Color of the text
-	Color *string `json:"color,omitempty" bson:"color"`
+	Color *string `json:"color,omitempty" bson:"color,omitempty"`
 
 	// Text Text to display
-	Text string `json:"text" bson:"text"`
+	Text string `json:"text" bson:"text,omitempty"`
 }
 
 // Category defines model for Category.
 type Category struct {
-	DeletedAt *uint64 `json:"deleted_at,omitempty" bson:"deleted_at"`
-	DeletedBy *UUID   `json:"deleted_by,omitempty" bson:"deleted_by"`
-	Id        UUID    `json:"id" bson:"id"`
+	DeletedAt *uint64 `json:"deleted_at,omitempty" bson:"deleted_at,omitempty"`
+	DeletedBy *UUID   `json:"deleted_by,omitempty" bson:"deleted_by,omitempty"`
+	Id        UUID    `json:"id" bson:"id,omitempty"`
 
 	// Name Name of the current category
-	Name string `json:"name" bson:"name"`
+	Name string `json:"name" bson:"name,omitempty"`
 
 	// PictureUri Link to picture of the current category
-	PictureUri string `json:"picture_uri" bson:"picture_uri"`
+	PictureUri string `json:"picture_uri" bson:"picture_uri,omitempty"`
 }
 
 // ErrorCodes defines model for ErrorCodes.
@@ -217,41 +217,41 @@ type ErrorCodes string
 
 // HTTPError defines model for HTTPError.
 type HTTPError struct {
-	ErrorCode ErrorCodes `json:"error_code" bson:"error_code"`
-	Message   Messages   `json:"message" bson:"message"`
+	ErrorCode ErrorCodes `json:"error_code" bson:"error_code,omitempty"`
+	Message   Messages   `json:"message" bson:"message,omitempty"`
 }
 
 // Item defines model for Item.
 type Item struct {
-	AmountLeft    uint64      `json:"amount_left" bson:"amount_left"`
-	BuyLimit      uint64      `json:"buy_limit" bson:"buy_limit"`
-	CategoryId    UUID        `json:"category_id" bson:"category_id"`
-	DeletedAt     *uint64     `json:"deleted_at,omitempty" bson:"deleted_at"`
-	DeletedBy     *UUID       `json:"deleted_by,omitempty" bson:"deleted_by"`
-	DisplayPrice  *uint64     `json:"display_price,omitempty" bson:"display_price"`
-	DisplayPrices *ItemPrices `json:"display_prices,omitempty" bson:"display_prices"`
-	Id            UUID        `json:"id" bson:"id"`
+	AmountLeft    uint64      `json:"amount_left" bson:"amount_left,omitempty"`
+	BuyLimit      uint64      `json:"buy_limit" bson:"buy_limit,omitempty"`
+	CategoryId    UUID        `json:"category_id" bson:"category_id,omitempty"`
+	DeletedAt     *uint64     `json:"deleted_at,omitempty" bson:"deleted_at,omitempty"`
+	DeletedBy     *UUID       `json:"deleted_by,omitempty" bson:"deleted_by,omitempty"`
+	DisplayPrice  *uint64     `json:"display_price,omitempty" bson:"display_price,omitempty"`
+	DisplayPrices *ItemPrices `json:"display_prices,omitempty" bson:"display_prices,omitempty"`
+	Id            UUID        `json:"id" bson:"id,omitempty"`
 
 	// Name Name of the current item
-	Name string `json:"name" bson:"name"`
+	Name string `json:"name" bson:"name,omitempty"`
 
 	// PictureUri Link to picture of the current item
-	PictureUri      string     `json:"picture_uri" bson:"picture_uri"`
-	Prices          ItemPrices `json:"prices" bson:"prices"`
-	Promotion       *uint64    `json:"promotion,omitempty" bson:"promotion"`
-	PromotionEndsAt *uint64    `json:"promotion_ends_at,omitempty" bson:"promotion_ends_at"`
+	PictureUri      string     `json:"picture_uri" bson:"picture_uri,omitempty"`
+	Prices          ItemPrices `json:"prices" bson:"prices,omitempty"`
+	Promotion       *uint64    `json:"promotion,omitempty" bson:"promotion,omitempty"`
+	PromotionEndsAt *uint64    `json:"promotion_ends_at,omitempty" bson:"promotion_ends_at,omitempty"`
 
 	// State State of the item
-	State ItemState `json:"state" bson:"state"`
+	State ItemState `json:"state" bson:"state,omitempty"`
 }
 
 // ItemPrices defines model for ItemPrices.
 type ItemPrices struct {
-	Ceten  uint64 `json:"ceten" bson:"ceten"`
-	Exte   uint64 `json:"exte" bson:"exte"`
-	Normal uint64 `json:"normal" bson:"normal"`
-	Staff  uint64 `json:"staff" bson:"staff"`
-	Vip    uint64 `json:"vip" bson:"vip"`
+	Ceten  uint64 `json:"ceten" bson:"ceten,omitempty"`
+	Exte   uint64 `json:"exte" bson:"exte,omitempty"`
+	Normal uint64 `json:"normal" bson:"normal,omitempty"`
+	Staff  uint64 `json:"staff" bson:"staff,omitempty"`
+	Vip    uint64 `json:"vip" bson:"vip,omitempty"`
 }
 
 // ItemState State of the item
@@ -262,73 +262,73 @@ type Messages string
 
 // NewAccount defines model for NewAccount.
 type NewAccount struct {
-	Balance      int64   `json:"balance" bson:"balance"`
-	CardId       *string `json:"card_id,omitempty" bson:"card_id"`
-	EmailAddress string  `json:"email_address" bson:"email_address"`
-	FirstName    string  `json:"first_name" bson:"first_name"`
-	LastName     string  `json:"last_name" bson:"last_name"`
+	Balance      int64   `json:"balance" bson:"balance,omitempty"`
+	CardId       *string `json:"card_id,omitempty" bson:"card_id,omitempty"`
+	EmailAddress string  `json:"email_address" bson:"email_address,omitempty"`
+	FirstName    string  `json:"first_name" bson:"first_name,omitempty"`
+	LastName     string  `json:"last_name" bson:"last_name,omitempty"`
 
 	// PriceRole Role of the account
-	PriceRole *AccountPriceRole `json:"price_role,omitempty" bson:"price_role"`
+	PriceRole *AccountPriceRole `json:"price_role,omitempty" bson:"price_role,omitempty"`
 
 	// Role Role of the account
-	Role AccountRole `json:"role" bson:"role"`
+	Role AccountRole `json:"role" bson:"role,omitempty"`
 }
 
 // NewCategory defines model for NewCategory.
 type NewCategory struct {
 	// Name Name of the current category
-	Name    string `json:"name" bson:"name"`
-	Picture string `json:"picture" bson:"picture"`
+	Name    string `json:"name" bson:"name,omitempty"`
+	Picture string `json:"picture" bson:"picture,omitempty"`
 }
 
 // NewItem defines model for NewItem.
 type NewItem struct {
-	AmountLeft uint64 `json:"amount_left" bson:"amount_left"`
-	BuyLimit   uint64 `json:"buy_limit" bson:"buy_limit"`
+	AmountLeft uint64 `json:"amount_left" bson:"amount_left,omitempty"`
+	BuyLimit   uint64 `json:"buy_limit" bson:"buy_limit,omitempty"`
 
 	// Name Name of the current item
-	Name string `json:"name" bson:"name"`
+	Name string `json:"name" bson:"name,omitempty"`
 
 	// Picture Picture of the current item
-	Picture         string     `json:"picture" bson:"picture"`
-	Prices          ItemPrices `json:"prices" bson:"prices"`
-	Promotion       *uint64    `json:"promotion,omitempty" bson:"promotion"`
-	PromotionEndsAt *uint64    `json:"promotion_ends_at,omitempty" bson:"promotion_ends_at"`
+	Picture         string     `json:"picture" bson:"picture,omitempty"`
+	Prices          ItemPrices `json:"prices" bson:"prices,omitempty"`
+	Promotion       *uint64    `json:"promotion,omitempty" bson:"promotion,omitempty"`
+	PromotionEndsAt *uint64    `json:"promotion_ends_at,omitempty" bson:"promotion_ends_at,omitempty"`
 
 	// State State of the item
-	State ItemState `json:"state" bson:"state"`
+	State ItemState `json:"state" bson:"state,omitempty"`
 }
 
 // NewTransaction defines model for NewTransaction.
 type NewTransaction struct {
 	// CardPin Pin of the card
-	CardPin string               `json:"card_pin" bson:"card_pin"`
-	Items   []NewTransactionItem `json:"items" bson:"items"`
+	CardPin string               `json:"card_pin" bson:"card_pin,omitempty"`
+	Items   []NewTransactionItem `json:"items" bson:"items,omitempty"`
 }
 
 // NewTransactionItem defines model for NewTransactionItem.
 type NewTransactionItem struct {
-	Amount uint64 `json:"amount" bson:"amount"`
-	ItemId UUID   `json:"item_id" bson:"item_id"`
+	Amount uint64 `json:"amount" bson:"amount,omitempty"`
+	ItemId UUID   `json:"item_id" bson:"item_id,omitempty"`
 }
 
 // Refill defines model for Refill.
 type Refill struct {
-	AccountId UUID `json:"account_id" bson:"account_id"`
+	AccountId UUID `json:"account_id" bson:"account_id,omitempty"`
 
 	// AccountName Name of the account
-	AccountName    string      `json:"account_name" bson:"account_name"`
-	Amount         uint64      `json:"amount" bson:"amount"`
-	CanceledBy     *UUID       `json:"canceled_by,omitempty" bson:"canceled_by"`
-	CanceledByName *string     `json:"canceled_by_name,omitempty" bson:"canceled_by_name"`
-	DeletedAt      *uint64     `json:"deleted_at,omitempty" bson:"deleted_at"`
-	DeletedBy      *UUID       `json:"deleted_by,omitempty" bson:"deleted_by"`
-	Id             UUID        `json:"id" bson:"id"`
-	IssuedAt       uint64      `json:"issued_at" bson:"issued_at"`
-	IssuedBy       UUID        `json:"issued_by" bson:"issued_by"`
-	IssuedByName   string      `json:"issued_by_name" bson:"issued_by_name"`
-	State          RefillState `json:"state" bson:"state"`
+	AccountName    string      `json:"account_name" bson:"account_name,omitempty"`
+	Amount         uint64      `json:"amount" bson:"amount,omitempty"`
+	CanceledBy     *UUID       `json:"canceled_by,omitempty" bson:"canceled_by,omitempty"`
+	CanceledByName *string     `json:"canceled_by_name,omitempty" bson:"canceled_by_name,omitempty"`
+	DeletedAt      *uint64     `json:"deleted_at,omitempty" bson:"deleted_at,omitempty"`
+	DeletedBy      *UUID       `json:"deleted_by,omitempty" bson:"deleted_by,omitempty"`
+	Id             UUID        `json:"id" bson:"id,omitempty"`
+	IssuedAt       uint64      `json:"issued_at" bson:"issued_at,omitempty"`
+	IssuedBy       UUID        `json:"issued_by" bson:"issued_by,omitempty"`
+	IssuedByName   string      `json:"issued_by_name" bson:"issued_by_name,omitempty"`
+	State          RefillState `json:"state" bson:"state,omitempty"`
 }
 
 // RefillState defines model for RefillState.
@@ -336,28 +336,28 @@ type RefillState string
 
 // Transaction defines model for Transaction.
 type Transaction struct {
-	AccountId string            `json:"account_id" bson:"account_id"`
-	DeletedAt *uint64           `json:"deleted_at,omitempty" bson:"deleted_at"`
-	DeletedBy *UUID             `json:"deleted_by,omitempty" bson:"deleted_by"`
-	Id        UUID              `json:"id" bson:"id"`
-	Items     []TransactionItem `json:"items" bson:"items"`
-	State     TransactionState  `json:"state" bson:"state"`
-	TotalCost uint64            `json:"total_cost" bson:"total_cost"`
+	AccountId string            `json:"account_id" bson:"account_id,omitempty"`
+	DeletedAt *uint64           `json:"deleted_at,omitempty" bson:"deleted_at,omitempty"`
+	DeletedBy *UUID             `json:"deleted_by,omitempty" bson:"deleted_by,omitempty"`
+	Id        UUID              `json:"id" bson:"id,omitempty"`
+	Items     []TransactionItem `json:"items" bson:"items,omitempty"`
+	State     TransactionState  `json:"state" bson:"state,omitempty"`
+	TotalCost uint64            `json:"total_cost" bson:"total_cost,omitempty"`
 }
 
 // TransactionItem defines model for TransactionItem.
 type TransactionItem struct {
-	ItemAmount uint64 `json:"item_amount" bson:"item_amount"`
-	ItemId     UUID   `json:"item_id" bson:"item_id"`
+	ItemAmount uint64 `json:"item_amount" bson:"item_amount,omitempty"`
+	ItemId     UUID   `json:"item_id" bson:"item_id,omitempty"`
 
 	// ItemName Name of the current item
-	ItemName string `json:"item_name" bson:"item_name"`
+	ItemName string `json:"item_name" bson:"item_name,omitempty"`
 
 	// PictureUri Link to picture of the current item
-	PictureUri string               `json:"picture_uri" bson:"picture_uri"`
-	State      TransactionItemState `json:"state" bson:"state"`
-	TotalCost  uint64               `json:"total_cost" bson:"total_cost"`
-	UnitCost   uint64               `json:"unit_cost" bson:"unit_cost"`
+	PictureUri string               `json:"picture_uri" bson:"picture_uri,omitempty"`
+	State      TransactionItemState `json:"state" bson:"state,omitempty"`
+	TotalCost  uint64               `json:"total_cost" bson:"total_cost,omitempty"`
+	UnitCost   uint64               `json:"unit_cost" bson:"unit_cost,omitempty"`
 }
 
 // TransactionItemState defines model for TransactionItemState.
@@ -371,282 +371,282 @@ type UUID = openapi_types.UUID
 
 // UpdateAccountAdmin defines model for UpdateAccountAdmin.
 type UpdateAccountAdmin struct {
-	Balance      *int64  `json:"balance,omitempty" bson:"balance"`
-	CardId       *string `json:"card_id,omitempty" bson:"card_id"`
-	EmailAddress *string `json:"email_address,omitempty" bson:"email_address"`
-	FirstName    *string `json:"first_name,omitempty" bson:"first_name"`
-	LastName     *string `json:"last_name,omitempty" bson:"last_name"`
+	Balance      *int64  `json:"balance,omitempty" bson:"balance,omitempty"`
+	CardId       *string `json:"card_id,omitempty" bson:"card_id,omitempty"`
+	EmailAddress *string `json:"email_address,omitempty" bson:"email_address,omitempty"`
+	FirstName    *string `json:"first_name,omitempty" bson:"first_name,omitempty"`
+	LastName     *string `json:"last_name,omitempty" bson:"last_name,omitempty"`
 
 	// PriceRole Role of the account
-	PriceRole    *AccountPriceRole      `json:"price_role,omitempty" bson:"price_role"`
-	Restrictions *[]AccountRestrictions `json:"restrictions,omitempty" bson:"restrictions"`
+	PriceRole    *AccountPriceRole      `json:"price_role,omitempty" bson:"price_role,omitempty"`
+	Restrictions *[]AccountRestrictions `json:"restrictions,omitempty" bson:"restrictions,omitempty"`
 
 	// Role Role of the account
-	Role *AccountRole `json:"role,omitempty" bson:"role"`
+	Role *AccountRole `json:"role,omitempty" bson:"role,omitempty"`
 
 	// State State of the account
-	State *AccountState `json:"state,omitempty" bson:"state"`
+	State *AccountState `json:"state,omitempty" bson:"state,omitempty"`
 }
 
 // UpdateCategory defines model for UpdateCategory.
 type UpdateCategory struct {
 	// Name Name of the current category
-	Name    *string `json:"name,omitempty" bson:"name"`
-	Picture *string `json:"picture,omitempty" bson:"picture"`
+	Name    *string `json:"name,omitempty" bson:"name,omitempty"`
+	Picture *string `json:"picture,omitempty" bson:"picture,omitempty"`
 }
 
 // UpdateItem defines model for UpdateItem.
 type UpdateItem struct {
-	AmountLeft *uint64 `json:"amount_left,omitempty" bson:"amount_left"`
-	BuyLimit   *uint64 `json:"buy_limit,omitempty" bson:"buy_limit"`
-	CategoryId *UUID   `json:"category_id,omitempty" bson:"category_id"`
+	AmountLeft *uint64 `json:"amount_left,omitempty" bson:"amount_left,omitempty"`
+	BuyLimit   *uint64 `json:"buy_limit,omitempty" bson:"buy_limit,omitempty"`
+	CategoryId *UUID   `json:"category_id,omitempty" bson:"category_id,omitempty"`
 
 	// Name Name of the current item
-	Name *string `json:"name,omitempty" bson:"name"`
+	Name *string `json:"name,omitempty" bson:"name,omitempty"`
 
 	// Picture Picture of the current item
-	Picture         *string     `json:"picture,omitempty" bson:"picture"`
-	Prices          *ItemPrices `json:"prices,omitempty" bson:"prices"`
-	Promotion       *uint64     `json:"promotion,omitempty" bson:"promotion"`
-	PromotionEndsAt *uint64     `json:"promotion_ends_at,omitempty" bson:"promotion_ends_at"`
+	Picture         *string     `json:"picture,omitempty" bson:"picture,omitempty"`
+	Prices          *ItemPrices `json:"prices,omitempty" bson:"prices,omitempty"`
+	Promotion       *uint64     `json:"promotion,omitempty" bson:"promotion,omitempty"`
+	PromotionEndsAt *uint64     `json:"promotion_ends_at,omitempty" bson:"promotion_ends_at,omitempty"`
 
 	// State State of the item
-	State *ItemState `json:"state,omitempty" bson:"state"`
+	State *ItemState `json:"state,omitempty" bson:"state,omitempty"`
 }
 
 // PatchAccountJSONBody defines parameters for PatchAccount.
 type PatchAccountJSONBody struct {
-	NewCardPin string `json:"new_card_pin" bson:"new_card_pin"`
-	OldCardPin string `json:"old_card_pin" bson:"old_card_pin"`
+	NewCardPin string `json:"new_card_pin" bson:"new_card_pin,omitempty"`
+	OldCardPin string `json:"old_card_pin" bson:"old_card_pin,omitempty"`
 }
 
 // GetAccountQRJSONBody defines parameters for GetAccountQR.
 type GetAccountQRJSONBody struct {
-	CardPin string `json:"card_pin" bson:"card_pin"`
+	CardPin string `json:"card_pin" bson:"card_pin,omitempty"`
 }
 
 // GetSelfRefillsParams defines parameters for GetSelfRefills.
 type GetSelfRefillsParams struct {
 	// Page Page number
-	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page,omitempty"`
 
 	// Limit Number of transactions per page
-	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit,omitempty"`
 
 	// StartDate Start date of the refill
-	StartDate *openapi_types.Date `form:"start_date,omitempty" json:"start_date,omitempty" bson:"start_date"`
+	StartDate *openapi_types.Date `form:"start_date,omitempty" json:"start_date,omitempty" bson:"start_date,omitempty"`
 
 	// EndDate End date of the refill
-	EndDate *openapi_types.Date `form:"end_date,omitempty" json:"end_date,omitempty" bson:"end_date"`
+	EndDate *openapi_types.Date `form:"end_date,omitempty" json:"end_date,omitempty" bson:"end_date,omitempty"`
 }
 
 // GetCurrentAccountTransactionsParams defines parameters for GetCurrentAccountTransactions.
 type GetCurrentAccountTransactionsParams struct {
 	// Page Page number
-	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page,omitempty"`
 
 	// Limit Number of transactions per page
-	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit,omitempty"`
 
 	// State Filter by state
-	State *TransactionState `form:"state,omitempty" json:"state,omitempty" bson:"state"`
+	State *TransactionState `form:"state,omitempty" json:"state,omitempty" bson:"state,omitempty"`
 }
 
 // GetAccountsParams defines parameters for GetAccounts.
 type GetAccountsParams struct {
 	// Page page to get
-	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page,omitempty"`
 
 	// Limit number of accounts to get
-	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit,omitempty"`
 
 	// Search search string
-	Search *string `form:"search,omitempty" json:"search,omitempty" bson:"search"`
+	Search *string `form:"search,omitempty" json:"search,omitempty" bson:"search,omitempty"`
 }
 
 // GetAccountRefillsParams defines parameters for GetAccountRefills.
 type GetAccountRefillsParams struct {
 	// Page Page number
-	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page,omitempty"`
 
 	// Limit Number of transactions per page
-	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit,omitempty"`
 
 	// StartDate Start date of the refill
-	StartDate *openapi_types.Date `form:"start_date,omitempty" json:"start_date,omitempty" bson:"start_date"`
+	StartDate *openapi_types.Date `form:"start_date,omitempty" json:"start_date,omitempty" bson:"start_date,omitempty"`
 
 	// EndDate End date of the refill
-	EndDate *openapi_types.Date `form:"end_date,omitempty" json:"end_date,omitempty" bson:"end_date"`
+	EndDate *openapi_types.Date `form:"end_date,omitempty" json:"end_date,omitempty" bson:"end_date,omitempty"`
 }
 
 // PostRefillParams defines parameters for PostRefill.
 type PostRefillParams struct {
 	// Amount Amount of the refill
-	Amount uint64 `form:"amount" json:"amount" bson:"amount"`
+	Amount uint64 `form:"amount" json:"amount" bson:"amount,omitempty"`
 }
 
 // PatchRefillIdParams defines parameters for PatchRefillId.
 type PatchRefillIdParams struct {
 	// State New state of the refill
-	State RefillState `form:"state" json:"state" bson:"state"`
+	State RefillState `form:"state" json:"state" bson:"state,omitempty"`
 }
 
 // GetAccountTransactionsParams defines parameters for GetAccountTransactions.
 type GetAccountTransactionsParams struct {
 	// Page Page number
-	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page,omitempty"`
 
 	// Limit Number of transactions per page
-	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit,omitempty"`
 
 	// State Filter by state
-	State *TransactionState `form:"state,omitempty" json:"state,omitempty" bson:"state"`
+	State *TransactionState `form:"state,omitempty" json:"state,omitempty" bson:"state,omitempty"`
 }
 
 // PatchTransactionIdParams defines parameters for PatchTransactionId.
 type PatchTransactionIdParams struct {
 	// State New state of the transaction
-	State TransactionState `form:"state" json:"state" bson:"state"`
+	State TransactionState `form:"state" json:"state" bson:"state,omitempty"`
 }
 
 // PatchTransactionItemIdParams defines parameters for PatchTransactionItemId.
 type PatchTransactionItemIdParams struct {
 	// State New state of the item
-	State *TransactionItemState `form:"state,omitempty" json:"state,omitempty" bson:"state"`
+	State *TransactionItemState `form:"state,omitempty" json:"state,omitempty" bson:"state,omitempty"`
 
 	// Amount New amount of the item
-	Amount *uint64 `form:"amount,omitempty" json:"amount,omitempty" bson:"amount"`
+	Amount *uint64 `form:"amount,omitempty" json:"amount,omitempty" bson:"amount,omitempty"`
 }
 
 // ConnectCardJSONBody defines parameters for ConnectCard.
 type ConnectCardJSONBody struct {
-	CardId  string `json:"card_id" bson:"card_id"`
-	CardPin string `json:"card_pin" bson:"card_pin"`
+	CardId  string `json:"card_id" bson:"card_id,omitempty"`
+	CardPin string `json:"card_pin" bson:"card_pin,omitempty"`
 }
 
 // ConnectGoogleParams defines parameters for ConnectGoogle.
 type ConnectGoogleParams struct {
 	// R Redirect to this url after connecting
-	R string `form:"r" json:"r" bson:"r"`
+	R string `form:"r" json:"r" bson:"r,omitempty"`
 }
 
 // CallbackParams defines parameters for Callback.
 type CallbackParams struct {
 	// Code Google OAuth code
-	Code string `form:"code" json:"code" bson:"code"`
+	Code string `form:"code" json:"code" bson:"code,omitempty"`
 
 	// State Google OAuth state
-	State string `form:"state" json:"state" bson:"state"`
+	State string `form:"state" json:"state" bson:"state,omitempty"`
 }
 
 // GetCategoryItemsParams defines parameters for GetCategoryItems.
 type GetCategoryItemsParams struct {
 	// Page Page number
-	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page,omitempty"`
 
 	// Limit Number of items per page
-	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit,omitempty"`
 
 	// State Filter by state
-	State *ItemState `form:"state,omitempty" json:"state,omitempty" bson:"state"`
+	State *ItemState `form:"state,omitempty" json:"state,omitempty" bson:"state,omitempty"`
 }
 
 // GetDeletedAccountsParams defines parameters for GetDeletedAccounts.
 type GetDeletedAccountsParams struct {
 	// Page Page number
-	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page,omitempty"`
 
 	// Limit Number of accounts per page
-	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit,omitempty"`
 
 	// Search search string
-	Search *string `form:"search,omitempty" json:"search,omitempty" bson:"search"`
+	Search *string `form:"search,omitempty" json:"search,omitempty" bson:"search,omitempty"`
 }
 
 // GetDeletedCarouselImagesParams defines parameters for GetDeletedCarouselImages.
 type GetDeletedCarouselImagesParams struct {
 	// Page Page number
-	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page,omitempty"`
 
 	// Limit Number of accounts per page
-	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit,omitempty"`
 }
 
 // GetDeletedCarouselTextsParams defines parameters for GetDeletedCarouselTexts.
 type GetDeletedCarouselTextsParams struct {
 	// Page Page number
-	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page,omitempty"`
 
 	// Limit Number of accounts per page
-	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit,omitempty"`
 }
 
 // GetDeletedCategoriesParams defines parameters for GetDeletedCategories.
 type GetDeletedCategoriesParams struct {
 	// Page Page number
-	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page,omitempty"`
 
 	// Limit Number of categories per page
-	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit,omitempty"`
 }
 
 // GetDeletedItemsParams defines parameters for GetDeletedItems.
 type GetDeletedItemsParams struct {
 	// Page Page number
-	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page,omitempty"`
 
 	// Limit Number of accounts per page
-	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit,omitempty"`
 }
 
 // GetDeletedRefillsParams defines parameters for GetDeletedRefills.
 type GetDeletedRefillsParams struct {
 	// Page Page number
-	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page,omitempty"`
 
 	// Limit Number of accounts per page
-	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit,omitempty"`
 }
 
 // GetDeletedTransactionsParams defines parameters for GetDeletedTransactions.
 type GetDeletedTransactionsParams struct {
 	// Page Page number
-	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page,omitempty"`
 
 	// Limit Number of accounts per page
-	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit,omitempty"`
 }
 
 // ImportAccountsMultipartBody defines parameters for ImportAccounts.
 type ImportAccountsMultipartBody struct {
-	File *openapi_types.File `json:"file,omitempty" bson:"file"`
+	File *openapi_types.File `json:"file,omitempty" bson:"file,omitempty"`
 }
 
 // GetRefillsParams defines parameters for GetRefills.
 type GetRefillsParams struct {
 	// Page Page number
-	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page,omitempty"`
 
 	// Limit Number of transactions per page
-	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit,omitempty"`
 
 	// StartDate Start date of the refill
-	StartDate *openapi_types.Date `form:"start_date,omitempty" json:"start_date,omitempty" bson:"start_date"`
+	StartDate *openapi_types.Date `form:"start_date,omitempty" json:"start_date,omitempty" bson:"start_date,omitempty"`
 
 	// EndDate End date of the refill
-	EndDate *openapi_types.Date `form:"end_date,omitempty" json:"end_date,omitempty" bson:"end_date"`
+	EndDate *openapi_types.Date `form:"end_date,omitempty" json:"end_date,omitempty" bson:"end_date,omitempty"`
 }
 
 // GetTransactionsParams defines parameters for GetTransactions.
 type GetTransactionsParams struct {
 	// Page Page number
-	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page,omitempty"`
 
 	// Limit Number of transactions per page
-	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit,omitempty"`
 
 	// State Filter by state
-	State *TransactionState `form:"state,omitempty" json:"state,omitempty" bson:"state"`
+	State *TransactionState `form:"state,omitempty" json:"state,omitempty" bson:"state,omitempty"`
 }
 
 // PatchAccountJSONRequestBody defines body for PatchAccount for application/json ContentType.
@@ -901,7 +901,7 @@ type ServerInterface interface {
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
 type ServerInterfaceWrapper struct {
-	Handler ServerInterface `bson:"handler"`
+	Handler ServerInterface `bson:"handler,omitempty"`
 }
 
 // GetAccount converts echo context to params.
@@ -2506,8 +2506,8 @@ type GetAccountResponseObject interface {
 }
 
 type GetAccount200JSONResponse struct {
-	Account *Account  `json:"account,omitempty" bson:"account"`
-	Message *Messages `json:"message,omitempty" bson:"message"`
+	Account *Account  `json:"account,omitempty" bson:"account,omitempty"`
+	Message *Messages `json:"message,omitempty" bson:"message,omitempty"`
 }
 
 func (response GetAccount200JSONResponse) VisitGetAccountResponse(w http.ResponseWriter) error {
@@ -2536,7 +2536,7 @@ func (response GetAccount500JSONResponse) VisitGetAccountResponse(w http.Respons
 }
 
 type PatchAccountRequestObject struct {
-	Body *PatchAccountJSONRequestBody `bson:"body"`
+	Body *PatchAccountJSONRequestBody `bson:"body,omitempty"`
 }
 
 type PatchAccountResponseObject interface {
@@ -2544,8 +2544,8 @@ type PatchAccountResponseObject interface {
 }
 
 type PatchAccount200JSONResponse struct {
-	Account *Account  `json:"account,omitempty" bson:"account"`
-	Message *Messages `json:"message,omitempty" bson:"message"`
+	Account *Account  `json:"account,omitempty" bson:"account,omitempty"`
+	Message *Messages `json:"message,omitempty" bson:"message,omitempty"`
 }
 
 func (response PatchAccount200JSONResponse) VisitPatchAccountResponse(w http.ResponseWriter) error {
@@ -2608,9 +2608,9 @@ type GetAccountAdminResponseObject interface {
 }
 
 type GetAccountAdmin200JSONResponse struct {
-	CanRestore bool      `json:"can_restore" bson:"can_restore"`
-	IsAllowed  bool      `json:"is_allowed" bson:"is_allowed"`
-	Message    *Messages `json:"message,omitempty" bson:"message"`
+	CanRestore bool      `json:"can_restore" bson:"can_restore,omitempty"`
+	IsAllowed  bool      `json:"is_allowed" bson:"is_allowed,omitempty"`
+	Message    *Messages `json:"message,omitempty" bson:"message,omitempty"`
 }
 
 func (response GetAccountAdmin200JSONResponse) VisitGetAccountAdminResponse(w http.ResponseWriter) error {
@@ -2664,13 +2664,13 @@ type GetAccountQRWebsocketResponseObject interface {
 }
 
 type GetAccountQRWebsocket101ResponseHeaders struct {
-	Connection         string `bson:"connection"`
-	SecWebSocketAccept string `bson:"sec_web_socket_accept"`
-	Upgrade            string `bson:"upgrade"`
+	Connection         string `bson:"connection,omitempty"`
+	SecWebSocketAccept string `bson:"sec_web_socket_accept,omitempty"`
+	Upgrade            string `bson:"upgrade,omitempty"`
 }
 
 type GetAccountQRWebsocket101Response struct {
-	Headers GetAccountQRWebsocket101ResponseHeaders `bson:"headers"`
+	Headers GetAccountQRWebsocket101ResponseHeaders `bson:"headers,omitempty"`
 }
 
 func (response GetAccountQRWebsocket101Response) VisitGetAccountQRWebsocketResponse(w http.ResponseWriter) error {
@@ -2682,7 +2682,7 @@ func (response GetAccountQRWebsocket101Response) VisitGetAccountQRWebsocketRespo
 }
 
 type GetAccountQRRequestObject struct {
-	Body *GetAccountQRJSONRequestBody `bson:"body"`
+	Body *GetAccountQRJSONRequestBody `bson:"body,omitempty"`
 }
 
 type GetAccountQRResponseObject interface {
@@ -2690,8 +2690,8 @@ type GetAccountQRResponseObject interface {
 }
 
 type GetAccountQR200ImagepngResponse struct {
-	Body          io.Reader `bson:"body"`
-	ContentLength int64     `bson:"content_length"`
+	Body          io.Reader `bson:"body,omitempty"`
+	ContentLength int64     `bson:"content_length,omitempty"`
 }
 
 func (response GetAccountQR200ImagepngResponse) VisitGetAccountQRResponse(w http.ResponseWriter) error {
@@ -2727,7 +2727,7 @@ func (response GetAccountQR500JSONResponse) VisitGetAccountQRResponse(w http.Res
 }
 
 type GetSelfRefillsRequestObject struct {
-	Params GetSelfRefillsParams `bson:"params"`
+	Params GetSelfRefillsParams `bson:"params,omitempty"`
 }
 
 type GetSelfRefillsResponseObject interface {
@@ -2735,10 +2735,10 @@ type GetSelfRefillsResponseObject interface {
 }
 
 type GetSelfRefills200JSONResponse struct {
-	Limit   uint64    `json:"limit" bson:"limit"`
-	MaxPage uint64    `json:"max_page" bson:"max_page"`
-	Page    uint64    `json:"page" bson:"page"`
-	Refills *[]Refill `json:"refills,omitempty" bson:"refills"`
+	Limit   uint64    `json:"limit" bson:"limit,omitempty"`
+	MaxPage uint64    `json:"max_page" bson:"max_page,omitempty"`
+	Page    uint64    `json:"page" bson:"page,omitempty"`
+	Refills *[]Refill `json:"refills,omitempty" bson:"refills,omitempty"`
 }
 
 func (response GetSelfRefills200JSONResponse) VisitGetSelfRefillsResponse(w http.ResponseWriter) error {
@@ -2767,7 +2767,7 @@ func (response GetSelfRefills500JSONResponse) VisitGetSelfRefillsResponse(w http
 }
 
 type GetCurrentAccountTransactionsRequestObject struct {
-	Params GetCurrentAccountTransactionsParams `bson:"params"`
+	Params GetCurrentAccountTransactionsParams `bson:"params,omitempty"`
 }
 
 type GetCurrentAccountTransactionsResponseObject interface {
@@ -2775,10 +2775,10 @@ type GetCurrentAccountTransactionsResponseObject interface {
 }
 
 type GetCurrentAccountTransactions200JSONResponse struct {
-	Limit        *uint64        `json:"limit,omitempty" bson:"limit"`
-	MaxPage      *uint64        `json:"max_page,omitempty" bson:"max_page"`
-	Page         *uint64        `json:"page,omitempty" bson:"page"`
-	Transactions *[]Transaction `json:"transactions,omitempty" bson:"transactions"`
+	Limit        *uint64        `json:"limit,omitempty" bson:"limit,omitempty"`
+	MaxPage      *uint64        `json:"max_page,omitempty" bson:"max_page,omitempty"`
+	Page         *uint64        `json:"page,omitempty" bson:"page,omitempty"`
+	Transactions *[]Transaction `json:"transactions,omitempty" bson:"transactions,omitempty"`
 }
 
 func (response GetCurrentAccountTransactions200JSONResponse) VisitGetCurrentAccountTransactionsResponse(w http.ResponseWriter) error {
@@ -2807,7 +2807,7 @@ func (response GetCurrentAccountTransactions403JSONResponse) VisitGetCurrentAcco
 }
 
 type PostTransactionsRequestObject struct {
-	Body *PostTransactionsJSONRequestBody `bson:"body"`
+	Body *PostTransactionsJSONRequestBody `bson:"body,omitempty"`
 }
 
 type PostTransactionsResponseObject interface {
@@ -2860,7 +2860,7 @@ func (response PostTransactions500JSONResponse) VisitPostTransactionsResponse(w 
 }
 
 type GetAccountsRequestObject struct {
-	Params GetAccountsParams `bson:"params"`
+	Params GetAccountsParams `bson:"params,omitempty"`
 }
 
 type GetAccountsResponseObject interface {
@@ -2868,11 +2868,11 @@ type GetAccountsResponseObject interface {
 }
 
 type GetAccounts200JSONResponse struct {
-	Accounts []Account `json:"accounts" bson:"accounts"`
-	Limit    uint64    `json:"limit" bson:"limit"`
-	MaxPage  uint64    `json:"max_page" bson:"max_page"`
-	Message  *Messages `json:"message,omitempty" bson:"message"`
-	Page     uint64    `json:"page" bson:"page"`
+	Accounts []Account `json:"accounts" bson:"accounts,omitempty"`
+	Limit    uint64    `json:"limit" bson:"limit,omitempty"`
+	MaxPage  uint64    `json:"max_page" bson:"max_page,omitempty"`
+	Message  *Messages `json:"message,omitempty" bson:"message,omitempty"`
+	Page     uint64    `json:"page" bson:"page,omitempty"`
 }
 
 func (response GetAccounts200JSONResponse) VisitGetAccountsResponse(w http.ResponseWriter) error {
@@ -2910,7 +2910,7 @@ func (response GetAccounts500JSONResponse) VisitGetAccountsResponse(w http.Respo
 }
 
 type PostAccountsRequestObject struct {
-	Body *PostAccountsJSONRequestBody `bson:"body"`
+	Body *PostAccountsJSONRequestBody `bson:"body,omitempty"`
 }
 
 type PostAccountsResponseObject interface {
@@ -2963,7 +2963,7 @@ func (response PostAccounts500JSONResponse) VisitPostAccountsResponse(w http.Res
 }
 
 type MarkDeleteAccountIdRequestObject struct {
-	AccountId UUID `json:"account_id" bson:"account_id"`
+	AccountId UUID `json:"account_id" bson:"account_id,omitempty"`
 }
 
 type MarkDeleteAccountIdResponseObject interface {
@@ -3015,7 +3015,7 @@ func (response MarkDeleteAccountId500JSONResponse) VisitMarkDeleteAccountIdRespo
 }
 
 type GetAccountIdRequestObject struct {
-	AccountId UUID `json:"account_id" bson:"account_id"`
+	AccountId UUID `json:"account_id" bson:"account_id,omitempty"`
 }
 
 type GetAccountIdResponseObject interface {
@@ -3068,8 +3068,8 @@ func (response GetAccountId500JSONResponse) VisitGetAccountIdResponse(w http.Res
 }
 
 type PatchAccountIdRequestObject struct {
-	AccountId UUID                           `json:"account_id" bson:"account_id"`
-	Body      *PatchAccountIdJSONRequestBody `bson:"body"`
+	AccountId UUID                           `json:"account_id" bson:"account_id,omitempty"`
+	Body      *PatchAccountIdJSONRequestBody `bson:"body,omitempty"`
 }
 
 type PatchAccountIdResponseObject interface {
@@ -3122,8 +3122,8 @@ func (response PatchAccountId500JSONResponse) VisitPatchAccountIdResponse(w http
 }
 
 type GetAccountRefillsRequestObject struct {
-	AccountId string                  `json:"account_id" bson:"account_id"`
-	Params    GetAccountRefillsParams `bson:"params"`
+	AccountId string                  `json:"account_id" bson:"account_id,omitempty"`
+	Params    GetAccountRefillsParams `bson:"params,omitempty"`
 }
 
 type GetAccountRefillsResponseObject interface {
@@ -3131,10 +3131,10 @@ type GetAccountRefillsResponseObject interface {
 }
 
 type GetAccountRefills200JSONResponse struct {
-	Limit   uint64    `json:"limit" bson:"limit"`
-	MaxPage uint64    `json:"max_page" bson:"max_page"`
-	Page    uint64    `json:"page" bson:"page"`
-	Refills *[]Refill `json:"refills,omitempty" bson:"refills"`
+	Limit   uint64    `json:"limit" bson:"limit,omitempty"`
+	MaxPage uint64    `json:"max_page" bson:"max_page,omitempty"`
+	Page    uint64    `json:"page" bson:"page,omitempty"`
+	Refills *[]Refill `json:"refills,omitempty" bson:"refills,omitempty"`
 }
 
 func (response GetAccountRefills200JSONResponse) VisitGetAccountRefillsResponse(w http.ResponseWriter) error {
@@ -3181,8 +3181,8 @@ func (response GetAccountRefills500JSONResponse) VisitGetAccountRefillsResponse(
 }
 
 type PostRefillRequestObject struct {
-	AccountId string           `json:"account_id" bson:"account_id"`
-	Params    PostRefillParams `bson:"params"`
+	AccountId string           `json:"account_id" bson:"account_id,omitempty"`
+	Params    PostRefillParams `bson:"params,omitempty"`
 }
 
 type PostRefillResponseObject interface {
@@ -3244,8 +3244,8 @@ func (response PostRefill500JSONResponse) VisitPostRefillResponse(w http.Respons
 }
 
 type MarkDeleteRefillRequestObject struct {
-	AccountId UUID `json:"account_id" bson:"account_id"`
-	RefillId  UUID `json:"refill_id" bson:"refill_id"`
+	AccountId UUID `json:"account_id" bson:"account_id,omitempty"`
+	RefillId  UUID `json:"refill_id" bson:"refill_id,omitempty"`
 }
 
 type MarkDeleteRefillResponseObject interface {
@@ -3297,9 +3297,9 @@ func (response MarkDeleteRefill500JSONResponse) VisitMarkDeleteRefillResponse(w 
 }
 
 type PatchRefillIdRequestObject struct {
-	AccountId UUID                `json:"account_id" bson:"account_id"`
-	RefillId  UUID                `json:"refill_id" bson:"refill_id"`
-	Params    PatchRefillIdParams `bson:"params"`
+	AccountId UUID                `json:"account_id" bson:"account_id,omitempty"`
+	RefillId  UUID                `json:"refill_id" bson:"refill_id,omitempty"`
+	Params    PatchRefillIdParams `bson:"params,omitempty"`
 }
 
 type PatchRefillIdResponseObject interface {
@@ -3370,8 +3370,8 @@ func (response PatchRefillId500JSONResponse) VisitPatchRefillIdResponse(w http.R
 }
 
 type GetAccountTransactionsRequestObject struct {
-	AccountId UUID                         `json:"account_id" bson:"account_id"`
-	Params    GetAccountTransactionsParams `bson:"params"`
+	AccountId UUID                         `json:"account_id" bson:"account_id,omitempty"`
+	Params    GetAccountTransactionsParams `bson:"params,omitempty"`
 }
 
 type GetAccountTransactionsResponseObject interface {
@@ -3379,10 +3379,10 @@ type GetAccountTransactionsResponseObject interface {
 }
 
 type GetAccountTransactions200JSONResponse struct {
-	Limit        *uint64        `json:"limit,omitempty" bson:"limit"`
-	MaxPage      *uint64        `json:"max_page,omitempty" bson:"max_page"`
-	Page         *uint64        `json:"page,omitempty" bson:"page"`
-	Transactions *[]Transaction `json:"transactions,omitempty" bson:"transactions"`
+	Limit        *uint64        `json:"limit,omitempty" bson:"limit,omitempty"`
+	MaxPage      *uint64        `json:"max_page,omitempty" bson:"max_page,omitempty"`
+	Page         *uint64        `json:"page,omitempty" bson:"page,omitempty"`
+	Transactions *[]Transaction `json:"transactions,omitempty" bson:"transactions,omitempty"`
 }
 
 func (response GetAccountTransactions200JSONResponse) VisitGetAccountTransactionsResponse(w http.ResponseWriter) error {
@@ -3420,8 +3420,8 @@ func (response GetAccountTransactions500JSONResponse) VisitGetAccountTransaction
 }
 
 type MarkDeleteTransactionIdRequestObject struct {
-	AccountId     UUID `json:"account_id" bson:"account_id"`
-	TransactionId UUID `json:"transaction_id" bson:"transaction_id"`
+	AccountId     UUID `json:"account_id" bson:"account_id,omitempty"`
+	TransactionId UUID `json:"transaction_id" bson:"transaction_id,omitempty"`
 }
 
 type MarkDeleteTransactionIdResponseObject interface {
@@ -3474,8 +3474,8 @@ func (response MarkDeleteTransactionId500JSONResponse) VisitMarkDeleteTransactio
 }
 
 type GetTransactionIdRequestObject struct {
-	AccountId     UUID `json:"account_id" bson:"account_id"`
-	TransactionId UUID `json:"transaction_id" bson:"transaction_id"`
+	AccountId     UUID `json:"account_id" bson:"account_id,omitempty"`
+	TransactionId UUID `json:"transaction_id" bson:"transaction_id,omitempty"`
 }
 
 type GetTransactionIdResponseObject interface {
@@ -3528,9 +3528,9 @@ func (response GetTransactionId500JSONResponse) VisitGetTransactionIdResponse(w 
 }
 
 type PatchTransactionIdRequestObject struct {
-	AccountId     UUID                     `json:"account_id" bson:"account_id"`
-	TransactionId UUID                     `json:"transaction_id" bson:"transaction_id"`
-	Params        PatchTransactionIdParams `bson:"params"`
+	AccountId     UUID                     `json:"account_id" bson:"account_id,omitempty"`
+	TransactionId UUID                     `json:"transaction_id" bson:"transaction_id,omitempty"`
+	Params        PatchTransactionIdParams `bson:"params,omitempty"`
 }
 
 type PatchTransactionIdResponseObject interface {
@@ -3583,10 +3583,10 @@ func (response PatchTransactionId500JSONResponse) VisitPatchTransactionIdRespons
 }
 
 type PatchTransactionItemIdRequestObject struct {
-	AccountId     UUID                         `json:"account_id" bson:"account_id"`
-	TransactionId UUID                         `json:"transaction_id" bson:"transaction_id"`
-	ItemId        UUID                         `json:"item_id" bson:"item_id"`
-	Params        PatchTransactionItemIdParams `bson:"params"`
+	AccountId     UUID                         `json:"account_id" bson:"account_id,omitempty"`
+	TransactionId UUID                         `json:"transaction_id" bson:"transaction_id,omitempty"`
+	ItemId        UUID                         `json:"item_id" bson:"item_id,omitempty"`
+	Params        PatchTransactionItemIdParams `bson:"params,omitempty"`
 }
 
 type PatchTransactionItemIdResponseObject interface {
@@ -3639,7 +3639,7 @@ func (response PatchTransactionItemId500JSONResponse) VisitPatchTransactionItemI
 }
 
 type ConnectCardRequestObject struct {
-	Body *ConnectCardJSONRequestBody `bson:"body"`
+	Body *ConnectCardJSONRequestBody `bson:"body,omitempty"`
 }
 
 type ConnectCardResponseObject interface {
@@ -3647,8 +3647,8 @@ type ConnectCardResponseObject interface {
 }
 
 type ConnectCard200JSONResponse struct {
-	Account *Account  `json:"account,omitempty" bson:"account"`
-	Message *Messages `json:"message,omitempty" bson:"message"`
+	Account *Account  `json:"account,omitempty" bson:"account,omitempty"`
+	Message *Messages `json:"message,omitempty" bson:"message,omitempty"`
 }
 
 func (response ConnectCard200JSONResponse) VisitConnectCardResponse(w http.ResponseWriter) error {
@@ -3686,7 +3686,7 @@ func (response ConnectCard500JSONResponse) VisitConnectCardResponse(w http.Respo
 }
 
 type ConnectGoogleRequestObject struct {
-	Params ConnectGoogleParams `bson:"params"`
+	Params ConnectGoogleParams `bson:"params,omitempty"`
 }
 
 type ConnectGoogleResponseObject interface {
@@ -3694,11 +3694,11 @@ type ConnectGoogleResponseObject interface {
 }
 
 type ConnectGoogle301ResponseHeaders struct {
-	Location string `bson:"location"`
+	Location string `bson:"location,omitempty"`
 }
 
 type ConnectGoogle301Response struct {
-	Headers ConnectGoogle301ResponseHeaders `bson:"headers"`
+	Headers ConnectGoogle301ResponseHeaders `bson:"headers,omitempty"`
 }
 
 func (response ConnectGoogle301Response) VisitConnectGoogleResponse(w http.ResponseWriter) error {
@@ -3735,7 +3735,7 @@ func (response ConnectGoogle500JSONResponse) VisitConnectGoogleResponse(w http.R
 }
 
 type ConnectAccountRequestObject struct {
-	QrNonce string `json:"qr_nonce" bson:"qr_nonce"`
+	QrNonce string `json:"qr_nonce" bson:"qr_nonce,omitempty"`
 }
 
 type ConnectAccountResponseObject interface {
@@ -3743,11 +3743,11 @@ type ConnectAccountResponseObject interface {
 }
 
 type ConnectAccount301ResponseHeaders struct {
-	Location string `bson:"location"`
+	Location string `bson:"location,omitempty"`
 }
 
 type ConnectAccount301Response struct {
-	Headers ConnectAccount301ResponseHeaders `bson:"headers"`
+	Headers ConnectAccount301ResponseHeaders `bson:"headers,omitempty"`
 }
 
 func (response ConnectAccount301Response) VisitConnectAccountResponse(w http.ResponseWriter) error {
@@ -3775,7 +3775,7 @@ func (response ConnectAccount500JSONResponse) VisitConnectAccountResponse(w http
 }
 
 type CallbackRequestObject struct {
-	Params CallbackParams `bson:"params"`
+	Params CallbackParams `bson:"params,omitempty"`
 }
 
 type CallbackResponseObject interface {
@@ -3783,11 +3783,11 @@ type CallbackResponseObject interface {
 }
 
 type Callback301ResponseHeaders struct {
-	Location string `bson:"location"`
+	Location string `bson:"location,omitempty"`
 }
 
 type Callback301Response struct {
-	Headers Callback301ResponseHeaders `bson:"headers"`
+	Headers Callback301ResponseHeaders `bson:"headers,omitempty"`
 }
 
 func (response Callback301Response) VisitCallbackResponse(w http.ResponseWriter) error {
@@ -3831,7 +3831,7 @@ func (response GetCarouselImages500JSONResponse) VisitGetCarouselImagesResponse(
 }
 
 type AddCarouselImageRequestObject struct {
-	Body *multipart.Reader `bson:"body"`
+	Body *multipart.Reader `bson:"body,omitempty"`
 }
 
 type AddCarouselImageResponseObject interface {
@@ -3893,7 +3893,7 @@ func (response AddCarouselImage500JSONResponse) VisitAddCarouselImageResponse(w 
 }
 
 type MarkDeleteCarouselImageRequestObject struct {
-	ImageId UUID `json:"image_id" bson:"image_id"`
+	ImageId UUID `json:"image_id" bson:"image_id,omitempty"`
 }
 
 type MarkDeleteCarouselImageResponseObject interface {
@@ -3945,7 +3945,7 @@ func (response MarkDeleteCarouselImage500JSONResponse) VisitMarkDeleteCarouselIm
 }
 
 type GetCarouselImageRequestObject struct {
-	ImageId UUID `json:"image_id" bson:"image_id"`
+	ImageId UUID `json:"image_id" bson:"image_id,omitempty"`
 }
 
 type GetCarouselImageResponseObject interface {
@@ -3953,9 +3953,9 @@ type GetCarouselImageResponseObject interface {
 }
 
 type GetCarouselImage200ImageResponse struct {
-	Body          io.Reader `bson:"body"`
-	ContentType   string    `bson:"content_type"`
-	ContentLength int64     `bson:"content_length"`
+	Body          io.Reader `bson:"body,omitempty"`
+	ContentType   string    `bson:"content_type,omitempty"`
+	ContentLength int64     `bson:"content_length,omitempty"`
 }
 
 func (response GetCarouselImage200ImageResponse) VisitGetCarouselImageResponse(w http.ResponseWriter) error {
@@ -4016,7 +4016,7 @@ func (response GetCarouselTexts500JSONResponse) VisitGetCarouselTextsResponse(w 
 }
 
 type AddCarouselTextRequestObject struct {
-	Body *AddCarouselTextJSONRequestBody `bson:"body"`
+	Body *AddCarouselTextJSONRequestBody `bson:"body,omitempty"`
 }
 
 type AddCarouselTextResponseObject interface {
@@ -4078,7 +4078,7 @@ func (response AddCarouselText500JSONResponse) VisitAddCarouselTextResponse(w ht
 }
 
 type MarkDeleteCarouselTextRequestObject struct {
-	TextId UUID `json:"text_id" bson:"text_id"`
+	TextId UUID `json:"text_id" bson:"text_id,omitempty"`
 }
 
 type MarkDeleteCarouselTextResponseObject interface {
@@ -4155,7 +4155,7 @@ func (response GetCategories500JSONResponse) VisitGetCategoriesResponse(w http.R
 }
 
 type PostCategoryRequestObject struct {
-	Body *PostCategoryJSONRequestBody `bson:"body"`
+	Body *PostCategoryJSONRequestBody `bson:"body,omitempty"`
 }
 
 type PostCategoryResponseObject interface {
@@ -4217,7 +4217,7 @@ func (response PostCategory500JSONResponse) VisitPostCategoryResponse(w http.Res
 }
 
 type MarkDeleteCategoryRequestObject struct {
-	CategoryId UUID `json:"category_id" bson:"category_id"`
+	CategoryId UUID `json:"category_id" bson:"category_id,omitempty"`
 }
 
 type MarkDeleteCategoryResponseObject interface {
@@ -4251,7 +4251,7 @@ func (response MarkDeleteCategory500JSONResponse) VisitMarkDeleteCategoryRespons
 }
 
 type GetCategoryRequestObject struct {
-	CategoryId UUID `json:"category_id" bson:"category_id"`
+	CategoryId UUID `json:"category_id" bson:"category_id,omitempty"`
 }
 
 type GetCategoryResponseObject interface {
@@ -4286,8 +4286,8 @@ func (response GetCategory500JSONResponse) VisitGetCategoryResponse(w http.Respo
 }
 
 type PatchCategoryRequestObject struct {
-	CategoryId UUID                          `json:"category_id" bson:"category_id"`
-	Body       *PatchCategoryJSONRequestBody `bson:"body"`
+	CategoryId UUID                          `json:"category_id" bson:"category_id,omitempty"`
+	Body       *PatchCategoryJSONRequestBody `bson:"body,omitempty"`
 }
 
 type PatchCategoryResponseObject interface {
@@ -4349,8 +4349,8 @@ func (response PatchCategory500JSONResponse) VisitPatchCategoryResponse(w http.R
 }
 
 type GetCategoryItemsRequestObject struct {
-	CategoryId UUID                   `json:"category_id" bson:"category_id"`
-	Params     GetCategoryItemsParams `bson:"params"`
+	CategoryId UUID                   `json:"category_id" bson:"category_id,omitempty"`
+	Params     GetCategoryItemsParams `bson:"params,omitempty"`
 }
 
 type GetCategoryItemsResponseObject interface {
@@ -4358,10 +4358,10 @@ type GetCategoryItemsResponseObject interface {
 }
 
 type GetCategoryItems200JSONResponse struct {
-	Items   *[]Item `json:"items,omitempty" bson:"items"`
-	Limit   *uint64 `json:"limit,omitempty" bson:"limit"`
-	MaxPage *uint64 `json:"max_page,omitempty" bson:"max_page"`
-	Page    *uint64 `json:"page,omitempty" bson:"page"`
+	Items   *[]Item `json:"items,omitempty" bson:"items,omitempty"`
+	Limit   *uint64 `json:"limit,omitempty" bson:"limit,omitempty"`
+	MaxPage *uint64 `json:"max_page,omitempty" bson:"max_page,omitempty"`
+	Page    *uint64 `json:"page,omitempty" bson:"page,omitempty"`
 }
 
 func (response GetCategoryItems200JSONResponse) VisitGetCategoryItemsResponse(w http.ResponseWriter) error {
@@ -4390,8 +4390,8 @@ func (response GetCategoryItems500JSONResponse) VisitGetCategoryItemsResponse(w 
 }
 
 type PostItemRequestObject struct {
-	CategoryId UUID                     `json:"category_id" bson:"category_id"`
-	Body       *PostItemJSONRequestBody `bson:"body"`
+	CategoryId UUID                     `json:"category_id" bson:"category_id,omitempty"`
+	Body       *PostItemJSONRequestBody `bson:"body,omitempty"`
 }
 
 type PostItemResponseObject interface {
@@ -4453,8 +4453,8 @@ func (response PostItem500JSONResponse) VisitPostItemResponse(w http.ResponseWri
 }
 
 type MarkDeleteItemRequestObject struct {
-	CategoryId UUID `json:"category_id" bson:"category_id"`
-	ItemId     UUID `json:"item_id" bson:"item_id"`
+	CategoryId UUID `json:"category_id" bson:"category_id,omitempty"`
+	ItemId     UUID `json:"item_id" bson:"item_id,omitempty"`
 }
 
 type MarkDeleteItemResponseObject interface {
@@ -4506,9 +4506,9 @@ func (response MarkDeleteItem500JSONResponse) VisitMarkDeleteItemResponse(w http
 }
 
 type PatchItemRequestObject struct {
-	CategoryId UUID                      `json:"category_id" bson:"category_id"`
-	ItemId     UUID                      `json:"item_id" bson:"item_id"`
-	Body       *PatchItemJSONRequestBody `bson:"body"`
+	CategoryId UUID                      `json:"category_id" bson:"category_id,omitempty"`
+	ItemId     UUID                      `json:"item_id" bson:"item_id,omitempty"`
+	Body       *PatchItemJSONRequestBody `bson:"body,omitempty"`
 }
 
 type PatchItemResponseObject interface {
@@ -4570,8 +4570,8 @@ func (response PatchItem500JSONResponse) VisitPatchItemResponse(w http.ResponseW
 }
 
 type GetItemPictureRequestObject struct {
-	CategoryId UUID `json:"category_id" bson:"category_id"`
-	ItemId     UUID `json:"item_id" bson:"item_id"`
+	CategoryId UUID `json:"category_id" bson:"category_id,omitempty"`
+	ItemId     UUID `json:"item_id" bson:"item_id,omitempty"`
 }
 
 type GetItemPictureResponseObject interface {
@@ -4579,8 +4579,8 @@ type GetItemPictureResponseObject interface {
 }
 
 type GetItemPicture200ImagepngResponse struct {
-	Body          io.Reader `bson:"body"`
-	ContentLength int64     `bson:"content_length"`
+	Body          io.Reader `bson:"body,omitempty"`
+	ContentLength int64     `bson:"content_length,omitempty"`
 }
 
 func (response GetItemPicture200ImagepngResponse) VisitGetItemPictureResponse(w http.ResponseWriter) error {
@@ -4616,7 +4616,7 @@ func (response GetItemPicture500JSONResponse) VisitGetItemPictureResponse(w http
 }
 
 type GetCategoryPictureRequestObject struct {
-	CategoryId UUID `json:"category_id" bson:"category_id"`
+	CategoryId UUID `json:"category_id" bson:"category_id,omitempty"`
 }
 
 type GetCategoryPictureResponseObject interface {
@@ -4624,8 +4624,8 @@ type GetCategoryPictureResponseObject interface {
 }
 
 type GetCategoryPicture200ImagepngResponse struct {
-	Body          io.Reader `bson:"body"`
-	ContentLength int64     `bson:"content_length"`
+	Body          io.Reader `bson:"body,omitempty"`
+	ContentLength int64     `bson:"content_length,omitempty"`
 }
 
 func (response GetCategoryPicture200ImagepngResponse) VisitGetCategoryPictureResponse(w http.ResponseWriter) error {
@@ -4661,7 +4661,7 @@ func (response GetCategoryPicture500JSONResponse) VisitGetCategoryPictureRespons
 }
 
 type GetDeletedAccountsRequestObject struct {
-	Params GetDeletedAccountsParams `bson:"params"`
+	Params GetDeletedAccountsParams `bson:"params,omitempty"`
 }
 
 type GetDeletedAccountsResponseObject interface {
@@ -4669,10 +4669,10 @@ type GetDeletedAccountsResponseObject interface {
 }
 
 type GetDeletedAccounts200JSONResponse struct {
-	Accounts []Account `json:"accounts" bson:"accounts"`
-	Limit    uint64    `json:"limit" bson:"limit"`
-	MaxPage  uint64    `json:"max_page" bson:"max_page"`
-	Page     uint64    `json:"page" bson:"page"`
+	Accounts []Account `json:"accounts" bson:"accounts,omitempty"`
+	Limit    uint64    `json:"limit" bson:"limit,omitempty"`
+	MaxPage  uint64    `json:"max_page" bson:"max_page,omitempty"`
+	Page     uint64    `json:"page" bson:"page,omitempty"`
 }
 
 func (response GetDeletedAccounts200JSONResponse) VisitGetDeletedAccountsResponse(w http.ResponseWriter) error {
@@ -4710,7 +4710,7 @@ func (response GetDeletedAccounts500JSONResponse) VisitGetDeletedAccountsRespons
 }
 
 type DeleteAccountRequestObject struct {
-	AccountId UUID `json:"account_id" bson:"account_id"`
+	AccountId UUID `json:"account_id" bson:"account_id,omitempty"`
 }
 
 type DeleteAccountResponseObject interface {
@@ -4771,7 +4771,7 @@ func (response DeleteAccount500JSONResponse) VisitDeleteAccountResponse(w http.R
 }
 
 type RestoreDeletedAccountRequestObject struct {
-	AccountId UUID `json:"account_id" bson:"account_id"`
+	AccountId UUID `json:"account_id" bson:"account_id,omitempty"`
 }
 
 type RestoreDeletedAccountResponseObject interface {
@@ -4841,7 +4841,7 @@ func (response RestoreDeletedAccount500JSONResponse) VisitRestoreDeletedAccountR
 }
 
 type GetDeletedCarouselImagesRequestObject struct {
-	Params GetDeletedCarouselImagesParams `bson:"params"`
+	Params GetDeletedCarouselImagesParams `bson:"params,omitempty"`
 }
 
 type GetDeletedCarouselImagesResponseObject interface {
@@ -4849,10 +4849,10 @@ type GetDeletedCarouselImagesResponseObject interface {
 }
 
 type GetDeletedCarouselImages200JSONResponse struct {
-	Items   []CarouselImage `json:"items" bson:"items"`
-	Limit   uint64          `json:"limit" bson:"limit"`
-	MaxPage uint64          `json:"max_page" bson:"max_page"`
-	Page    uint64          `json:"page" bson:"page"`
+	Items   []CarouselImage `json:"items" bson:"items,omitempty"`
+	Limit   uint64          `json:"limit" bson:"limit,omitempty"`
+	MaxPage uint64          `json:"max_page" bson:"max_page,omitempty"`
+	Page    uint64          `json:"page" bson:"page,omitempty"`
 }
 
 func (response GetDeletedCarouselImages200JSONResponse) VisitGetDeletedCarouselImagesResponse(w http.ResponseWriter) error {
@@ -4890,7 +4890,7 @@ func (response GetDeletedCarouselImages500JSONResponse) VisitGetDeletedCarouselI
 }
 
 type DeleteCarouselImageRequestObject struct {
-	ImageId UUID `json:"image_id" bson:"image_id"`
+	ImageId UUID `json:"image_id" bson:"image_id,omitempty"`
 }
 
 type DeleteCarouselImageResponseObject interface {
@@ -4951,7 +4951,7 @@ func (response DeleteCarouselImage500JSONResponse) VisitDeleteCarouselImageRespo
 }
 
 type RestoreDeletedCarouselImageRequestObject struct {
-	ImageId UUID `json:"image_id" bson:"image_id"`
+	ImageId UUID `json:"image_id" bson:"image_id,omitempty"`
 }
 
 type RestoreDeletedCarouselImageResponseObject interface {
@@ -5021,7 +5021,7 @@ func (response RestoreDeletedCarouselImage500JSONResponse) VisitRestoreDeletedCa
 }
 
 type GetDeletedCarouselTextsRequestObject struct {
-	Params GetDeletedCarouselTextsParams `bson:"params"`
+	Params GetDeletedCarouselTextsParams `bson:"params,omitempty"`
 }
 
 type GetDeletedCarouselTextsResponseObject interface {
@@ -5029,10 +5029,10 @@ type GetDeletedCarouselTextsResponseObject interface {
 }
 
 type GetDeletedCarouselTexts200JSONResponse struct {
-	Items   []CarouselText `json:"items" bson:"items"`
-	Limit   uint64         `json:"limit" bson:"limit"`
-	MaxPage uint64         `json:"max_page" bson:"max_page"`
-	Page    uint64         `json:"page" bson:"page"`
+	Items   []CarouselText `json:"items" bson:"items,omitempty"`
+	Limit   uint64         `json:"limit" bson:"limit,omitempty"`
+	MaxPage uint64         `json:"max_page" bson:"max_page,omitempty"`
+	Page    uint64         `json:"page" bson:"page,omitempty"`
 }
 
 func (response GetDeletedCarouselTexts200JSONResponse) VisitGetDeletedCarouselTextsResponse(w http.ResponseWriter) error {
@@ -5070,7 +5070,7 @@ func (response GetDeletedCarouselTexts500JSONResponse) VisitGetDeletedCarouselTe
 }
 
 type DeleteCarouselTextRequestObject struct {
-	TextId UUID `json:"text_id" bson:"text_id"`
+	TextId UUID `json:"text_id" bson:"text_id,omitempty"`
 }
 
 type DeleteCarouselTextResponseObject interface {
@@ -5131,7 +5131,7 @@ func (response DeleteCarouselText500JSONResponse) VisitDeleteCarouselTextRespons
 }
 
 type RestoreDeletedCarouselTextRequestObject struct {
-	TextId UUID `json:"text_id" bson:"text_id"`
+	TextId UUID `json:"text_id" bson:"text_id,omitempty"`
 }
 
 type RestoreDeletedCarouselTextResponseObject interface {
@@ -5201,7 +5201,7 @@ func (response RestoreDeletedCarouselText500JSONResponse) VisitRestoreDeletedCar
 }
 
 type GetDeletedCategoriesRequestObject struct {
-	Params GetDeletedCategoriesParams `bson:"params"`
+	Params GetDeletedCategoriesParams `bson:"params,omitempty"`
 }
 
 type GetDeletedCategoriesResponseObject interface {
@@ -5209,10 +5209,10 @@ type GetDeletedCategoriesResponseObject interface {
 }
 
 type GetDeletedCategories200JSONResponse struct {
-	Categories []Category `json:"categories" bson:"categories"`
-	Limit      uint64     `json:"limit" bson:"limit"`
-	MaxPage    uint64     `json:"max_page" bson:"max_page"`
-	Page       uint64     `json:"page" bson:"page"`
+	Categories []Category `json:"categories" bson:"categories,omitempty"`
+	Limit      uint64     `json:"limit" bson:"limit,omitempty"`
+	MaxPage    uint64     `json:"max_page" bson:"max_page,omitempty"`
+	Page       uint64     `json:"page" bson:"page,omitempty"`
 }
 
 func (response GetDeletedCategories200JSONResponse) VisitGetDeletedCategoriesResponse(w http.ResponseWriter) error {
@@ -5250,7 +5250,7 @@ func (response GetDeletedCategories500JSONResponse) VisitGetDeletedCategoriesRes
 }
 
 type DeleteCategoryRequestObject struct {
-	CategoryId UUID `json:"category_id" bson:"category_id"`
+	CategoryId UUID `json:"category_id" bson:"category_id,omitempty"`
 }
 
 type DeleteCategoryResponseObject interface {
@@ -5311,7 +5311,7 @@ func (response DeleteCategory500JSONResponse) VisitDeleteCategoryResponse(w http
 }
 
 type RestoreDeletedCategoryRequestObject struct {
-	CategoryId UUID `json:"category_id" bson:"category_id"`
+	CategoryId UUID `json:"category_id" bson:"category_id,omitempty"`
 }
 
 type RestoreDeletedCategoryResponseObject interface {
@@ -5381,7 +5381,7 @@ func (response RestoreDeletedCategory500JSONResponse) VisitRestoreDeletedCategor
 }
 
 type GetDeletedItemsRequestObject struct {
-	Params GetDeletedItemsParams `bson:"params"`
+	Params GetDeletedItemsParams `bson:"params,omitempty"`
 }
 
 type GetDeletedItemsResponseObject interface {
@@ -5389,10 +5389,10 @@ type GetDeletedItemsResponseObject interface {
 }
 
 type GetDeletedItems200JSONResponse struct {
-	Items   []Item `json:"items" bson:"items"`
-	Limit   uint64 `json:"limit" bson:"limit"`
-	MaxPage uint64 `json:"max_page" bson:"max_page"`
-	Page    uint64 `json:"page" bson:"page"`
+	Items   []Item `json:"items" bson:"items,omitempty"`
+	Limit   uint64 `json:"limit" bson:"limit,omitempty"`
+	MaxPage uint64 `json:"max_page" bson:"max_page,omitempty"`
+	Page    uint64 `json:"page" bson:"page,omitempty"`
 }
 
 func (response GetDeletedItems200JSONResponse) VisitGetDeletedItemsResponse(w http.ResponseWriter) error {
@@ -5430,7 +5430,7 @@ func (response GetDeletedItems500JSONResponse) VisitGetDeletedItemsResponse(w ht
 }
 
 type DeleteItemRequestObject struct {
-	ItemId UUID `json:"item_id" bson:"item_id"`
+	ItemId UUID `json:"item_id" bson:"item_id,omitempty"`
 }
 
 type DeleteItemResponseObject interface {
@@ -5491,7 +5491,7 @@ func (response DeleteItem500JSONResponse) VisitDeleteItemResponse(w http.Respons
 }
 
 type RestoreDeletedItemRequestObject struct {
-	ItemId UUID `json:"item_id" bson:"item_id"`
+	ItemId UUID `json:"item_id" bson:"item_id,omitempty"`
 }
 
 type RestoreDeletedItemResponseObject interface {
@@ -5561,7 +5561,7 @@ func (response RestoreDeletedItem500JSONResponse) VisitRestoreDeletedItemRespons
 }
 
 type GetDeletedRefillsRequestObject struct {
-	Params GetDeletedRefillsParams `bson:"params"`
+	Params GetDeletedRefillsParams `bson:"params,omitempty"`
 }
 
 type GetDeletedRefillsResponseObject interface {
@@ -5569,10 +5569,10 @@ type GetDeletedRefillsResponseObject interface {
 }
 
 type GetDeletedRefills200JSONResponse struct {
-	Limit   uint64   `json:"limit" bson:"limit"`
-	MaxPage uint64   `json:"max_page" bson:"max_page"`
-	Page    uint64   `json:"page" bson:"page"`
-	Refills []Refill `json:"refills" bson:"refills"`
+	Limit   uint64   `json:"limit" bson:"limit,omitempty"`
+	MaxPage uint64   `json:"max_page" bson:"max_page,omitempty"`
+	Page    uint64   `json:"page" bson:"page,omitempty"`
+	Refills []Refill `json:"refills" bson:"refills,omitempty"`
 }
 
 func (response GetDeletedRefills200JSONResponse) VisitGetDeletedRefillsResponse(w http.ResponseWriter) error {
@@ -5610,7 +5610,7 @@ func (response GetDeletedRefills500JSONResponse) VisitGetDeletedRefillsResponse(
 }
 
 type DeleteRefillRequestObject struct {
-	RefillId UUID `json:"refill_id" bson:"refill_id"`
+	RefillId UUID `json:"refill_id" bson:"refill_id,omitempty"`
 }
 
 type DeleteRefillResponseObject interface {
@@ -5671,7 +5671,7 @@ func (response DeleteRefill500JSONResponse) VisitDeleteRefillResponse(w http.Res
 }
 
 type RestoreDeletedRefillRequestObject struct {
-	RefillId UUID `json:"refill_id" bson:"refill_id"`
+	RefillId UUID `json:"refill_id" bson:"refill_id,omitempty"`
 }
 
 type RestoreDeletedRefillResponseObject interface {
@@ -5741,7 +5741,7 @@ func (response RestoreDeletedRefill500JSONResponse) VisitRestoreDeletedRefillRes
 }
 
 type GetDeletedTransactionsRequestObject struct {
-	Params GetDeletedTransactionsParams `bson:"params"`
+	Params GetDeletedTransactionsParams `bson:"params,omitempty"`
 }
 
 type GetDeletedTransactionsResponseObject interface {
@@ -5749,10 +5749,10 @@ type GetDeletedTransactionsResponseObject interface {
 }
 
 type GetDeletedTransactions200JSONResponse struct {
-	Limit        uint64        `json:"limit" bson:"limit"`
-	MaxPage      uint64        `json:"max_page" bson:"max_page"`
-	Page         uint64        `json:"page" bson:"page"`
-	Transactions []Transaction `json:"transactions" bson:"transactions"`
+	Limit        uint64        `json:"limit" bson:"limit,omitempty"`
+	MaxPage      uint64        `json:"max_page" bson:"max_page,omitempty"`
+	Page         uint64        `json:"page" bson:"page,omitempty"`
+	Transactions []Transaction `json:"transactions" bson:"transactions,omitempty"`
 }
 
 func (response GetDeletedTransactions200JSONResponse) VisitGetDeletedTransactionsResponse(w http.ResponseWriter) error {
@@ -5790,7 +5790,7 @@ func (response GetDeletedTransactions500JSONResponse) VisitGetDeletedTransaction
 }
 
 type DeleteTransactionRequestObject struct {
-	TransactionId UUID `json:"transaction_id" bson:"transaction_id"`
+	TransactionId UUID `json:"transaction_id" bson:"transaction_id,omitempty"`
 }
 
 type DeleteTransactionResponseObject interface {
@@ -5851,7 +5851,7 @@ func (response DeleteTransaction500JSONResponse) VisitDeleteTransactionResponse(
 }
 
 type RestoreDeletedTransactionRequestObject struct {
-	TransactionId UUID `json:"transaction_id" bson:"transaction_id"`
+	TransactionId UUID `json:"transaction_id" bson:"transaction_id,omitempty"`
 }
 
 type RestoreDeletedTransactionResponseObject interface {
@@ -5921,7 +5921,7 @@ func (response RestoreDeletedTransaction500JSONResponse) VisitRestoreDeletedTran
 }
 
 type ImportAccountsRequestObject struct {
-	Body *multipart.Reader `bson:"body"`
+	Body *multipart.Reader `bson:"body,omitempty"`
 }
 
 type ImportAccountsResponseObject interface {
@@ -5929,8 +5929,8 @@ type ImportAccountsResponseObject interface {
 }
 
 type ImportAccounts200JSONResponse struct {
-	Message     *Messages `json:"message,omitempty" bson:"message"`
-	NotAccepted *[]string `json:"not_accepted,omitempty" bson:"not_accepted"`
+	Message     *Messages `json:"message,omitempty" bson:"message,omitempty"`
+	NotAccepted *[]string `json:"not_accepted,omitempty" bson:"not_accepted,omitempty"`
 }
 
 func (response ImportAccounts200JSONResponse) VisitImportAccountsResponse(w http.ResponseWriter) error {
@@ -6019,7 +6019,7 @@ func (response Logout500JSONResponse) VisitLogoutResponse(w http.ResponseWriter)
 }
 
 type GetRefillsRequestObject struct {
-	Params GetRefillsParams `bson:"params"`
+	Params GetRefillsParams `bson:"params,omitempty"`
 }
 
 type GetRefillsResponseObject interface {
@@ -6027,10 +6027,10 @@ type GetRefillsResponseObject interface {
 }
 
 type GetRefills200JSONResponse struct {
-	Limit   *uint64   `json:"limit,omitempty" bson:"limit"`
-	MaxPage *uint64   `json:"max_page,omitempty" bson:"max_page"`
-	Page    *uint64   `json:"page,omitempty" bson:"page"`
-	Refills *[]Refill `json:"refills,omitempty" bson:"refills"`
+	Limit   *uint64   `json:"limit,omitempty" bson:"limit,omitempty"`
+	MaxPage *uint64   `json:"max_page,omitempty" bson:"max_page,omitempty"`
+	Page    *uint64   `json:"page,omitempty" bson:"page,omitempty"`
+	Refills *[]Refill `json:"refills,omitempty" bson:"refills,omitempty"`
 }
 
 func (response GetRefills200JSONResponse) VisitGetRefillsResponse(w http.ResponseWriter) error {
@@ -6068,7 +6068,7 @@ func (response GetRefills500JSONResponse) VisitGetRefillsResponse(w http.Respons
 }
 
 type GetTransactionsRequestObject struct {
-	Params GetTransactionsParams `bson:"params"`
+	Params GetTransactionsParams `bson:"params,omitempty"`
 }
 
 type GetTransactionsResponseObject interface {
@@ -6076,10 +6076,10 @@ type GetTransactionsResponseObject interface {
 }
 
 type GetTransactions200JSONResponse struct {
-	Limit        *uint64        `json:"limit,omitempty" bson:"limit"`
-	MaxPage      *uint64        `json:"max_page,omitempty" bson:"max_page"`
-	Page         *uint64        `json:"page,omitempty" bson:"page"`
-	Transactions *[]Transaction `json:"transactions,omitempty" bson:"transactions"`
+	Limit        *uint64        `json:"limit,omitempty" bson:"limit,omitempty"`
+	MaxPage      *uint64        `json:"max_page,omitempty" bson:"max_page,omitempty"`
+	Page         *uint64        `json:"page,omitempty" bson:"page,omitempty"`
+	Transactions *[]Transaction `json:"transactions,omitempty" bson:"transactions,omitempty"`
 }
 
 func (response GetTransactions200JSONResponse) VisitGetTransactionsResponse(w http.ResponseWriter) error {
@@ -6335,8 +6335,8 @@ func NewStrictHandler(ssi StrictServerInterface, middlewares []StrictMiddlewareF
 }
 
 type strictHandler struct {
-	ssi         StrictServerInterface  `bson:"ssi"`
-	middlewares []StrictMiddlewareFunc `bson:"middlewares"`
+	ssi         StrictServerInterface  `bson:"ssi,omitempty"`
+	middlewares []StrictMiddlewareFunc `bson:"middlewares,omitempty"`
 }
 
 // GetAccount operation middleware
@@ -8136,100 +8136,100 @@ var swaggerSpec = []string{
 	"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",
-	"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",
-	"AAD//xx8DCP0PwEA",
+	"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",
+	"TotqENc/AQA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

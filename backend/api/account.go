@@ -6,7 +6,9 @@ import (
 	"encoding/csv"
 	"reflect"
 	"strconv"
+	"strings"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -338,7 +340,12 @@ func (s *Server) ImportAccounts(c echo.Context) error {
 	for i := 0; i < v.NumField(); i++ {
 		field := v.Type().Field(i)
 		tag := field.Tag.Get("json")
+		tag = strings.Split(tag, ",")[0]
 		for j, colName := range colNames {
+			colName = strings.ToLower(colName)
+			colName = strings.ReplaceAll(colName, " ", "_")
+			colName = strings.ReplaceAll(colName, "-", "_")
+			colName = strings.TrimSpace(colName)
 			if tag == colName {
 				assignments[tag] = j
 			}
@@ -363,19 +370,21 @@ func (s *Server) ImportAccounts(c echo.Context) error {
 		account := &models.Account{
 			Account: autogen.Account{
 				Balance:      balance,
+				Id:           uuid.New(),
 				CardId:       record[assignments["card_id"]],
-				EmailAddress: record[assignments["email"]],
+				EmailAddress: record[assignments["email_address"]],
 				FirstName:    record[assignments["first_name"]],
 				LastName:     record[assignments["last_name"]],
 				Role:         autogen.AccountRole(record[assignments["role"]]),
 				PriceRole:    autogen.AccountPriceRole(record[assignments["price_role"]]),
-				State:        autogen.AccountOK,
+				State:        autogen.AccountNotOnBoarded,
 			},
 		}
 		account.SetPin("1234")
 
 		err = s.CreateAccount(c.Request().Context(), account)
 		if err != nil {
+			logrus.Error(err)
 			notProcessed = append(notProcessed, record[0])
 			continue
 		}
