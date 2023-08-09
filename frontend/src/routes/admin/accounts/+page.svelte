@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Account, NewAccount, NewCategory } from '$lib/api';
-	import { api } from '$lib/config/config';
+	import Refills from '$lib/components/admin/refills.svelte';
 	import { accountsApi } from '$lib/requests/requests';
 	import { formatPrice } from '$lib/utils';
 	import { onMount } from 'svelte';
@@ -20,6 +20,7 @@
 	let page = 0;
 	let max_page = 0;
 	let accounts_per_page = 10;
+	let shown_refill: Account | undefined = undefined;
 
 	onMount(() => {
 		reloadAccounts();
@@ -63,6 +64,15 @@
 			});
 	}
 </script>
+
+{#if shown_refill}
+	<Refills
+		account={shown_refill}
+		onClose={() => {
+			shown_refill = undefined;
+		}}
+	/>
+{/if}
 
 <!-- Popup -->
 <div
@@ -233,6 +243,17 @@
 								/>
 								<button
 									class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
+									on:click={() => {
+										// @ts-ignore
+										document.getElementById('import').click();
+									}}
+								>
+									Importer des Comptes
+								</button>
+
+
+								<button
+									class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
 									data-hs-overlay="#hs-modal-new-account"
 								>
 									<svg
@@ -326,7 +347,7 @@
 										<div class="px-6 py-3">
 											<input
 												type="text"
-												class="block text-sm dark:text-white/[.8]  break-words p-2 bg-transparent"
+												class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent"
 												value={account.last_name}
 												on:input={(e) => {
 													// @ts-ignore
@@ -353,7 +374,7 @@
 										<div class="px-6 py-3">
 											<input
 												type="text"
-												class="block text-sm dark:text-white/[.8]  break-words p-2 bg-transparent"
+												class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent"
 												value={account.first_name}
 												on:input={(e) => {
 													// @ts-ignore
@@ -380,7 +401,7 @@
 										<div class="px-6 py-3">
 											<input
 												type="text"
-												class="w-72 block text-sm dark:text-white/[.8]  break-words p-2 bg-transparent"
+												class="w-72 block text-sm dark:text-white/[.8] break-words p-2 bg-transparent"
 												value={account.email_address}
 												on:input={(e) => {
 													// @ts-ignore
@@ -405,9 +426,7 @@
 									</td>
 									<td class="h-px w-72">
 										<div class="px-6 py-3">
-											<p
-												class="text-sm dark:text-white/[.8]  break-words p-2 bg-transparent"
-											>
+											<p class="text-sm dark:text-white/[.8] break-words p-2 bg-transparent">
 												{formatPrice(account.balance)}
 											</p>
 										</div>
@@ -415,7 +434,7 @@
 									<td class="h-px w-72">
 										<div class="px-6 py-3">
 											<select
-												class="block text-sm dark:text-white/[.8]  break-words p-2 bg-transparent"
+												class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent"
 												value={account.role}
 												on:change={(e) => {
 													// @ts-ignore
@@ -448,7 +467,7 @@
 									<td class="h-px w-72">
 										<div class="px-6 py-3">
 											<select
-												class="block text-sm dark:text-white/[.8]  break-words p-2 bg-transparent"
+												class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent"
 												value={account.price_role}
 												on:change={(e) => {
 													// @ts-ignore
@@ -479,6 +498,12 @@
 									</td>
 									<td class="h-px w-px whitespace-nowrap">
 										<div class="px-6 py-1.5">
+											<button
+												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
+												on:click={() => shown_refill = account}
+											>
+												Transactions
+											</button>
 											<button
 												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
 												on:click={() => deleteAccount(account.id)}
@@ -537,7 +562,7 @@
 									type="button"
 									class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
 									on:click={() => {
-										if (page < Math.ceil(accounts.length / accounts_per_page) - 1) page++;
+										if (page < max_page) page++;
 									}}
 								>
 									Suivant
