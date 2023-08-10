@@ -31,7 +31,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
-          context: .
+          context: ./backend
           file: ./backend/Dockerfile
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
@@ -64,7 +64,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
-          context: .
+          context: ./frontend
           file: ./frontend/Dockerfile
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
