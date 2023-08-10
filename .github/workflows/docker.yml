@@ -12,6 +12,9 @@ jobs:
   push_back_to_registry:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3
@@ -45,6 +48,9 @@ jobs:
   push_front_to_registry:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3
