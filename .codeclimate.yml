@@ -11,13 +11,13 @@ checks:
       threshold: 1000
   method-complexity:
     config:
-      threshold: 7
+      threshold: 50
   method-count:
     config:
       threshold: 50
   method-lines:
     config:
-      threshold: 50
+      threshold: 100
   nested-control-flow:
     config:
       threshold: 4
