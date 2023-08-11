@@ -55,6 +55,27 @@ func (s *Server) RemoveOnBoardCookie(c echo.Context) {
 	sess.Save(c.Request(), c.Response())
 }
 
+func MustGetUserOrOnBoard(c echo.Context) (*models.Account, error) {
+	logged := c.Get("userLogged").(bool)
+	loggedOnBoard := c.Get("onBoardLogged").(bool)
+	if !logged && !loggedOnBoard {
+		ErrorNotAuthenticated(c)
+		return nil, errors.New("not authenticated")
+	}
+
+	var account *models.Account
+
+	if logged {
+		account = c.Get("userAccount").(*models.Account)
+	}
+
+	if loggedOnBoard {
+		account = c.Get("onBoardAccount").(*models.Account)
+	}
+
+	return account, nil
+}
+
 func MustGetUser(c echo.Context) (*models.Account, error) {
 	logged := c.Get("userLogged").(bool)
 	if !logged {

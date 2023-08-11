@@ -14,9 +14,9 @@ import (
 // (POST /account/transactions)
 func (s *Server) PostTransactions(c echo.Context) error {
 	// Get account from cookie
-	logged := c.Get("userLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	_, err := MustGetUser(c)
+	if err != nil {
+		return nil
 	}
 
 	accountID := c.Get("userAccountID").(string)
@@ -34,7 +34,7 @@ func (s *Server) PostTransactions(c echo.Context) error {
 	var fetchedItems = make(map[string]*models.Item)
 
 	// Check that pin matches
-	err := c.Bind(&potentialTransaction)
+	err = c.Bind(&potentialTransaction)
 	if err != nil {
 		logrus.Error(err)
 		return Error400(c)
@@ -201,9 +201,9 @@ func (s *Server) GetAccountTransactions(c echo.Context, accountId autogen.UUID, 
 // (GET /account/transactions)
 func (s *Server) GetCurrentAccountTransactions(c echo.Context, params autogen.GetCurrentAccountTransactionsParams) error {
 	// Get account from cookie
-	logged := c.Get("userLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	_, err := MustGetUser(c)
+	if err != nil {
+		return nil
 	}
 
 	accountID := c.Get("userAccountID").(string)

@@ -59,20 +59,9 @@ var upgrader = websocket.Upgrader{
 }
 
 func Upgrade(c echo.Context) error {
-	logged := c.Get("userLogged").(bool)
-	loggedOnBoard := c.Get("onBoardLogged").(bool)
-	if !logged && !loggedOnBoard {
-		return ErrorNotAuthenticated(c)
-	}
-
-	var accountID string
-
-	if logged {
-		accountID = c.Get("userAccountID").(string)
-	}
-
-	if loggedOnBoard {
-		accountID = c.Get("onBoardAccountID").(string)
+	account, err := MustGetUserOrOnBoard(c)
+	if err != nil {
+		return nil
 	}
 
 	conn, err := upgrader.Upgrade(c.Response(), c.Request(), nil)
@@ -80,7 +69,7 @@ func Upgrade(c echo.Context) error {
 		return Error500(c)
 	}
 
-	room := GetWSRoom(accountID)
+	room := GetWSRoom(account.Id.String())
 	room.Add(conn)
 
 	for {

@@ -83,9 +83,9 @@ func (s *Server) GetRefills(c echo.Context, params autogen.GetRefillsParams) err
 // (GET /account/refills)
 func (s *Server) GetSelfRefills(c echo.Context, params autogen.GetSelfRefillsParams) error {
 	// Get account from cookie
-	logged := c.Get("userLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	_, err := MustGetUser(c)
+	if err != nil {
+		return nil
 	}
 
 	accountID := c.Get("userAccountID").(string)

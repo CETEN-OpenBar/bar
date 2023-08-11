@@ -30,27 +30,13 @@ var redirectCache = cache.New(5*time.Minute, 10*time.Minute)
 // (GET /account/qr)
 func (s *Server) GetAccountQR(c echo.Context) error {
 	// Get account from cookie
-	logged := c.Get("userLogged").(bool)
-	loggedOnBoard := c.Get("onBoardLogged").(bool)
-	if !logged && !loggedOnBoard {
-		return ErrorNotAuthenticated(c)
-	}
-
-	var accountID string
-	var account *models.Account
-
-	if logged {
-		accountID = c.Get("userAccountID").(string)
-		account = c.Get("userAccount").(*models.Account)
-	}
-
-	if loggedOnBoard {
-		accountID = c.Get("onBoardAccountID").(string)
-		account = c.Get("onBoardAccount").(*models.Account)
+	account, err := MustGetUserOrOnBoard(c)
+	if err != nil {
+		return nil
 	}
 
 	var params autogen.GetAccountQRJSONBody
-	err := c.Bind(&params)
+	err = c.Bind(&params)
 	if err != nil {
 		return Error400(c)
 	}
@@ -59,13 +45,13 @@ func (s *Server) GetAccountQR(c echo.Context) error {
 		return ErrorAccNotFound(c)
 	}
 
-	b64, found := qrCache.Get(accountID)
+	b64, found := qrCache.Get(account.Id.String())
 	if !found {
 		// Generate QR code nonce
 		nonce := uuid.NewString()
 
 		// Cache nonce
-		qrCache.Set(nonce, accountID, cache.DefaultExpiration)
+		qrCache.Set(nonce, account.Id.String(), cache.DefaultExpiration)
 
 		conf := config.GetConfig()
 		url := fmt.Sprintf("%s/auth/google/begin/%s", conf.ApiConfig.BasePath, nonce)
@@ -80,9 +66,9 @@ func (s *Server) GetAccountQR(c echo.Context) error {
 			return Error500(c)
 		}
 		b64 = base64.StdEncoding.EncodeToString(png)
-		qrCache.Set(accountID, b64, cache.DefaultExpiration)
+		qrCache.Set(account.Id.String(), b64, cache.DefaultExpiration)
 
-		logrus.Debugf("QR code generated for account %s: %s", accountID, url)
+		logrus.Debugf("QR code generated for account %s: %s", account.Id.String(), url)
 	}
 
 	// Convert to base64
@@ -97,10 +83,9 @@ func (s *Server) GetAccountQR(c echo.Context) error {
 
 // (GET /account/qr)
 func (s *Server) GetAccountQRWebsocket(c echo.Context) error {
-	logged := c.Get("userLogged").(bool)
-	loggedOnBoard := c.Get("onBoardLogged").(bool)
-	if !logged && !loggedOnBoard {
-		return ErrorNotAuthenticated(c)
+	_, err := MustGetUserOrOnBoard(c)
+	if err != nil {
+		return nil
 	}
 
 	return Upgrade(c)

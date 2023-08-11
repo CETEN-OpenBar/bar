@@ -271,9 +271,9 @@ func (s *Server) PatchItem(c echo.Context, categoryId autogen.UUID, itemId autog
 // (GET /categories/{category_id}/items/{item_id}/picture)
 func (s *Server) GetItemPicture(c echo.Context, categoryId autogen.UUID, itemId autogen.UUID) error {
 	// Get account from cookie
-	logged := c.Get("userLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	_, err := MustGetUser(c)
+	if err != nil {
+		return nil
 	}
 
 	data, err := storage.GetFile("items/" + itemId.String())

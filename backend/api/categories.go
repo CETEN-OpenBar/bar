@@ -19,9 +19,9 @@ import (
 // (GET /categories)
 func (s *Server) GetCategories(c echo.Context) error {
 	// Get account from cookie
-	logged := c.Get("userLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	_, err := MustGetUser(c)
+	if err != nil {
+		return nil
 	}
 
 	data, err := s.DBackend.GetAllCategories(c.Request().Context())
@@ -122,9 +122,9 @@ func (s *Server) MarkDeleteCategory(c echo.Context, categoryId autogen.UUID) err
 // (GET /categories/{category_id})
 func (s *Server) GetCategory(c echo.Context, categoryId autogen.UUID) error {
 	// Get account from cookie
-	logged := c.Get("userLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	_, err := MustGetUser(c)
+	if err != nil {
+		return nil
 	}
 
 	category, err := s.DBackend.GetCategory(c.Request().Context(), categoryId.String())
@@ -198,9 +198,9 @@ func (s *Server) PatchCategory(c echo.Context, categoryId autogen.UUID) error {
 
 // (GET /categories/{category_id}/picture)
 func (s *Server) GetCategoryPicture(c echo.Context, categoryId autogen.UUID) error {
-	logged := c.Get("userLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	_, err := MustGetUser(c)
+	if err != nil {
+		return nil
 	}
 
 	data, err := storage.GetFile("categories/" + categoryId.String())
