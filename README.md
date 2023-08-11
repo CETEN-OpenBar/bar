@@ -1,7 +1,6 @@
 <p align="center">
   <p align="center">
     <a href="https://github.com/yyewolf/bar/releases/latest"><img alt="Release" src="https://img.shields.io/github/release/yyewolf/bar.svg?style=flat-square"></a>
-    <a href="https://travis-ci.org/yyewolf/bar"><img alt="Travis" src="https://travis-ci.org/yyewolf/bar.svg?branch=master"></a>
     <a href="/LICENSE.md"><img alt="Software License" src="https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat-square"></a>
     <a href="https://codeclimate.com/github/yyewolf/bar/test_coverage"><img src="https://api.codeclimate.com/v1/badges/d9fcf617937d6026221f/test_coverage" /></a>
     <a href="https://codeclimate.com/github/yyewolf/bar/maintainability"><img src="https://api.codeclimate.com/v1/badges/d9fcf617937d6026221f/maintainability" /></a>
