@@ -16,12 +16,10 @@ import (
 
 // (GET /account)
 func (s *Server) GetAccount(c echo.Context) error {
-	logged := c.Get("userLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	account, err := MustGetUser(c)
+	if err != nil {
+		return nil
 	}
-
-	account := c.Get("userAccount").(*models.Account)
 
 	// Return account
 	resp := autogen.GetAccount200JSONResponse{
@@ -33,15 +31,13 @@ func (s *Server) GetAccount(c echo.Context) error {
 
 // (PATCH /account)
 func (s *Server) PatchAccount(c echo.Context) error {
-	logged := c.Get("userLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	account, err := MustGetUser(c)
+	if err != nil {
+		return nil
 	}
 
-	account := c.Get("userAccount").(*models.Account)
-
 	var param autogen.PatchAccountJSONBody
-	err := c.Bind(&param)
+	err = c.Bind(&param)
 	if err != nil {
 		return Error400(c)
 	}
@@ -66,9 +62,9 @@ func (s *Server) PatchAccount(c echo.Context) error {
 
 // (GET /accounts)
 func (s *Server) GetAccounts(c echo.Context, params autogen.GetAccountsParams) error {
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	_, err := MustGetUser(c)
+	if err != nil {
+		return nil
 	}
 
 	// Set up parameters
@@ -124,15 +120,13 @@ func (s *Server) GetAccounts(c echo.Context, params autogen.GetAccountsParams) e
 
 // (POST /accounts)
 func (s *Server) PostAccounts(c echo.Context) error {
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	admin, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
 	}
 
-	adminID := c.Get("adminAccountID").(string)
-
 	var req autogen.NewAccount
-	err := c.Bind(&req)
+	err = c.Bind(&req)
 	if err != nil {
 		return Error400(c)
 	}
@@ -169,21 +163,19 @@ func (s *Server) PostAccounts(c echo.Context) error {
 		return Error500(c)
 	}
 
-	logrus.Info("Account created: ", account.Account.Id, " by ", adminID)
+	logrus.Info("Account created: ", account.Account.Id, " by ", admin.Id.String())
 	autogen.PostAccounts200JSONResponse(account.Account).VisitPostAccountsResponse(c.Response())
 	return nil
 }
 
 // (DELETE /accounts/{account_id})
 func (s *Server) MarkDeleteAccountId(c echo.Context, accountId autogen.UUID) error {
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	admin, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
 	}
 
-	adminID := c.Get("adminAccountID").(string)
-
-	err := s.DBackend.MarkDeleteAccount(c.Request().Context(), accountId.String(), adminID)
+	err = s.DBackend.MarkDeleteAccount(c.Request().Context(), accountId.String(), admin.Id.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorAccNotFound(c)
@@ -191,19 +183,17 @@ func (s *Server) MarkDeleteAccountId(c echo.Context, accountId autogen.UUID) err
 		return Error500(c)
 	}
 
-	logrus.Info("Account marked as deleted: ", accountId, " by ", adminID)
+	logrus.Info("Account marked as deleted: ", accountId, " by ", admin.Id.String())
 	autogen.DeleteAccount204Response{}.VisitDeleteAccountResponse(c.Response())
 	return nil
 }
 
 // (GET /accounts/{account_id})
 func (s *Server) GetAccountId(c echo.Context, accountId autogen.UUID) error {
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	admin, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
 	}
-
-	adminID := c.Get("adminAccountID").(string)
 
 	account, err := s.DBackend.GetAccount(c.Request().Context(), accountId.String())
 	if err != nil {
@@ -213,22 +203,20 @@ func (s *Server) GetAccountId(c echo.Context, accountId autogen.UUID) error {
 		return Error500(c)
 	}
 
-	logrus.Info("Account retrieved: ", accountId, " by ", adminID)
+	logrus.Info("Account retrieved: ", accountId, " by ", admin.Id.String())
 	autogen.GetAccountId200JSONResponse(account.Account).VisitGetAccountIdResponse(c.Response())
 	return nil
 }
 
 // (PATCH /accounts/{account_id})
 func (s *Server) PatchAccountId(c echo.Context, accountId autogen.UUID) error {
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	admin, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
 	}
 
-	adminID := c.Get("adminAccountID").(string)
-
 	var req autogen.UpdateAccountAdmin
-	err := c.Bind(&req)
+	err = c.Bind(&req)
 	if err != nil {
 		return Error400(c)
 	}
@@ -296,19 +284,17 @@ func (s *Server) PatchAccountId(c echo.Context, accountId autogen.UUID) error {
 		return Error500(c)
 	}
 
-	logrus.Info("Account updated: ", accountId, " by ", adminID)
+	logrus.Info("Account updated: ", accountId, " by ", admin.Id.String())
 	autogen.PatchAccountId200JSONResponse(account.Account).VisitPatchAccountIdResponse(c.Response())
 	return nil
 }
 
 // (POST /import/accounts)
 func (s *Server) ImportAccounts(c echo.Context) error {
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	admin, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
 	}
-
-	adminID := c.Get("adminAccountID").(string)
 
 	// Get file from request
 	file, err := c.FormFile("file")
@@ -390,7 +376,7 @@ func (s *Server) ImportAccounts(c echo.Context) error {
 		}
 	}
 
-	logrus.Info("Accounts imported: ", len(records)-len(notProcessed), " by ", adminID)
+	logrus.Info("Accounts imported: ", len(records)-len(notProcessed), " by ", admin.Id.String())
 	autogen.ImportAccounts200JSONResponse{
 		NotAccepted: &notProcessed,
 	}.VisitImportAccountsResponse(c.Response())
@@ -398,19 +384,19 @@ func (s *Server) ImportAccounts(c echo.Context) error {
 }
 
 // (GET /account/admin)
-func (s *Server) GetAccountAdmin(ctx echo.Context) error {
-	logged := ctx.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(ctx)
+func (s *Server) GetAccountAdmin(c echo.Context) error {
+	admin, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
 	}
 
-	canRestore := ctx.Get("adminAccountRole").(autogen.AccountRole) == autogen.AccountSuperAdmin
+	canRestore := admin.Role == autogen.AccountSuperAdmin
 
 	// Return account
 	resp := autogen.GetAccountAdmin200JSONResponse{
 		IsAllowed:  true,
 		CanRestore: canRestore,
 	}
-	resp.VisitGetAccountAdminResponse(ctx.Response())
+	resp.VisitGetAccountAdminResponse(c.Response())
 	return nil
 }

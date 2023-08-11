@@ -12,13 +12,12 @@ import (
 // (GET /deleted/accounts)
 func (s *Server) GetDeletedAccounts(c echo.Context, params autogen.GetDeletedAccountsParams) error {
 	// Get admin account from cookie
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
 	}
 
-	role := c.Get("adminAccountRole").(autogen.AccountRole)
-	if role != autogen.AccountSuperAdmin {
+	if account.Role != autogen.AccountSuperAdmin {
 		return ErrorNotAuthenticated(c)
 	}
 
@@ -77,19 +76,16 @@ func (s *Server) GetDeletedAccounts(c echo.Context, params autogen.GetDeletedAcc
 // (DELETE /deleted/accounts/{account_id})
 func (s *Server) DeleteAccount(c echo.Context, accountId autogen.UUID) error {
 	// Get admin account from cookie
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
+
+	if account.Role != autogen.AccountSuperAdmin {
 		return ErrorNotAuthenticated(c)
 	}
 
-	role := c.Get("adminAccountRole").(autogen.AccountRole)
-	if role != autogen.AccountSuperAdmin {
-		return ErrorNotAuthenticated(c)
-	}
-
-	adminId := c.Get("adminAccountID").(string)
-
-	err := s.DBackend.DeleteAccount(c.Request().Context(), accountId.String())
+	err = s.DBackend.DeleteAccount(c.Request().Context(), accountId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorAccNotFound(c)
@@ -98,24 +94,23 @@ func (s *Server) DeleteAccount(c echo.Context, accountId autogen.UUID) error {
 		return Error500(c)
 	}
 
-	logrus.Infof("Admin %s deleted account %s", adminId, accountId)
+	logrus.Infof("Admin %s deleted account %s", account.Id, accountId)
 	return nil
 }
 
 // (PATCH /deleted/accounts/{account_id})
 func (s *Server) RestoreDeletedAccount(c echo.Context, accountId autogen.UUID) error {
 	// Get admin account from cookie
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
+
+	if account.Role != autogen.AccountSuperAdmin {
 		return ErrorNotAuthenticated(c)
 	}
 
-	role := c.Get("adminAccountRole").(autogen.AccountRole)
-	if role != autogen.AccountSuperAdmin {
-		return ErrorNotAuthenticated(c)
-	}
-
-	err := s.DBackend.UnMarkDeleteAccount(c.Request().Context(), accountId.String())
+	err = s.DBackend.UnMarkDeleteAccount(c.Request().Context(), accountId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorAccNotFound(c)
@@ -129,13 +124,12 @@ func (s *Server) RestoreDeletedAccount(c echo.Context, accountId autogen.UUID) e
 // (GET /deleted/carousel/images)
 func (s *Server) GetDeletedCarouselImages(c echo.Context, params autogen.GetDeletedCarouselImagesParams) error {
 	// Get admin account from cookie
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
 	}
 
-	role := c.Get("adminAccountRole").(autogen.AccountRole)
-	if role != autogen.AccountSuperAdmin {
+	if account.Role != autogen.AccountSuperAdmin {
 		return ErrorNotAuthenticated(c)
 	}
 
@@ -189,19 +183,16 @@ func (s *Server) GetDeletedCarouselImages(c echo.Context, params autogen.GetDele
 // (DELETE /deleted/carousel/images/{image_id})
 func (s *Server) DeleteCarouselImage(c echo.Context, imageId autogen.UUID) error {
 	// Get admin account from cookie
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
+
+	if account.Role != autogen.AccountSuperAdmin {
 		return ErrorNotAuthenticated(c)
 	}
 
-	role := c.Get("adminAccountRole").(autogen.AccountRole)
-	if role != autogen.AccountSuperAdmin {
-		return ErrorNotAuthenticated(c)
-	}
-
-	adminId := c.Get("adminAccountID").(string)
-
-	err := s.DBackend.DeleteCarouselImage(c.Request().Context(), imageId.String())
+	err = s.DBackend.DeleteCarouselImage(c.Request().Context(), imageId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorImageNotFound(c)
@@ -216,24 +207,23 @@ func (s *Server) DeleteCarouselImage(c echo.Context, imageId autogen.UUID) error
 		return Error500(c)
 	}
 
-	logrus.Infof("Admin %s deleted carousel image %s", adminId, imageId)
+	logrus.Infof("Admin %s deleted carousel image %s", account.Id, imageId)
 	return nil
 }
 
 // (PATCH /deleted/carousel/images/{image_id})
 func (s *Server) RestoreDeletedCarouselImage(c echo.Context, imageId autogen.UUID) error {
 	// Get admin account from cookie
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
+
+	if account.Role != autogen.AccountSuperAdmin {
 		return ErrorNotAuthenticated(c)
 	}
 
-	role := c.Get("adminAccountRole").(autogen.AccountRole)
-	if role != autogen.AccountSuperAdmin {
-		return ErrorNotAuthenticated(c)
-	}
-
-	err := s.DBackend.UnMarkDeleteCarouselImage(c.Request().Context(), imageId.String())
+	err = s.DBackend.UnMarkDeleteCarouselImage(c.Request().Context(), imageId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorImageNotFound(c)
@@ -247,13 +237,12 @@ func (s *Server) RestoreDeletedCarouselImage(c echo.Context, imageId autogen.UUI
 // (GET /deleted/carousel/texts)
 func (s *Server) GetDeletedCarouselTexts(c echo.Context, params autogen.GetDeletedCarouselTextsParams) error {
 	// Get admin account from cookie
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
 	}
 
-	role := c.Get("adminAccountRole").(autogen.AccountRole)
-	if role != autogen.AccountSuperAdmin {
+	if account.Role != autogen.AccountSuperAdmin {
 		return ErrorNotAuthenticated(c)
 	}
 
@@ -307,19 +296,16 @@ func (s *Server) GetDeletedCarouselTexts(c echo.Context, params autogen.GetDelet
 // (DELETE /deleted/carousel/texts/{text_id})
 func (s *Server) DeleteCarouselText(c echo.Context, textId autogen.UUID) error {
 	// Get admin account from cookie
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
+
+	if account.Role != autogen.AccountSuperAdmin {
 		return ErrorNotAuthenticated(c)
 	}
 
-	role := c.Get("adminAccountRole").(autogen.AccountRole)
-	if role != autogen.AccountSuperAdmin {
-		return ErrorNotAuthenticated(c)
-	}
-
-	adminId := c.Get("adminAccountID").(string)
-
-	err := s.DBackend.DeleteCarouselText(c.Request().Context(), textId.String())
+	err = s.DBackend.DeleteCarouselText(c.Request().Context(), textId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorTextNotFound(c)
@@ -328,24 +314,23 @@ func (s *Server) DeleteCarouselText(c echo.Context, textId autogen.UUID) error {
 		return Error500(c)
 	}
 
-	logrus.Infof("Admin %s deleted carousel text %s", adminId, textId)
+	logrus.Infof("Admin %s deleted carousel text %s", account.Id, textId)
 	return nil
 }
 
 // (PATCH /deleted/carousel/texts/{text_id})
 func (s *Server) RestoreDeletedCarouselText(c echo.Context, textId autogen.UUID) error {
 	// Get admin account from cookie
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
+
+	if account.Role != autogen.AccountSuperAdmin {
 		return ErrorNotAuthenticated(c)
 	}
 
-	role := c.Get("adminAccountRole").(autogen.AccountRole)
-	if role != autogen.AccountSuperAdmin {
-		return ErrorNotAuthenticated(c)
-	}
-
-	err := s.DBackend.UnMarkDeleteCarouselText(c.Request().Context(), textId.String())
+	err = s.DBackend.UnMarkDeleteCarouselText(c.Request().Context(), textId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorTextNotFound(c)
@@ -359,13 +344,12 @@ func (s *Server) RestoreDeletedCarouselText(c echo.Context, textId autogen.UUID)
 // (GET /deleted/categories)
 func (s *Server) GetDeletedCategories(c echo.Context, params autogen.GetDeletedCategoriesParams) error {
 	// Get admin account from cookie
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
 	}
 
-	role := c.Get("adminAccountRole").(autogen.AccountRole)
-	if role != autogen.AccountSuperAdmin {
+	if account.Role != autogen.AccountSuperAdmin {
 		return ErrorNotAuthenticated(c)
 	}
 
@@ -419,19 +403,16 @@ func (s *Server) GetDeletedCategories(c echo.Context, params autogen.GetDeletedC
 // (DELETE /deleted/categories/{category_id})
 func (s *Server) DeleteCategory(c echo.Context, categoryId autogen.UUID) error {
 	// Get admin account from cookie
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
+
+	if account.Role != autogen.AccountSuperAdmin {
 		return ErrorNotAuthenticated(c)
 	}
 
-	role := c.Get("adminAccountRole").(autogen.AccountRole)
-	if role != autogen.AccountSuperAdmin {
-		return ErrorNotAuthenticated(c)
-	}
-
-	adminId := c.Get("adminAccountID").(string)
-
-	err := s.DBackend.DeleteCategory(c.Request().Context(), categoryId.String())
+	err = s.DBackend.DeleteCategory(c.Request().Context(), categoryId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorItemNotFound(c)
@@ -446,24 +427,23 @@ func (s *Server) DeleteCategory(c echo.Context, categoryId autogen.UUID) error {
 		return Error500(c)
 	}
 
-	logrus.Infof("Admin %s deleted category %s", adminId, categoryId)
+	logrus.Infof("Admin %s deleted category %s", account.Id, categoryId)
 	return nil
 }
 
 // (PATCH /deleted/categories/{category_id})
 func (s *Server) RestoreDeletedCategory(c echo.Context, categoryId autogen.UUID) error {
 	// Get admin account from cookie
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
+
+	if account.Role != autogen.AccountSuperAdmin {
 		return ErrorNotAuthenticated(c)
 	}
 
-	role := c.Get("adminAccountRole").(autogen.AccountRole)
-	if role != autogen.AccountSuperAdmin {
-		return ErrorNotAuthenticated(c)
-	}
-
-	err := s.DBackend.UnMarkDeleteCategory(c.Request().Context(), categoryId.String())
+	err = s.DBackend.UnMarkDeleteCategory(c.Request().Context(), categoryId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorItemNotFound(c)
@@ -477,13 +457,12 @@ func (s *Server) RestoreDeletedCategory(c echo.Context, categoryId autogen.UUID)
 // (GET /deleted/items)
 func (s *Server) GetDeletedItems(c echo.Context, params autogen.GetDeletedItemsParams) error {
 	// Get admin account from cookie
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
 	}
 
-	role := c.Get("adminAccountRole").(autogen.AccountRole)
-	if role != autogen.AccountSuperAdmin {
+	if account.Role != autogen.AccountSuperAdmin {
 		return ErrorNotAuthenticated(c)
 	}
 
@@ -537,19 +516,16 @@ func (s *Server) GetDeletedItems(c echo.Context, params autogen.GetDeletedItemsP
 // (DELETE /deleted/items/{item_id})
 func (s *Server) DeleteItem(c echo.Context, itemId autogen.UUID) error {
 	// Get admin account from cookie
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
+
+	if account.Role != autogen.AccountSuperAdmin {
 		return ErrorNotAuthenticated(c)
 	}
 
-	role := c.Get("adminAccountRole").(autogen.AccountRole)
-	if role != autogen.AccountSuperAdmin {
-		return ErrorNotAuthenticated(c)
-	}
-
-	adminId := c.Get("adminAccountID").(string)
-
-	err := s.DBackend.DeleteItem(c.Request().Context(), itemId.String())
+	err = s.DBackend.DeleteItem(c.Request().Context(), itemId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorItemNotFound(c)
@@ -564,24 +540,23 @@ func (s *Server) DeleteItem(c echo.Context, itemId autogen.UUID) error {
 		return Error500(c)
 	}
 
-	logrus.Infof("Admin %s deleted item %s", adminId, itemId)
+	logrus.Infof("Admin %s deleted item %s", account.Id, itemId)
 	return nil
 }
 
 // (PATCH /deleted/items/{item_id})
 func (s *Server) RestoreDeletedItem(c echo.Context, itemId autogen.UUID) error {
 	// Get admin account from cookie
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
+
+	if account.Role != autogen.AccountSuperAdmin {
 		return ErrorNotAuthenticated(c)
 	}
 
-	role := c.Get("adminAccountRole").(autogen.AccountRole)
-	if role != autogen.AccountSuperAdmin {
-		return ErrorNotAuthenticated(c)
-	}
-
-	err := s.DBackend.UnMarkDeleteItem(c.Request().Context(), itemId.String())
+	err = s.DBackend.UnMarkDeleteItem(c.Request().Context(), itemId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorItemNotFound(c)
@@ -595,13 +570,12 @@ func (s *Server) RestoreDeletedItem(c echo.Context, itemId autogen.UUID) error {
 // (GET /deleted/refills)
 func (s *Server) GetDeletedRefills(c echo.Context, params autogen.GetDeletedRefillsParams) error {
 	// Get admin account from cookie
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
 	}
 
-	role := c.Get("adminAccountRole").(autogen.AccountRole)
-	if role != autogen.AccountSuperAdmin {
+	if account.Role != autogen.AccountSuperAdmin {
 		return ErrorNotAuthenticated(c)
 	}
 
@@ -655,19 +629,16 @@ func (s *Server) GetDeletedRefills(c echo.Context, params autogen.GetDeletedRefi
 // (DELETE /deleted/refills/{refill_id})
 func (s *Server) DeleteRefill(c echo.Context, refillId autogen.UUID) error {
 	// Get admin account from cookie
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
+
+	if account.Role != autogen.AccountSuperAdmin {
 		return ErrorNotAuthenticated(c)
 	}
 
-	role := c.Get("adminAccountRole").(autogen.AccountRole)
-	if role != autogen.AccountSuperAdmin {
-		return ErrorNotAuthenticated(c)
-	}
-
-	adminId := c.Get("adminAccountID").(string)
-
-	err := s.DBackend.DeleteRefill(c.Request().Context(), refillId.String())
+	err = s.DBackend.DeleteRefill(c.Request().Context(), refillId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorRefillNotFound(c)
@@ -676,24 +647,23 @@ func (s *Server) DeleteRefill(c echo.Context, refillId autogen.UUID) error {
 		return Error500(c)
 	}
 
-	logrus.Infof("Admin %s deleted refill %s", adminId, refillId)
+	logrus.Infof("Admin %s deleted refill %s", account.Id, refillId)
 	return nil
 }
 
 // (PATCH /deleted/refills/{refill_id})
 func (s *Server) RestoreDeletedRefill(c echo.Context, refillId autogen.UUID) error {
 	// Get admin account from cookie
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
+
+	if account.Role != autogen.AccountSuperAdmin {
 		return ErrorNotAuthenticated(c)
 	}
 
-	role := c.Get("adminAccountRole").(autogen.AccountRole)
-	if role != autogen.AccountSuperAdmin {
-		return ErrorNotAuthenticated(c)
-	}
-
-	err := s.DBackend.UnMarkDeleteRefill(c.Request().Context(), refillId.String())
+	err = s.DBackend.UnMarkDeleteRefill(c.Request().Context(), refillId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorRefillNotFound(c)
@@ -707,13 +677,12 @@ func (s *Server) RestoreDeletedRefill(c echo.Context, refillId autogen.UUID) err
 // (GET /deleted/transactions)
 func (s *Server) GetDeletedTransactions(c echo.Context, params autogen.GetDeletedTransactionsParams) error {
 	// Get admin account from cookie
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
 	}
 
-	role := c.Get("adminAccountRole").(autogen.AccountRole)
-	if role != autogen.AccountSuperAdmin {
+	if account.Role != autogen.AccountSuperAdmin {
 		return ErrorNotAuthenticated(c)
 	}
 
@@ -767,19 +736,16 @@ func (s *Server) GetDeletedTransactions(c echo.Context, params autogen.GetDelete
 // (DELETE /deleted/transactions/{transaction_id})
 func (s *Server) DeleteTransaction(c echo.Context, transactionId autogen.UUID) error {
 	// Get admin account from cookie
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
+
+	if account.Role != autogen.AccountSuperAdmin {
 		return ErrorNotAuthenticated(c)
 	}
 
-	role := c.Get("adminAccountRole").(autogen.AccountRole)
-	if role != autogen.AccountSuperAdmin {
-		return ErrorNotAuthenticated(c)
-	}
-
-	adminId := c.Get("adminAccountID").(string)
-
-	err := s.DBackend.DeleteTransaction(c.Request().Context(), transactionId.String())
+	err = s.DBackend.DeleteTransaction(c.Request().Context(), transactionId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorTransactionNotFound(c)
@@ -788,24 +754,23 @@ func (s *Server) DeleteTransaction(c echo.Context, transactionId autogen.UUID) e
 		return Error500(c)
 	}
 
-	logrus.Infof("Admin %s deleted transaction %s", adminId, transactionId)
+	logrus.Infof("Admin %s deleted transaction %s", account.Id, transactionId)
 	return nil
 }
 
 // (PATCH /deleted/transactions/{transaction_id})
 func (s *Server) RestoreDeletedTransaction(c echo.Context, transactionId autogen.UUID) error {
 	// Get admin account from cookie
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
+
+	if account.Role != autogen.AccountSuperAdmin {
 		return ErrorNotAuthenticated(c)
 	}
 
-	role := c.Get("adminAccountRole").(autogen.AccountRole)
-	if role != autogen.AccountSuperAdmin {
-		return ErrorNotAuthenticated(c)
-	}
-
-	err := s.DBackend.UnMarkDeleteTransaction(c.Request().Context(), transactionId.String())
+	err = s.DBackend.UnMarkDeleteTransaction(c.Request().Context(), transactionId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorTransactionNotFound(c)

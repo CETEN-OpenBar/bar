@@ -15,12 +15,10 @@ import (
 
 // (GET /refills)
 func (s *Server) GetRefills(c echo.Context, params autogen.GetRefillsParams) error {
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
 	}
-
-	adminID := c.Get("adminAccountID").(string)
 
 	var startsAt uint64 = 0
 	if params.StartDate != nil {
@@ -69,7 +67,7 @@ func (s *Server) GetRefills(c echo.Context, params autogen.GetRefillsParams) err
 		refills = append(refills, refill.Refill)
 	}
 
-	logrus.Infof("Refills have been retrieved by %s", adminID)
+	logrus.Infof("Refills have been retrieved by %s", account.Id)
 
 	page++
 	maxPage++
@@ -148,12 +146,10 @@ func (s *Server) GetSelfRefills(c echo.Context, params autogen.GetSelfRefillsPar
 
 // (GET /accounts/{account_id}/refills)
 func (s *Server) GetAccountRefills(c echo.Context, accountId string, params autogen.GetAccountRefillsParams) error {
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	_, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
 	}
-
-	adminID := c.Get("adminAccountID").(string)
 
 	account, err := s.DBackend.GetAccountByCard(c.Request().Context(), accountId)
 	if account == nil {
@@ -211,7 +207,7 @@ func (s *Server) GetAccountRefills(c echo.Context, accountId string, params auto
 		refills = append(refills, refill.Refill)
 	}
 
-	logrus.Infof("Refills have been retrieved by %s", adminID)
+	logrus.Infof("Refills have been retrieved by %s", account.Id)
 	autogen.GetAccountRefills200JSONResponse{
 		Refills: &refills,
 		Limit:   size,
@@ -223,13 +219,10 @@ func (s *Server) GetAccountRefills(c echo.Context, accountId string, params auto
 
 // (POST /accounts/{account_id}/refills)
 func (s *Server) PostRefill(c echo.Context, accountId string, params autogen.PostRefillParams) error {
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	admin, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
 	}
-
-	adminID := c.Get("adminAccountID").(string)
-	adminAccount := c.Get("adminAccount").(*models.Account)
 
 	account, err := s.DBackend.GetAccountByCard(c.Request().Context(), accountId)
 	if account == nil {
@@ -249,8 +242,8 @@ func (s *Server) PostRefill(c echo.Context, accountId string, params autogen.Pos
 			Amount:       params.Amount,
 			Id:           uuid.New(),
 			IssuedAt:     uint64(time.Now().Unix()),
-			IssuedBy:     uuid.MustParse(adminID),
-			IssuedByName: adminAccount.Name(),
+			IssuedBy:     admin.Id,
+			IssuedByName: admin.Name(),
 			State:        autogen.Valid,
 		},
 	}
@@ -273,20 +266,17 @@ func (s *Server) PostRefill(c echo.Context, accountId string, params autogen.Pos
 		return Error500(c)
 	}
 
-	logrus.Infof("Refill %s has been created by %s", refill.Id, adminID)
+	logrus.Infof("Refill %s has been created by %s", refill.Id, account.Id)
 	autogen.PostRefill201JSONResponse(refill.Refill).VisitPostRefillResponse(c.Response())
 	return nil
 }
 
 // (PATCH /accounts/{account_id}/refills/{refill_id})
 func (s *Server) PatchRefillId(c echo.Context, accountId autogen.UUID, refillId autogen.UUID, params autogen.PatchRefillIdParams) error {
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	admin, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
 	}
-
-	adminID := c.Get("adminAccountID").(string)
-	adminAccount := c.Get("adminAccount").(*models.Account)
 
 	account, err := s.DBackend.GetAccount(c.Request().Context(), accountId.String())
 	if err != nil {
@@ -310,10 +300,9 @@ func (s *Server) PatchRefillId(c echo.Context, accountId autogen.UUID, refillId 
 	if oldState == autogen.Valid && params.State == autogen.Canceled {
 		account.Balance -= int64(refill.Amount)
 
-		uid := uuid.MustParse(adminID)
-		name := adminAccount.Name()
+		name := admin.Name()
 
-		refill.CanceledBy = &uid
+		refill.CanceledBy = &admin.Id
 		refill.CanceledByName = &name
 	} else if oldState == autogen.Canceled && params.State == autogen.Valid {
 		account.Balance += int64(refill.Amount)
@@ -338,21 +327,19 @@ func (s *Server) PatchRefillId(c echo.Context, accountId autogen.UUID, refillId 
 		return Error500(c)
 	}
 
-	logrus.Infof("Refill %s has been updated by %s", refill.Id, adminID)
+	logrus.Infof("Refill %s has been updated by %s", refill.Id, account.Id)
 	autogen.PatchRefillId200JSONResponse(refill.Refill).VisitPatchRefillIdResponse(c.Response())
 	return nil
 }
 
 // (DELETE /accounts/{account_id}/refills/{refill_id})
 func (s *Server) MarkDeleteRefill(c echo.Context, accountId autogen.UUID, refillId autogen.UUID) error {
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
 	}
 
-	adminID := c.Get("adminAccountID").(string)
-
-	_, err := s.DBackend.GetRefill(c.Request().Context(), refillId.String())
+	_, err = s.DBackend.GetRefill(c.Request().Context(), refillId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorRefillNotFound(c)
@@ -360,12 +347,12 @@ func (s *Server) MarkDeleteRefill(c echo.Context, accountId autogen.UUID, refill
 		return Error500(c)
 	}
 
-	err = s.DBackend.MarkDeleteRefill(c.Request().Context(), refillId.String(), adminID)
+	err = s.DBackend.MarkDeleteRefill(c.Request().Context(), refillId.String(), account.Id.String())
 	if err != nil {
 		return Error500(c)
 	}
 
-	logrus.Infof("Refill %s has been marked deleted by %s", refillId, adminID)
+	logrus.Infof("Refill %s has been marked deleted by %s", refillId, account.Id)
 	autogen.MarkDeleteAccountId204Response{}.VisitMarkDeleteAccountIdResponse(c.Response())
 	return nil
 }

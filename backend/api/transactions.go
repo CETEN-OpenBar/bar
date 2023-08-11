@@ -139,9 +139,9 @@ func (s *Server) PostTransactions(c echo.Context) error {
 
 // (GET /accounts/{account_id}/transactions)
 func (s *Server) GetAccountTransactions(c echo.Context, accountId autogen.UUID, params autogen.GetAccountTransactionsParams) error {
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	_, err := MustGetUser(c)
+	if err != nil {
+		return nil
 	}
 
 	var page uint64
@@ -265,15 +265,13 @@ func (s *Server) GetCurrentAccountTransactions(c echo.Context, params autogen.Ge
 
 // (DELETE /accounts/{account_id}/transactions/{transaction_id})
 func (s *Server) MarkDeleteTransactionId(c echo.Context, accountId autogen.UUID, transactionId autogen.UUID) error {
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
 	}
 
-	adminID := c.Get("adminAccountID").(string)
-
 	// Get transaction from database
-	err := s.DBackend.MarkDeleteTransaction(c.Request().Context(), transactionId.String(), adminID)
+	err = s.DBackend.MarkDeleteTransaction(c.Request().Context(), transactionId.String(), account.Id.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorTransactionNotFound(c)
@@ -282,16 +280,16 @@ func (s *Server) MarkDeleteTransactionId(c echo.Context, accountId autogen.UUID,
 		return Error500(c)
 	}
 
-	logrus.Infof("Transaction %s marked as deleted by %s", transactionId.String(), adminID)
+	logrus.Infof("Transaction %s marked as deleted by %s", transactionId.String(), account.Id)
 	autogen.MarkDeleteTransactionId200JSONResponse{}.VisitMarkDeleteTransactionIdResponse(c.Response())
 	return nil
 }
 
 // (GET /accounts/{account_id}/transactions/{transaction_id})
 func (s *Server) GetTransactionId(c echo.Context, accountId autogen.UUID, transactionId autogen.UUID) error {
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	_, err := MustGetUser(c)
+	if err != nil {
+		return nil
 	}
 
 	// Get transaction from database
@@ -310,9 +308,9 @@ func (s *Server) GetTransactionId(c echo.Context, accountId autogen.UUID, transa
 
 // (PATCH /accounts/{account_id}/transactions/{transaction_id})
 func (s *Server) PatchTransactionId(c echo.Context, accountId autogen.UUID, transactionId autogen.UUID, params autogen.PatchTransactionIdParams) error {
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	_, err := MustGetUser(c)
+	if err != nil {
+		return nil
 	}
 
 	account := c.Get("userAccount").(*models.Account)
@@ -431,9 +429,9 @@ func (s *Server) PatchTransactionId(c echo.Context, accountId autogen.UUID, tran
 
 // (PATCH /accounts/{account_id}/transactions/{transaction_id}/{item_id})
 func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, transactionId autogen.UUID, itemId autogen.UUID, params autogen.PatchTransactionItemIdParams) error {
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	_, err := MustGetUser(c)
+	if err != nil {
+		return nil
 	}
 
 	account := c.Get("userAccount").(*models.Account)
@@ -524,9 +522,9 @@ func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, 
 
 // (GET /transactions)
 func (s *Server) GetTransactions(c echo.Context, params autogen.GetTransactionsParams) error {
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	_, err := MustGetUser(c)
+	if err != nil {
+		return nil
 	}
 
 	var page uint64

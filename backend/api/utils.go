@@ -3,6 +3,7 @@ package api
 import (
 	"bar/autogen"
 	"bar/internal/models"
+	"errors"
 
 	"github.com/labstack/echo/v4"
 )
@@ -52,4 +53,26 @@ func (s *Server) RemoveOnBoardCookie(c echo.Context) {
 	sess := s.getOnboardSess(c)
 	sess.Options.MaxAge = -1
 	sess.Save(c.Request(), c.Response())
+}
+
+func MustGetUser(c echo.Context) (*models.Account, error) {
+	logged := c.Get("userLogged").(bool)
+	if !logged {
+		ErrorNotAuthenticated(c)
+		return nil, errors.New("not authenticated")
+	}
+
+	account := c.Get("userAccount").(*models.Account)
+	return account, nil
+}
+
+func MustGetAdmin(c echo.Context) (*models.Account, error) {
+	logged := c.Get("adminLogged").(bool)
+	if !logged {
+		ErrorForbidden(c)
+		return nil, errors.New("not authenticated")
+	}
+
+	account := c.Get("adminAccount").(*models.Account)
+	return account, nil
 }

@@ -41,12 +41,10 @@ func (s *Server) GetCategories(c echo.Context) error {
 
 // (POST /categories)
 func (s *Server) PostCategory(c echo.Context) error {
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	admin, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
 	}
-
-	adminID := c.Get("adminAccountID").(string)
 
 	var p autogen.NewCategory
 	if err := c.Bind(&p); err != nil {
@@ -89,21 +87,19 @@ func (s *Server) PostCategory(c echo.Context) error {
 		return Error500(c)
 	}
 
-	logrus.Infof("Category %s created by %s", category.Id.String(), adminID)
+	logrus.Infof("Category %s created by %s", category.Id.String(), admin.Id.String())
 	autogen.PostCategory201JSONResponse(category.Category).VisitPostCategoryResponse(c.Response())
 	return nil
 }
 
 // (DELETE /categories/{category_id})
 func (s *Server) MarkDeleteCategory(c echo.Context, categoryId autogen.UUID) error {
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	admin, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
 	}
 
-	adminID := c.Get("adminAccountID").(string)
-
-	_, err := s.DBackend.GetCategory(c.Request().Context(), categoryId.String())
+	_, err = s.DBackend.GetCategory(c.Request().Context(), categoryId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorCategoryNotFound(c)
@@ -112,13 +108,13 @@ func (s *Server) MarkDeleteCategory(c echo.Context, categoryId autogen.UUID) err
 		return Error500(c)
 	}
 
-	err = s.DBackend.MarkDeleteCategory(c.Request().Context(), categoryId.String(), adminID)
+	err = s.DBackend.MarkDeleteCategory(c.Request().Context(), categoryId.String(), admin.Id.String())
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
 	}
 
-	logrus.Infof("Category %s marked deleted by %s", categoryId.String(), adminID)
+	logrus.Infof("Category %s marked deleted by %s", categoryId.String(), admin.Id.String())
 	autogen.MarkDeleteCategory204Response{}.VisitMarkDeleteCategoryResponse(c.Response())
 	return nil
 }
@@ -146,12 +142,10 @@ func (s *Server) GetCategory(c echo.Context, categoryId autogen.UUID) error {
 
 // (PATCH /categories/{category_id})
 func (s *Server) PatchCategory(c echo.Context, categoryId autogen.UUID) error {
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	admin, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
 	}
-
-	adminID := c.Get("adminAccountID").(string)
 
 	category, err := s.DBackend.GetCategory(c.Request().Context(), categoryId.String())
 	if err != nil {
@@ -197,7 +191,7 @@ func (s *Server) PatchCategory(c echo.Context, categoryId autogen.UUID) error {
 		return Error500(c)
 	}
 
-	logrus.Infof("Category %s updated by %s", categoryId.String(), adminID)
+	logrus.Infof("Category %s updated by %s", categoryId.String(), admin.Id.String())
 	autogen.PatchCategory200JSONResponse(category.Category).VisitPatchCategoryResponse(c.Response())
 	return nil
 }

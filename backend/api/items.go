@@ -19,12 +19,10 @@ import (
 // (GET /categories/{category_id}/items)
 func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, params autogen.GetCategoryItemsParams) error {
 	// Get account from cookie
-	logged := c.Get("userLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	account, err := MustGetUser(c)
+	if err != nil {
+		return nil
 	}
-
-	account := c.Get("userAccount").(*models.Account)
 
 	var page uint64 = 1
 	if params.Page != nil {
@@ -49,7 +47,7 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 		state = string(*params.State)
 	}
 
-	_, err := s.DBackend.GetCategory(c.Request().Context(), categoryId.String())
+	_, err = s.DBackend.GetCategory(c.Request().Context(), categoryId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorCategoryNotFound(c)
@@ -101,9 +99,9 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 
 // (POST /categories/{category_id}/items)
 func (s *Server) PostItem(c echo.Context, categoryId autogen.UUID) error {
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	_, err := MustGetUser(c)
+	if err != nil {
+		return nil
 	}
 
 	var p autogen.NewItem
@@ -162,14 +160,12 @@ func (s *Server) PostItem(c echo.Context, categoryId autogen.UUID) error {
 
 // (DELETE /categories/{category_id}/items/{item_id})
 func (s *Server) MarkDeleteItem(c echo.Context, categoryId autogen.UUID, itemId autogen.UUID) error {
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	admin, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
 	}
 
-	adminID := c.Get("adminAccountID").(string)
-
-	_, err := s.DBackend.GetItem(c.Request().Context(), itemId.String())
+	_, err = s.DBackend.GetItem(c.Request().Context(), itemId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorItemNotFound(c)
@@ -178,25 +174,23 @@ func (s *Server) MarkDeleteItem(c echo.Context, categoryId autogen.UUID, itemId 
 		return Error500(c)
 	}
 
-	err = s.DBackend.MarkDeleteItem(c.Request().Context(), itemId.String(), adminID)
+	err = s.DBackend.MarkDeleteItem(c.Request().Context(), itemId.String(), admin.Id.String())
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
 	}
 
-	logrus.Infof("Item %s deleted by %s", itemId.String(), adminID)
+	logrus.Infof("Item %s deleted by %s", itemId.String(), admin.Id.String())
 	autogen.DeleteItem204Response{}.VisitDeleteItemResponse(c.Response())
 	return nil
 }
 
 // (PATCH /categories/{category_id}/items/{item_id})
 func (s *Server) PatchItem(c echo.Context, categoryId autogen.UUID, itemId autogen.UUID) error {
-	logged := c.Get("adminLogged").(bool)
-	if !logged {
-		return ErrorNotAuthenticated(c)
+	admin, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
 	}
-
-	adminID := c.Get("adminAccountID").(string)
 
 	item, err := s.DBackend.GetItem(c.Request().Context(), itemId.String())
 	if err != nil {
@@ -269,7 +263,7 @@ func (s *Server) PatchItem(c echo.Context, categoryId autogen.UUID, itemId autog
 		return Error500(c)
 	}
 
-	logrus.Infof("Item %s updated by %s", item.Id.String(), adminID)
+	logrus.Infof("Item %s updated by %s", item.Id.String(), admin.Id.String())
 	autogen.PostItem201JSONResponse(item.Item).VisitPostItemResponse(c.Response())
 	return nil
 }

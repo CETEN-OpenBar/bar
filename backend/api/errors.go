@@ -33,6 +33,15 @@ func ErrorNotAuthenticated(c echo.Context) error {
 	return nil
 }
 
+func ErrorForbidden(c echo.Context) error {
+	resp := autogen.GetAccountId403JSONResponse{
+		Message:   autogen.Messages(autogen.ErrForbidden),
+		ErrorCode: autogen.ErrForbidden,
+	}
+	resp.VisitGetAccountIdResponse(c.Response())
+	return nil
+}
+
 func Error409(c echo.Context) error {
 	resp := autogen.PostAccounts409JSONResponse{
 		Message:   autogen.MsgAccountAlreadyExists,
