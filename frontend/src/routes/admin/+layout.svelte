@@ -19,7 +19,7 @@
 
 <!-- svelte-ignore a11y-invalid-attribute -->
 
-<div class="h-screen dark:bg-slate-950">
+<div class="min-h-screen dark:bg-slate-950">
 	<header
 		class="flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full bg-blue-600 dark:bg-blue-900 text-sm py-3 sm:py-0"
 	>

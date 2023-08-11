@@ -43,6 +43,15 @@
 			.postAccounts(newAccount, { withCredentials: true })
 			.then((res) => {
 				accounts = [...accounts, res.data];
+				newAccount = {
+					first_name: '',
+					last_name: '',
+					email_address: '',
+					card_id: '',
+					balance: 0,
+					role: 'student',
+					price_role: 'ceten'
+				};
 			});
 	}
 
