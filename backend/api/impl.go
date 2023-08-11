@@ -69,6 +69,14 @@ func (s *Server) Serve(c *config.Config) error {
 		}
 	})
 
+	// Fake timeout
+	// e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+	// 	return func(c echo.Context) error {
+	// 		time.Sleep(1000 * time.Millisecond)
+	// 		return next(c)
+	// 	}
+	// })
+
 	// You can use h for intellisense and get the handlers' names
 	e.Use(s.AuthMiddleware)
 
