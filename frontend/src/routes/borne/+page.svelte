@@ -14,6 +14,7 @@
 	import { goto } from '$app/navigation';
 	import FsLoading from '$lib/components/borne/fs_loading.svelte';
 	import { api } from '$lib/config/config';
+	import { fly } from 'svelte/transition';
 
 	let fakeImages: Array<CarouselImage> = [
 		{
@@ -64,7 +65,7 @@
 				Promise.all(images.map((x) => preloadImage(api() + x.image_url))).finally(() => {
 					setTimeout(() => {
 						display = true;
-					}, 500);
+					}, 1500);
 				});
 			});
 
@@ -137,7 +138,9 @@
 {/if}
 
 {#if display}
-	<Carousel {images} {texts} />
+	<div in:fly={{ x: -1000, duration: 1000 }}>
+		<Carousel {images} {texts} />
+	</div>
 {:else}
 	<FsLoading />
 {/if}

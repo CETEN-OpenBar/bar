@@ -31,6 +31,8 @@
 	let maxPage = 0;
 	let itemsPerPage = 10;
 
+	let rebounceTimeout: number | null = null;
+
 	onMount(() => {
 		categoriesApi()
 			.getCategories({ withCredentials: true })
@@ -306,7 +308,7 @@
 					<div class="relative flex flex-row">
 						<input
 							type="number"
-							class="block text-sm dark:text-white/[.8] w-16  break-words p-2 bg-transparent"
+							class="block text-sm dark:text-white/[.8] w-16 break-words p-2 bg-transparent"
 							value={selectedItem?.promotion ?? 0}
 							on:input={(e) => {
 								// @ts-ignore
@@ -486,14 +488,13 @@
 												required
 												aria-describedby="text-error"
 												bind:value={editItemPriceRole}
-												on:change={()=>{
+												on:change={() => {
 													// Remove the value of elems with id "price"
 													let elems = document.querySelectorAll('[id=price]');
 													elems.forEach((elem) => {
 														// @ts-ignore
-														elem.value = "";
+														elem.value = '';
 													});
-
 												}}
 											>
 												<option value="normal">Prix de base</option>
@@ -515,7 +516,7 @@
 											<div class="px-6 py-3">
 												<input
 													type="text"
-													class="block text-sm dark:text-white/[.8]  break-words p-2 bg-transparent"
+													class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent"
 													value={item.name}
 													on:input={(e) => {
 														// @ts-ignore
@@ -573,7 +574,7 @@
 											<div class="px-6 py-3">
 												<input
 													type="number"
-													class="block text-sm dark:text-white/[.8]  break-words p-2 bg-transparent"
+													class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent"
 													value={item.amount_left}
 													on:input={(e) => {
 														// @ts-ignore
@@ -587,7 +588,7 @@
 											<div class="px-6 py-3">
 												<input
 													type="number"
-													class="block text-sm dark:text-white/[.8]  break-words p-2 bg-transparent"
+													class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent"
 													value={item.buy_limit}
 													on:input={(e) => {
 														// @ts-ignore
@@ -622,6 +623,16 @@
 														prices[editItemPriceRole] = price;
 
 														editItem(item.id, { prices: prices });
+
+														// Remove the value of elems with id "price" with rebounce timeout
+														if (rebounceTimeout) clearTimeout(rebounceTimeout);
+														rebounceTimeout = setTimeout(() => {
+															let elems = document.querySelectorAll('[id=price]');
+															elems.forEach((elem) => {
+																// @ts-ignore
+																elem.value = '';
+															});
+														}, 1000);
 													}}
 												/>
 											</div>
