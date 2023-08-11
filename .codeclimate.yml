@@ -1,0 +1,17 @@
+## exclude auto generated files from codeclimate analysis
+exclude_patterns:
+- "backend/autogen/bar.gen.go"
+- "frontend/src/lib/api/*"
+- "config/"
+- "db/"
+- "dist/"
+- "features/"
+- "**/node_modules/"
+- "script/"
+- "**/spec/"
+- "**/test/"
+- "**/tests/"
+- "Tests/"
+- "**/vendor/"
+- "**/*_test.go"
+- "**/*.d.ts"
