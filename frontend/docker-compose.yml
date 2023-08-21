@@ -1,0 +1,12 @@
+version: '3.5'
+
+services:
+  frontend:
+    build:
+      dockerfile: Dockerfile
+      network: host
+      context: frontend
+    volumes:
+      - ./static/config.json:/app/build/config.json:ro
+    ports:
+      - 9998:8080
