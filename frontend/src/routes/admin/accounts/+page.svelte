@@ -43,6 +43,15 @@
 			.postAccounts(newAccount, { withCredentials: true })
 			.then((res) => {
 				accounts = [...accounts, res.data];
+				newAccount = {
+					first_name: '',
+					last_name: '',
+					email_address: '',
+					card_id: '',
+					balance: 0,
+					role: 'student',
+					price_role: 'ceten'
+				};
 			});
 	}
 
@@ -434,7 +443,7 @@
 									<td class="h-px w-72">
 										<div class="px-6 py-3">
 											<select
-												class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent"
+												class="block text-sm dark:text-white/[.8] dark:bg-slate-900 break-words p-2 bg-transparent"
 												value={account.role}
 												on:change={(e) => {
 													// @ts-ignore
@@ -467,7 +476,7 @@
 									<td class="h-px w-72">
 										<div class="px-6 py-3">
 											<select
-												class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent"
+												class="block text-sm dark:text-white/[.8] dark:bg-slate-900 break-words p-2"
 												value={account.price_role}
 												on:change={(e) => {
 													// @ts-ignore

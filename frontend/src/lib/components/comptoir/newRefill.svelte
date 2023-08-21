@@ -47,7 +47,7 @@
 
 <div id="popup" class="absolute w-full h-full top-0 left-0 flex justify-center items-center">
 	<div
-		class="relative flex flex-col justify-center items-center gap-4 p-10 h-64 bg-white rounded-xl shadow-xl z-20"
+		class="relative text-black flex flex-col justify-center items-center gap-4 p-10 h-64 bg-white rounded-xl shadow-xl z-20"
 	>
 		<!-- button to close the popup -->
 		<button
@@ -60,7 +60,7 @@
 		</button>
 		<!-- prompt to scan the card -->
 		{#if card.id == ''}
-			<h1 class="text-black text-3xl">Veuillez scanner la carte.</h1>
+			<h1 class="text-3xl">Veuillez scanner la carte.</h1>
 		{:else}
 			<h1 class="text-3xl">Veuillez entrer le montant de la recharge.</h1>
 

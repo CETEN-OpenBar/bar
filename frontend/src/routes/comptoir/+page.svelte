@@ -7,6 +7,9 @@
 	import { onMount } from 'svelte';
 	import { authApi, carouselApi } from '$lib/requests/requests';
 	import { goto } from '$app/navigation';
+	import FsLoading from '$lib/components/borne/fs_loading.svelte';
+	import { api } from '$lib/config/config';
+	import { fly } from 'svelte/transition';
 
 	let fakeImages: Array<CarouselImage> = [
 		{
@@ -32,6 +35,7 @@
 		}
 	];
 
+	let display: Boolean = false;
 	let images: Array<CarouselImage> = fakeImages;
 	let texts: Array<CarouselText> = fakeTexts;
 
@@ -39,18 +43,31 @@
 		fetchCarousel();
 	});
 
+	const preloadImage = (src: string) =>
+		new Promise((resolve, reject) => {
+			const image = new Image();
+			image.onload = resolve;
+			image.onerror = reject;
+			image.src = src;
+		});
+
 	function fetchCarousel() {
 		carouselApi()
 			.getCarouselImages()
 			.then((res) => {
 				if (res.data != null) images = res.data;
 				if (images.length === 0) images = fakeImages;
+				Promise.all(images.map((x) => preloadImage(api() + x.image_url))).finally(() => {
+					setTimeout(() => {
+						display = true;
+					}, 1500);
+				});
 			});
 
 		carouselApi()
 			.getCarouselTexts()
 			.then((res) => {
-				if (res.data != null)  texts = res.data;
+				if (res.data != null) texts = res.data;
 				if (texts.length === 0) texts = fakeTexts;
 			});
 
@@ -88,7 +105,11 @@
 				}
 			)
 			.then((res) => {
-				if (res.data.account?.role === AccountRole.AccountAdmin || AccountRole.AccountSuperAdmin || AccountRole.AccountMember)
+				if (
+					res.data.account?.role === AccountRole.AccountAdmin ||
+					AccountRole.AccountSuperAdmin ||
+					AccountRole.AccountMember
+				)
 					goto('/comptoir');
 				goto('/comptoir/transactions');
 			})
@@ -116,4 +137,11 @@
 	<Pin callback={pinCallback} />
 {/if}
 
-<Carousel {images} {texts} />
+
+{#if display}
+	<div in:fly={{ x: -1000, duration: 1000 }}>
+		<Carousel {images} {texts} />
+	</div>
+{:else}
+	<FsLoading />
+{/if}
