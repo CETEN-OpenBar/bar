@@ -67,7 +67,7 @@ To get the project up and running, follow these steps:
 1. **Start Database:**
    - Run the following command to initiate the MongoDB database and Mongo Express UI:
      ```
-     docker-compose up
+     docker compose up -d
      ```
 
 2. **Backend Setup:**

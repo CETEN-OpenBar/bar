@@ -19,8 +19,6 @@
 
 # Go workspace file
 go.work
-<<<<<<< Updated upstream
-=======
 
 *.img
 
@@ -29,4 +27,3 @@ go.work
 borne/OVMF.fd
 
 borne/build/
->>>>>>> Stashed changes
