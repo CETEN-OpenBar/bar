@@ -1,0 +1,51 @@
+FROM ubuntu:latest
+LABEL project=bar-borne
+COPY ./fs/etc /etc
+RUN apt-get update -y
+RUN echo "root:root" | chpasswd
+RUN apt-get -y install \
+  linux-image-generic \
+  systemd-sysv
+RUN apt-get install -yq --no-install-recommends \
+    initramfs-tools parted overlayroot systemd systemd-sysv dbus sudo bash
+RUN useradd -m ubuntu -G sudo -s /bin/bash
+RUN bash -c 'echo "ubuntu:ubuntu" | chpasswd'
+RUN apt-get clean
+RUN rm /etc/kernel-img.conf
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get install -y \
+        curl bzip2 xorg git unclutter \
+        libdbus-glib-1-2 libpci-dev libglib2.0-0 libstdc++6 libxtst6 \
+        dbus-x11 network-manager pulseaudio nano
+RUN curl -L -o firefox.tar.bz2 "https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US" 
+RUN tar xjf firefox.tar.bz2 -C /usr/lib
+RUN chmod +x /usr/lib/firefox/firefox
+RUN ln -s /usr/lib/firefox/firefox /usr/bin/firefox
+
+RUN apt-get install xserver-xorg-core xserver-xorg openbox -y
+
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+
+# Run as ubuntu
+USER ubuntu
+ENV HOME=/home/ubuntu
+WORKDIR /home/ubuntu/
+RUN git clone https://github.com/yyewolf/bar
+WORKDIR /home/ubuntu/bar/frontend
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash \
+    && . /home/ubuntu/.nvm/nvm.sh \
+    && nvm install --lts \
+    && nvm use --lts \
+    && cd /home/ubuntu/bar/frontend \
+    && npm ci \
+    && npm run build
+RUN echo {"api":"http://localhost:8080","apiws":"ws://localhost:8080","local_token": "jesuisleplusfort"} > static/config.json
+
+USER root
+RUN mkdir /etc/systemd/system/getty@tty1.service.d
+COPY bar.service /etc/systemd/system/bar.service
+COPY override.conf /etc/systemd/system/getty@tty1.service.d/override.conf
+COPY .bashrc /home/ubuntu/.bashrc
+COPY .xinitrc /home/ubuntu/.xinitrc
+RUN systemctl enable bar.service

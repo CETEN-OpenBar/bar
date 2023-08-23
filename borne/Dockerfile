@@ -3,95 +3,27 @@ LABEL project=bar-borne
 
 WORKDIR /root
 
-RUN wget -O rootfs.tar.gz https://cdimage.ubuntu.com/ubuntu-base/releases/22.04/release/ubuntu-base-22.04-base-amd64.tar.gz
-
+COPY fs/rootfs.tar.gz .
 RUN mkdir rootfs/
 RUN tar -C rootfs/ -xf rootfs.tar.gz
 
-COPY ./fs/etc rootfs/etc
 
-RUN fakeroot fakechroot chroot rootfs/ \
-    apt-get update
-
-RUN chroot rootfs/ \
-    apt-get install -yq --no-install-recommends \
-        linux-image-generic initramfs-tools parted overlayroot systemd systemd-sysv dbus sudo
-
-RUN fakeroot fakechroot chroot rootfs/ \
-    apt-get clean
-
-RUN chroot rootfs/ \
-    useradd -m ubuntu -G sudo -s /bin/bash
-RUN chroot rootfs/ \
-    bash -c 'echo "ubuntu:ubuntu" | chpasswd'
-
-# Only needed during install to prevent kernel/initrd symlinks from being created
-RUN chroot rootfs/ \
-    rm /etc/kernel-img.conf
-
-# Usefull stuff for our bar purposes :
-# Install npm, git, xorg and chromium
-# clone https://github.com/yyewolf/bar
-# go to bar/frontend
-# setup config.json with the right values :
-#     echo {"api":"http://localhost:8080","apiws":"ws://localhost:8080","local_token": "jesuisleplusfort"} > bar/frontend/static/config.json
-# do npm install and setup a service that does node build/index.js at boot in bar/frontend
-# made it so x server starts at boot and chromium is in kiosk mode as soon as x server starts
-# made it so chromium starts at boot and goes to localhost:8080
-
-COPY bar.service .
-COPY override.conf .
-COPY .bashrc .
-COPY .xinitrc .
-
-RUN cp bar.service rootfs/etc/systemd/system/bar.service
-RUN mkdir rootfs/etc/systemd/system/getty@tty1.service.d
-RUN cp override.conf rootfs/etc/systemd/system/getty@tty1.service.d/override.conf
-RUN cp .bashrc rootfs/home/ubuntu/.bashrc
-RUN cp .xinitrc rootfs/home/ubuntu/.xinitrc
-
-RUN chroot rootfs/ \
-    apt-get install -y --no-install-recommends \
-        curl git xorg chromium-browser unclutter
-
-# download nvm install script
-RUN apt update && apt install curl bzip2 -y
-RUN curl https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh -o install_nvm.sh
-RUN mv install_nvm.sh rootfs/home/ubuntu/install_nvm.sh
-RUN curl -L -o firefox.tar.bz2 "https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US" 
-RUN tar xjf firefox.tar.bz2 -C rootfs/usr/lib
-RUN chmod +x rootfs/usr/lib/firefox/firefox
-RUN ln -s /usr/lib/firefox/firefox /usr/bin/firefox
-
-RUN chroot rootfs/ /bin/bash <<EOF
-cd ~/ && \
-git clone https://github.com/nvm-sh/nvm.git .nvm && \
-cd .nvm && \
-. ./nvm.sh && \
-cd /home/ubuntu && \
-cat install_nvm.sh | /bin/bash && \
-nvm install --lts && \
-nvm use --lts && \
-git clone https://github.com/yyewolf/bar && \
-cd bar/frontend && \
-npm ci && \
-npm run build && \
-echo {"api":"http://localhost:8080","apiws":"ws://localhost:8080","local_token": "jesuisleplusfort"} > static/config.json  && \
-systemctl enable bar.service
+RUN echo borne > rootfs/etc/hostname
+RUN echo <<EOF >> rootfs/etc/hosts
+127.0.1.1 borne
 EOF
-    
 
 COPY ./utils/sectors.sh .
 
 # Create empty file for containing the partitions
-RUN fallocate -l 4GiB image.img
+RUN fallocate -l 6GiB image.img
 
 # Set up partition table
 RUN parted -s -- image.img \
     mktable gpt \
     mkpart primary 0% 100MiB \
-    mkpart primary 100MiB -16MiB \
-    mkpart primary -16MiB 100% \
+    mkpart primary 100MiB -1000MiB \
+    mkpart primary -1000MiB 100% \
     set 1 esp on
 
 RUN mkdir -p esp/EFI/BOOT esp/EFI/ubuntu esp/grub

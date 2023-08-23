@@ -2,20 +2,22 @@ version: "3"
 
 tasks:
   build:
-    desc: "Build Alpine image"
+    desc: "Build image"
     cmds:
-      - echo "[Building Alpine image]"
+      - echo "[Building base system]"
+      - docker build -f Dockerfile.ubuntu -t bar/borne .
+      - docker export -o fs/rootfs.tar.gz `docker run -d bar/borne /bin/true`
+      - echo "[Building image]"
       - docker build -o build .
   test:
-    desc: "Test Alpine image"
+    desc: "Test image"
     cmds:
       - wget -nc https://github.com/clearlinux/common/raw/master/OVMF.fd
-      # start with network
-      - qemu-system-x86_64 -hda build/image.img -smp 4 -m 2G -bios OVMF.fd -nic user,model=virtio-net-pci
+      - qemu-system-x86_64 -hda build/image.img -smp 4 -m 4G -bios OVMF.fd -nic user,model=virtio-net-pci
   clean:
-    desc: "Clean Alpine image"
+    desc: "Clean image"
     ignore_error: true
     cmds:
-      - echo "[Cleaning Alpine image]"
+      - echo "[Cleaning image]"
       - docker rm `docker ps -qa -f=label=project="bar-borne"`
       - docker rmi `docker images -q bar/*`

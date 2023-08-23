@@ -28,3 +28,7 @@ go.work
 
 borne/OVMF.fd
 >>>>>>> feat: new efi builder
+
+borne/build/
+
+borne/fs/rootfs.tar.gz
