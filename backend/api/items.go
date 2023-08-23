@@ -317,7 +317,7 @@ func (s *Server) GetItemPicture(c echo.Context, categoryId autogen.UUID, itemId 
 // (GET /items)
 func (s *Server) GetAllItems(c echo.Context, params autogen.GetAllItemsParams) error {
 	// Get account from cookie
-	account, err := MustGetUser(c)
+	account, err := MustGetAdmin(c)
 	if err != nil {
 		return nil
 	}
