@@ -19,3 +19,12 @@
 
 # Go workspace file
 go.work
+<<<<<<< e1bd4845470e52b68d0d13406b76578428fe9a54
+=======
+
+*.img
+
+*.tar
+
+borne/OVMF.fd
+>>>>>>> feat: new efi builder

@@ -1,0 +1,9 @@
+FROM ubuntu:22.04
+LABEL project=bar-borne
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt-get install -yq --no-install-recommends \
+        wget squashfs-tools dosfstools parted udev grub2-common grub-efi-amd64-signed shim-signed mtools ca-certificates fakechroot fakeroot && \
+    rm -rf /var/lib/apt/lists/*

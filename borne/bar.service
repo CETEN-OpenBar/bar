@@ -1,0 +1,10 @@
+[Unit]
+Description=Bar
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/bar/frontend
+ExecStart=/usr/bin/node build/index.js
+Restart=on-failure
