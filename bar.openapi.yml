@@ -3899,6 +3899,10 @@ components:
           example: 32
         buy_limit:
           type: integer
+          format: int64
+          example: 32
+        optimal_amount:
+          type: integer
           format: uint64
           example: 32
         category_id:
@@ -3962,6 +3966,10 @@ components:
           type: integer
           format: uint64
           example: 32
+        optimal_amount:
+          type: integer
+          format: uint64
+          example: 32
         buy_limit:
           type: integer
           format: uint64
@@ -3978,7 +3986,7 @@ components:
       required:
         - prices
         - amount_left
-        - buy_limit
+        - optimal_amount
         - category_id
         - name
         - picture
@@ -4007,6 +4015,10 @@ components:
           type: integer
           format: uint64
           example: 32
+        optimal_amount:
+          type: integer
+          format: uint64
+          example: 32
         buy_limit:
           type: integer
           format: uint64
@@ -4030,7 +4042,7 @@ components:
         - id
         - prices
         - amount_left
-        - buy_limit
+        - optimal_amount
         - category_id
         - name
         - picture_uri

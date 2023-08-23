@@ -52,13 +52,13 @@ export interface Account {
      * @type {string}
      * @memberof Account
      */
-    'google_id': string;
+    'google_id'?: string;
     /**
      * 
      * @type {string}
      * @memberof Account
      */
-    'google_picture': string;
+    'google_picture'?: string;
     /**
      * 
      * @type {string}
@@ -888,7 +888,13 @@ export interface Item {
      * @type {number}
      * @memberof Item
      */
-    'buy_limit': number;
+    'optimal_amount': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof Item
+     */
+    'buy_limit'?: number;
     /**
      * 
      * @type {string}
@@ -1112,7 +1118,13 @@ export interface NewItem {
      * @type {number}
      * @memberof NewItem
      */
-    'buy_limit': number;
+    'optimal_amount': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof NewItem
+     */
+    'buy_limit'?: number;
     /**
      * Name of the current item
      * @type {string}
@@ -1526,6 +1538,12 @@ export interface UpdateItem {
      * @memberof UpdateItem
      */
     'buy_limit'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateItem
+     */
+    'optimal_amount'?: number;
     /**
      * 
      * @type {string}

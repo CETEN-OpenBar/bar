@@ -19,3 +19,14 @@
 
 # Go workspace file
 go.work
+<<<<<<< Updated upstream
+=======
+
+*.img
+
+*.tar
+
+borne/OVMF.fd
+
+borne/build/
+>>>>>>> Stashed changes

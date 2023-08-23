@@ -143,6 +143,7 @@ func (s *Server) PostItem(c echo.Context, categoryId autogen.UUID) error {
 			State:           p.State,
 			AmountLeft:      p.AmountLeft,
 			BuyLimit:        p.BuyLimit,
+			OptimalAmount:   p.OptimalAmount,
 		},
 	}
 
@@ -249,8 +250,16 @@ func (s *Server) PatchItem(c echo.Context, categoryId autogen.UUID, itemId autog
 	if p.AmountLeft != nil {
 		item.AmountLeft = *p.AmountLeft
 	}
+	if p.OptimalAmount != nil {
+		item.OptimalAmount = *p.OptimalAmount
+	}
 	if p.BuyLimit != nil {
-		item.BuyLimit = *p.BuyLimit
+		if *p.BuyLimit < 0 {
+			item.BuyLimit = nil
+		} else {
+			var buyLimit uint64 = uint64(*p.BuyLimit)
+			item.BuyLimit = &buyLimit
+		}
 	}
 
 	var rp = item.RealPrices()

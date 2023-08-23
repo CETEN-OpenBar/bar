@@ -75,9 +75,11 @@ func (s *Server) PostTransactions(c echo.Context) error {
 			logrus.Warnf("Item %s is not in stock", item.Id.String())
 			return Error400(c)
 		}
-		if item.BuyLimit < potentialItem.Amount {
-			logrus.Warnf("Item %s cannot be bought for that amount", item.Id.String())
-			return Error400(c)
+		if item.BuyLimit != nil {
+			if *item.BuyLimit < potentialItem.Amount {
+				logrus.Warnf("Item %s cannot be bought for that amount", item.Id.String())
+				return Error400(c)
+			}
 		}
 
 		transaction.Items = append(transaction.Items, autogen.TransactionItem{
@@ -118,7 +120,9 @@ func (s *Server) PostTransactions(c echo.Context) error {
 
 		// update items
 		for _, item := range fetchedItems {
-			item.BuyLimit += item.AmountLeft
+			if item.BuyLimit != nil {
+				*item.BuyLimit += item.AmountLeft
+			}
 			err = s.DBackend.UpdateItem(ctx, item)
 			if err != nil {
 				logrus.Error(err)

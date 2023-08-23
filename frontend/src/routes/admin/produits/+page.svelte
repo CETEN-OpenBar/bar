@@ -20,7 +20,8 @@
 			vip: 0
 		} as ItemPrices,
 		amount_left: 0,
-		buy_limit: 0,
+		buy_limit: undefined,
+		optimal_amount: 0,
 		state: 'buyable'
 	};
 	let newItemPriceRole: AccountPriceRole = 'normal';
@@ -245,11 +246,47 @@
 										type="number"
 										id="max"
 										name="max"
-										placeholder="Max par commande"
+										placeholder="Pas de max par commande"
 										class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
 										required
 										aria-describedby="text-error"
 										bind:value={newItem.buy_limit}
+										on:input={(e) => {
+											// @ts-ignore
+											if (e.target?.value === '') {
+												newItem.buy_limit = undefined;
+												return;
+											}
+											// @ts-ignore
+											let buy_limit = parseInt(e.target?.value);
+											newItem.buy_limit = buy_limit;
+										}}
+									/>
+								</div>
+
+								<label for="description" class="block text-sm mb-2 dark:text-white"
+									>Valeur optimale du stock</label
+								>
+								<div class="relative">
+									<input
+										type="number"
+										id="max"
+										name="max"
+										placeholder="Valeur optimale du stock"
+										class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+										required
+										aria-describedby="text-error"
+										bind:value={newItem.optimal_amount}
+										on:input={(e) => {
+											// @ts-ignore
+											if (e.target?.value === '') {
+												newItem.buy_limit = undefined;
+												return;
+											}
+											// @ts-ignore
+											let buy_limit = parseInt(e.target?.value);
+											newItem.buy_limit = buy_limit;
+										}}
 									/>
 								</div>
 
@@ -434,76 +471,71 @@
 						<table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
 							<thead class="bg-gray-50 dark:bg-slate-800">
 								<tr>
-									<th scope="col" class="px-6 py-3 text-left">
-										<div class="flex items-center gap-x-2">
-											<span
-												class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
-											>
-												Nom
-											</span>
-										</div>
+									<th scope="col" class="px-6 py-3">
+										<span
+											class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+										>
+											Nom
+										</span>
 									</th>
-									<th scope="col" class="px-6 py-3 text-left">
-										<div class="flex items-center gap-x-2">
-											<span
-												class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
-											>
-												Image
-											</span>
-										</div>
+									<th scope="col" class="px-6 py-3">
+										<span
+											class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+										>
+											Image
+										</span>
 									</th>
-									<th scope="col" class="px-6 py-3 text-left">
-										<div class="flex items-center gap-x-2">
-											<span
-												class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
-											>
-												Etat
-											</span>
-										</div>
+									<th scope="col" class="px-2 py-3">
+										<p
+											class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+										>
+											Etat
+										</p>
 									</th>
-									<th scope="col" class="px-2 py-3 text-left">
-										<div class="flex items-center gap-x-2">
-											<span
-												class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
-											>
-												En stock
-											</span>
-										</div>
+									<th scope="col" class="px-2 py-3 w-2">
+										<span
+											class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+										>
+											En stock
+										</span>
 									</th>
-									<th scope="col" class="px-2 py-3 text-left">
-										<div class="flex items-center gap-x-2">
-											<span
-												class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
-											>
-												Limite d'achat
-											</span>
-										</div>
+									<th scope="col" class="px-2 py-3">
+										<span
+											class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+										>
+											Limite d'achat
+										</span>
 									</th>
-									<th scope="col" class="px-6 py-3 text-left">
-										<div class="flex items-center gap-x-2">
-											<select
-												id="role"
-												name="role"
-												class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-												required
-												aria-describedby="text-error"
-												bind:value={editItemPriceRole}
-												on:change={() => {
-													// Remove the value of elems with id "price"
-													let elems = document.querySelectorAll('[id=price]');
-													elems.forEach((elem) => {
-														// @ts-ignore
-														elem.value = '';
-													});
-												}}
-											>
-												<option value="normal">Prix de base</option>
-												<option value="exte">Prix externe</option>
-												<option value="ceten">Prix ceten</option>
-												<option value="staff">Prix staff</option>
-												<option value="vip">Prix VIP</option>
-											</select>
-										</div>
+									<th scope="col" class="px-2 py-3">
+										<span
+											class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+										>
+											Montant optimal en stock
+										</span>
+									</th>
+									<th scope="col" class="px-6 py-3">
+										<select
+											id="role"
+											name="role"
+											class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+											required
+											aria-describedby="text-error"
+											bind:value={editItemPriceRole}
+											on:change={() => {
+												// Remove the value of elems with id "price"
+												let elems = document.querySelectorAll('[id=price]');
+												elems.forEach((elem) => {
+													// @ts-ignore
+													elem.value = '';
+												});
+											}}
+										>
+											<option value="normal">Prix de base</option>
+											<option value="exte">Prix externe</option>
+											<option value="ceten">Prix ceten</option>
+											<option value="staff">Prix staff</option>
+											<option value="vip">Prix VIP</option>
+										</select>
 									</th>
 									<th scope="col" class="px-6 py-3 text-right" />
 								</tr>
@@ -516,7 +548,7 @@
 											<div class="px-6 py-3">
 												<input
 													type="text"
-													class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent"
+													class="py-3 px-2 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
 													value={item.name}
 													on:input={(e) => {
 														// @ts-ignore
@@ -555,7 +587,7 @@
 											</div>
 										</td>
 										<td class="h-px w-72">
-											<div class="px-6 py-3">
+											<div class="px-2 py-3">
 												<select
 													class="block text-sm dark:text-white/[.8] dark:bg-slate-900 break-words p-2 bg-transparent"
 													value={item.state}
@@ -571,10 +603,10 @@
 											</div>
 										</td>
 										<td class="h-px w-72">
-											<div class="px-6 py-3">
+											<div class="px-2 py-3">
 												<input
 													type="number"
-													class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent"
+													class="py-3 px-2 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
 													value={item.amount_left}
 													on:input={(e) => {
 														// @ts-ignore
@@ -588,12 +620,31 @@
 											<div class="px-6 py-3">
 												<input
 													type="number"
-													class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent"
+													class="py-3 px-2 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
 													value={item.buy_limit}
 													on:input={(e) => {
 														// @ts-ignore
 														let buy_limit = parseInt(e.target?.value);
+														// @ts-ignore
+														if (e.target?.value === '') {
+															editItem(item.id, { buy_limit: -1 });
+															return;
+														}
 														editItem(item.id, { buy_limit: buy_limit });
+													}}
+												/>
+											</div>
+										</td>
+										<td class="h-px w-72">
+											<div class="px-6 py-3">
+												<input
+													type="number"
+													class="py-3 px-2 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+													value={item.optimal_amount}
+													on:input={(e) => {
+														// @ts-ignore
+														let optimal_amount = parseInt(e.target?.value);
+														editItem(item.id, { optimal_amount: optimal_amount });
 													}}
 												/>
 											</div>
@@ -605,7 +656,7 @@
 													id="price"
 													name="price"
 													placeholder={formatPrice(item.prices[editItemPriceRole])}
-													class="py-3 px-4 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+													class="py-3 px-2 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
 													required
 													aria-describedby="text-error"
 													on:input={(e) => {
