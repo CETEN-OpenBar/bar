@@ -9,14 +9,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (b *Backend) GetItems(ctx context.Context, categoryID string, page, size uint64, state string) ([]*models.Item, error) {
+func (b *Backend) GetItems(ctx context.Context, categoryID string, page, size uint64, state string, name string) ([]*models.Item, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	var items []*models.Item
 
 	filter := bson.M{
-		"category_id": uuid.MustParse(categoryID),
 		"$or": []bson.M{
 			{
 				"deleted_at": bson.M{
@@ -31,6 +30,15 @@ func (b *Backend) GetItems(ctx context.Context, categoryID string, page, size ui
 	if state != "" {
 		filter["state"] = state
 	}
+	if categoryID != "" {
+		filter["category_id"] = uuid.MustParse(categoryID)
+	}
+	if name != "" {
+		filter["name"] = bson.M{
+			"$regex":   name,
+			"$options": "i",
+		}
+	}
 
 	cursor, err := b.db.Collection(ItemsCollection).Find(ctx, filter, options.Find().SetSkip(int64(page*size)).SetLimit(int64(size)))
 	if err != nil {
@@ -44,12 +52,11 @@ func (b *Backend) GetItems(ctx context.Context, categoryID string, page, size ui
 	return items, nil
 }
 
-func (b *Backend) CountItems(ctx context.Context, categoryID string, state string) (uint64, error) {
+func (b *Backend) CountItems(ctx context.Context, categoryID string, state string, name string) (uint64, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
-	count, err := b.db.Collection(ItemsCollection).CountDocuments(ctx, bson.M{
-		"category_id": uuid.MustParse(categoryID),
+	filter := bson.M{
 		"$or": []bson.M{
 			{
 				"deleted_at": bson.M{
@@ -60,8 +67,21 @@ func (b *Backend) CountItems(ctx context.Context, categoryID string, state strin
 				"deleted_at": nil,
 			},
 		},
-		"state": state,
-	})
+	}
+	if state != "" {
+		filter["state"] = state
+	}
+	if categoryID != "" {
+		filter["category_id"] = uuid.MustParse(categoryID)
+	}
+	if name != "" {
+		filter["name"] = bson.M{
+			"$regex":   name,
+			"$options": "i",
+		}
+	}
+
+	count, err := b.db.Collection(ItemsCollection).CountDocuments(ctx, filter)
 	if err != nil {
 		return 0, err
 	}

@@ -56,7 +56,7 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 		return Error500(c)
 	}
 
-	count, err := s.DBackend.CountItems(c.Request().Context(), categoryId.String(), state)
+	count, err := s.DBackend.CountItems(c.Request().Context(), categoryId.String(), state, "")
 	if err != nil {
 		return Error500(c)
 	}
@@ -66,7 +66,7 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 		page = maxPage
 	}
 
-	data, err := s.DBackend.GetItems(c.Request().Context(), categoryId.String(), page, size, state)
+	data, err := s.DBackend.GetItems(c.Request().Context(), categoryId.String(), page, size, state, "")
 	if err != nil {
 		return Error500(c)
 	}
@@ -311,5 +311,85 @@ func (s *Server) GetItemPicture(c echo.Context, categoryId autogen.UUID, itemId 
 
 	c.Response().Header().Set("Content-Type", http.DetectContentType(data))
 	c.Response().Write(data)
+	return nil
+}
+
+// (GET /items)
+func (s *Server) GetAllItems(c echo.Context, params autogen.GetAllItemsParams) error {
+	// Get account from cookie
+	account, err := MustGetUser(c)
+	if err != nil {
+		return nil
+	}
+
+	var page uint64 = 1
+	if params.Page != nil {
+		page = uint64(*params.Page)
+	}
+
+	var size uint64 = 50
+	if params.Limit != nil {
+		size = uint64(*params.Limit)
+	}
+
+	if page > 0 {
+		page -= 1
+	}
+
+	if size > 100 {
+		size = 100
+	}
+
+	var state = ""
+	var categoryId = ""
+	var name = ""
+	if params.State != nil {
+		state = string(*params.State)
+	}
+	if params.CategoryId != nil {
+		categoryId = params.CategoryId.String()
+	}
+	if params.Name != nil {
+		name = string(*params.Name)
+	}
+
+	count, err := s.DBackend.CountItems(c.Request().Context(), categoryId, state, name)
+	if err != nil {
+		return Error500(c)
+	}
+	var maxPage = uint64(count) / size
+
+	if page > maxPage {
+		page = maxPage
+	}
+
+	data, err := s.DBackend.GetItems(c.Request().Context(), categoryId, page, size, state, name)
+	if err != nil {
+		return Error500(c)
+	}
+
+	var items []autogen.Item
+
+	for _, item := range data {
+		var rp = item.RealPrice(account.PriceRole)
+		item.DisplayPrice = &rp
+
+		if account.HasPrivileges() {
+			var rp = item.RealPrices()
+			item.DisplayPrices = &rp
+		}
+
+		items = append(items, item.Item)
+	}
+
+	page += 1
+	maxPage += 1
+	autogen.GetCategoryItems200JSONResponse{
+		Items:   &items,
+		Page:    &page,
+		Limit:   &size,
+		MaxPage: &maxPage,
+	}.VisitGetCategoryItemsResponse(c.Response())
+
 	return nil
 }
