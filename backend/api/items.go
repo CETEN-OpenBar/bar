@@ -384,12 +384,12 @@ func (s *Server) GetAllItems(c echo.Context, params autogen.GetAllItemsParams) e
 
 	page += 1
 	maxPage += 1
-	autogen.GetCategoryItems200JSONResponse{
+	autogen.GetAllItems200JSONResponse{
 		Items:   &items,
 		Page:    &page,
 		Limit:   &size,
 		MaxPage: &maxPage,
-	}.VisitGetCategoryItemsResponse(c.Response())
+	}.VisitGetAllItemsResponse(c.Response())
 
 	return nil
 }

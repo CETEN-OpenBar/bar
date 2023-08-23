@@ -1,15 +1,27 @@
 <script lang="ts">
-	import type { Category, Item, NewItem, ItemPrices, UpdateItem, AccountPriceRole } from '$lib/api';
+	import type {
+		Category,
+		Item,
+		NewItem,
+		ItemPrices,
+		UpdateItem,
+		AccountPriceRole,
+		ItemState
+	} from '$lib/api';
 	import { api } from '$lib/config/config';
 	import { categoriesApi, itemsApi } from '$lib/requests/requests';
-	import { formatPrice } from '$lib/utils';
+	import { formatPrice, parsePrice } from '$lib/utils';
 	import { onMount } from 'svelte';
 
+	// Type for NewItem with categoryId
+	interface NewItemWithCategory extends NewItem {
+		category_id: string;
+	}
+
 	let categories: Category[] = [];
-	let selectedCategory: string = '';
 	let selectedItem: Item | null = null;
 	let items: Item[] = [];
-	let newItem: NewItem = {
+	let newItem: NewItemWithCategory = {
 		name: '',
 		picture: '',
 		prices: {
@@ -22,17 +34,22 @@
 		amount_left: 0,
 		buy_limit: undefined,
 		optimal_amount: 0,
-		state: 'buyable'
+		state: 'buyable',
+		category_id: ''
 	};
 	let newItemPriceRole: AccountPriceRole = 'normal';
 	let editItemPriceRole: AccountPriceRole = 'normal';
 	let promoItemPriceRole: AccountPriceRole = 'normal';
 
 	let page = 0;
-	let maxPage = 0;
+	let max_page = 0;
 	let itemsPerPage = 10;
 
 	let rebounceTimeout: number | null = null;
+
+	let searchState: ItemState | undefined = undefined;
+	let searchCategory: string | undefined = undefined;
+	let searchName: string | undefined = undefined;
 
 	onMount(() => {
 		categoriesApi()
@@ -40,16 +57,17 @@
 			.then((res) => {
 				categories = res.data ?? [];
 			});
+
+		reloadItems();
 	});
 
-	function changeCategory(category: string) {
-		selectedCategory = category;
-		page = 0;
-		maxPage = 0;
+	function reloadItems() {
 		itemsApi()
-			.getCategoryItems(selectedCategory, page, itemsPerPage, undefined, { withCredentials: true })
+			.getAllItems(page, itemsPerPage, searchState, searchCategory, searchName, {
+				withCredentials: true
+			})
 			.then((res) => {
-				maxPage = res.data.max_page ?? 0;
+				max_page = res.data.max_page ?? 0;
 				page = res.data.page ?? 0;
 				itemsPerPage = res.data.limit ?? 0;
 				items = res.data.items ?? [];
@@ -59,16 +77,16 @@
 	function createNewItem() {
 		if (!newItem) return;
 		itemsApi()
-			.postItem(selectedCategory, newItem, { withCredentials: true })
+			.postItem(newItem.category_id, newItem, { withCredentials: true })
 			.then((res) => {
 				items = [...items, res.data];
 			});
 	}
 
-	function editItem(id: string, item: UpdateItem) {
+	function editItem(id: string, item: UpdateItem, category_id: string) {
 		if (!newItem) return;
 		itemsApi()
-			.patchItem(selectedCategory, id, item, { withCredentials: true })
+			.patchItem(category_id, id, item, { withCredentials: true })
 			.then((res) => {
 				items = items.map((it) => {
 					if (it.id === id) {
@@ -80,12 +98,12 @@
 			});
 	}
 
-	function reuploadItemPicture(id: string, file: File) {
+	function reuploadItemPicture(id: string, file: File, category_id: string) {
 		if (!newItem) return;
 		file2Base64(file).then((base64) => {
 			base64 = base64.replace('data:', '').replace(/^.+,/, '');
 			itemsApi()
-				.patchItem(selectedCategory, id, { picture: base64 }, { withCredentials: true })
+				.patchItem(category_id, id, { picture: base64 }, { withCredentials: true })
 				.then((res) => {
 					items = items.map((ct) => {
 						if (ct.id === id) {
@@ -97,9 +115,9 @@
 		});
 	}
 
-	function deleteItem(id: string) {
+	function deleteItem(id: string, category_id: string) {
 		itemsApi()
-			.markDeleteItem(selectedCategory, id, { withCredentials: true })
+			.markDeleteItem(category_id, id, { withCredentials: true })
 			.then(() => {
 				items = items.filter((ct) => ct.id !== id);
 			});
@@ -153,6 +171,22 @@
 								/>
 							</div>
 
+							<label for="category" class="block text-sm mb-2 dark:text-white">Catégorie</label>
+							<div class="relative">
+								<select
+									id="category"
+									name="category"
+									class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+									required
+									aria-describedby="text-error"
+									bind:value={newItem.category_id}
+								>
+									{#each categories as category}
+										<option value={category.id}>{category.name}</option>
+									{/each}
+								</select>
+							</div>
+
 							<label for="image" class="block text-sm mb-2 dark:text-white">Image</label>
 							<div class="relative">
 								<input
@@ -184,6 +218,17 @@
 										required
 										aria-describedby="text-error"
 										bind:value={newItemPriceRole}
+										on:change={// resets the value of the price input
+										() => {
+											// Remove the value of elems with id "price"
+											let elems = document.querySelectorAll('[id=price-new]');
+											elems.forEach((elem) => {
+												// @ts-ignore
+												elem.value = '';
+												// @ts-ignore
+												elem.placeholder = formatPrice(newItem.prices[newItemPriceRole]);
+											});
+										}}
 									>
 										<option value="normal">Prix de base</option>
 										<option value="exte">Prix externe</option>
@@ -199,7 +244,7 @@
 								<div class="relative">
 									<input
 										type="number"
-										id="price"
+										id="price-new"
 										name="price"
 										placeholder="Prix du produit"
 										class="py-3 px-4 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
@@ -207,15 +252,7 @@
 										aria-describedby="text-error"
 										on:input={(e) => {
 											// @ts-ignore
-											let price = e.target?.value;
-											// split and parse price[0]
-											if (price.includes(',')) price = price.split(',');
-											else if (price.includes('.')) price = price.split('.');
-
-											if (price.length > 1) price = parseInt(price[0]) * 100 + parseInt(price[1]);
-											else price = parseInt(price[0]) * 100;
-
-											newItem.prices[newItemPriceRole] = price;
+											newItem.prices[newItemPriceRole] = parsePrice(e.target?.value);
 										}}
 									/>
 
@@ -279,13 +316,8 @@
 										bind:value={newItem.optimal_amount}
 										on:input={(e) => {
 											// @ts-ignore
-											if (e.target?.value === '') {
-												newItem.buy_limit = undefined;
-												return;
-											}
-											// @ts-ignore
-											let buy_limit = parseInt(e.target?.value);
-											newItem.buy_limit = buy_limit;
+											let optimal_amount = parseInt(e.target?.value);
+											newItem.optimal_amount = optimal_amount;
 										}}
 									/>
 								</div>
@@ -350,7 +382,11 @@
 							on:input={(e) => {
 								// @ts-ignore
 								let promotion = parseInt(e.target?.value);
-								editItem(selectedItem?.id ?? '', { promotion: promotion });
+								editItem(
+									selectedItem?.id ?? '',
+									{ promotion: promotion },
+									selectedItem?.category_id ?? ''
+								);
 							}}
 						/>
 						<span class="self-center text-sm text-gray-400"> % </span>
@@ -373,7 +409,11 @@
 								// @ts-ignore
 								let date = e.target?.value;
 								let timestampSeconds = Date.parse(date) / 1000;
-								editItem(selectedItem?.id ?? '', { promotion_ends_at: timestampSeconds });
+								editItem(
+									selectedItem?.id ?? '',
+									{ promotion_ends_at: timestampSeconds },
+									selectedItem?.category_id ?? ''
+								);
 							}}
 						/>
 					</div>
@@ -403,387 +443,476 @@
 	</div>
 </div>
 
-<!-- Categories section -->
-<div
-	class="flex flex-row gap-5 items-center overflow-x-auto overflow-y-hidden m-5 p-5 rounded-xl bg-slate-200 dark:bg-slate-900"
->
-	{#each categories as category}
-		<button
-			class="w-16 flex-shrink-0 flex flex-col items-center justify-center m-2 rounded-lg dark:text-white transition-colors duration-300"
-			on:click={() => {
-				changeCategory(category.id);
-			}}
-		>
-			<img class="w-full" src={api() + category.picture_uri} alt={category.name} />
-			<span class="text-md font-bold">{category.name}</span>
-		</button>
-	{/each}
-</div>
-
-{#if selectedCategory != ''}
-	<!-- Table Section -->
-	<div class="max-w-[95%] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
-		<!-- Card -->
-		<div class="flex flex-col">
-			<div class="-m-1.5 overflow-x-auto">
-				<div class="p-1.5 min-w-full inline-block align-middle">
+<!-- Table Section -->
+<div class="max-w-[95%] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+	<!-- Card -->
+	<div class="flex flex-col">
+		<div class="-m-1.5 overflow-x-auto">
+			<div class="p-1.5 min-w-full inline-block align-middle">
+				<div
+					class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden dark:bg-slate-900 dark:border-gray-700"
+				>
+					<!-- Header -->
 					<div
-						class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden dark:bg-slate-900 dark:border-gray-700"
+						class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-b border-gray-200 dark:border-gray-700"
 					>
-						<!-- Header -->
-						<div
-							class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-b border-gray-200 dark:border-gray-700"
-						>
-							<div>
-								<h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Produits</h2>
-								<p class="text-sm text-gray-600 dark:text-gray-400">Ajouter des produits</p>
-							</div>
+						<div>
+							<h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Produits</h2>
+							<p class="text-sm text-gray-600 dark:text-gray-400">Ajouter des produits</p>
+						</div>
 
-							<div>
-								<div class="inline-flex gap-x-2">
-									<button
-										class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
-										data-hs-overlay="#hs-modal-new-item"
-									>
-										<svg
-											class="w-3 h-3"
-											xmlns="http://www.w3.org/2000/svg"
-											width="16"
-											height="16"
-											viewBox="0 0 16 16"
-											fill="none"
-										>
-											<path
-												d="M2.63452 7.50001L13.6345 7.5M8.13452 13V2"
-												stroke="currentColor"
-												stroke-width="2"
-												stroke-linecap="round"
-											/>
-										</svg>
-										Ajouter un produit
-									</button>
-								</div>
+						<div class="px-4 mx-4 grid grid-cols-3 gap-4">
+							<!-- Titles -->
+							<div class="text-lg dark:text-white">
+								Par catégorie
+							</div>
+							<div class="text-lg dark:text-white">
+								Par état
+							</div>
+							<div class="text-lg dark:text-white">
+								Par nom
+							</div>
+							<div class="relative mt-4 w-96 md:mt-0">
+								<!-- filter by category -->
+								<select
+									id="category"
+									name="category"
+									class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+									required
+									aria-describedby="text-error"
+									on:change={(e) => {
+										// @ts-ignore
+										searchCategory = e.target?.value;
+										if (searchCategory === '') searchCategory = undefined;
+										reloadItems();
+									}}
+								>
+									<option value="">Pas de filtre</option>
+									{#each categories as category}
+										<option value={category.id}>{category.name}</option>
+									{/each}
+								</select>
+							</div>
+							<div class="relative mt-4 w-96 md:mt-0">
+								<!-- filter by state -->
+								<select
+									id="state"
+									name="state"
+									class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+									required
+									aria-describedby="text-error"
+									on:change={(e) => {
+										// @ts-ignore
+										let val = e.target?.value;
+										if (val == "") searchState = undefined;
+										else searchState = val;
+										reloadItems();
+									}}
+								>
+									<option value="">Pas de filtre</option>
+									<option value="buyable">Achetable</option>
+									<option value="not_buyable">Non achetable</option>
+								</select>
+							</div>
+							<div class="relative mt-4 w-96 md:mt-0">
+								<input
+									type="text"
+									class="py-3 px-4 w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+									placeholder="Rechercher"
+									aria-label="Rechercher"
+									on:input={(e) => {
+										// @ts-ignore
+										searchName = e.target.value.toLowerCase();
+										reloadItems();
+									}}
+								/>
+								<svg
+									class="absolute w-4 h-4 right-3 top-3 text-gray-400 dark:text-gray-300 pointer-events-none"
+									xmlns="http://www.w3.org/2000/svg"
+									width="16"
+									height="16"
+									viewBox="0 0 16 16"
+									fill="none"
+								>
+									<path
+										d="M11.6667 11.6667L15.3333 15.3333"
+										stroke="currentColor"
+										stroke-width="1.5"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									/>
+									<path
+										d="M6.66663 12.6667C9.53763 12.6667 12 10.2037 12 7.33337C12 4.46337 9.53763 2.00004 6.66663 2.00004C3.79563 2.00004 1.33329 4.46337 1.33329 7.33337C1.33329 10.2037 3.79563 12.6667 6.66663 12.6667Z"
+										stroke="currentColor"
+										stroke-width="1.5"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									/>
+								</svg>
 							</div>
 						</div>
-						<!-- End Header -->
 
-						<!-- Table -->
-						<table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-							<thead class="bg-gray-50 dark:bg-slate-800">
+						<div>
+							<div class="inline-flex gap-x-2">
+								<button
+									class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
+									data-hs-overlay="#hs-modal-new-item"
+								>
+									<svg
+										class="w-3 h-3"
+										xmlns="http://www.w3.org/2000/svg"
+										width="16"
+										height="16"
+										viewBox="0 0 16 16"
+										fill="none"
+									>
+										<path
+											d="M2.63452 7.50001L13.6345 7.5M8.13452 13V2"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+										/>
+									</svg>
+									Ajouter un produit
+								</button>
+							</div>
+						</div>
+					</div>
+					<!-- End Header -->
+
+					<!-- Table -->
+					<table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+						<thead class="bg-gray-50 dark:bg-slate-800">
+							<tr>
+								<th scope="col" class="px-6 py-3">
+									<span
+										class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+									>
+										Nom
+									</span>
+								</th>
+								<th scope="col" class="px-6 py-3">
+									<span
+										class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+									>
+										Catégorie
+									</span>
+								</th>
+								<th scope="col" class="px-6 py-3">
+									<span
+										class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+									>
+										Image
+									</span>
+								</th>
+								<th scope="col" class="px-2 py-3">
+									<p
+										class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+									>
+										Etat
+									</p>
+								</th>
+								<th scope="col" class="px-2 py-3 w-2">
+									<span
+										class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+									>
+										En stock
+									</span>
+								</th>
+								<th scope="col" class="px-2 py-3">
+									<span
+										class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+									>
+										Limite d'achat
+									</span>
+								</th>
+								<th scope="col" class="px-2 py-3">
+									<span
+										class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+									>
+										Montant optimal en stock
+									</span>
+								</th>
+								<th scope="col" class="px-6 py-3">
+									<select
+										id="role"
+										name="role"
+										class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+										required
+										aria-describedby="text-error"
+										bind:value={editItemPriceRole}
+										on:change={() => {
+											// Remove the value of elems with id "price"
+											let elems = document.querySelectorAll('[id=price]');
+											elems.forEach((elem) => {
+												// @ts-ignore
+												elem.value = '';
+											});
+										}}
+									>
+										<option value="normal">Prix de base</option>
+										<option value="exte">Prix externe</option>
+										<option value="ceten">Prix ceten</option>
+										<option value="staff">Prix staff</option>
+										<option value="vip">Prix VIP</option>
+									</select>
+								</th>
+								<th scope="col" class="px-6 py-3 text-right" />
+							</tr>
+						</thead>
+
+						<tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+							{#each items as item}
 								<tr>
-									<th scope="col" class="px-6 py-3">
-										<span
-											class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
-										>
-											Nom
-										</span>
-									</th>
-									<th scope="col" class="px-6 py-3">
-										<span
-											class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
-										>
-											Image
-										</span>
-									</th>
-									<th scope="col" class="px-2 py-3">
-										<p
-											class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
-										>
-											Etat
-										</p>
-									</th>
-									<th scope="col" class="px-2 py-3 w-2">
-										<span
-											class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
-										>
-											En stock
-										</span>
-									</th>
-									<th scope="col" class="px-2 py-3">
-										<span
-											class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
-										>
-											Limite d'achat
-										</span>
-									</th>
-									<th scope="col" class="px-2 py-3">
-										<span
-											class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
-										>
-											Montant optimal en stock
-										</span>
-									</th>
-									<th scope="col" class="px-6 py-3">
-										<select
-											id="role"
-											name="role"
-											class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-											required
-											aria-describedby="text-error"
-											bind:value={editItemPriceRole}
-											on:change={() => {
-												// Remove the value of elems with id "price"
-												let elems = document.querySelectorAll('[id=price]');
-												elems.forEach((elem) => {
+									<td class="h-px w-72">
+										<div class="px-6 py-3 grid justify-center">
+											<input
+												type="text"
+												class="py-3 px-2 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+												value={item.name}
+												on:input={(e) => {
 													// @ts-ignore
-													elem.value = '';
-												});
-											}}
-										>
-											<option value="normal">Prix de base</option>
-											<option value="exte">Prix externe</option>
-											<option value="ceten">Prix ceten</option>
-											<option value="staff">Prix staff</option>
-											<option value="vip">Prix VIP</option>
-										</select>
-									</th>
-									<th scope="col" class="px-6 py-3 text-right" />
-								</tr>
-							</thead>
-
-							<tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-								{#each items as item}
-									<tr>
-										<td class="h-px w-72">
-											<div class="px-6 py-3">
-												<input
-													type="text"
-													class="py-3 px-2 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-													value={item.name}
-													on:input={(e) => {
-														// @ts-ignore
-														let name = e.target?.value;
-														editItem(item.id, { name: name });
-													}}
-												/>
-											</div>
-										</td>
-										<td class="h-px w-72">
-											<!-- Display a miniature of the image -->
-											<div class="px-6 py-3 w-24 relative">
-												<!-- <img
+													let name = e.target?.value;
+													editItem(item.id, { name: name }, item.category_id);
+												}}
+											/>
+										</div>
+									</td>
+									<td class="h-px w-52">
+										<div class="px-6 py-3 grid justify-center">
+											<select
+												class="block text-sm dark:text-white/[.8] dark:bg-slate-900 break-words p-2 bg-transparent"
+												value={item.category_id}
+												on:change={(e) => {
+													// @ts-ignore
+													let category_id = e.target?.value;
+													editItem(item.id, { category_id: category_id }, item.category_id);
+												}}
+											>
+												{#each categories as category}
+													<option value={category.id}>{category.name}</option>
+												{/each}
+											</select>
+										</div>
+									</td>
+									<td class="h-px w-36 grid justify-center">
+										<!-- Display a miniature of the image -->
+										<div class="px-6 py-3 relative">
+											<!-- <img
 												src={api() + category.picture_uri}
 												alt="indisponible"
 												class="w-full h-full rounded-md object-cover"
 											/> -->
 
-												<!-- input in front of the image to click & reupload -->
-												<input
-													type="file"
-													class="absolute w-[50%] h-[70%] opacity-0 cursor-pointer"
-													on:change={(e) => {
-														// @ts-ignore
-														let file = e.target?.files[0];
-														reuploadItemPicture(item.id, file);
-													}}
+											<!-- input in front of the image to click & reupload -->
+											<input
+												type="file"
+												class="absolute w-12 h-12 opacity-0 cursor-pointer"
+												on:change={(e) => {
+													// @ts-ignore
+													let file = e.target?.files[0];
+													reuploadItemPicture(item.id, file, item.category_id);
+												}}
+											/>
+											{#if item.picture_uri != ''}
+												<img
+													src={api() + item.picture_uri}
+													alt="indisponible"
+													class="w-12 h-12 rounded-md object-cover"
 												/>
-												{#if item.picture_uri != ''}
-													<img
-														src={api() + item.picture_uri}
-														alt="indisponible"
-														class="w-full h-full rounded-md object-cover"
-													/>
-												{/if}
-											</div>
-										</td>
-										<td class="h-px w-72">
-											<div class="px-2 py-3">
-												<select
-													class="block text-sm dark:text-white/[.8] dark:bg-slate-900 break-words p-2 bg-transparent"
-													value={item.state}
-													on:change={(e) => {
-														// @ts-ignore
-														let state = e.target?.value;
-														editItem(item.id, { state: state });
-													}}
-												>
-													<option value="buyable">Achetable</option>
-													<option value="not_buyable">Pas achetable</option>
-												</select>
-											</div>
-										</td>
-										<td class="h-px w-72">
-											<div class="px-2 py-3">
-												<input
-													type="number"
-													class="py-3 px-2 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-													value={item.amount_left}
-													on:input={(e) => {
-														// @ts-ignore
-														let stock = parseInt(e.target?.value);
-														editItem(item.id, { amount_left: stock });
-													}}
-												/>
-											</div>
-										</td>
-										<td class="h-px w-72">
-											<div class="px-6 py-3">
-												<input
-													type="number"
-													class="py-3 px-2 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-													value={item.buy_limit}
-													on:input={(e) => {
-														// @ts-ignore
-														let buy_limit = parseInt(e.target?.value);
-														// @ts-ignore
-														if (e.target?.value === '') {
-															editItem(item.id, { buy_limit: -1 });
-															return;
-														}
-														editItem(item.id, { buy_limit: buy_limit });
-													}}
-												/>
-											</div>
-										</td>
-										<td class="h-px w-72">
-											<div class="px-6 py-3">
-												<input
-													type="number"
-													class="py-3 px-2 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-													value={item.optimal_amount}
-													on:input={(e) => {
-														// @ts-ignore
-														let optimal_amount = parseInt(e.target?.value);
-														editItem(item.id, { optimal_amount: optimal_amount });
-													}}
-												/>
-											</div>
-										</td>
-										<td class="h-px w-72">
-											<div class="px-6 py-3">
-												<input
-													type="number"
-													id="price"
-													name="price"
-													placeholder={formatPrice(item.prices[editItemPriceRole])}
-													class="py-3 px-2 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-													required
-													aria-describedby="text-error"
-													on:input={(e) => {
-														// @ts-ignore
-														let price = e.target?.value;
-														// split and parse price[0]
-														if (price.includes(',')) price = price.split(',');
-														else if (price.includes('.')) price = price.split('.');
+											{/if}
+										</div>
+									</td>
+									<td class="h-px w-52">
+										<div class="px-2 py-3 grid justify-center">
+											<select
+												class="block text-sm dark:text-white/[.8] dark:bg-slate-900 break-words p-2 bg-transparent"
+												value={item.state}
+												on:change={(e) => {
+													// @ts-ignore
+													let state = e.target?.value;
+													editItem(item.id, { state: state }, item.category_id);
+												}}
+											>
+												<option value="buyable">Achetable</option>
+												<option value="not_buyable">Pas achetable</option>
+											</select>
+										</div>
+									</td>
+									<td class="h-px w-52">
+										<div class="px-2 py-3 grid justify-center">
+											<input
+												type="number"
+												class="py-3 px-2 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+												value={item.amount_left}
+												on:input={(e) => {
+													// @ts-ignore
+													let stock = parseInt(e.target?.value);
+													editItem(item.id, { amount_left: stock }, item.category_id);
+												}}
+											/>
+										</div>
+									</td>
+									<td class="h-px w-52">
+										<div class="px-6 py-3 grid justify-center">
+											<input
+												type="number"
+												class="py-3 px-2 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+												value={item.buy_limit}
+												on:input={(e) => {
+													// @ts-ignore
+													let buy_limit = parseInt(e.target?.value);
+													// @ts-ignore
+													if (e.target?.value === '') {
+														editItem(item.id, { buy_limit: -1 }, item.category_id);
+														return;
+													}
+													editItem(item.id, { buy_limit: buy_limit }, item.category_id);
+												}}
+											/>
+										</div>
+									</td>
+									<td class="h-px w-52">
+										<div class="px-6 py-3 grid justify-center">
+											<input
+												type="number"
+												class="py-3 px-2 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+												value={item.optimal_amount}
+												on:input={(e) => {
+													// @ts-ignore
+													let optimal_amount = parseInt(e.target?.value);
+													editItem(item.id, { optimal_amount: optimal_amount }, item.category_id);
+												}}
+											/>
+										</div>
+									</td>
+									<td class="h-px w-52">
+										<div class="px-6 py-3 grid justify-center">
+											<input
+												type="number"
+												id="price"
+												name="price"
+												placeholder={formatPrice(item.prices[editItemPriceRole])}
+												class="py-3 px-2 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+												required
+												aria-describedby="text-error"
+												on:input={(e) => {
+													let prices = item.prices;
+													// @ts-ignore
+													prices[editItemPriceRole] = parsePrice(e.target?.value);
 
-														if (price.length > 1)
-															price = parseInt(price[0]) * 100 + parseInt(price[1]);
-														else price = parseInt(price[0]) * 100;
+													editItem(item.id, { prices: prices }, item.category_id);
 
-														let prices = item.prices;
-														prices[editItemPriceRole] = price;
+													// Remove the value of elems with id "price" with rebounce timeout
+													if (rebounceTimeout) clearTimeout(rebounceTimeout);
+													rebounceTimeout = setTimeout(() => {
+														let elems = document.querySelectorAll('[id=price]');
+														elems.forEach((elem) => {
+															// @ts-ignore
+															elem.value = '';
+														});
+													}, 1000);
+												}}
+											/>
+										</div>
+									</td>
+									<td class="h-px w-px whitespace-nowrap">
+										<div class="px-6 py-1.5 grid justify-center">
+											<button
+												class="{item.promotion_ends_at ?? 0 > new Date().getTime() / 1000
+													? 'animate-pulse'
+													: ''} inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
+												data-hs-overlay="#hs-modal-edit-item"
+												on:click={() => (selectedItem = item)}
+											>
+												Promotions
+											</button>
+											<button
+												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
+												on:click={() => deleteItem(item.id, item.category_id)}
+											>
+												Supprimer
+											</button>
+										</div>
+									</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+					<!-- End Table -->
 
-														editItem(item.id, { prices: prices });
+					<!-- Footer -->
+					<div
+						class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-t border-gray-200 dark:border-gray-700"
+					>
+						<div>
+							<p class="text-sm text-gray-600 dark:text-gray-400">
+								<span class="font-semibold text-gray-800 dark:text-gray-200">{items.length}</span>
+								résultats
+							</p>
+						</div>
 
-														// Remove the value of elems with id "price" with rebounce timeout
-														if (rebounceTimeout) clearTimeout(rebounceTimeout);
-														rebounceTimeout = setTimeout(() => {
-															let elems = document.querySelectorAll('[id=price]');
-															elems.forEach((elem) => {
-																// @ts-ignore
-																elem.value = '';
-															});
-														}, 1000);
-													}}
-												/>
-											</div>
-										</td>
-										<td class="h-px w-px whitespace-nowrap">
-											<div class="px-6 py-1.5">
-												<button
-													class="{item.promotion_ends_at ?? 0 > new Date().getTime() / 1000
-														? 'animate-pulse'
-														: ''} inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
-													data-hs-overlay="#hs-modal-edit-item"
-													on:click={() => (selectedItem = item)}
-												>
-													Promotions
-												</button>
-												<button
-													class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
-													on:click={() => deleteItem(item.id)}
-												>
-													Supprimer
-												</button>
-											</div>
-										</td>
-									</tr>
-								{/each}
-							</tbody>
-						</table>
-						<!-- End Table -->
+						<div>
+							<div class="inline-flex gap-x-2">
+								<button
+									type="button"
+									class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
+									on:click={() => {
+										if (page > 1) page--;
+										reloadItems();
+									}}
+								>
+									<svg
+										class="w-3 h-3"
+										xmlns="http://www.w3.org/2000/svg"
+										width="16"
+										height="16"
+										fill="currentColor"
+										viewBox="0 0 16 16"
+									>
+										<path
+											fill-rule="evenodd"
+											d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"
+										/>
+									</svg>
+									Précédent
+								</button>
 
-						<!-- Footer -->
-						<div
-							class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-t border-gray-200 dark:border-gray-700"
-						>
-							<div>
-								<p class="text-sm text-gray-600 dark:text-gray-400">
-									<span class="font-semibold text-gray-800 dark:text-gray-200">{items.length}</span>
-									résultats
+								<p class="text-sm self-center text-gray-600 dark:text-gray-400">
+									Page {page + 1} / {max_page + 1}
 								</p>
-							</div>
 
-							<div>
-								<div class="inline-flex gap-x-2">
-									<button
-										type="button"
-										class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
-										on:click={() => {
-											if (page > 1) page--;
-										}}
+								<button
+									type="button"
+									class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
+									on:click={() => {
+										if (page < max_page) page++;
+										reloadItems();
+									}}
+								>
+									Suivant
+									<svg
+										class="w-3 h-3"
+										xmlns="http://www.w3.org/2000/svg"
+										width="16"
+										height="16"
+										fill="currentColor"
+										viewBox="0 0 16 16"
 									>
-										<svg
-											class="w-3 h-3"
-											xmlns="http://www.w3.org/2000/svg"
-											width="16"
-											height="16"
-											fill="currentColor"
-											viewBox="0 0 16 16"
-										>
-											<path
-												fill-rule="evenodd"
-												d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"
-											/>
-										</svg>
-										Précédent
-									</button>
-
-									<p class="text-sm self-center text-gray-600 dark:text-gray-400">
-										Page {page} / {Math.ceil(categories.length / itemsPerPage)}
-									</p>
-
-									<button
-										type="button"
-										class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
-										on:click={() => {
-											if (page < Math.ceil(categories.length / itemsPerPage) - 1) page++;
-										}}
-									>
-										Suivant
-										<svg
-											class="w-3 h-3"
-											xmlns="http://www.w3.org/2000/svg"
-											width="16"
-											height="16"
-											fill="currentColor"
-											viewBox="0 0 16 16"
-										>
-											<path
-												fill-rule="evenodd"
-												d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"
-											/>
-										</svg>
-									</button>
-								</div>
+										<path
+											fill-rule="evenodd"
+											d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"
+										/>
+									</svg>
+								</button>
 							</div>
 						</div>
-						<!-- End Footer -->
 					</div>
+					<!-- End Footer -->
 				</div>
 			</div>
 		</div>
-		<!-- End Card -->
 	</div>
-	<!-- End Table Section -->
-{/if}
+	<!-- End Card -->
+</div>
+<!-- End Table Section -->
