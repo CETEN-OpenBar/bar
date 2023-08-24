@@ -477,6 +477,16 @@ func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, 
 		item.TotalCost = *params.Amount * item.UnitCost
 	}
 
+	if params.AlreadyDone != nil {
+		if *params.AlreadyDone > item.ItemAmount {
+			return Error400(c)
+		}
+		item.ItemAlreadyDone = *params.AlreadyDone
+		if item.ItemAlreadyDone == item.ItemAmount {
+			item.State = autogen.TransactionItemFinished
+		}
+	}
+
 	origItem, err := s.DBackend.GetItem(c.Request().Context(), itemId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {

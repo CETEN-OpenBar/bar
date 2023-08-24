@@ -1209,6 +1209,13 @@ paths:
           schema:
             type: integer
             format: uint64
+        - name: already_done
+          in: query
+          description: Update item's already done
+          required: false
+          schema:
+            type: integer
+            format: uint64
       responses:
         '200':
           description: ''
@@ -4213,6 +4220,9 @@ components:
         item_amount:
           type: integer
           format: uint64
+        item_already_done:
+          type: integer
+          format: uint64
         unit_cost:
           type: integer
           format: uint64
@@ -4225,6 +4235,7 @@ components:
         - item_id
         - item_name
         - item_amount
+        - item_already_done
         - unit_cost
         - total_cost
         - state
@@ -4264,7 +4275,6 @@ components:
         amount:
           type: integer
           format: uint64
-          
       required:
         - item_id
         - amount

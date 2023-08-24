@@ -1405,6 +1405,12 @@ export interface TransactionItem {
      * @type {number}
      * @memberof TransactionItem
      */
+    'item_already_done': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof TransactionItem
+     */
     'unit_cost': number;
     /**
      * 
@@ -6601,10 +6607,11 @@ export const TransactionsApiAxiosParamCreator = function (configuration?: Config
          * @param {string} itemId ID of the item
          * @param {TransactionItemState} [state] New state of the item
          * @param {number} [amount] New amount of the item
+         * @param {number} [alreadyDone] Update item\&#39;s already done
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        patchTransactionItemId: async (accountId: string, transactionId: string, itemId: string, state?: TransactionItemState, amount?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        patchTransactionItemId: async (accountId: string, transactionId: string, itemId: string, state?: TransactionItemState, amount?: number, alreadyDone?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'accountId' is not null or undefined
             assertParamExists('patchTransactionItemId', 'accountId', accountId)
             // verify required parameter 'transactionId' is not null or undefined
@@ -6634,6 +6641,10 @@ export const TransactionsApiAxiosParamCreator = function (configuration?: Config
 
             if (amount !== undefined) {
                 localVarQueryParameter['amount'] = amount;
+            }
+
+            if (alreadyDone !== undefined) {
+                localVarQueryParameter['already_done'] = alreadyDone;
             }
 
 
@@ -6776,11 +6787,12 @@ export const TransactionsApiFp = function(configuration?: Configuration) {
          * @param {string} itemId ID of the item
          * @param {TransactionItemState} [state] New state of the item
          * @param {number} [amount] New amount of the item
+         * @param {number} [alreadyDone] Update item\&#39;s already done
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async patchTransactionItemId(accountId: string, transactionId: string, itemId: string, state?: TransactionItemState, amount?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<HTTPError>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.patchTransactionItemId(accountId, transactionId, itemId, state, amount, options);
+        async patchTransactionItemId(accountId: string, transactionId: string, itemId: string, state?: TransactionItemState, amount?: number, alreadyDone?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<HTTPError>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.patchTransactionItemId(accountId, transactionId, itemId, state, amount, alreadyDone, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -6881,11 +6893,12 @@ export const TransactionsApiFactory = function (configuration?: Configuration, b
          * @param {string} itemId ID of the item
          * @param {TransactionItemState} [state] New state of the item
          * @param {number} [amount] New amount of the item
+         * @param {number} [alreadyDone] Update item\&#39;s already done
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        patchTransactionItemId(accountId: string, transactionId: string, itemId: string, state?: TransactionItemState, amount?: number, options?: any): AxiosPromise<HTTPError> {
-            return localVarFp.patchTransactionItemId(accountId, transactionId, itemId, state, amount, options).then((request) => request(axios, basePath));
+        patchTransactionItemId(accountId: string, transactionId: string, itemId: string, state?: TransactionItemState, amount?: number, alreadyDone?: number, options?: any): AxiosPromise<HTTPError> {
+            return localVarFp.patchTransactionItemId(accountId, transactionId, itemId, state, amount, alreadyDone, options).then((request) => request(axios, basePath));
         },
         /**
          * Create a new transaction
@@ -6996,12 +7009,13 @@ export class TransactionsApi extends BaseAPI {
      * @param {string} itemId ID of the item
      * @param {TransactionItemState} [state] New state of the item
      * @param {number} [amount] New amount of the item
+     * @param {number} [alreadyDone] Update item\&#39;s already done
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TransactionsApi
      */
-    public patchTransactionItemId(accountId: string, transactionId: string, itemId: string, state?: TransactionItemState, amount?: number, options?: AxiosRequestConfig) {
-        return TransactionsApiFp(this.configuration).patchTransactionItemId(accountId, transactionId, itemId, state, amount, options).then((request) => request(this.axios, this.basePath));
+    public patchTransactionItemId(accountId: string, transactionId: string, itemId: string, state?: TransactionItemState, amount?: number, alreadyDone?: number, options?: AxiosRequestConfig) {
+        return TransactionsApiFp(this.configuration).patchTransactionItemId(accountId, transactionId, itemId, state, amount, alreadyDone, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Transaction } from '$lib/api';
+	import { ItemState, TransactionItemState, type Transaction } from '$lib/api';
 	import { api } from '$lib/config/config';
 	import { transactionsApi } from '$lib/requests/requests';
 	import { formatPrice } from '$lib/utils';
@@ -28,6 +28,7 @@
 					item.item_id,
 					item.state,
 					item.item_amount,
+					item.item_already_done,
 					{
 						withCredentials: true
 					}
@@ -88,21 +89,34 @@
 					<!-- One for each item.amount -->
 					<div
 						class="flex flex-col justify-center text-center break-words rounded-xl {item.state ==
-						'canceled'
+						TransactionItemState.TransactionItemCanceled
 							? 'bg-red-200'
+							: ''} {item.state ==
+						TransactionItemState.TransactionItemFinished
+							? 'bg-green-200'
 							: ''}"
 					>
 						{item.item_name ? item.item_name : 'Test'}
-						{#if item.state == 'canceled'}
+						{#if item.state == TransactionItemState.TransactionItemCanceled}
 							: Annulé
+						{/if}
+						{#if item.state == TransactionItemState.TransactionItemFinished}
+							: Terminé
 						{/if}
 						<img
 							src={api() + item.picture_uri}
 							alt="ca charge"
 							class="self-center w-10 h-10 rounded-2xl"
 						/>
-						{item.item_amount}
-						{#if item.state != 'canceled'}
+						<div class="flex flex-col">
+							<div>
+								Total: {item.item_amount}
+							</div>
+							<div>
+								Restant: {item.item_amount - item.item_already_done}
+							</div>
+						</div>
+						{#if item.state == TransactionItemState.TransactionItemStarted}
 							<div class="flex flex-row justify-center">
 								<div class="grid grid-cols-3 gap-1">
 									{#if item.item_amount > 1}
@@ -121,12 +135,25 @@
 									<button
 										class="bg-gray-500 hover:bg-gray-700 text-white font-bold p-2 rounded col-start-2"
 										on:click={() => {
-											item.state = 'canceled';
+											item.state = TransactionItemState.TransactionItemCanceled;
 										}}
 									>
 										<iconify-icon
 											class="text-white text-lg self-center align-middle"
 											icon="mdi:cancel"
+										/>
+									</button>
+									<button
+										class="bg-green-500 hover:bg-green-700 text-white font-bold p-2 rounded col-start-2"
+										on:click={() => {
+											if (item.item_already_done < item.item_amount) item.item_already_done += 1;
+											if (item.item_already_done == item.item_amount) item.state = TransactionItemState.TransactionItemFinished;
+											
+										}}
+									>
+										<iconify-icon
+											class="text-white text-lg self-center align-middle"
+											icon="mdi:check"
 										/>
 									</button>
 									{#if item.item_amount < transaction.items[i].item_amount}
