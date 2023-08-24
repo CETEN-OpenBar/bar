@@ -70,7 +70,7 @@
 								class="text-sm text-white self-center bg-red-500 rounded-xl p-2"
 								on:click={() => {
 									refillsApi()
-										.patchRefillId(refill.account_id, refill.id, 'canceled', {
+										.patchRefillId(refill.account_id, refill.id, 'canceled', refill.type, {
 											withCredentials: true
 										})
 										.then(() => {
@@ -84,7 +84,7 @@
 								class="text-sm text-white self-center bg-red-500 rounded-xl p-2"
 								on:click={() => {
 									refillsApi()
-										.patchRefillId(refill.account_id, refill.id, 'valid', { withCredentials: true })
+										.patchRefillId(refill.account_id, refill.id, 'valid', refill.type, { withCredentials: true })
 										.then(() => {
 											reloadRefills();
 										});
