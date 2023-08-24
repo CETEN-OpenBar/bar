@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { RefillType } from '$lib/api';
 	import { refillsApi } from '$lib/requests/requests';
+	import { formatPrice, parsePrice } from '$lib/utils';
 	import Error from '../error.svelte';
 	import Success from '../success.svelte';
 
@@ -10,10 +12,11 @@
 
 	let card = {
 		id: '',
-		amount_euros: 0,
-		amount_cents: 0,
-		amount: 0
+		amount: 0,
+		type: RefillType.RefillOther
 	};
+
+	let rebounce = 0;
 
 	let buffer = '';
 	function onType(e: KeyboardEvent) {
@@ -47,7 +50,7 @@
 
 <div id="popup" class="absolute w-full h-full top-0 left-0 flex justify-center items-center">
 	<div
-		class="relative text-black flex flex-col justify-center items-center gap-4 p-10 h-64 bg-white rounded-xl shadow-xl z-20"
+		class="relative text-black flex flex-col justify-center items-center gap-4 p-10 h-96 bg-white rounded-xl shadow-xl z-20"
 	>
 		<!-- button to close the popup -->
 		<button
@@ -64,31 +67,60 @@
 		{:else}
 			<h1 class="text-3xl">Veuillez entrer le montant de la recharge.</h1>
 
-			<div class="flex flex-row">
-				<input
-					type="number"
-					class="text-sm bg-gray-200 rounded-md w-24 text-center"
-					bind:value={card.amount_euros}
-				/>
-				<div class="self-end">.</div>
-				<input
-					type="number"
-					class="text-sm bg-gray-200 rounded-md w-24 text-center"
-					bind:value={card.amount_cents}
-				/>
-				<div class="self-end">€</div>
+			<div class="flex flex-col gap-8">
+				<div class="flex flex-col">
+					<label for="price-new" class="block text-xl mb-2 align-middle">Montant :</label>
+					<input
+						type="number"
+						id="price-new"
+						name="price"
+						placeholder="Montant de la recharge"
+						class="text-sm bg-gray-200 rounded-md p-2 text-center"
+						required
+						aria-describedby="text-error"
+						on:input={(e) => {
+							// @ts-ignore
+							card.amount = parsePrice(e.target?.value);
+							console.log(card.amount);
+
+							// rebounce update
+							clearTimeout(rebounce);
+							rebounce = setTimeout(() => {
+								let elem = document.getElementById('price-new');
+								if (elem) {
+									// @ts-ignore
+									elem.value = '';
+									// @ts-ignore
+									elem.placeholder = formatPrice(card.amount);
+								}
+							}, 1000);
+						}}
+					/>
+				</div>
+
+				<div class="flex flex-col">
+					<label for="refill-type" class="block text-xl mb-2 align-middle">Type :</label>
+					<select
+						id="refill-type"
+						name="refill-type"
+						class="text-sm bg-gray-200 rounded-md p-2 text-center"
+						on:change={(e) => {
+							// @ts-ignore
+							card.type = e.target?.value;
+						}}
+					>
+						<option value={RefillType.RefillOther}>Autre</option>
+						<option value={RefillType.RefillCash}>Liquide</option>
+						<option value={RefillType.RefillCard}>Carte</option>
+					</select>
+				</div>
 			</div>
 
 			<button
 				class="text-3xl bg-green-500 p-4 rounded-xl hover:bg-green-700 transition-all text-white"
 				on:click={() => {
-					if (card.amount_euros < 0 || card.amount_cents < 0 || card.amount_cents > 99) {
-						error = 'Montant invalide.';
-						return;
-					}
-					card.amount = card.amount_euros * 100 + card.amount_cents;
 					refillsApi()
-						.postRefill(card.id, card.amount, { withCredentials: true })
+						.postRefill(card.id, card.amount, card.type, { withCredentials: true })
 						.then(() => {
 							success = 'Recharge effectuée avec succès.';
 							close();

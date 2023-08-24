@@ -1271,6 +1271,12 @@ export interface Refill {
     'canceled_by_name'?: string;
     /**
      * 
+     * @type {RefillType}
+     * @memberof Refill
+     */
+    'type': RefillType;
+    /**
+     * 
      * @type {number}
      * @memberof Refill
      */
@@ -1296,6 +1302,21 @@ export const RefillState = {
 } as const;
 
 export type RefillState = typeof RefillState[keyof typeof RefillState];
+
+
+/**
+ * 
+ * @export
+ * @enum {string}
+ */
+
+export const RefillType = {
+    RefillCash: 'cash',
+    RefillCard: 'card',
+    RefillOther: 'other'
+} as const;
+
+export type RefillType = typeof RefillType[keyof typeof RefillType];
 
 
 /**
@@ -5942,17 +5963,16 @@ export const RefillsApiAxiosParamCreator = function (configuration?: Configurati
          * Update refill\'s state
          * @param {string} accountId ID of the account
          * @param {string} refillId ID of the refill
-         * @param {RefillState} state New state of the refill
+         * @param {RefillState} [state] New state of the refill
+         * @param {RefillType} [type] New type of the refill
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        patchRefillId: async (accountId: string, refillId: string, state: RefillState, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        patchRefillId: async (accountId: string, refillId: string, state?: RefillState, type?: RefillType, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'accountId' is not null or undefined
             assertParamExists('patchRefillId', 'accountId', accountId)
             // verify required parameter 'refillId' is not null or undefined
             assertParamExists('patchRefillId', 'refillId', refillId)
-            // verify required parameter 'state' is not null or undefined
-            assertParamExists('patchRefillId', 'state', state)
             const localVarPath = `/accounts/{account_id}/refills/{refill_id}`
                 .replace(`{${"account_id"}}`, encodeURIComponent(String(accountId)))
                 .replace(`{${"refill_id"}}`, encodeURIComponent(String(refillId)));
@@ -5973,6 +5993,10 @@ export const RefillsApiAxiosParamCreator = function (configuration?: Configurati
                 localVarQueryParameter['state'] = state;
             }
 
+            if (type !== undefined) {
+                localVarQueryParameter['type'] = type;
+            }
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -5988,14 +6012,17 @@ export const RefillsApiAxiosParamCreator = function (configuration?: Configurati
          * Create a new refill
          * @param {string} accountId ID or CardID of the account
          * @param {number} amount Amount of the refill
+         * @param {RefillType} type Type of the refill
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        postRefill: async (accountId: string, amount: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        postRefill: async (accountId: string, amount: number, type: RefillType, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'accountId' is not null or undefined
             assertParamExists('postRefill', 'accountId', accountId)
             // verify required parameter 'amount' is not null or undefined
             assertParamExists('postRefill', 'amount', amount)
+            // verify required parameter 'type' is not null or undefined
+            assertParamExists('postRefill', 'type', type)
             const localVarPath = `/accounts/{account_id}/refills`
                 .replace(`{${"account_id"}}`, encodeURIComponent(String(accountId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -6013,6 +6040,10 @@ export const RefillsApiAxiosParamCreator = function (configuration?: Configurati
 
             if (amount !== undefined) {
                 localVarQueryParameter['amount'] = amount;
+            }
+
+            if (type !== undefined) {
+                localVarQueryParameter['type'] = type;
             }
 
 
@@ -6091,23 +6122,25 @@ export const RefillsApiFp = function(configuration?: Configuration) {
          * Update refill\'s state
          * @param {string} accountId ID of the account
          * @param {string} refillId ID of the refill
-         * @param {RefillState} state New state of the refill
+         * @param {RefillState} [state] New state of the refill
+         * @param {RefillType} [type] New type of the refill
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async patchRefillId(accountId: string, refillId: string, state: RefillState, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Refill>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.patchRefillId(accountId, refillId, state, options);
+        async patchRefillId(accountId: string, refillId: string, state?: RefillState, type?: RefillType, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Refill>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.patchRefillId(accountId, refillId, state, type, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Create a new refill
          * @param {string} accountId ID or CardID of the account
          * @param {number} amount Amount of the refill
+         * @param {RefillType} type Type of the refill
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async postRefill(accountId: string, amount: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Refill>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.postRefill(accountId, amount, options);
+        async postRefill(accountId: string, amount: number, type: RefillType, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Refill>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postRefill(accountId, amount, type, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
@@ -6171,22 +6204,24 @@ export const RefillsApiFactory = function (configuration?: Configuration, basePa
          * Update refill\'s state
          * @param {string} accountId ID of the account
          * @param {string} refillId ID of the refill
-         * @param {RefillState} state New state of the refill
+         * @param {RefillState} [state] New state of the refill
+         * @param {RefillType} [type] New type of the refill
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        patchRefillId(accountId: string, refillId: string, state: RefillState, options?: any): AxiosPromise<Refill> {
-            return localVarFp.patchRefillId(accountId, refillId, state, options).then((request) => request(axios, basePath));
+        patchRefillId(accountId: string, refillId: string, state?: RefillState, type?: RefillType, options?: any): AxiosPromise<Refill> {
+            return localVarFp.patchRefillId(accountId, refillId, state, type, options).then((request) => request(axios, basePath));
         },
         /**
          * Create a new refill
          * @param {string} accountId ID or CardID of the account
          * @param {number} amount Amount of the refill
+         * @param {RefillType} type Type of the refill
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        postRefill(accountId: string, amount: number, options?: any): AxiosPromise<Refill> {
-            return localVarFp.postRefill(accountId, amount, options).then((request) => request(axios, basePath));
+        postRefill(accountId: string, amount: number, type: RefillType, options?: any): AxiosPromise<Refill> {
+            return localVarFp.postRefill(accountId, amount, type, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -6257,25 +6292,27 @@ export class RefillsApi extends BaseAPI {
      * Update refill\'s state
      * @param {string} accountId ID of the account
      * @param {string} refillId ID of the refill
-     * @param {RefillState} state New state of the refill
+     * @param {RefillState} [state] New state of the refill
+     * @param {RefillType} [type] New type of the refill
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof RefillsApi
      */
-    public patchRefillId(accountId: string, refillId: string, state: RefillState, options?: AxiosRequestConfig) {
-        return RefillsApiFp(this.configuration).patchRefillId(accountId, refillId, state, options).then((request) => request(this.axios, this.basePath));
+    public patchRefillId(accountId: string, refillId: string, state?: RefillState, type?: RefillType, options?: AxiosRequestConfig) {
+        return RefillsApiFp(this.configuration).patchRefillId(accountId, refillId, state, type, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Create a new refill
      * @param {string} accountId ID or CardID of the account
      * @param {number} amount Amount of the refill
+     * @param {RefillType} type Type of the refill
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof RefillsApi
      */
-    public postRefill(accountId: string, amount: number, options?: AxiosRequestConfig) {
-        return RefillsApiFp(this.configuration).postRefill(accountId, amount, options).then((request) => request(this.axios, this.basePath));
+    public postRefill(accountId: string, amount: number, type: RefillType, options?: AxiosRequestConfig) {
+        return RefillsApiFp(this.configuration).postRefill(accountId, amount, type, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

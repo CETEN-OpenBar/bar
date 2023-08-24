@@ -5,10 +5,16 @@ export const parsePrice = (price: string) => {
     } else if (price.includes('.')) {
         splt = price.split('.');
     }
+
+    const cents = parseInt(splt.length>1 ? splt[1] : '00');
+    const euros = parseInt(splt[0])
+
+    if (isNaN(cents) || isNaN(euros)) throw new Error('Invalid price');
+    if (cents >= 100 || cents < 0 || euros < 0) throw new Error('Invalid price');
     
     let res = 0;
-    if (price.length > 1) res = parseInt(price[0]) * 100 + parseInt(price[1]);
-    else res = parseInt(price[0]) * 100;
+    if (splt.length > 1) res = euros * 100 + cents;
+    else res = euros * 100;
     return res;
 }
 

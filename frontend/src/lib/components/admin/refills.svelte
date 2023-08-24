@@ -1,5 +1,5 @@
 <script lang="ts">
-	import  { type Account, type Refill, RefillState } from '$lib/api';
+	import  { type Account, type Refill, RefillState, RefillType } from '$lib/api';
 	import { refillsApi } from '$lib/requests/requests';
 	import { formatDate, formatPrice } from '$lib/utils';
 	import { onMount } from 'svelte';
@@ -66,7 +66,7 @@
 					<div class="-m-1.5 overflow-x-auto">
 						<div class="p-1.5 min-w-full inline-block align-middle">
 							<div
-								class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden dark:bg-slate-900 dark:border-gray-700"
+								class="bg-white border border-gray-200 rounded-t-xl shadow-sm overflow-hidden dark:bg-slate-900 dark:border-gray-700"
 							>
 								<!-- Header -->
 								<div
@@ -82,7 +82,7 @@
 							<!-- End Header -->
 
 							<!-- Table -->
-							<table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+							<table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 dark:bg-slate-800">
 								<thead class="bg-gray-50 dark:bg-slate-800">
 									<tr>
 										<th scope="col" class="px-6 py-3 text-left">
@@ -109,6 +109,15 @@
 													class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 												>
 													Montant
+												</span>
+											</div>
+										</th>
+										<th scope="col" class="px-6 py-3 text-left">
+											<div class="flex items-center gap-x-2">
+												<span
+													class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+												>
+													Type
 												</span>
 											</div>
 										</th>
@@ -150,9 +159,44 @@
 											<td class="h-px w-72">
 												<div class="px-6 py-3">
                                                     <select
-                                                        class="block text-sm dark:text-white/[.8] dark:bg-slate-900 break-words p-2 bg-transparent"
-                                                        value={refill.state}
-                                                        disabled
+                                                        class="block text-sm dark:text-white/[.8] dark:bg-slate-800 break-words p-2 bg-transparent"
+                                                        bind:value={refill.type}
+														on:change={(e) => {
+															// @ts-ignore
+															refill.type = e.target?.value;
+															refillsApi()
+																.patchRefillId(account.id, refill.id, refill.state, refill.type, { withCredentials: true })
+																.then((res) => {
+																	reloadRefills();
+																})
+																.catch((err) => {
+																	console.error(err);
+																});
+														}}
+                                                    >
+													<option value={RefillType.RefillOther}>Autre</option>
+													<option value={RefillType.RefillCash}>Liquide</option>
+													<option value={RefillType.RefillCard}>Carte</option>
+												</select>
+												</div>
+											</td>
+											<td class="h-px w-72">
+												<div class="px-6 py-3">
+                                                    <select
+                                                        class="block text-sm dark:text-white/[.8] dark:bg-slate-800 break-words p-2 bg-transparent"
+                                                        bind:value={refill.state}
+														on:change={(e) => {
+															// @ts-ignore
+															refill.state = e.target?.value;
+															refillsApi()
+																.patchRefillId(account.id, refill.id, refill.state, refill.type, { withCredentials: true })
+																.then((res) => {
+																	reloadRefills();
+																})
+																.catch((err) => {
+																	console.error(err);
+																});
+														}}
                                                     >
                                                         <option value="{RefillState.Valid}">Valide</option>
                                                         <option value="{RefillState.Canceled}">Annulé</option>
@@ -177,7 +221,7 @@
 
 							<!-- Footer -->
 							<div
-								class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-t border-gray-200 dark:border-gray-700"
+								class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-t border-gray-200 dark:border-gray-700 dark:bg-slate-800"
 							>
 								<div>
 									<div class="inline-flex gap-x-2">

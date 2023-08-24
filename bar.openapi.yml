@@ -1368,15 +1368,12 @@ paths:
                   page:
                     type: integer
                     format: uint64
-                    
                   limit:
                     type: integer
                     format: uint64
-                    
                   max_page:
                     type: integer
                     format: uint64
-                    
                 required:
                   - items
                   - page
@@ -1511,6 +1508,13 @@ paths:
           schema:
             type: integer
             format: uint64
+        - name: type
+          in: query
+          description: Type of the refill
+          required: true
+          schema:
+            type: string
+            $ref: '#/components/schemas/RefillType'
       responses:
         '201':
           description: ''
@@ -1572,10 +1576,17 @@ paths:
         - name: state
           in: query
           description: New state of the refill
-          required: true
+          required: false
           schema:
             type: string
             $ref: '#/components/schemas/RefillState'
+        - name: type
+          in: query
+          description: New type of the refill
+          required: false
+          schema:
+            type: string
+            $ref: '#/components/schemas/RefillType'
       responses:
         '200':
           description: ''
@@ -4275,6 +4286,16 @@ components:
       enum:
         - valid
         - canceled
+    RefillType:
+      type: string
+      enum:
+        - cash
+        - card
+        - other
+      x-enum-varnames:
+        - RefillCash
+        - RefillCard
+        - RefillOther
     Refill:
       type: object
       properties:
@@ -4302,6 +4323,8 @@ components:
           $ref: '#/components/schemas/UUID'
         canceled_by_name:
           type: string
+        type:
+          $ref: '#/components/schemas/RefillType'
         deleted_at:
           type: integer
           format: uint64
@@ -4316,6 +4339,7 @@ components:
         - issued_at
         - issued_by
         - issued_by_name
+        - type
     CarouselTextCreate:
       type: object
       properties:

@@ -240,6 +240,7 @@ func (s *Server) PostRefill(c echo.Context, accountId string, params autogen.Pos
 			AccountId:    account.Id,
 			AccountName:  account.Name(),
 			Amount:       params.Amount,
+			Type:         params.Type,
 			Id:           uuid.New(),
 			IssuedAt:     uint64(time.Now().Unix()),
 			IssuedBy:     admin.Id,
@@ -294,20 +295,26 @@ func (s *Server) PatchRefillId(c echo.Context, accountId autogen.UUID, refillId 
 		return Error500(c)
 	}
 
-	oldState := refill.State
-	refill.State = params.State
+	if params.State != nil {
+		oldState := refill.State
+		refill.State = *params.State
 
-	if oldState == autogen.Valid && params.State == autogen.Canceled {
-		account.Balance -= int64(refill.Amount)
+		if oldState == autogen.Valid && *params.State == autogen.Canceled {
+			account.Balance -= int64(refill.Amount)
 
-		name := admin.Name()
+			name := admin.Name()
 
-		refill.CanceledBy = &admin.Id
-		refill.CanceledByName = &name
-	} else if oldState == autogen.Canceled && params.State == autogen.Valid {
-		account.Balance += int64(refill.Amount)
-		refill.CanceledBy = nil
-		refill.CanceledByName = nil
+			refill.CanceledBy = &admin.Id
+			refill.CanceledByName = &name
+		} else if oldState == autogen.Canceled && *params.State == autogen.Valid {
+			account.Balance += int64(refill.Amount)
+			refill.CanceledBy = nil
+			refill.CanceledByName = nil
+		}
+	}
+
+	if params.Type != nil {
+		refill.Type = *params.Type
 	}
 
 	_, err = s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {
