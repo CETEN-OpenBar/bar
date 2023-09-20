@@ -1,14 +1,5 @@
 <script lang="ts">
     import { api } from "$lib/config/config";
-    import { onMount } from "svelte";
-
-    let redirectTo: string = "";
-
-    onMount(() => {
-        origin = window.location.origin;
-        // url encode
-        redirectTo = encodeURIComponent(origin + "/admin");
-    });
 </script>
 
 <style>
@@ -30,6 +21,6 @@
 <!-- Connect with Google at the middle of the screen -->
 <div class="flex flex-col items-center justify-center h-screen">
     <div class="flex flex-col items-center justify-center">
-        <a href={api() + "/auth/google?r="+redirectTo} class="connect-button mt-4">Connection avec Google</a>
+        <a href={api() + "/auth/google?r=admin"} class="connect-button mt-4">Connection avec Google</a>
     </div>
 </div>

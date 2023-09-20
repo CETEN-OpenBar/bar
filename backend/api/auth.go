@@ -153,6 +153,11 @@ type googleUser struct {
 	Picture   string `json:"picture"`
 }
 
+func DefaultRedirect(c echo.Context) error {
+	conf := config.GetConfig()
+	return c.Redirect(http.StatusPermanentRedirect, conf.ApiConfig.FrontendBasePath+"/borne")
+}
+
 // (GET /auth/google/callback)
 func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 	// Get account from state and delete state
@@ -162,21 +167,22 @@ func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 	}
 	stateCache.Delete(params.State)
 
+	conf := config.GetConfig()
+
 	account, err := s.DBackend.GetAccount(c.Request().Context(), accountID.(string))
 	if err != nil {
 		if err != mongo.ErrNoDocuments {
 			logrus.Error(err)
-			return Error500(c)
+			return DefaultRedirect(c)
 		}
 		// Check if account is onBoard
 		acc, found := onBoardCache.Get(accountID.(string))
 		if !found {
-			return ErrorAccNotFound(c)
+			logrus.Error(err)
+			return DefaultRedirect(c)
 		}
 		account = acc.(*models.Account)
 	}
-
-	conf := config.GetConfig()
 
 	// Get token from Google
 	oauth2Config := oauth2.Config{
@@ -193,7 +199,7 @@ func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 	token, err := oauth2Config.Exchange(c.Request().Context(), params.Code)
 	if err != nil {
 		logrus.Error(err)
-		return Error500(c)
+		return DefaultRedirect(c)
 	}
 
 	// Get user from Google
@@ -201,7 +207,7 @@ func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 	resp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
 	if err != nil {
 		logrus.Error(err)
-		return Error500(c)
+		return DefaultRedirect(c)
 	}
 	defer resp.Body.Close()
 
@@ -209,25 +215,25 @@ func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 	err = json.NewDecoder(resp.Body).Decode(usr)
 	if err != nil {
 		logrus.Error(err)
-		return Error500(c)
+		return DefaultRedirect(c)
 	}
 
 	adminService, err := admin.NewService(c.Request().Context(), option.WithTokenSource(oauth2Config.TokenSource(c.Request().Context(), token)))
 	if err != nil {
 		logrus.Error(err)
-		return Error500(c)
+		return DefaultRedirect(c)
 	}
 
 	t, err := adminService.Users.Get(usr.ID).Projection("custom").CustomFieldMask("Education").ViewType("domain_public").Do()
 	if err != nil {
 		logrus.Error(err)
-		return Error500(c)
+		return DefaultRedirect(c)
 	}
 	edc := &education{}
 	err = json.Unmarshal(t.CustomSchemas["Education"], edc)
 	if err != nil {
 		logrus.Error(err)
-		return Error500(c)
+		return DefaultRedirect(c)
 	}
 
 	account.FirstName = usr.FirstName
@@ -242,7 +248,7 @@ func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 		err = s.DBackend.CreateAccount(c.Request().Context(), account)
 		if err != nil {
 			logrus.Error(err)
-			return Error500(c)
+			return DefaultRedirect(c)
 		}
 
 		// Delete ONBOARD cookie
@@ -251,7 +257,7 @@ func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 		err = s.DBackend.UpdateAccount(c.Request().Context(), account)
 		if err != nil {
 			logrus.Error(err)
-			return Error500(c)
+			return DefaultRedirect(c)
 		}
 	}
 
@@ -259,7 +265,7 @@ func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 
 	r, found := redirectCache.Get(params.State)
 	if !found {
-		return Error500(c)
+		return DefaultRedirect(c)
 	}
 	redirectCache.Delete(params.State)
 
@@ -286,7 +292,7 @@ func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams
 	token, err := oauth2Config.Exchange(c.Request().Context(), params.Code)
 	if err != nil {
 		logrus.Error(err)
-		return Error500(c)
+		return DefaultRedirect(c)
 	}
 
 	// Get user from Google
@@ -294,7 +300,7 @@ func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams
 	resp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
 	if err != nil {
 		logrus.Error(err)
-		return Error500(c)
+		return DefaultRedirect(c)
 	}
 	defer resp.Body.Close()
 
@@ -302,7 +308,7 @@ func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams
 	err = json.NewDecoder(resp.Body).Decode(usr)
 	if err != nil {
 		logrus.Error(err)
-		return Error500(c)
+		return DefaultRedirect(c)
 	}
 
 	account, err := s.DBackend.GetAccountByGoogle(c.Request().Context(), usr.ID)
@@ -311,25 +317,25 @@ func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams
 			return ErrorAccNotFound(c)
 		}
 		logrus.Error(err)
-		return Error500(c)
+		return DefaultRedirect(c)
 	}
 
 	adminService, err := admin.NewService(c.Request().Context(), option.WithTokenSource(oauth2Config.TokenSource(c.Request().Context(), token)))
 	if err != nil {
 		logrus.Error(err)
-		return Error500(c)
+		return DefaultRedirect(c)
 	}
 
 	t, err := adminService.Users.Get(usr.ID).Projection("custom").CustomFieldMask("Education").ViewType("domain_public").Do()
 	if err != nil {
 		logrus.Error(err)
-		return Error500(c)
+		return DefaultRedirect(c)
 	}
 	edc := &education{}
 	err = json.Unmarshal(t.CustomSchemas["Education"], edc)
 	if err != nil {
 		logrus.Error(err)
-		return Error500(c)
+		return DefaultRedirect(c)
 	}
 
 	account.FirstName = usr.FirstName
@@ -341,13 +347,12 @@ func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams
 	err = s.DBackend.UpdateAccount(c.Request().Context(), account)
 	if err != nil {
 		logrus.Error(err)
-		return Error500(c)
+		return DefaultRedirect(c)
 	}
 
 	r, found := redirectCache.Get(params.State)
 	if !found {
-		logrus.Error("no redirect found")
-		return Error500(c)
+		return c.Redirect(http.StatusPermanentRedirect, conf.ApiConfig.FrontendBasePath+"/borne/connected")
 	}
 	redirectCache.Delete(params.State)
 
@@ -410,13 +415,13 @@ func (s *Server) ConnectGoogle(c echo.Context, p autogen.ConnectGoogleParams) er
 	conf := config.GetConfig()
 
 	// Get ?r=
-	redirect := p.R
+	rel := p.R
 
 	// Check if it's a safe redirect (TODO: check if this is correct)
-	if strings.HasPrefix(redirect, conf.ApiConfig.FrontendBasePath) {
-		redirectCache.Set(redirect, true, cache.DefaultExpiration)
+	switch rel {
+	case "admin":
+		rel = conf.ApiConfig.FrontendBasePath + "/admin"
 	}
-
 	// Init OAuth2 flow with Google
 	oauth2Config := oauth2.Config{
 		ClientID:     conf.OauthConfig.GoogleClientID,
@@ -432,7 +437,7 @@ func (s *Server) ConnectGoogle(c echo.Context, p autogen.ConnectGoogleParams) er
 	// state is not nonce
 	state := uuid.NewString()
 
-	redirectCache.Set(state, redirect, cache.DefaultExpiration)
+	redirectCache.Set(state, rel, cache.DefaultExpiration)
 
 	hostDomainOption := oauth2.SetAuthURLParam("hd", "telecomnancy.net")
 	// Redirect to Google
