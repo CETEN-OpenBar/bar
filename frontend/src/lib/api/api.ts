@@ -119,6 +119,12 @@ export interface Account {
      * @memberof Account
      */
     'deleted_by'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Account
+     */
+    'wants_to_staff': boolean;
 }
 
 
@@ -1322,6 +1328,27 @@ export type RefillType = typeof RefillType[keyof typeof RefillType];
 /**
  * 
  * @export
+ * @interface ToggleAccountWantsToStaff200Response
+ */
+export interface ToggleAccountWantsToStaff200Response {
+    /**
+     * 
+     * @type {Messages}
+     * @memberof ToggleAccountWantsToStaff200Response
+     */
+    'message'?: Messages;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ToggleAccountWantsToStaff200Response
+     */
+    'wants_to_staff': boolean;
+}
+
+
+/**
+ * 
+ * @export
  * @interface Transaction
  */
 export interface Transaction {
@@ -1617,6 +1644,42 @@ export interface UpdateItem {
  */
 export const AccountsApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
+        /**
+         * Toggles the wants_to_staff flag
+         * @summary 
+         * @param {string} accountId ID of the account
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        adminToggleAccountWantsToStaff: async (accountId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'accountId' is not null or undefined
+            assertParamExists('adminToggleAccountWantsToStaff', 'accountId', accountId)
+            const localVarPath = `/accounts/{account_id}/toggles/wants_to_staff`
+                .replace(`{${"account_id"}}`, encodeURIComponent(String(accountId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
         /**
          * Get the basic current account\'s information
          * @summary 
@@ -1952,6 +2015,38 @@ export const AccountsApiAxiosParamCreator = function (configuration?: Configurat
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * Toggles the wants_to_staff flag
+         * @summary 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        toggleAccountWantsToStaff: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/account/toggles/wants_to_staff`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication auth required
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -1962,6 +2057,17 @@ export const AccountsApiAxiosParamCreator = function (configuration?: Configurat
 export const AccountsApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = AccountsApiAxiosParamCreator(configuration)
     return {
+        /**
+         * Toggles the wants_to_staff flag
+         * @summary 
+         * @param {string} accountId ID of the account
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async adminToggleAccountWantsToStaff(accountId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ToggleAccountWantsToStaff200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.adminToggleAccountWantsToStaff(accountId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
         /**
          * Get the basic current account\'s information
          * @summary 
@@ -2061,6 +2167,16 @@ export const AccountsApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.postAccounts(newAccount, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
+        /**
+         * Toggles the wants_to_staff flag
+         * @summary 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async toggleAccountWantsToStaff(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ToggleAccountWantsToStaff200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.toggleAccountWantsToStaff(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
     }
 };
 
@@ -2071,6 +2187,16 @@ export const AccountsApiFp = function(configuration?: Configuration) {
 export const AccountsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = AccountsApiFp(configuration)
     return {
+        /**
+         * Toggles the wants_to_staff flag
+         * @summary 
+         * @param {string} accountId ID of the account
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        adminToggleAccountWantsToStaff(accountId: string, options?: any): AxiosPromise<ToggleAccountWantsToStaff200Response> {
+            return localVarFp.adminToggleAccountWantsToStaff(accountId, options).then((request) => request(axios, basePath));
+        },
         /**
          * Get the basic current account\'s information
          * @summary 
@@ -2161,6 +2287,15 @@ export const AccountsApiFactory = function (configuration?: Configuration, baseP
         postAccounts(newAccount?: NewAccount, options?: any): AxiosPromise<Account> {
             return localVarFp.postAccounts(newAccount, options).then((request) => request(axios, basePath));
         },
+        /**
+         * Toggles the wants_to_staff flag
+         * @summary 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        toggleAccountWantsToStaff(options?: any): AxiosPromise<ToggleAccountWantsToStaff200Response> {
+            return localVarFp.toggleAccountWantsToStaff(options).then((request) => request(axios, basePath));
+        },
     };
 };
 
@@ -2171,6 +2306,18 @@ export const AccountsApiFactory = function (configuration?: Configuration, baseP
  * @extends {BaseAPI}
  */
 export class AccountsApi extends BaseAPI {
+    /**
+     * Toggles the wants_to_staff flag
+     * @summary 
+     * @param {string} accountId ID of the account
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AccountsApi
+     */
+    public adminToggleAccountWantsToStaff(accountId: string, options?: AxiosRequestConfig) {
+        return AccountsApiFp(this.configuration).adminToggleAccountWantsToStaff(accountId, options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * Get the basic current account\'s information
      * @summary 
@@ -2277,6 +2424,17 @@ export class AccountsApi extends BaseAPI {
      */
     public postAccounts(newAccount?: NewAccount, options?: AxiosRequestConfig) {
         return AccountsApiFp(this.configuration).postAccounts(newAccount, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Toggles the wants_to_staff flag
+     * @summary 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AccountsApi
+     */
+    public toggleAccountWantsToStaff(options?: AxiosRequestConfig) {
+        return AccountsApiFp(this.configuration).toggleAccountWantsToStaff(options).then((request) => request(this.axios, this.basePath));
     }
 }
 

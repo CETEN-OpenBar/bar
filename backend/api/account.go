@@ -400,3 +400,50 @@ func (s *Server) GetAccountAdmin(c echo.Context) error {
 	resp.VisitGetAccountAdminResponse(c.Response())
 	return nil
 }
+
+// (GET /account/toggles/wants_to_staff)
+func (s *Server) ToggleAccountWantsToStaff(c echo.Context) error {
+	account, err := MustGetUser(c)
+	if err != nil {
+		return nil
+	}
+
+	account.WantsToStaff = !account.WantsToStaff
+
+	err = s.UpdateAccount(c.Request().Context(), account)
+	if err != nil {
+		return Error500(c)
+	}
+
+	return autogen.ToggleAccountWantsToStaff200JSONResponse{
+		WantsToStaff: account.WantsToStaff,
+	}.VisitToggleAccountWantsToStaffResponse(c.Response())
+}
+
+// (GET /accounts/{account_id}/toggles/wants_to_staff)
+func (s *Server) AdminToggleAccountWantsToStaff(c echo.Context, accountId autogen.UUID) error {
+	admin, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
+
+	account, err := s.DBackend.GetAccount(c.Request().Context(), accountId.String())
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorAccNotFound(c)
+		}
+		return Error500(c)
+	}
+
+	account.WantsToStaff = !account.WantsToStaff
+
+	logrus.Infof("[%s] Updated %s's wants to staff flag to %v", admin.Id.String(), accountId.String(), account.WantsToStaff)
+	err = s.UpdateAccount(c.Request().Context(), account)
+	if err != nil {
+		return Error500(c)
+	}
+
+	return autogen.AdminToggleAccountWantsToStaff200JSONResponse{
+		WantsToStaff: account.WantsToStaff,
+	}.VisitAdminToggleAccountWantsToStaffResponse(c.Response())
+}

@@ -431,6 +431,53 @@ paths:
         - auth: []
       tags:
         - accounts
+  /account/toggles/wants_to_staff:
+    get:
+      description: Toggles the wants_to_staff flag
+      summary: ''
+      operationId: toggleAccountWantsToStaff
+      responses:
+        '200':
+          description: Changed account's wants_to_staff flag
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    $ref: '#/components/schemas/Messages'
+                  wants_to_staff:
+                    type: boolean
+                required:
+                  - wants_to_staff
+        '401':
+          description: 'Not connected'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: 'Account not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '409':
+          description: 'Conflict'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - auth: []
+      tags:
+        - accounts
   /accounts:
     description: Get all accounts informations
     get:
@@ -742,6 +789,60 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
         '404':
           description: 'Account not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+        - admin_auth: []
+      tags:
+        - accounts
+  /accounts/{account_id}/toggles/wants_to_staff:
+    get:
+      description: Toggles the wants_to_staff flag
+      summary: ''
+      operationId: adminToggleAccountWantsToStaff
+      parameters:
+        - name: account_id
+          in: path
+          description: ID of the account
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        '200':
+          description: Changed account's wants_to_staff flag
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    $ref: '#/components/schemas/Messages'
+                  wants_to_staff:
+                    type: boolean
+                required:
+                  - wants_to_staff
+        '401':
+          description: 'Not connected'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: 'Account not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '409':
+          description: 'Conflict'
           content:
             application/json:
               schema:
@@ -3959,6 +4060,8 @@ components:
           format: uint64
         deleted_by:
           $ref: '#/components/schemas/UUID'
+        wants_to_staff:
+          type: boolean
       required:
         - id
         - first_name
@@ -3971,6 +4074,7 @@ components:
         - state
         - card_id
         - card_pin
+        - wants_to_staff
     ItemState:
       type: string
       description: State of the item
