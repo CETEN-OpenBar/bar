@@ -879,7 +879,7 @@
 								</button>
 
 								<p class="text-sm self-center text-gray-600 dark:text-gray-400">
-									Page {page + 1} / {max_page + 1}
+									Page {page} / {max_page}
 								</p>
 
 								<button
