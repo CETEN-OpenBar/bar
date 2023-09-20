@@ -143,6 +143,7 @@ func (s *Server) PostAccounts(c echo.Context) error {
 
 	account := &models.Account{
 		Account: autogen.Account{
+			Id:           uuid.New(),
 			Balance:      req.Balance,
 			CardId:       cardId,
 			EmailAddress: req.EmailAddress,
@@ -218,6 +219,7 @@ func (s *Server) PatchAccountId(c echo.Context, accountId autogen.UUID) error {
 	var req autogen.UpdateAccountAdmin
 	err = c.Bind(&req)
 	if err != nil {
+		logrus.Error(err)
 		return Error400(c)
 	}
 
@@ -226,6 +228,7 @@ func (s *Server) PatchAccountId(c echo.Context, accountId autogen.UUID) error {
 		if err == mongo.ErrNoDocuments {
 			return ErrorAccNotFound(c)
 		}
+		logrus.Error(err)
 		return Error500(c)
 	}
 
@@ -249,7 +252,7 @@ func (s *Server) PatchAccountId(c echo.Context, accountId autogen.UUID) error {
 		r := *req.Role
 
 		// Can only set the roles to something below the current role
-		switch account.Role {
+		switch admin.Role {
 		case autogen.AccountSuperAdmin:
 			account.Account.Role = r
 		case autogen.AccountAdmin:
@@ -281,6 +284,7 @@ func (s *Server) PatchAccountId(c echo.Context, accountId autogen.UUID) error {
 
 	err = s.UpdateAccount(c.Request().Context(), account)
 	if err != nil {
+		logrus.Error(err)
 		return Error500(c)
 	}
 
