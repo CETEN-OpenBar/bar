@@ -1,0 +1,111 @@
+<script lang="ts">
+	import { page } from "$app/stores";
+
+	// New type for modules with Name, Color and Link
+	type Module = {
+		name: string;
+		color: string;
+		link: string;
+	};
+
+	// Array of modules
+	let modules = [] as Module[];
+	let currentPage = 0;
+
+	// Add modules to array (append more when editing modules)
+	// TODO: make sure all modules are here
+
+	// Color code :
+	// Blue => panel related
+	// Green => product related
+	// Red => account related
+
+	modules.push({
+		name: 'Dashboard',
+		color: 'bg-blue-600',
+		link: '/panel/dash'
+	});
+
+	modules.push({
+		name: 'Création de comptes',
+		color: 'bg-red-600',
+		link: '/panel/accounts'
+	});
+
+	modules.push({
+		name: 'Création de produits',
+		color: 'bg-green-600',
+		link: '/panel/accounts'
+	});
+
+	modules.push({
+		name: 'Restock',
+		color: 'bg-green-600',
+		link: '/panel/accounts'
+	});
+
+	// fill with rdm bullshit for test
+	// TODO: remove this bs
+	for (let i = 0; i < 100; i++) {
+		modules.push({
+			name: 'Module ' + i,
+			color: 'bg-blue-600',
+			link: '/panel/dash'
+		});
+	}
+
+	// Sort the modules by name
+	modules.sort((a, b) => a.name.localeCompare(b.name));
+</script>
+
+<div class="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">
+	{#each modules as module, i}
+		<!-- only display modules that are in the current page -->
+		{#if i >= currentPage * 12 && i < (currentPage + 1) * 12}
+			<a href={module.link}>
+				<div
+					class="flex flex-col items-center justify-center h-32 w-64 break-words flex-wrap text-center rounded-lg shadow-lg cursor-pointer {module.color}"
+				>
+					<p class="text-2xl font-bold text-white p-5">{module.name}</p>
+				</div>
+			</a>
+		{/if}
+	{/each}
+
+
+	<!-- if page is not whole, fill it with invisible modules -->
+	{#if currentPage == modules.length % 12 && modules.length % 12 != 0}
+		{#each Array(12 - (modules.length % 12)) as _}
+		<div class="flex flex-col items-center justify-center h-32 w-64 break-words flex-wrap text-center rounded-lg shadow-lg ">
+			<p class="text-2xl font-bold text-white p-5"></p>
+		</div>
+		{/each}
+	{/if}
+</div>
+
+<!-- arrows for navigation -->
+<div id="pagination" class="mt-5">
+	<button
+		class=" text-white font-bold py-2 px-4 rounded-l {currentPage == 0
+			? 'bg-gray-400 pointer-events-none'
+			: 'bg-blue-600 hover:bg-blue-700'}"
+		on:click={() => {
+			if (currentPage > 0) currentPage--;
+		}}
+	>
+		Précédent
+	</button>
+	<button
+		class="text-white font-bold py-2 px-4 rounded-r {(currentPage +
+			1) *
+			12 <
+		modules.length
+			? 'bg-blue-600 hover:bg-blue-700'
+			: 'bg-gray-400 pointer-events-none'}"
+		on:click={() => {
+			if ((currentPage + 1) * 12 < modules.length) currentPage++;
+		}}
+	>
+		Suivant
+	</button>
+</div>
