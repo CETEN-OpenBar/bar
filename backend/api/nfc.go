@@ -3,6 +3,7 @@ package api
 import (
 	"bar/autogen"
 	"crypto/sha256"
+	"fmt"
 	"io"
 	"os"
 
@@ -39,7 +40,7 @@ func (s *Server) GetNFCChecksum(c echo.Context) error {
 		logrus.WithError(err).Fatal("failed to copy process file")
 	}
 
-	storedChecksum = string(h.Sum(nil))
+	storedChecksum = fmt.Sprintf("%x", h.Sum(nil))
 
 	return autogen.GetNFCChecksum200JSONResponse{Checksum: storedChecksum}.VisitGetNFCChecksumResponse(c.Response())
 }
