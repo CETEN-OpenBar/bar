@@ -1,5 +1,5 @@
 <script lang="ts">
-    export const callback: (card: string) => void = () => {};
+    export let callback: (card: string) => void = () => {};
 
     let socket = new WebSocket('ws://localhost:3737/');
 

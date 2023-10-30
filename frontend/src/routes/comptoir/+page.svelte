@@ -10,6 +10,7 @@
 	import FsLoading from '$lib/components/borne/fs_loading.svelte';
 	import { api } from '$lib/config/config';
 	import { fly } from 'svelte/transition';
+	import ReadCard from '$lib/components/readCard.svelte';
 
 	let fakeImages: Array<CarouselImage> = [
 		{
@@ -79,16 +80,9 @@
 		pin: ''
 	};
 
-	let buffer = '';
-	function onType(e: KeyboardEvent) {
-		if (e.key !== 'Enter') {
-			buffer += e.key;
-		} else {
-			card.id = buffer;
-			buffer = '';
-		}
+	function cardCallback(id: string) {
+		card.id = id;
 	}
-
 	let incorrectPin = '';
 
 	function pinCallback(pin: string) {
@@ -127,7 +121,7 @@
 	}
 </script>
 
-<svelte:window on:keydown={onType} />
+<ReadCard callback={cardCallback} />
 
 {#if incorrectPin != ''}
 	<Error error={incorrectPin} />

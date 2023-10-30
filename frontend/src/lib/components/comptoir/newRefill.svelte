@@ -3,6 +3,7 @@
 	import { refillsApi } from '$lib/requests/requests';
 	import { formatPrice, parsePrice } from '$lib/utils';
 	import Error from '../error.svelte';
+	import ReadCard from '../readCard.svelte';
 	import Success from '../success.svelte';
 
 	export let close: () => void;
@@ -10,23 +11,15 @@
 	let success = '';
 	let error = '';
 
+	function cardCallback(id: string) {
+		card.id = id;
+	}
+	let rebounce = 0;
 	let card = {
 		id: '',
 		amount: 0,
 		type: RefillType.RefillOther
 	};
-
-	let rebounce = 0;
-
-	let buffer = '';
-	function onType(e: KeyboardEvent) {
-		if (e.key !== 'Enter') {
-			buffer += e.key;
-		} else {
-			card.id = buffer;
-			buffer = '';
-		}
-	}
 </script>
 
 {#if success != ''}
@@ -37,7 +30,8 @@
 	<Error {error} />
 {/if}
 
-<svelte:window on:keydown={onType} />
+
+<ReadCard callback={cardCallback} />
 
 <!-- Popup overlay -->
 <button
