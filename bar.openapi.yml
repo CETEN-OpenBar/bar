@@ -3836,6 +3836,47 @@ paths:
         - admin_auth: []
       tags:
         - deleted
+  /nfc:
+    get:
+      description: "Download the current NFC reader process"
+      operationId: getNFC
+      responses:
+        '200':
+          description: "NFC reader process"
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+  /nfc/checksum:
+    get:
+      description: "View the checksum of the current NFC reader process."
+      operationId: getNFCChecksum
+      responses:
+        '200':
+          description: "Checksum of the current NFC reader process."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  checksum:
+                    type: string
+                    example: "0x12345678"
+                required:
+                  - checksum
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
 components:
   schemas:
     UUID:
@@ -4122,7 +4163,11 @@ components:
     ItemPrices:
       type: object
       properties:
-        normal:
+        membre_bureau:
+          type: integer
+          format: uint64
+          example: 1000
+        membre_privilegie:
           type: integer
           format: uint64
           example: 1000
