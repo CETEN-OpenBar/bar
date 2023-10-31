@@ -143,7 +143,7 @@ func (s *Server) PostTransactions(c echo.Context) error {
 
 // (GET /accounts/{account_id}/transactions)
 func (s *Server) GetAccountTransactions(c echo.Context, accountId autogen.UUID, params autogen.GetAccountTransactionsParams) error {
-	_, err := MustGetUser(c)
+	_, err := MustGetAdmin(c)
 	if err != nil {
 		return nil
 	}
@@ -291,7 +291,7 @@ func (s *Server) MarkDeleteTransactionId(c echo.Context, accountId autogen.UUID,
 
 // (GET /accounts/{account_id}/transactions/{transaction_id})
 func (s *Server) GetTransactionId(c echo.Context, accountId autogen.UUID, transactionId autogen.UUID) error {
-	_, err := MustGetUser(c)
+	_, err := MustGetAdmin(c)
 	if err != nil {
 		return nil
 	}
@@ -312,7 +312,7 @@ func (s *Server) GetTransactionId(c echo.Context, accountId autogen.UUID, transa
 
 // (PATCH /accounts/{account_id}/transactions/{transaction_id})
 func (s *Server) PatchTransactionId(c echo.Context, accountId autogen.UUID, transactionId autogen.UUID, params autogen.PatchTransactionIdParams) error {
-	_, err := MustGetUser(c)
+	_, err := MustGetAdmin(c)
 	if err != nil {
 		return nil
 	}
@@ -433,7 +433,7 @@ func (s *Server) PatchTransactionId(c echo.Context, accountId autogen.UUID, tran
 
 // (PATCH /accounts/{account_id}/transactions/{transaction_id}/{item_id})
 func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, transactionId autogen.UUID, itemId autogen.UUID, params autogen.PatchTransactionItemIdParams) error {
-	_, err := MustGetUser(c)
+	_, err := MustGetAdmin(c)
 	if err != nil {
 		return nil
 	}
@@ -536,7 +536,7 @@ func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, 
 
 // (GET /transactions)
 func (s *Server) GetTransactions(c echo.Context, params autogen.GetTransactionsParams) error {
-	_, err := MustGetUser(c)
+	_, err := MustGetAdmin(c)
 	if err != nil {
 		return nil
 	}
