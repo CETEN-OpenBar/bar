@@ -290,11 +290,26 @@ func (s *Server) CallbackLinking(c echo.Context, params autogen.CallbackParams, 
 	if account.State == autogen.AccountNotOnBoarded {
 		account.State = autogen.AccountOK
 
-		err = s.DBackend.CreateAccount(c.Request().Context(), account)
+		// Check if an account with this Google ID and no Card ID exists
+		acc, err := s.DBackend.GetAccountByGoogle(c.Request().Context(), usr.ID)
 		if err != nil {
-			logrus.Error(err)
-			return DefaultRedirect(c)
+			if err != mongo.ErrNoDocuments {
+				logrus.Error(err)
+				return DefaultRedirect(c)
+			}
+
+			err = s.DBackend.CreateAccount(c.Request().Context(), account)
+			if err != nil {
+				logrus.Error(err)
+				return DefaultRedirect(c)
+			}
 		}
+
+		if acc.CardId == "" {
+			acc.CardId = account.CardId
+		}
+
+		account = acc
 
 		// Delete ONBOARD cookie
 		s.RemoveOnBoardCookie(c)
