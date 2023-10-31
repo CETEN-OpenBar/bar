@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/peterhellberg/acr122u"
 	"github.com/sirupsen/logrus"
+	"github.com/yyewolf/acr122u"
 )
 
 func main() {
