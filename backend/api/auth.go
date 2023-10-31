@@ -309,6 +309,12 @@ func (s *Server) CallbackLinking(c echo.Context, params autogen.CallbackParams, 
 			acc.CardId = account.CardId
 		}
 
+		err = s.DBackend.UpdateAccount(c.Request().Context(), acc)
+		if err != nil {
+			logrus.Error(err)
+			return DefaultRedirect(c)
+		}
+
 		account = acc
 
 		// Delete ONBOARD cookie
