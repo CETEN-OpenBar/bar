@@ -12,9 +12,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var apiUrl = "https://api.bar.telecomnancy.net/nfc"
-
-// var apiUrl = "http://localhost:8080/nfc"
+// var apiUrl = "https://api.bar.telecomnancy.net/nfc"
+var apiUrl = "http://localhost:8080/nfc"
 
 func init() {
 	// Get checksum of current process file
@@ -37,7 +36,8 @@ func init() {
 	// and compare
 	r, err := http.Get(fmt.Sprintf("%s/checksum", apiUrl))
 	if err != nil {
-		logrus.WithError(err).Fatal("failed to get checksum")
+		logrus.Error("failed to get checksum, cannot perform update")
+		return
 	}
 
 	if r.StatusCode != http.StatusOK {

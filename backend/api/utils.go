@@ -95,5 +95,11 @@ func MustGetAdmin(c echo.Context) (*models.Account, error) {
 	}
 
 	account := c.Get("adminAccount").(*models.Account)
+
+	if account.State == autogen.AccountNotOnBoarded {
+		ErrorForbidden(c)
+		return nil, errors.New("not authenticated")
+	}
+
 	return account, nil
 }

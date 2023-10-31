@@ -105,10 +105,12 @@ func (s *Server) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 				return Error500(c)
 			}
 
-			c.Set("adminLogged", true)
-			c.Set("adminAccountID", adminId)
-			c.Set("adminAccount", account)
-			c.Set("adminAccountRole", account.Role)
+			if account.IsAdmin() {
+				c.Set("adminLogged", true)
+				c.Set("adminAccountID", adminId)
+				c.Set("adminAccount", account)
+				c.Set("adminAccountRole", account.Role)
+			}
 		}
 
 		return next(c)
