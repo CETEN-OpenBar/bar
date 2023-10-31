@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { dev } from '$app/environment';
 	export let callback: (card: string) => void = () => {};
 
 	let socket = new WebSocket('ws://localhost:3737/');
@@ -22,5 +23,17 @@
 		};
 	}
 
+	let buffer = '';
+	function handleInput(event: KeyboardEvent) {
+		if (event.key === 'Enter') {
+			callback(buffer);
+			buffer = '';
+		} else {
+			buffer += event.key;
+		}
+	}
+
 	defineSocket(socket);
 </script>
+
+<svelte:window on:keydown={handleInput} />
