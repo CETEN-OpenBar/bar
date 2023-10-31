@@ -1,14 +1,26 @@
 <script lang="ts">
-    export let callback: (card: string) => void = () => {};
+	export let callback: (card: string) => void = () => {};
 
-    let socket = new WebSocket('ws://localhost:3737/');
+	let socket = new WebSocket('ws://localhost:3737/');
 
-    type WsData = {
-        uid: string;
-    };
+	function defineSocket(socket: WebSocket) {
+		type WsData = {
+			uid: string;
+		};
 
-    socket.onmessage = (event) => {
-        const data: WsData = JSON.parse(event.data);
-        callback(data.uid);
-    };
+		socket.onmessage = (event) => {
+			const data: WsData = JSON.parse(event.data);
+			callback(data.uid);
+		};
+
+		// on any error the websocket should try to reconnect 1 second later
+		socket.onerror = () => {
+			setTimeout(() => {
+				socket = new WebSocket('ws://localhost:3737/');
+				defineSocket(socket);
+			}, 1000);
+		};
+	}
+
+	defineSocket(socket);
 </script>
