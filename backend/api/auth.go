@@ -27,6 +27,16 @@ var qrCache = cache.New(5*time.Minute, 10*time.Minute)
 var stateCache = cache.New(5*time.Minute, 10*time.Minute)
 var redirectCache = cache.New(5*time.Minute, 10*time.Minute)
 
+type StateCache struct {
+	Type string
+	Data interface{}
+}
+
+type QrCache struct {
+	Type string
+	Data interface{}
+}
+
 // (GET /account/qr)
 func (s *Server) GetAccountQR(c echo.Context) error {
 	// Get account from cookie
@@ -51,7 +61,10 @@ func (s *Server) GetAccountQR(c echo.Context) error {
 		nonce := uuid.NewString()
 
 		// Cache nonce
-		qrCache.Set(nonce, account.Id.String(), cache.DefaultExpiration)
+		qrCache.Set(nonce, &QrCache{
+			Type: "linking",
+			Data: account.Id.String(),
+		}, cache.DefaultExpiration)
 
 		conf := config.GetConfig()
 		url := fmt.Sprintf("%s/auth/google/begin/%s", conf.ApiConfig.BasePath, nonce)
@@ -88,7 +101,7 @@ func (s *Server) GetAccountQRWebsocket(c echo.Context) error {
 		return nil
 	}
 
-	return Upgrade(c)
+	return LinkUpgrade(c)
 }
 
 var scopes = []string{
@@ -100,14 +113,23 @@ var scopes = []string{
 // (GET /auth/google/begin/{qr_nonce})
 func (s *Server) ConnectAccount(c echo.Context, qrNonce string) error {
 	// Get account from nonce and delete nonce
-	accountID, found := qrCache.Get(qrNonce)
+	data, found := qrCache.Get(qrNonce)
 	if !found {
 		return ErrorNotAuthenticated(c)
 	}
-	qrCache.Delete(qrNonce)
-	qrCache.Delete(accountID.(string))
 
-	BroadcastToRoom(accountID.(string), []byte("scanned"))
+	qrCache.Delete(qrNonce)
+
+	d := data.(*QrCache)
+
+	if d.Type == "linking" {
+		accountID := d.Data
+		qrCache.Delete(accountID.(string))
+		BroadcastToRoom(accountID.(string), []byte("scanned"))
+	} else if d.Type == "qr_auth" {
+		uid := d.Data
+		BroadcastToRoom(uid.(string), []byte("scanned"))
+	}
 
 	conf := config.GetConfig()
 
@@ -127,7 +149,11 @@ func (s *Server) ConnectAccount(c echo.Context, qrNonce string) error {
 	state := uuid.NewString()
 
 	// Cache state
-	stateCache.Set(state, accountID, cache.DefaultExpiration)
+	stateCache.Set(state, &StateCache{
+		Type: d.Type,
+		Data: d.Data,
+	}, cache.DefaultExpiration)
+
 	redirectCache.Set(state, conf.ApiConfig.FrontendBasePath+"/borne/connected", cache.DefaultExpiration)
 
 	hostDomainOption := oauth2.SetAuthURLParam("hd", "telecomnancy.net")
@@ -161,11 +187,30 @@ func DefaultRedirect(c echo.Context) error {
 // (GET /auth/google/callback)
 func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
 	// Get account from state and delete state
-	accountID, found := stateCache.Get(params.State)
+	data, found := stateCache.Get(params.State)
 	if !found {
+		// This callback is used when connecting to the admin panel for example.
+		// The users clicks a button to log in with Google.
 		return s.CallbackInpromptu(c, params)
 	}
 	stateCache.Delete(params.State)
+
+	state := data.(*StateCache)
+	switch state.Type {
+	case "qr_auth":
+		// Used when connecting to a borne with the QR Code displayed
+		return s.CallbackQRAuth(c, params, state)
+	case "linking":
+		// Used when linking an account to a Google account
+		return s.CallbackLinking(c, params, state)
+	default:
+		// Default fallback that should not happen
+		return s.CallbackLinking(c, params, state)
+	}
+}
+
+func (s *Server) CallbackLinking(c echo.Context, params autogen.CallbackParams, state *StateCache) error {
+	accountID := state.Data
 
 	conf := config.GetConfig()
 
@@ -384,7 +429,7 @@ func (s *Server) ConnectCard(c echo.Context) error {
 				CardId:    param.CardId,
 				Id:        uuid.New(),
 				Role:      autogen.AccountStudent,
-				PriceRole: autogen.AccountPriceNormal,
+				PriceRole: autogen.AccountPriceCeten,
 				State:     autogen.AccountNotOnBoarded,
 			},
 		}

@@ -12,8 +12,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// var apiUrl = "https://api.bar.telecomnancy.net/nfc"
-var apiUrl = "http://localhost:8080/nfc"
+var apiUrl = "https://api.bar.telecomnancy.net/nfc"
+
+// var apiUrl = "http://localhost:8080/nfc"
 
 func init() {
 	// Get checksum of current process file

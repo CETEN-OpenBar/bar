@@ -42,12 +42,18 @@ func (s *Server) PatchAccount(c echo.Context) error {
 		return Error400(c)
 	}
 
-	// sha256 both pins
-	if !account.VerifyPin(param.OldCardPin) {
-		return Error400(c)
-	}
+	if param.CardId != nil && *param.CardId != "" && account.CardId == "" {
+		// The user doesn't have a card id yet, so we can set it without checking the pin
+		account.CardId = *param.CardId
+		account.SetPin(param.NewCardPin)
+	} else {
+		// sha256 both pins
+		if !account.VerifyPin(param.OldCardPin) {
+			return Error400(c)
+		}
 
-	account.SetPin(param.NewCardPin)
+		account.SetPin(param.NewCardPin)
+	}
 
 	err = s.UpdateAccount(c.Request().Context(), account)
 	if err != nil {
@@ -136,7 +142,7 @@ func (s *Server) PostAccounts(c echo.Context) error {
 		cardId = *req.CardId
 	}
 
-	var priceRole = autogen.AccountPriceNormal
+	var priceRole = autogen.AccountPriceCeten
 	if req.PriceRole != nil {
 		priceRole = *req.PriceRole
 	}

@@ -192,6 +192,79 @@ paths:
         - local_token: []
       tags:
         - auth
+  /auth/qr:
+    description: Get the QR code to connect account to Google
+    get:
+      description: Websocket to listen for scan & callback (for cool animations)
+      summary: ''
+      operationId: getBorneAuthQRWebsocket
+      responses:
+        '101':
+          description: 'Switching Protocols'
+          headers:
+            Connection: 
+              schema:
+                type: string
+                enum:
+                  - Upgrade
+              required: true
+            Upgrade:
+              schema:
+                type: string
+                enum:
+                  - websocket
+              required: true
+            Sec-WebSocket-Accept:
+              schema:
+                type: string
+              required: true
+      security:
+        - local_token: []
+    post:
+      description: Validate the connection to connect
+      summary: ''
+      operationId: postBorneAuthQR
+      requestBody:
+        description: Nonce
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nonce:
+                  type: string
+              required:
+                - nonce
+      responses:
+        '200':
+          description: 'Successfully connected'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    $ref: '#/components/schemas/Messages'
+                  account:
+                    $ref: '#/components/schemas/Account'
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: 'Not connected'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
   /account/qr:
     description: Get the QR code to connect account to Google
     get:
@@ -319,15 +392,17 @@ paths:
       tags:
         - accounts
     patch:
-      description: Update's account card pin
+      description: Update's account card pin / id
       operationId: patchAccount
       requestBody:
-        description: Card pin
+        description: Card pin / id
         content:
           application/json:
             schema:
               type: object
               properties:
+                card_id:
+                  type: string
                 old_card_pin:
                   type: string
                 new_card_pin:
@@ -4050,13 +4125,15 @@ components:
       description: Role of the account
       example: student
       enum:
-        - normal
+        - membre_bureau
+        - membre_privilegie
         - staff
         - vip
         - ceten
         - exte
       x-enum-varnames:
-        - AccountPriceNormal
+        - AccountPriceMembreBureau
+        - AccountPriceMembrePrivilegie
         - AccountPriceStaff
         - AccountPriceVIP
         - AccountPriceCeten
@@ -4188,7 +4265,8 @@ components:
           format: uint64
           example: 1000
       required:
-        - normal
+        - membre_bureau
+        - membre_privilegie
         - staff
         - vip
         - ceten

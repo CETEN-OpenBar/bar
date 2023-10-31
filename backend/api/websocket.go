@@ -8,7 +8,9 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type WSRoom []*websocket.Conn
+type WSRoom struct {
+	conns []*websocket.Conn
+}
 
 var wsRooms = make(map[string]*WSRoom)
 var lock = sync.RWMutex{}
@@ -24,15 +26,15 @@ func GetWSRoom(name string) *WSRoom {
 
 func (s *WSRoom) Add(conn *websocket.Conn) {
 	r := *s
-	r = append(r, conn)
+	r.conns = append(r.conns, conn)
 	*s = r
 }
 
 func (s *WSRoom) Remove(conn *websocket.Conn) {
 	r := *s
-	for i, c := range r {
+	for i, c := range r.conns {
 		if c == conn {
-			r = append(r[:i], r[i+1:]...)
+			r.conns = append(r.conns[:i], r.conns[i+1:]...)
 			break
 		}
 	}
@@ -41,7 +43,7 @@ func (s *WSRoom) Remove(conn *websocket.Conn) {
 
 func (s *WSRoom) Broadcast(message []byte) {
 	r := *s
-	for _, conn := range r {
+	for _, conn := range r.conns {
 		conn.WriteMessage(websocket.TextMessage, message)
 	}
 	*s = r
@@ -58,7 +60,7 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin:     func(r *http.Request) bool { return true },
 }
 
-func Upgrade(c echo.Context) error {
+func LinkUpgrade(c echo.Context) error {
 	account, err := MustGetUserOrOnBoard(c)
 	if err != nil {
 		return nil

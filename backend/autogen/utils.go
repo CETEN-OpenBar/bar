@@ -12,8 +12,10 @@ func (i *Item) RealPrice(r AccountPriceRole) uint64 {
 		price = i.Prices.Ceten
 	case AccountPriceExte:
 		price = i.Prices.Exte
-	case AccountPriceNormal:
-		price = i.Prices.Normal
+	case AccountPriceMembreBureau:
+		price = i.Prices.MembreBureau
+	case AccountPriceMembrePrivilegie:
+		price = i.Prices.MembrePrivilegie
 	case AccountPriceStaff:
 		price = i.Prices.Staff
 	case AccountPriceVIP:
@@ -41,11 +43,12 @@ func (i *Item) RealPrices() ItemPrices {
 	}
 
 	return ItemPrices{
-		Ceten:  uint64(float64(i.Prices.Ceten) * (1.0 - (float64(*i.Promotion) / 100.0))),
-		Exte:   uint64(float64(i.Prices.Exte) * (1.0 - (float64(*i.Promotion) / 100.0))),
-		Normal: uint64(float64(i.Prices.Normal) * (1.0 - (float64(*i.Promotion) / 100.0))),
-		Staff:  uint64(float64(i.Prices.Staff) * (1.0 - (float64(*i.Promotion) / 100.0))),
-		Vip:    uint64(float64(i.Prices.Vip) * (1.0 - (float64(*i.Promotion) / 100.0))),
+		Ceten:            uint64(float64(i.Prices.Ceten) * (1.0 - (float64(*i.Promotion) / 100.0))),
+		Exte:             uint64(float64(i.Prices.Exte) * (1.0 - (float64(*i.Promotion) / 100.0))),
+		MembreBureau:     uint64(float64(i.Prices.MembreBureau) * (1.0 - (float64(*i.Promotion) / 100.0))),
+		MembrePrivilegie: uint64(float64(i.Prices.MembrePrivilegie) * (1.0 - (float64(*i.Promotion) / 100.0))),
+		Staff:            uint64(float64(i.Prices.Staff) * (1.0 - (float64(*i.Promotion) / 100.0))),
+		Vip:              uint64(float64(i.Prices.Vip) * (1.0 - (float64(*i.Promotion) / 100.0))),
 	}
 }
 
