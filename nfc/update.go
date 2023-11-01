@@ -15,20 +15,10 @@ import (
 )
 
 func init() {
-	// Get checksum of current process file
-	h := md5.New()
-	filename := os.Args[0]
-	if _, err := os.Stat(filename); err != nil {
-		logrus.WithError(err).Fatal("failed to stat process file")
-	}
-
-	f, err := os.Open(filename)
+	// Get checksum of current version
+	localVersion, err := os.ReadFile("current.md5")
 	if err != nil {
-		logrus.WithError(err).Fatal("failed to open process file")
-	}
-
-	if _, err := io.Copy(h, f); err != nil {
-		logrus.WithError(err).Fatal("failed to copy process file")
+		logrus.WithError(err).Error("failed to open current.md5")
 	}
 
 	client := github.NewClient(nil)
@@ -36,7 +26,8 @@ func init() {
 	// list all organizations for user "willnorris"
 	release, _, err := client.Repositories.GetLatestRelease(context.Background(), "yyewolf", "bar")
 	if err != nil {
-		logrus.WithError(err).Fatal("failed to get latest release")
+		logrus.WithError(err).Error("failed to get latest release")
+		return
 	}
 
 	var md5 string
@@ -59,19 +50,22 @@ func init() {
 	// Download md5
 	r, err := http.Get(md5)
 	if err != nil {
-		logrus.WithError(err).Fatal("failed to get checksum")
+		logrus.WithError(err).Error("failed to get checksum")
+		return
 	}
 
 	if r.StatusCode != http.StatusOK {
-		logrus.WithField("status", r.StatusCode).Fatal("failed to get checksum")
+		logrus.WithField("status", r.StatusCode).Error("failed to get checksum")
+		return
 	}
 
 	d, err := io.ReadAll(r.Body)
 	if err != nil {
-		logrus.WithError(err).Fatal("failed to read checksum")
+		logrus.WithError(err).Error("failed to read checksum")
+		return
 	}
 
-	localChecksum := fmt.Sprintf("%x\n", h.Sum(nil))
+	localChecksum := string(localVersion)
 	remoteChecksum := string(d)
 
 	logrus.WithFields(logrus.Fields{
@@ -80,32 +74,49 @@ func init() {
 	}).Info("checksums")
 
 	if localChecksum != remoteChecksum {
-		performUpdate(tarball)
+		performUpdate(remoteChecksum, tarball)
 	}
 
 	logrus.Info("checksum OK")
 }
 
-func performUpdate(tarball string) {
+func performUpdate(checksum, tarball string) {
 	logrus.Info("performing update")
 	r, err := http.Get(tarball)
 	if err != nil {
-		logrus.WithError(err).Fatal("failed to get update")
+		logrus.WithError(err).Error("failed to get update")
+		return
 	}
 
 	if r.StatusCode != http.StatusOK {
-		logrus.WithField("status", r.StatusCode).Fatal("failed to get update")
+		logrus.WithField("status", r.StatusCode).Error("failed to get update")
+		return
 	}
 
 	data, err := io.ReadAll(r.Body)
 	if err != nil {
-		logrus.WithError(err).Fatal("failed to read update")
+		logrus.WithError(err).Error("failed to read update")
+		return
+	}
+
+	// verify checksum
+	h := md5.New()
+	_, err = h.Write(data)
+	if err != nil {
+		logrus.WithError(err).Error("failed to write update")
+		return
+	}
+
+	if fmt.Sprintf("%x\n", h.Sum(nil)) != checksum {
+		logrus.Error("checksum mismatch")
+		return
 	}
 
 	// open a subprocess that will replace the current process file
 	err = os.WriteFile("update.tar.gz", data, 0755)
 	if err != nil {
-		logrus.WithError(err).Fatal("failed to open process file")
+		logrus.WithError(err).Error("failed to open process file")
+		return
 	}
 
 	// write sh file that will finish the update
@@ -115,19 +126,30 @@ rm nfc
 tar -xzf update.tar.gz
 chmod +x %s
 rm update.tar.gz
+rm LICENSE
+rm update.sh
 `, os.Args[0])), 0755)
 	if err != nil {
-		logrus.WithError(err).Fatal("failed to open process file")
+		logrus.WithError(err).Error("failed to open process file")
+		return
 	}
 
 	// chmod the sh file
 	err = os.Chmod("update.sh", 0755)
 	if err != nil {
-		logrus.WithError(err).Fatal("failed to chmod sh file")
+		logrus.WithError(err).Error("failed to chmod sh file")
+		return
 	}
 
 	// run the sh file in another process
 	exec.Command("sh", "update.sh").Start()
+
+	// save the checksum in current.md5
+	err = os.WriteFile("current.md5", []byte(checksum), 0755)
+	if err != nil {
+		logrus.WithError(err).Error("failed to open process file")
+		return
+	}
 
 	logrus.Info("update OK")
 	logrus.Info("restarting")
