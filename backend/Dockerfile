@@ -8,6 +8,5 @@ RUN go build -o /app/bar /app/cmd/bar/main.go
 
 FROM alpine
 COPY --from=backend /app/bar .
-COPY nfc/nfc .
 USER 1000
 ENTRYPOINT ["/bar"]

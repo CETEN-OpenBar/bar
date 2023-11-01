@@ -1,0 +1,26 @@
+name: NFC
+on:
+  release:
+    types: [created]
+
+jobs:
+  releases-matrix:
+    name: Release Go Binary
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [linux]
+        goarch: [amd64]
+    steps:
+    - uses: actions/checkout@v3
+    - uses: wangyoucao577/go-release-action@v1
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        goos: ${{ matrix.goos }}
+        goarch: ${{ matrix.goarch }}
+        goversion: "https://dl.google.com/go/go1.21.2.linux-amd64.tar.gz"
+        project_path: "./nfc"
+        binary_name: "nfc"
+        extra_files: LICENSE
+        pre_command: apt-get update && apt-get install -y pcscd libpcsclite-dev gcc pkg-config && export CGO_ENABLED=1
+        
