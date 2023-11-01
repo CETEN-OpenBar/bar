@@ -48,10 +48,11 @@ func init() {
 			continue
 		}
 		if strings.HasSuffix(name, "linux-amd64.tar.gz.md5") {
-			md5 = asset.GetURL()
+			md5 = asset.GetBrowserDownloadURL()
+			logrus.WithField("url", md5).Info("found md5")
 		}
 		if strings.HasSuffix(name, "linux-amd64.tar.gz") {
-			tarball = asset.GetURL()
+			tarball = asset.GetBrowserDownloadURL()
 		}
 	}
 
@@ -70,10 +71,15 @@ func init() {
 		logrus.WithError(err).Fatal("failed to read checksum")
 	}
 
-	currentChecksum := fmt.Sprintf("%x", h.Sum(nil))
-	potentialChecksum := string(d)
+	localChecksum := fmt.Sprintf("%x\n", h.Sum(nil))
+	remoteChecksum := string(d)
 
-	if currentChecksum != potentialChecksum {
+	logrus.WithFields(logrus.Fields{
+		"local":  localChecksum,
+		"remote": remoteChecksum,
+	}).Info("checksums")
+
+	if localChecksum != remoteChecksum {
 		performUpdate(tarball)
 	}
 
