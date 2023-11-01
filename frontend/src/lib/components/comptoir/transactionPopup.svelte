@@ -91,8 +91,7 @@
 						class="flex flex-col justify-center text-center break-words rounded-xl {item.state ==
 						TransactionItemState.TransactionItemCanceled
 							? 'bg-red-200'
-							: ''} {item.state ==
-						TransactionItemState.TransactionItemFinished
+							: ''} {item.state == TransactionItemState.TransactionItemFinished
 							? 'bg-green-200'
 							: ''}"
 					>
@@ -147,8 +146,8 @@
 										class="bg-green-500 hover:bg-green-700 text-white font-bold p-2 rounded col-start-2"
 										on:click={() => {
 											if (item.item_already_done < item.item_amount) item.item_already_done += 1;
-											if (item.item_already_done == item.item_amount) item.state = TransactionItemState.TransactionItemFinished;
-											
+											if (item.item_already_done == item.item_amount)
+												item.state = TransactionItemState.TransactionItemFinished;
 										}}
 									>
 										<iconify-icon
@@ -201,6 +200,7 @@
 				<button
 					class="bg-green-500 rounded-xl text-white text-md font-bold p-2 h-20 w-full"
 					on:click={() => {
+						saveTransaction();
 						transactionsApi()
 							.patchTransactionId(newTransaction.account_id, newTransaction.id, 'finished', {
 								withCredentials: true

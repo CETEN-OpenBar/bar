@@ -94,7 +94,6 @@ type DBackend interface {
 	MarkDeleteRefill(ctx context.Context, id, by string) error
 	UnMarkDeleteRefill(ctx context.Context, id string) error
 	DeleteRefill(ctx context.Context, id string) error
-	RestoreRefill(ctx context.Context, id string) error
 
 	GetDeletedRefills(ctx context.Context, page uint64, size uint64) ([]*models.Refill, error)
 	CountDeletedRefills(ctx context.Context) (uint64, error)
