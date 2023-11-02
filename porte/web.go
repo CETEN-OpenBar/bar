@@ -32,6 +32,7 @@ func routes(e *echo.Echo) {
 			return c.JSON(400, gin.H{"error": err.Error()})
 		}
 
+		logrus.Debug("POST /auth/card: ", string(data))
 		rdr := bytes.NewReader(data)
 
 		// Http client with X-Local-Token
@@ -42,6 +43,7 @@ func routes(e *echo.Echo) {
 		}
 
 		request.Header.Add("X-Local-Token", conf.LocalToken)
+		request.Header.Add("Content-Type", "application/json")
 
 		// post the same request to API_URL
 		r, err := client.Do(request)
@@ -60,15 +62,17 @@ func routes(e *echo.Echo) {
 		}
 
 		request.Header.Add("X-Local-Token", conf.LocalToken)
+		for _, cookie := range r.Cookies() {
+			request.AddCookie(cookie)
+		}
 
 		r2, err := client.Do(request)
 		if err != nil {
-			logrus.Debug("/account/admin returned ", r.StatusCode)
 			return c.JSON(400, gin.H{"error": err.Error()})
 		}
 
 		if r2.StatusCode != http.StatusOK {
-			logrus.Debug("/account/admin returned ", r.StatusCode)
+			logrus.Debug("/account/admin returned ", r2.StatusCode)
 			return c.JSON(400, gin.H{"error": "invalid card"})
 		}
 
