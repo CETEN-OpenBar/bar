@@ -1,0 +1,13 @@
+[Unit]
+Description=OpenBar's Porte Service
+
+[Service]
+User=root
+WorkingDirectory=/root
+ExecStart=/porte
+# optional items below
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
