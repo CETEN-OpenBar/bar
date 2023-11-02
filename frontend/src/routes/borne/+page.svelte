@@ -1,7 +1,9 @@
 <script lang="ts">
-	import Carousel from '$lib/components/borne/carousel.svelte';
+	// import Carousel from '$lib/components/borne/carousel.svelte';
 	import Pin from '$lib/components/borne/pin.svelte';
 	import Error from '$lib/components/error.svelte';
+	import Carousel from 'svelte-carousel';
+
 
 	import {
 		AccountState,
@@ -133,9 +135,21 @@
 {/if}
 
 {#if display}
-	<div in:fly={{ x: -1000, duration: 1000 }}>
-		<Carousel {images} {texts} />
-	</div>
+	<Carousel
+	autoplay
+	autoplayDuration={3000}
+
+	arrows={false}
+	dots={false}
+	>
+	{#each images as image, i}
+			<img src={api() + image.image_url}
+				alt="dommage"
+				draggable="false"
+				class="w-full h-full object-cover"
+			/>
+	{/each}
+	</Carousel>
 {:else}
 	<FsLoading />
 {/if}
