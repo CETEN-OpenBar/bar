@@ -10,6 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/labstack/echo/v4"
+	"github.com/sirupsen/logrus"
 )
 
 type OpenRequest struct {
@@ -34,21 +35,24 @@ func routes(e *echo.Echo) {
 		rdr := bytes.NewReader(data)
 
 		// post the same request to API_URL
-		r, err := http.Post(conf.ApiURL, "application/json", rdr)
+		r, err := http.Post(conf.ApiURL+"/auth/card", "application/json", rdr)
 		if err != nil {
 			return c.JSON(400, gin.H{"error": err.Error()})
 		}
 
 		if r.StatusCode != http.StatusOK {
+			logrus.Debug("/auth/card returned ", r.StatusCode)
 			return c.JSON(400, gin.H{"error": "invalid card"})
 		}
 
-		r2, err := http.Post("http://localhost:8080/account/admin", "application/json", rdr)
+		r2, err := http.Post(conf.ApiURL+"/account/admin", "application/json", rdr)
 		if err != nil {
+			logrus.Debug("/account/admin returned ", r.StatusCode)
 			return c.JSON(400, gin.H{"error": err.Error()})
 		}
 
 		if r2.StatusCode != http.StatusOK {
+			logrus.Debug("/account/admin returned ", r.StatusCode)
 			return c.JSON(400, gin.H{"error": "invalid card"})
 		}
 
