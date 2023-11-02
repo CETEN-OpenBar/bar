@@ -11,6 +11,7 @@ import (
 type Config struct {
 	ApiURL      string `env:"BAR_API_URL" envDefault:"http://localhost:8080/auth/card"`
 	GithubToken string `env:"BAR_GH_TOKEN"`
+	LocalToken  string `env:"BAR_LOCAL_TOKEN"`
 
 	LogLevel string `env:"BAR_LOG_LEVEL" envDefault:"info"`
 }
