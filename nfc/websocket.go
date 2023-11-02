@@ -32,7 +32,10 @@ func cardReader(w http.ResponseWriter, r *http.Request) {
 	delete(listeners, c)
 }
 
-func wsServer() {
+func server() {
 	http.HandleFunc("/", cardReader)
+	http.HandleFunc("/config.json", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "config.json")
+	})
 	logrus.Fatal(http.ListenAndServe(*addr, nil))
 }

@@ -12,7 +12,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	go wsServer()
+	go server()
 	h := &handler{logrus.StandardLogger()}
 	ctx.Serve(h)
 }
