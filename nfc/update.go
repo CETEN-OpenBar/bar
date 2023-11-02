@@ -23,6 +23,8 @@ func init() {
 
 	client := github.NewClient(nil)
 
+	client = client.WithAuthToken(config.GithubToken)
+
 	// list all organizations for user "willnorris"
 	release, _, err := client.Repositories.GetLatestRelease(context.Background(), "yyewolf", "bar")
 	if err != nil {
