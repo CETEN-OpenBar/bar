@@ -105,7 +105,7 @@
 					AccountRole.AccountMember
 				)
 					goto('/comptoir');
-				goto('/comptoir/transactions');
+				goto('/comptoir/c/transactions');
 			})
 			.catch(() => {
 				incorrectPin = 'Mauvais code pin';

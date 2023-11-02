@@ -1,5 +1,6 @@
 {
     "api":"http://localhost:8080",
     "apiws":"ws://localhost:8080",
+    "local_api":"http://192.168.0.5:8080",
     "local_token": "jesuisleplusfort"
 }

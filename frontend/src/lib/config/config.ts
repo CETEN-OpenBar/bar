@@ -5,6 +5,7 @@ import axios from "axios";
 export type Config = {
     apiws: string;
     api: string;
+    local_api: string;
     local_token: string;
 };
 
@@ -24,6 +25,13 @@ export const apiws = () => {
     }
     return c.apiws;
 };
+
+export const local_api = () => {
+    if (c == null) {
+        throw new Error("Config not loaded");
+    }
+    return c.local_api;
+}
 
 export const local_token = () => {
     if (c == null) {
