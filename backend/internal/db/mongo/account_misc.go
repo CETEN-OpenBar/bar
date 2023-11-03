@@ -135,6 +135,7 @@ func (b *Backend) GetAccountByCard(ctx context.Context, card string) (*models.Ac
 
 	return &account, nil
 }
+
 func (b *Backend) GetAccountByGoogle(ctx context.Context, googleID string) (*models.Account, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
@@ -142,6 +143,19 @@ func (b *Backend) GetAccountByGoogle(ctx context.Context, googleID string) (*mod
 	// Get account by card
 	var account models.Account
 	if err := b.db.Collection(AccountsCollection).FindOne(ctx, bson.M{"google_id": googleID}).Decode(&account); err != nil {
+		return nil, err
+	}
+
+	return &account, nil
+}
+
+func (b *Backend) GetAccountByEmail(ctx context.Context, email string) (*models.Account, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
+	defer cancel()
+
+	// Get account by card
+	var account models.Account
+	if err := b.db.Collection(AccountsCollection).FindOne(ctx, bson.M{"email_address": email}).Decode(&account); err != nil {
 		return nil, err
 	}
 

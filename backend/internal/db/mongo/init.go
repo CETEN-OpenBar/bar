@@ -178,8 +178,17 @@ var (
 					"email_address": 1,
 				},
 				Options: options.Index().SetUnique(true).SetPartialFilterExpression(bson.M{
-					"email_address": bson.M{
-						"$exists": true,
+					"$and": []bson.M{
+						{
+							"email_address": bson.M{
+								"$exists": true,
+							},
+						},
+						{
+							"email_address": bson.M{
+								"$type": "string",
+							},
+						},
 					},
 				}),
 			},

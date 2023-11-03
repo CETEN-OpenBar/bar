@@ -117,6 +117,7 @@ type DBackend interface {
 	CountAllTransactions(ctx context.Context, state string) (uint64, error)
 
 	// Other requests that are not CRUD but still needed
+	GetAccountByEmail(ctx context.Context, email string) (*models.Account, error)
 	GetAccountByGoogle(ctx context.Context, googleID string) (*models.Account, error)
 	GetAccountByCard(ctx context.Context, card string) (*models.Account, error)
 	GetAccounts(ctx context.Context, page uint64, size uint64, query string) ([]*models.Account, error)

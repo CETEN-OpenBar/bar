@@ -291,7 +291,7 @@ func (s *Server) CallbackLinking(c echo.Context, params autogen.CallbackParams, 
 		account.State = autogen.AccountOK
 
 		// Check if an account with this Google ID and no Card ID exists
-		acc, err := s.DBackend.GetAccountByGoogle(c.Request().Context(), usr.ID)
+		acc, err := s.DBackend.GetAccountByEmail(c.Request().Context(), usr.ID)
 		if err != nil {
 			if err != mongo.ErrNoDocuments {
 				logrus.Error(err)

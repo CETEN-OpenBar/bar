@@ -27,3 +27,5 @@ go.work
 borne/OVMF.fd
 
 borne/build/
+
+data
