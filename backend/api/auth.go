@@ -315,6 +315,12 @@ func (s *Server) CallbackLinking(c echo.Context, params autogen.CallbackParams, 
 			}
 
 			account = acc
+
+			account.FirstName = usr.FirstName
+			account.LastName = usr.LastName
+			account.EmailAddress = usr.Email
+			account.GoogleId = &usr.ID
+			account.GooglePicture = &usr.Picture
 		}
 
 		// Delete ONBOARD cookie

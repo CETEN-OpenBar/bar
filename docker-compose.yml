@@ -37,8 +37,6 @@ services:
         test $$(mongosh --quiet --eval "try { rs.initiate({ _id: 'rs0', members: [{ _id: 0, host: '127.0.0.1' }] }).ok } catch (_) { rs.status().ok }") -eq 1
       interval: 3s
       start_period: 3s
-    volumes:
-      - ./data:/data/db
   mongo-express:
     image: mongo-express
     restart: always
