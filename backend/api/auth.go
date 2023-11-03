@@ -303,19 +303,19 @@ func (s *Server) CallbackLinking(c echo.Context, params autogen.CallbackParams, 
 				logrus.Error(err)
 				return DefaultRedirect(c)
 			}
-		}
+		} else {
+			if acc.CardId == "" {
+				acc.CardId = account.CardId
+			}
 
-		if acc.CardId == "" {
-			acc.CardId = account.CardId
-		}
+			err = s.DBackend.UpdateAccount(c.Request().Context(), acc)
+			if err != nil {
+				logrus.Error(err)
+				return DefaultRedirect(c)
+			}
 
-		err = s.DBackend.UpdateAccount(c.Request().Context(), acc)
-		if err != nil {
-			logrus.Error(err)
-			return DefaultRedirect(c)
+			account = acc
 		}
-
-		account = acc
 
 		// Delete ONBOARD cookie
 		s.RemoveOnBoardCookie(c)
