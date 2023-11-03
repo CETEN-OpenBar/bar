@@ -28,7 +28,7 @@ func main() {
 
 	acc := &models.Account{
 		Account: autogen.Account{
-			CardId: "1",
+			CardId: autogen.OptionalString("1"),
 			Id:     uuid.New(),
 			Role:   autogen.AccountSuperAdmin,
 			State:  autogen.AccountOK,

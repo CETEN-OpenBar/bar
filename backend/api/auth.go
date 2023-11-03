@@ -304,7 +304,7 @@ func (s *Server) CallbackLinking(c echo.Context, params autogen.CallbackParams, 
 				return DefaultRedirect(c)
 			}
 		} else {
-			if acc.CardId == "" {
+			if acc.CardId == nil {
 				acc.CardId = account.CardId
 			}
 
@@ -447,7 +447,7 @@ func (s *Server) ConnectCard(c echo.Context) error {
 		// Create default account with 1234 pin
 		account = &models.Account{
 			Account: autogen.Account{
-				CardId:    param.CardId,
+				CardId:    autogen.OptionalString(param.CardId),
 				Id:        uuid.New(),
 				Role:      autogen.AccountStudent,
 				PriceRole: autogen.AccountPriceCeten,

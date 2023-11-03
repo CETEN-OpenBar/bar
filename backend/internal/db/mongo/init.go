@@ -135,12 +135,22 @@ var (
 				}),
 			},
 			mongo.IndexModel{
+				// Avoid duplicates except empty values
 				Keys: bson.M{
 					"card_id": 1,
 				},
 				Options: options.Index().SetUnique(true).SetPartialFilterExpression(bson.M{
-					"card_id": bson.M{
-						"$exists": true,
+					"$and": []bson.M{
+						{
+							"card_id": bson.M{
+								"$exists": true,
+							},
+						},
+						{
+							"card_id": bson.M{
+								"$type": "string",
+							},
+						},
 					},
 				}),
 			},
@@ -149,8 +159,17 @@ var (
 					"google_id": 1,
 				},
 				Options: options.Index().SetUnique(true).SetPartialFilterExpression(bson.M{
-					"google_id": bson.M{
-						"$exists": true,
+					"$and": []bson.M{
+						{
+							"google_id": bson.M{
+								"$exists": true,
+							},
+						},
+						{
+							"google_id": bson.M{
+								"$type": "string",
+							},
+						},
 					},
 				}),
 			},

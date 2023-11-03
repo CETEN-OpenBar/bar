@@ -71,12 +71,12 @@
 	>
 		{#each items as item}
 			<button
-				class="w-32 flex-shrink-0 flex flex-col items-center justify-center rounded-lg text-white transition-colors duration-300"
+				class="w-32 h-46 flex-shrink-0 flex flex-col items-center justify-center rounded-lg text-white transition-colors duration-300"
 				on:click={() => {
 					click(item);
 				}}
 			>
-				<img class="w-full" src={api() + item.picture_uri} alt={item.name} />
+				<img src={api() + item.picture_uri} alt={item.name} />
 				<span class="text-lg font-bold">{item.name}</span>
 				<span class="text-sm">Prix: {formatPrice(item.display_price??999)}</span>
 			</button>

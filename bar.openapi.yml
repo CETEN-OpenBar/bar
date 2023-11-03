@@ -4090,6 +4090,7 @@ components:
         - vip
         - ceten
         - exte
+        - interne
       x-enum-varnames:
         - AccountPriceMembreBureau
         - AccountPriceMembrePrivilegie
@@ -4097,6 +4098,7 @@ components:
         - AccountPriceVIP
         - AccountPriceCeten
         - AccountPriceExte
+        - AccountPriceInterne
     Account:
       type: object
       properties:
@@ -4113,6 +4115,10 @@ components:
         email_address:
           type: string
         balance:
+          type: integer
+          format: int64
+          example: 1000
+        points:
           type: integer
           format: int64
           example: 1000
@@ -4149,8 +4155,8 @@ components:
         - price_role
         - restrictions
         - state
-        - card_id
         - card_pin
+        - points
         - wants_to_staff
     ItemState:
       type: string
@@ -4335,6 +4341,9 @@ components:
         picture:
           type: string
           format: base64
+        position:
+          type: integer
+          format: uint64
     NewCategory:
       type: object
       properties:
@@ -4344,9 +4353,13 @@ components:
         picture:
           type: string
           format: base64
+        position:
+          type: integer
+          format: uint64
       required:
         - name
         - picture
+        - position
     Category:
       type: object
       properties:
@@ -4358,6 +4371,9 @@ components:
         picture_uri:
           type: string
           description: Link to picture of the current category
+        position:
+          type: integer
+          format: uint64
         deleted_at:
           type: integer
           format: uint64
@@ -4367,6 +4383,7 @@ components:
         - id
         - name
         - picture_uri
+        - position
         - items
     TransactionState:
       type: string

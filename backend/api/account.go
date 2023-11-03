@@ -42,9 +42,9 @@ func (s *Server) PatchAccount(c echo.Context) error {
 		return Error400(c)
 	}
 
-	if param.CardId != nil && *param.CardId != "" && account.CardId == "" {
+	if param.CardId != nil && *param.CardId != "" && account.CardId != nil && *account.CardId == "" {
 		// The user doesn't have a card id yet, so we can set it without checking the pin
-		account.CardId = *param.CardId
+		account.CardId = param.CardId
 		account.SetPin(param.NewCardPin)
 	} else {
 		// sha256 both pins
@@ -151,7 +151,7 @@ func (s *Server) PostAccounts(c echo.Context) error {
 		Account: autogen.Account{
 			Id:           uuid.New(),
 			Balance:      req.Balance,
-			CardId:       cardId,
+			CardId:       autogen.OptionalString(cardId),
 			EmailAddress: req.EmailAddress,
 			FirstName:    req.FirstName,
 			LastName:     req.LastName,
@@ -242,7 +242,7 @@ func (s *Server) PatchAccountId(c echo.Context, accountId autogen.UUID) error {
 		account.Account.Balance = *req.Balance
 	}
 	if req.CardId != nil {
-		account.Account.CardId = *req.CardId
+		account.Account.CardId = req.CardId
 		account.SetPin("1234")
 	}
 	if req.EmailAddress != nil {
@@ -367,7 +367,7 @@ func (s *Server) ImportAccounts(c echo.Context) error {
 			Account: autogen.Account{
 				Balance:      balance,
 				Id:           uuid.New(),
-				CardId:       record[assignments["card_id"]],
+				CardId:       autogen.OptionalString(record[assignments["card_id"]]),
 				EmailAddress: record[assignments["email_address"]],
 				FirstName:    record[assignments["first_name"]],
 				LastName:     record[assignments["last_name"]],

@@ -76,6 +76,7 @@ func (s *Server) PostCategory(c echo.Context) error {
 		Category: autogen.Category{
 			Id:         uid,
 			Name:       p.Name,
+			Position:   p.Position,
 			PictureUri: "/categories/" + uid.String() + "/picture",
 		},
 	}
@@ -163,6 +164,10 @@ func (s *Server) PatchCategory(c echo.Context, categoryId autogen.UUID) error {
 
 	if p.Name != nil {
 		category.Name = *p.Name
+	}
+
+	if p.Position != nil {
+		category.Position = *p.Position
 	}
 
 	if p.Picture != nil {

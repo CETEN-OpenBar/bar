@@ -2,6 +2,13 @@ package autogen
 
 import "time"
 
+func OptionalString(s string) *string {
+	if s == "" {
+		return nil
+	}
+	return &s
+}
+
 func (i *Item) RealPrice(r AccountPriceRole) uint64 {
 	// TODO: modify this when modifying price roles
 	var price uint64
