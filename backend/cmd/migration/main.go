@@ -37,7 +37,7 @@ func main() {
 
 	// We need to connect to MariaDB on localhost:3306
 	// to execute the query that we will move to PMB
-	mariaDB, err := sql.Open("mysql", "root:qwerty@tcp(localhost:3306)/pmb")
+	mariaDB, err := sql.Open("mysql", "root:qwerty@tcp(localhost:3306)/pmb?parseTime=true")
 	if err != nil {
 		panic(err)
 	}
@@ -52,7 +52,8 @@ func main() {
 	uuid.SetRand(rdr)
 
 	part1(mongoDB, mariaDB)
-	part2(mongoDB, mariaDB)
+	// part2(mongoDB, mariaDB)
+	part3(mongoDB, mariaDB)
 }
 
 var IDmap = make(map[string]uuid.UUID)
@@ -132,6 +133,19 @@ func part1(mongoDB db.DBackend, mariaDB *sql.DB) {
 			role = autogen.AccountMember
 		}
 
+		acc := &models.Account{
+			Account: autogen.Account{
+				Balance:   int64(bal),
+				Id:        uuid,
+				Points:    pts,
+				FirstName: firstname,
+				LastName:  lastname,
+				State:     autogen.AccountOK,
+				Role:      role,
+				PriceRole: priceRole,
+			},
+		}
+
 		// Rândom RANDOM should become random.random@tn.net
 		firstname, _, _ = transform.String(t, strings.ToLower(firstname))
 		lastname, _, _ = transform.String(t, strings.ToLower(lastname))
@@ -140,19 +154,8 @@ func part1(mongoDB db.DBackend, mariaDB *sql.DB) {
 
 		// Insert into mongo
 		email := fmt.Sprintf("%s.%s@telecomnancy.net", firstname, lastname)
-		acc := &models.Account{
-			Account: autogen.Account{
-				Balance:      int64(bal),
-				Id:           uuid,
-				Points:       pts,
-				EmailAddress: email,
-				FirstName:    firstname,
-				LastName:     lastname,
-				State:        autogen.AccountOK,
-				Role:         role,
-				PriceRole:    priceRole,
-			},
-		}
+
+		acc.EmailAddress = email
 
 		acc.SetPin("1234")
 
@@ -160,6 +163,8 @@ func part1(mongoDB db.DBackend, mariaDB *sql.DB) {
 		if err != nil {
 			logrus.Error(err)
 		}
+
+		fmt.Println(clientId)
 	}
 }
 
@@ -260,5 +265,83 @@ func part2(mongoDB db.DBackend, mariaDB *sql.DB) {
 			logrus.Error(err)
 		}
 
+	}
+}
+
+func part3(mongoDB db.DBackend, mariaDB *sql.DB) {
+	rq := `SELECT client_transaction.cancelled, client_transaction.clientId, client_transaction.operator, client_transaction.date,client_transaction.method, client_transaction.amount from client_transaction; `
+
+	rows, err := mariaDB.Query(rq)
+	if err != nil {
+		panic(err)
+	}
+
+	for rows.Next() {
+		// clientId 	operator 	date 	method 	amount
+		var canceled bool
+		var clientId string
+		var operator string
+		var date time.Time
+		var method string
+		var amount string
+
+		err = rows.Scan(&canceled, &clientId, &operator, &date, &method, &amount)
+		if err != nil {
+			panic(err)
+		}
+
+		var type_ autogen.RefillType
+
+		switch method {
+		case "0":
+			type_ = autogen.RefillCash
+		case "1":
+			type_ = autogen.RefillCheck
+		case "2":
+			type_ = autogen.RefillTransfer
+		case "3":
+			type_ = autogen.RefillCard
+		case "4":
+			type_ = autogen.RefillOther
+		}
+
+		// Find account
+		accountId, nok := IDmap[clientId]
+		operatorId, nok2 := IDmap[operator]
+
+		if !nok || !nok2 {
+			fmt.Println("Skipped refill")
+			continue
+		}
+
+		acc, _ := mongoDB.GetAccount(context.Background(), accountId.String())
+		op, _ := mongoDB.GetAccount(context.Background(), operatorId.String())
+
+		howMuch, _ := strconv.Atoi(strings.ReplaceAll(amount, ".", ""))
+
+		refill := &models.Refill{
+			Refill: autogen.Refill{
+				AccountId:    accountId,
+				AccountName:  acc.Name(),
+				IssuedAt:     uint64(date.Unix()),
+				IssuedBy:     operatorId,
+				Type:         type_,
+				IssuedByName: op.Name(),
+				State:        autogen.Valid,
+				Amount:       int64(howMuch),
+				Id:           uuid.New(),
+			},
+		}
+
+		fmt.Println(refill)
+
+		if canceled {
+			refill.Refill.State = autogen.Canceled
+		}
+
+		err = mongoDB.CreateRefill(context.Background(), refill)
+		if err != nil {
+			logrus.Error(err)
+		}
 	}
 }

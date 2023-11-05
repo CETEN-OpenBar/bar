@@ -154,8 +154,6 @@ func (s *Server) ConnectAccount(c echo.Context, qrNonce string) error {
 		Data: d.Data,
 	}, cache.DefaultExpiration)
 
-	redirectCache.Set(state, conf.ApiConfig.FrontendBasePath+"/borne/connected", cache.DefaultExpiration)
-
 	hostDomainOption := oauth2.SetAuthURLParam("hd", "telecomnancy.net")
 	// Redirect to Google
 	url := oauth2Config.AuthCodeURL(state, oauth2.AccessTypeOffline, hostDomainOption)
@@ -179,9 +177,14 @@ type googleUser struct {
 	Picture   string `json:"picture"`
 }
 
-func DefaultRedirect(c echo.Context) error {
+func ErrorRedirect(c echo.Context, err string) error {
 	conf := config.GetConfig()
-	return c.Redirect(http.StatusPermanentRedirect, conf.ApiConfig.FrontendBasePath+"/borne")
+	return c.Redirect(http.StatusPermanentRedirect, conf.ApiConfig.FrontendBasePath+"/mobile?rt=authError&rm="+err)
+}
+
+func SuccessRedirect(c echo.Context) error {
+	conf := config.GetConfig()
+	return c.Redirect(http.StatusPermanentRedirect, conf.ApiConfig.FrontendBasePath+"/mobile?rt=authSuccess")
 }
 
 // (GET /auth/google/callback)
@@ -218,13 +221,13 @@ func (s *Server) CallbackLinking(c echo.Context, params autogen.CallbackParams, 
 	if err != nil {
 		if err != mongo.ErrNoDocuments {
 			logrus.Error(err)
-			return DefaultRedirect(c)
+			return ErrorRedirect(c, "#001")
 		}
 		// Check if account is onBoard
 		acc, found := onBoardCache.Get(accountID.(string))
 		if !found {
 			logrus.Error(err)
-			return DefaultRedirect(c)
+			return ErrorRedirect(c, "#002")
 		}
 		account = acc.(*models.Account)
 	}
@@ -244,7 +247,7 @@ func (s *Server) CallbackLinking(c echo.Context, params autogen.CallbackParams, 
 	token, err := oauth2Config.Exchange(c.Request().Context(), params.Code)
 	if err != nil {
 		logrus.Error(err)
-		return DefaultRedirect(c)
+		return ErrorRedirect(c, "#003")
 	}
 
 	// Get user from Google
@@ -252,7 +255,7 @@ func (s *Server) CallbackLinking(c echo.Context, params autogen.CallbackParams, 
 	resp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
 	if err != nil {
 		logrus.Error(err)
-		return DefaultRedirect(c)
+		return ErrorRedirect(c, "#004")
 	}
 	defer resp.Body.Close()
 
@@ -260,25 +263,25 @@ func (s *Server) CallbackLinking(c echo.Context, params autogen.CallbackParams, 
 	err = json.NewDecoder(resp.Body).Decode(usr)
 	if err != nil {
 		logrus.Error(err)
-		return DefaultRedirect(c)
+		return ErrorRedirect(c, "#005")
 	}
 
 	adminService, err := admin.NewService(c.Request().Context(), option.WithTokenSource(oauth2Config.TokenSource(c.Request().Context(), token)))
 	if err != nil {
 		logrus.Error(err)
-		return DefaultRedirect(c)
+		return ErrorRedirect(c, "#006")
 	}
 
 	t, err := adminService.Users.Get(usr.ID).Projection("custom").CustomFieldMask("Education").ViewType("domain_public").Do()
 	if err != nil {
 		logrus.Error(err)
-		return DefaultRedirect(c)
+		return ErrorRedirect(c, "#007")
 	}
 	edc := &education{}
 	err = json.Unmarshal(t.CustomSchemas["Education"], edc)
 	if err != nil {
 		logrus.Error(err)
-		return DefaultRedirect(c)
+		return ErrorRedirect(c, "#008")
 	}
 
 	account.FirstName = usr.FirstName
@@ -295,13 +298,13 @@ func (s *Server) CallbackLinking(c echo.Context, params autogen.CallbackParams, 
 		if err != nil {
 			if err != mongo.ErrNoDocuments {
 				logrus.Error(err)
-				return DefaultRedirect(c)
+				return ErrorRedirect(c, "#009")
 			}
 
 			err = s.DBackend.CreateAccount(c.Request().Context(), account)
 			if err != nil {
 				logrus.Error(err)
-				return DefaultRedirect(c)
+				return ErrorRedirect(c, "#010")
 			}
 		} else {
 			if acc.CardId == nil {
@@ -311,7 +314,7 @@ func (s *Server) CallbackLinking(c echo.Context, params autogen.CallbackParams, 
 			err = s.DBackend.UpdateAccount(c.Request().Context(), acc)
 			if err != nil {
 				logrus.Error(err)
-				return DefaultRedirect(c)
+				return ErrorRedirect(c, "#011")
 			}
 
 			account = acc
@@ -329,7 +332,7 @@ func (s *Server) CallbackLinking(c echo.Context, params autogen.CallbackParams, 
 		err = s.DBackend.UpdateAccount(c.Request().Context(), account)
 		if err != nil {
 			logrus.Error(err)
-			return DefaultRedirect(c)
+			return ErrorRedirect(c, "#012")
 		}
 	}
 
@@ -337,7 +340,7 @@ func (s *Server) CallbackLinking(c echo.Context, params autogen.CallbackParams, 
 
 	r, found := redirectCache.Get(params.State)
 	if !found {
-		return DefaultRedirect(c)
+		return SuccessRedirect(c)
 	}
 	redirectCache.Delete(params.State)
 
@@ -364,7 +367,7 @@ func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams
 	token, err := oauth2Config.Exchange(c.Request().Context(), params.Code)
 	if err != nil {
 		logrus.Error(err)
-		return DefaultRedirect(c)
+		return ErrorRedirect(c, "#014")
 	}
 
 	// Get user from Google
@@ -372,7 +375,7 @@ func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams
 	resp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
 	if err != nil {
 		logrus.Error(err)
-		return DefaultRedirect(c)
+		return ErrorRedirect(c, "#015")
 	}
 	defer resp.Body.Close()
 
@@ -380,7 +383,7 @@ func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams
 	err = json.NewDecoder(resp.Body).Decode(usr)
 	if err != nil {
 		logrus.Error(err)
-		return DefaultRedirect(c)
+		return ErrorRedirect(c, "#016")
 	}
 
 	account, err := s.DBackend.GetAccountByGoogle(c.Request().Context(), usr.ID)
@@ -389,25 +392,25 @@ func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams
 			return ErrorAccNotFound(c)
 		}
 		logrus.Error(err)
-		return DefaultRedirect(c)
+		return ErrorRedirect(c, "#017")
 	}
 
 	adminService, err := admin.NewService(c.Request().Context(), option.WithTokenSource(oauth2Config.TokenSource(c.Request().Context(), token)))
 	if err != nil {
 		logrus.Error(err)
-		return DefaultRedirect(c)
+		return ErrorRedirect(c, "#018")
 	}
 
 	t, err := adminService.Users.Get(usr.ID).Projection("custom").CustomFieldMask("Education").ViewType("domain_public").Do()
 	if err != nil {
 		logrus.Error(err)
-		return DefaultRedirect(c)
+		return ErrorRedirect(c, "#019")
 	}
 	edc := &education{}
 	err = json.Unmarshal(t.CustomSchemas["Education"], edc)
 	if err != nil {
 		logrus.Error(err)
-		return DefaultRedirect(c)
+		return ErrorRedirect(c, "#020")
 	}
 
 	account.FirstName = usr.FirstName
@@ -419,12 +422,12 @@ func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams
 	err = s.DBackend.UpdateAccount(c.Request().Context(), account)
 	if err != nil {
 		logrus.Error(err)
-		return DefaultRedirect(c)
+		return ErrorRedirect(c, "#021")
 	}
 
 	r, found := redirectCache.Get(params.State)
 	if !found {
-		return c.Redirect(http.StatusPermanentRedirect, conf.ApiConfig.FrontendBasePath+"/borne/connected")
+		return SuccessRedirect(c)
 	}
 	redirectCache.Delete(params.State)
 

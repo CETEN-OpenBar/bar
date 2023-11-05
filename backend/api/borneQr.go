@@ -127,7 +127,7 @@ func (s *Server) CallbackQRAuth(c echo.Context, params autogen.CallbackParams, s
 	token, err := oauth2Config.Exchange(c.Request().Context(), params.Code)
 	if err != nil {
 		logrus.Error(err)
-		return DefaultRedirect(c)
+		return ErrorRedirect(c, "#022")
 	}
 
 	// Get user from Google
@@ -135,7 +135,7 @@ func (s *Server) CallbackQRAuth(c echo.Context, params autogen.CallbackParams, s
 	resp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
 	if err != nil {
 		logrus.Error(err)
-		return DefaultRedirect(c)
+		return ErrorRedirect(c, "#023")
 	}
 	defer resp.Body.Close()
 
@@ -143,7 +143,7 @@ func (s *Server) CallbackQRAuth(c echo.Context, params autogen.CallbackParams, s
 	err = json.NewDecoder(resp.Body).Decode(usr)
 	if err != nil {
 		logrus.Error(err)
-		return DefaultRedirect(c)
+		return ErrorRedirect(c, "#024")
 	}
 
 	account, err := s.DBackend.GetAccountByGoogle(c.Request().Context(), usr.ID)
@@ -152,7 +152,7 @@ func (s *Server) CallbackQRAuth(c echo.Context, params autogen.CallbackParams, s
 			return ErrorAccNotFound(c)
 		}
 		logrus.Error(err)
-		return DefaultRedirect(c)
+		return ErrorRedirect(c, "#025")
 	}
 
 	uid := state.Data

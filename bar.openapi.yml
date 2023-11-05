@@ -1690,7 +1690,7 @@ paths:
           required: true
           schema:
             type: integer
-            format: uint64
+            format: int64
         - name: type
           in: query
           description: Type of the refill
@@ -4504,10 +4504,14 @@ components:
       enum:
         - cash
         - card
+        - tranfer
+        - check
         - other
       x-enum-varnames:
         - RefillCash
         - RefillCard
+        - RefillTransfer
+        - RefillCheck
         - RefillOther
     Refill:
       type: object
@@ -4521,7 +4525,7 @@ components:
           description: Name of the account
         amount:
           type: integer
-          format: uint64
+          format: int64
           example: 1050 (10.50€)
         state:
           $ref: '#/components/schemas/RefillState'

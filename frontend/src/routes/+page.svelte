@@ -8,7 +8,7 @@
 	const callback = async () => {
 		let req: ConnectCardRequest = {
 			card_id: '1',
-			card_pin: '1234'
+			card_pin: '1111'
 		};
 		authApi()
 			.connectCard(req, {
