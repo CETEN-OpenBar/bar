@@ -395,12 +395,23 @@ func (s *Server) ImportAccounts(c echo.Context) error {
 
 // (GET /account/admin)
 func (s *Server) GetAccountAdmin(c echo.Context) error {
-	admin, err := MustGetAdmin(c)
+	user, err := MustGetUser(c)
 	if err != nil {
 		return nil
 	}
 
-	canRestore := admin.Role == autogen.AccountSuperAdmin
+	switch user.Role {
+	case autogen.AccountGhost:
+		return Error403(c)
+	case autogen.AccountStudent:
+		return Error403(c)
+	case autogen.AccountStudentWithBenefits:
+		return Error403(c)
+	default:
+		break
+	}
+
+	canRestore := user.Role == autogen.AccountSuperAdmin
 
 	// Return account
 	resp := autogen.GetAccountAdmin200JSONResponse{

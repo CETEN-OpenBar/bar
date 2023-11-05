@@ -136,9 +136,9 @@
 {/if}
 
 {#if display}
-<div in:fly={{ x: -1000, duration: 1000 }}>
-	<Carousel {images} {texts} />
-</div>
+	<div in:fly={{ x: -1000, duration: 1000 }}>
+		<Carousel {images} {texts} />
+	</div>
 {:else}
 	<FsLoading />
 {/if}

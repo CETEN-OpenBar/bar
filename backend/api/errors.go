@@ -23,6 +23,14 @@ func Error400(c echo.Context) error {
 	resp.VisitConnectAccountResponse(c.Response())
 	return nil
 }
+func Error403(c echo.Context) error {
+	resp := autogen.AddCarouselImage403JSONResponse{
+		Message:   autogen.MsgAccountNotAllowed,
+		ErrorCode: autogen.ErrNotAuthenticated,
+	}
+	resp.VisitAddCarouselImageResponse(c.Response())
+	return nil
+}
 
 func ErrorNotAuthenticated(c echo.Context) error {
 	resp := autogen.GetAccounts401JSONResponse{
