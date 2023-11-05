@@ -19,7 +19,7 @@
 	>
 		{#each texts as text, i}
 			<div
-				class="w-full h-full flex justify-center items-center p-2"
+				class="w-full h-full flex justify-center items-center p-2 select-none"
 				style="text-color: {text.color}; background-color: #22283170"
 				transition:fly={{ y: 100, duration: 1000, delay: 1000 }}
 			>
@@ -35,7 +35,7 @@
 			src={api() + image.image_url}
 			alt="dommage"
 			draggable="false"
-			class="w-full object-cover overflow-hidden"
+			class="w-full object-cover overflow-hidden select-none"
 		/>
 	{/each}
 </Carousel>
