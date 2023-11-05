@@ -14,7 +14,7 @@
 
 	let page: number = 0;
 	let maxPage: number = 0;
-	let limit: number = 15;
+	let limit: number = 12;
 
 	onMount(() => {
 		loadItems();
@@ -65,21 +65,31 @@
 	</div>
 {:else}
 	<div
-		class="grid grid-cols-5 gap-3 w-full p-16"
+		class="grid grid-cols-4 gap-8 w-full p-16"
 		in:fly={{ x: -direction * 300, duration: 500 }}
 		out:fly={{ x: direction * 300, duration: 500 }}
 	>
 		{#each items as item}
-			<button
-				class="w-32 h-46 flex-shrink-0 flex flex-col items-center justify-center rounded-lg text-white transition-colors duration-300"
-				on:click={() => {
-					click(item);
-				}}
-			>
-				<img src={api() + item.picture_uri} alt={item.name} />
-				<span class="text-lg font-bold">{item.name}</span>
-				<span class="text-sm">Prix: {formatPrice(item.display_price??999)}</span>
-			</button>
+			{#if item.amount_left > 0}
+				<!-- image wil be in a button box -->
+				<button
+					class="w-50 h-50 flex-shrink-0 flex flex-col items-center justify-between rounded-lg text-white transition-colors duration-300"
+					on:click={() => {
+						click(item);
+					}}
+				>
+					<img
+						draggable="false"
+						class="w-32 h-32 object-contain"
+						src={api() + item.picture_uri}
+						alt={item.name}
+					/>
+					<div class="flex flex-col">
+						<span class="text-lg font-bold">{item.name}</span>
+						<span class="text-sm">Prix: {formatPrice(item.display_price ?? 999)}</span>
+					</div>
+				</button>
+			{/if}
 		{/each}
 	</div>
 {/if}

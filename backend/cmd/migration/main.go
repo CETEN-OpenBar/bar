@@ -8,6 +8,7 @@ import (
 	"bar/internal/models"
 	"bar/internal/storage"
 	"context"
+	"crypto/sha256"
 	"database/sql"
 	"fmt"
 	"math/rand"
@@ -52,7 +53,7 @@ func main() {
 	uuid.SetRand(rdr)
 
 	part1(mongoDB, mariaDB)
-	// part2(mongoDB, mariaDB)
+	part2(mongoDB, mariaDB)
 	part3(mongoDB, mariaDB)
 }
 
@@ -154,6 +155,8 @@ func part1(mongoDB db.DBackend, mariaDB *sql.DB) {
 
 		// Insert into mongo
 		email := fmt.Sprintf("%s.%s@telecomnancy.net", firstname, lastname)
+		h := sha256.Sum256([]byte(email))
+		acc.GooglePicture = autogen.OptionalString(fmt.Sprintf("https://www.gravatar.com/avatar/%x?d=mp&f=y", h))
 
 		acc.EmailAddress = email
 

@@ -24,9 +24,10 @@ func (s *Server) PostTransactions(c echo.Context) error {
 
 	transaction := &models.Transaction{
 		Transaction: autogen.Transaction{
-			AccountId: accountID,
-			State:     autogen.TransactionStarted,
-			Id:        uuid.New(),
+			AccountId:   accountID,
+			AccountName: account.Name(),
+			State:       autogen.TransactionStarted,
+			Id:          uuid.New(),
 		},
 	}
 

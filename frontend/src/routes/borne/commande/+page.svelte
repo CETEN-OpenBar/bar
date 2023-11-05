@@ -53,7 +53,7 @@
 
 		if (newOrder.find((i) => i.item_id == item.id)) {
 			let found = newOrder.find((i) => i.item_id == item.id)!;
-			if (found.amount >= found.item.buy_limit) {
+			if (found.amount >= (found.item.buy_limit??0)) {
 				return;
 			}
 			found.amount++;
@@ -105,6 +105,7 @@
 
 	function finalizeTransaction(card_pin: string) {
 		if (card_pin == '') {
+			pin = false;
 			error = "J'ai besoin de votre code pin pour valider la transaction";
 			setTimeout(() => {
 				error = '';

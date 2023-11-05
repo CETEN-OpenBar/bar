@@ -73,10 +73,16 @@ export interface Account {
     'balance': number;
     /**
      * 
+     * @type {number}
+     * @memberof Account
+     */
+    'points': number;
+    /**
+     * 
      * @type {string}
      * @memberof Account
      */
-    'card_id': string;
+    'card_id'?: string;
     /**
      * 
      * @type {string}
@@ -135,11 +141,13 @@ export interface Account {
  */
 
 export const AccountPriceRole = {
-    AccountPriceNormal: 'normal',
+    AccountPriceMembreBureau: 'membre_bureau',
+    AccountPriceMembrePrivilegie: 'membre_privilegie',
     AccountPriceStaff: 'staff',
     AccountPriceVIP: 'vip',
     AccountPriceCeten: 'ceten',
-    AccountPriceExte: 'exte'
+    AccountPriceExte: 'exte',
+    AccountPriceInterne: 'interne'
 } as const;
 
 export type AccountPriceRole = typeof AccountPriceRole[keyof typeof AccountPriceRole];
@@ -302,6 +310,12 @@ export interface Category {
      * @memberof Category
      */
     'picture_uri': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Category
+     */
+    'position': number;
     /**
      * 
      * @type {number}
@@ -951,7 +965,13 @@ export interface ItemPrices {
      * @type {number}
      * @memberof ItemPrices
      */
-    'normal': number;
+    'membre_bureau': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ItemPrices
+     */
+    'membre_privilegie': number;
     /**
      * 
      * @type {number}
@@ -1088,6 +1108,12 @@ export interface NewCategory {
      * @memberof NewCategory
      */
     'picture': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof NewCategory
+     */
+    'position': number;
 }
 /**
  * 
@@ -1201,6 +1227,12 @@ export interface PatchAccountRequest {
      * @type {string}
      * @memberof PatchAccountRequest
      */
+    'card_id'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchAccountRequest
+     */
     'old_card_pin': string;
     /**
      * 
@@ -1208,6 +1240,19 @@ export interface PatchAccountRequest {
      * @memberof PatchAccountRequest
      */
     'new_card_pin': string;
+}
+/**
+ * 
+ * @export
+ * @interface PostBorneAuthQRRequest
+ */
+export interface PostBorneAuthQRRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof PostBorneAuthQRRequest
+     */
+    'nonce': string;
 }
 /**
  * 
@@ -1319,6 +1364,8 @@ export type RefillState = typeof RefillState[keyof typeof RefillState];
 export const RefillType = {
     RefillCash: 'cash',
     RefillCard: 'card',
+    RefillTransfer: 'tranfer',
+    RefillCheck: 'check',
     RefillOther: 'other'
 } as const;
 
@@ -1370,6 +1417,12 @@ export interface Transaction {
      * @memberof Transaction
      */
     'account_id': string;
+    /**
+     * Name of the account
+     * @type {string}
+     * @memberof Transaction
+     */
+    'account_name': string;
     /**
      * 
      * @type {number}
@@ -1567,6 +1620,12 @@ export interface UpdateCategory {
      * @memberof UpdateCategory
      */
     'picture'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateCategory
+     */
+    'position'?: number;
 }
 /**
  * 
@@ -1905,8 +1964,8 @@ export const AccountsApiAxiosParamCreator = function (configuration?: Configurat
             };
         },
         /**
-         * Update\'s account card pin
-         * @param {PatchAccountRequest} [patchAccountRequest] Card pin
+         * Update\'s account card pin / id
+         * @param {PatchAccountRequest} [patchAccountRequest] Card pin / id
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -2135,8 +2194,8 @@ export const AccountsApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Update\'s account card pin
-         * @param {PatchAccountRequest} [patchAccountRequest] Card pin
+         * Update\'s account card pin / id
+         * @param {PatchAccountRequest} [patchAccountRequest] Card pin / id
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -2258,8 +2317,8 @@ export const AccountsApiFactory = function (configuration?: Configuration, baseP
             return localVarFp.markDeleteAccountId(accountId, options).then((request) => request(axios, basePath));
         },
         /**
-         * Update\'s account card pin
-         * @param {PatchAccountRequest} [patchAccountRequest] Card pin
+         * Update\'s account card pin / id
+         * @param {PatchAccountRequest} [patchAccountRequest] Card pin / id
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -2391,8 +2450,8 @@ export class AccountsApi extends BaseAPI {
     }
 
     /**
-     * Update\'s account card pin
-     * @param {PatchAccountRequest} [patchAccountRequest] Card pin
+     * Update\'s account card pin / id
+     * @param {PatchAccountRequest} [patchAccountRequest] Card pin / id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AccountsApi
@@ -3849,6 +3908,73 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * Websocket to listen for scan & callback (for cool animations)
+         * @summary 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getBorneAuthQRWebsocket: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/auth/qr`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication local_token required
+            await setApiKeyToObject(localVarHeaderParameter, "X-Local-Token", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Validate the connection to connect
+         * @summary 
+         * @param {PostBorneAuthQRRequest} [postBorneAuthQRRequest] Nonce
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postBorneAuthQR: async (postBorneAuthQRRequest?: PostBorneAuthQRRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/auth/qr`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postBorneAuthQRRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -3867,6 +3993,27 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          */
         async getAccountQRWebsocket(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getAccountQRWebsocket(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Websocket to listen for scan & callback (for cool animations)
+         * @summary 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getBorneAuthQRWebsocket(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getBorneAuthQRWebsocket(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Validate the connection to connect
+         * @summary 
+         * @param {PostBorneAuthQRRequest} [postBorneAuthQRRequest] Nonce
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postBorneAuthQR(postBorneAuthQRRequest?: PostBorneAuthQRRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConnectCard200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postBorneAuthQR(postBorneAuthQRRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
@@ -3888,6 +4035,25 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         getAccountQRWebsocket(options?: any): AxiosPromise<void> {
             return localVarFp.getAccountQRWebsocket(options).then((request) => request(axios, basePath));
         },
+        /**
+         * Websocket to listen for scan & callback (for cool animations)
+         * @summary 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getBorneAuthQRWebsocket(options?: any): AxiosPromise<void> {
+            return localVarFp.getBorneAuthQRWebsocket(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Validate the connection to connect
+         * @summary 
+         * @param {PostBorneAuthQRRequest} [postBorneAuthQRRequest] Nonce
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postBorneAuthQR(postBorneAuthQRRequest?: PostBorneAuthQRRequest, options?: any): AxiosPromise<ConnectCard200Response> {
+            return localVarFp.postBorneAuthQR(postBorneAuthQRRequest, options).then((request) => request(axios, basePath));
+        },
     };
 };
 
@@ -3907,6 +4073,29 @@ export class DefaultApi extends BaseAPI {
      */
     public getAccountQRWebsocket(options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).getAccountQRWebsocket(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Websocket to listen for scan & callback (for cool animations)
+     * @summary 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getBorneAuthQRWebsocket(options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getBorneAuthQRWebsocket(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Validate the connection to connect
+     * @summary 
+     * @param {PostBorneAuthQRRequest} [postBorneAuthQRRequest] Nonce
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public postBorneAuthQR(postBorneAuthQRRequest?: PostBorneAuthQRRequest, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).postBorneAuthQR(postBorneAuthQRRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
