@@ -2,8 +2,7 @@
 	// import Carousel from '$lib/components/borne/carousel.svelte';
 	import Pin from '$lib/components/borne/pin.svelte';
 	import Error from '$lib/components/error.svelte';
-	import Carousel from 'svelte-carousel';
-
+	import Carousel from '$lib/components/borne/carousel.svelte';
 
 	import {
 		AccountState,
@@ -49,6 +48,9 @@
 
 	onMount(() => {
 		fetchCarousel();
+
+		// Add overflow hidden to body
+		document.body.style.overflow = 'hidden';
 	});
 
 	const preloadImage = (src: string) =>
@@ -125,7 +127,6 @@
 
 <ReadCard callback={cardCallback} />
 
-
 {#if incorrectPin != ''}
 	<Error error={incorrectPin} />
 {/if}
@@ -135,21 +136,9 @@
 {/if}
 
 {#if display}
-	<Carousel
-	autoplay
-	autoplayDuration={3000}
-
-	arrows={false}
-	dots={false}
-	>
-	{#each images as image, i}
-			<img src={api() + image.image_url}
-				alt="dommage"
-				draggable="false"
-				class="w-full h-full object-cover"
-			/>
-	{/each}
-	</Carousel>
+<div in:fly={{ x: -1000, duration: 1000 }}>
+	<Carousel {images} {texts} />
+</div>
 {:else}
 	<FsLoading />
 {/if}
