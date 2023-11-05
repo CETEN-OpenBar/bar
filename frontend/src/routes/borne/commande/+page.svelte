@@ -53,12 +53,12 @@
 
 		if (newOrder.find((i) => i.item_id == item.id)) {
 			let found = newOrder.find((i) => i.item_id == item.id)!;
-			if (found.amount >= (found.item.buy_limit??0)) {
+			if (found.amount >= (found.item.buy_limit ?? 9999)) {
 				return;
 			}
 			found.amount++;
 			order = newOrder;
-			orderPrice += item.display_price??999;
+			orderPrice += item.display_price ?? 999;
 			return;
 		}
 
@@ -69,7 +69,7 @@
 		};
 		newOrder.push(newTItem);
 		order = newOrder;
-		orderPrice += item.display_price??999;
+		orderPrice += item.display_price ?? 999;
 	};
 
 	function removeItem(item: NewTransactionItemWithItem, amount: number = 1) {
@@ -89,7 +89,7 @@
 				}
 
 				order = newOrder;
-				orderPrice -= amount * (item.item.display_price??999);
+				orderPrice -= amount * (item.item.display_price ?? 999);
 				return;
 			}
 		};
@@ -139,6 +139,7 @@
 				setTimeout(() => {
 					error = '';
 				}, 3000);
+				pin = false;
 			});
 		confirm = false;
 	}
@@ -246,7 +247,12 @@
 							>
 								<iconify-icon class="text-white align-middle text-2xl" icon="ic:outline-cancel" />
 							</button>
-							<img class="w-16" src={api() + item.item.picture_uri} alt={item.item.name} />
+							<img
+								draggable="false"
+								class="w-16 h-16 object-contain"
+								src={api() + item.item.picture_uri}
+								alt={item.item.name}
+							/>
 							<div class="flex flex-row justify-center items-center">
 								<button
 									class="w-10 h-10 border-2 border-gray-300 rounded-full"
@@ -262,26 +268,26 @@
 									<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:plus" />
 								</button>
 							</div>
-							<span class="text-lg text-white">{formatPrice((item.item.display_price??999) * item.amount)}</span>
+							<span class="text-lg text-white"
+								>{formatPrice((item.item.display_price ?? 999) * item.amount)}</span
+							>
 						</div>
 					{/each}
 				</div>
 			</div>
 			<hr class="w-full border-white" />
-			<div class="p-4 flex justify-between bottom-0 h-1/6">
+			<div class="p-1 flex justify-between bottom-0 h-1/6">
 				<div
 					class="flex flex-col gap-1 justify-center items-center w-full h-full overflow-x-auto overflow-y-hidden"
 				>
-					<!-- Commande en cours title -->
 					<h1 class="text-md md:text-md lg:text-2xl text-white">Total</h1>
-					<!-- Subtitle with current balance -->
-					<h2 class="text-xs md:text-xs lg:text-xl text-white">Coût: {formatPrice(orderPrice)}</h2>
-					<h2 class="text-xs md:text-xs lg:text-xl text-white">
-						Restant: {formatPrice((account?.balance ?? 0) - orderPrice)}
+					<h2 class="text-md text-white">Coût: {formatPrice(orderPrice)}</h2>
+					<h2 class="text-md text-white">
+						Reste: {formatPrice((account?.balance ?? 0) - orderPrice)}
 					</h2>
 
 					<button
-						class="w-full h-10 bg-green-500 rounded-lg text-white text-lg font-bold"
+						class="w-full h-16 bg-green-500 rounded-lg text-white text-lg font-bold"
 						on:click={() => (confirm = true)}
 					>
 						Valider la commande

@@ -1,6 +1,7 @@
 package mongo
 
 import (
+	"bar/autogen"
 	"bar/internal/models"
 	"context"
 
@@ -29,6 +30,11 @@ func (b *Backend) GetItems(ctx context.Context, categoryID string, page, size ui
 	}
 	if state != "" {
 		filter["state"] = state
+		if state == string(autogen.ItemBuyable) {
+			filter["amount_left"] = bson.M{
+				"$gt": 0,
+			}
+		}
 	}
 	if categoryID != "" {
 		filter["category_id"] = uuid.MustParse(categoryID)
@@ -70,6 +76,11 @@ func (b *Backend) CountItems(ctx context.Context, categoryID string, state strin
 	}
 	if state != "" {
 		filter["state"] = state
+		if state == string(autogen.ItemBuyable) {
+			filter["amount_left"] = bson.M{
+				"$gt": 0,
+			}
+		}
 	}
 	if categoryID != "" {
 		filter["category_id"] = uuid.MustParse(categoryID)

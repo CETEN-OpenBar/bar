@@ -28,10 +28,11 @@ func main() {
 
 	acc := &models.Account{
 		Account: autogen.Account{
-			CardId: autogen.OptionalString("1"),
-			Id:     uuid.New(),
-			Role:   autogen.AccountSuperAdmin,
-			State:  autogen.AccountOK,
+			CardId:    autogen.OptionalString("1"),
+			Id:        uuid.New(),
+			Role:      autogen.AccountSuperAdmin,
+			State:     autogen.AccountOK,
+			PriceRole: autogen.AccountPriceCeten,
 		},
 	}
 	acc.SetPin("1234")
