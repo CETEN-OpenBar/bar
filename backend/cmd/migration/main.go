@@ -176,7 +176,7 @@ var Categories = make(map[string]uuid.UUID)
 func part2(mongoDB db.DBackend, mariaDB *sql.DB) {
 	// SELECT product.name, price as exte, cetenPrice as ceten, privilegePrice as vip, barMemberPrice staff, privilegePrice as privilegie, cost as bureau, product.image, stock, type, product_type.name, product_type.image from product join product_type on product.type = product_type.productTypeId;
 
-	rq := `SELECT product.hidden, product.criticalStock, product.name, price as exte, cetenPrice as ceten, privilegePrice as vip, barMemberPrice staff, privilegePrice as privilegie, cost as bureau, product.image, stock, type, product_type.name as categorie, product_type.image as image_categorie from product join product_type on product.type = product_type.productTypeId;`
+	rq := `SELECT product.hidden, product.criticalStock, product.name, price as exte, cetenPrice as ceten, privilegePrice as vip, barMemberPrice staff, privilegePrice as privilegie, cost as bureau, product.image, stock, type, product_type.name as categorie, product_type.image as image_categorie, product_type.boolean as categorie_hidden from product join product_type on product.type = product_type.productTypeId;`
 
 	rows, err := mariaDB.Query(rq)
 	if err != nil {
@@ -199,12 +199,13 @@ func part2(mongoDB db.DBackend, mariaDB *sql.DB) {
 		var type_ string
 		var categorie string
 		var imageCategorie []byte
+		var categorieHidden bool
 
 		if strings.Contains(productName, "OLD") {
 			continue
 		}
 
-		var err = rows.Scan(&hidden, &criticalStock, &productName, &priceExte, &priceCeten, &priceVip, &priceStaff, &pricePrivilegie, &priceBureau, &image, &stock, &type_, &categorie, &imageCategorie)
+		var err = rows.Scan(&hidden, &criticalStock, &productName, &priceExte, &priceCeten, &priceVip, &priceStaff, &pricePrivilegie, &priceBureau, &image, &stock, &type_, &categorie, &imageCategorie, &categorieHidden)
 		if err != nil {
 			panic(err)
 		}
@@ -220,6 +221,12 @@ func part2(mongoDB db.DBackend, mariaDB *sql.DB) {
 					Position:   0,
 					PictureUri: "/categories/" + uid.String() + "/picture",
 				},
+			}
+			if categorieHidden {
+				system := uuid.MustParse("00000000-0000-0000-0000-000000000000")
+				now := uint64(time.Now().Unix())
+				cat.DeletedAt = &now
+				cat.DeletedBy = &system
 			}
 			mongoDB.CreateCategory(context.Background(), cat)
 			Categories[categorie] = uid
