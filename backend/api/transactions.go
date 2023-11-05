@@ -463,6 +463,7 @@ func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, 
 		origItem.AmountLeft += item.ItemAmount
 		account.Balance += int64(item.TotalCost)
 		transaction.TotalCost -= item.TotalCost
+		item.TotalCost = 0
 	} else if oldState == autogen.TransactionItemCanceled && item.State != autogen.TransactionItemCanceled {
 		// Can't do that
 		return Error400(c)

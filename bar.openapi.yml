@@ -4229,6 +4229,10 @@ components:
           type: integer
           format: uint64
           example: 1000
+        interne:
+          type: integer
+          format: uint64
+          example: 1000
       required:
         - membre_bureau
         - membre_privilegie
@@ -4236,6 +4240,7 @@ components:
         - vip
         - ceten
         - exte
+        - interne
     NewItem:
       type: object
       properties:

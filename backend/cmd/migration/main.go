@@ -248,6 +248,7 @@ func part2(mongoDB db.DBackend, mariaDB *sql.DB) {
 			MembrePrivilegie: uint64(privilegiePrice),
 			MembreBureau:     uint64(bureauPrice),
 			Exte:             uint64(extePrice),
+			Interne:          uint64(extePrice),
 		}
 
 		uid := uuid.New()

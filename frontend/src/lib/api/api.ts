@@ -996,6 +996,12 @@ export interface ItemPrices {
      * @memberof ItemPrices
      */
     'exte': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ItemPrices
+     */
+    'interne': number;
 }
 /**
  * State of the item

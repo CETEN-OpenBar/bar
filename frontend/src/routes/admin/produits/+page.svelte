@@ -27,9 +27,11 @@
 		prices: {
 			exte: 0,
 			ceten: 0,
-			normal: 0,
 			staff: 0,
-			vip: 0
+			vip: 0,
+			interne: 0,
+			membre_bureau: 0,
+			membre_privilegie: 0,
 		} as ItemPrices,
 		amount_left: 0,
 		buy_limit: undefined,
@@ -37,9 +39,9 @@
 		state: 'buyable',
 		category_id: ''
 	};
-	let newItemPriceRole: AccountPriceRole = 'normal';
-	let editItemPriceRole: AccountPriceRole = 'normal';
-	let promoItemPriceRole: AccountPriceRole = 'normal';
+	let newItemPriceRole: AccountPriceRole = 'ceten';
+	let editItemPriceRole: AccountPriceRole = 'ceten';
+	let promoItemPriceRole: AccountPriceRole = 'ceten';
 
 	let page = 0;
 	let max_page = 0;
@@ -230,11 +232,13 @@
 											});
 										}}
 									>
-										<option value="normal">Prix de base</option>
+										<option value="interne">Prix interne</option>
 										<option value="exte">Prix externe</option>
 										<option value="ceten">Prix ceten</option>
 										<option value="staff">Prix staff</option>
 										<option value="vip">Prix VIP</option>
+										<option value="membre">Prix Membre</option>
+										<option value="membre_privilegie">Prix Membre privilégié</option>
 									</select>
 								</div>
 
@@ -426,11 +430,13 @@
 						aria-describedby="text-error"
 						bind:value={promoItemPriceRole}
 					>
-						<option value="normal">Prix réel de base</option>
+						<option value="interne">Prix réel interne</option>
 						<option value="exte">Prix réel externe</option>
 						<option value="ceten">Prix réel ceten</option>
 						<option value="staff">Prix réel staff</option>
 						<option value="vip">Prix réel VIP</option>
+						<option value="membre">Prix réel Membre</option>
+						<option value="membre_privilegie">Prix réel Membre privilégié</option>
 					</select>
 					<div class="relative">
 						<span class="self-center text-sm text-gray-400"
@@ -650,11 +656,13 @@
 											});
 										}}
 									>
-										<option value="normal">Prix de base</option>
+										<option value="interne">Prix interne</option>
 										<option value="exte">Prix externe</option>
 										<option value="ceten">Prix ceten</option>
 										<option value="staff">Prix staff</option>
 										<option value="vip">Prix VIP</option>
+										<option value="membre">Prix Membre</option>
+										<option value="membre_privilegie">Prix Membre privilégié</option>
 									</select>
 								</th>
 								<th scope="col" class="px-6 py-3 text-right" />

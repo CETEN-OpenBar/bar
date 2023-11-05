@@ -497,11 +497,13 @@
 														});
 												}}
 											>
-												<option value="normal">Normal</option>
+												<option value="interne">Interne</option>
 												<option value="exte">Exte</option>
 												<option value="ceten">CETEN</option>
 												<option value="vip">VIP</option>
 												<option value="staff">Staff</option>
+												<option value="membre">Membre</option>
+												<option value="membre_privilegie">Membre privilégié</option>
 											</select>
 										</div>
 									</td>
