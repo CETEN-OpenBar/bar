@@ -1,0 +1,29 @@
+layout {
+    default_tab_template {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        children
+        pane size=2 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+
+	tab name="frontend" {
+		pane cwd="frontend" command="npm" {
+			args "run" "dev"		
+		}
+	}
+
+	tab name="backend" {
+		pane cwd="backend" command="go" {
+			args "run" "cmd/bar/main.go"
+		}
+	}
+
+	tab name="editor" {
+		pane cwd="./" command="hx" {
+			args "./"
+		}
+	}
+}
