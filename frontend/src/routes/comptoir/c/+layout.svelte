@@ -21,7 +21,7 @@
 				goto('/comptoir');
 			});
 
-		disconnectInterval = setInterval(logout, 15000);
+		disconnectInterval = setInterval(logout, 300000);
 
 		// trigger action on any event
 		let events = ['mousemove', 'mousedown', 'keypress', 'DOMMouseScroll', 'mousewheel', 'touchmove', 'MSPointerMove', 'click'];
@@ -44,7 +44,7 @@
 	function onAction() {
 		console.log('action');
 		clearInterval(disconnectInterval);
-		disconnectInterval = setInterval(logout, 15000);
+		disconnectInterval = setInterval(logout, 300000);
 	}
 </script>
 
