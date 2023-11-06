@@ -22,8 +22,23 @@
 			.catch(() => {
 				goto('/borne');
 			});
-			
+
 		disconnectInterval = setInterval(logout, 15000);
+
+		// trigger action on any event
+		let events = [
+			'mousemove',
+			'mousedown',
+			'keypress',
+			'DOMMouseScroll',
+			'mousewheel',
+			'touchmove',
+			'MSPointerMove',
+			'click'
+		];
+		for (let i in events) {
+			window.addEventListener(events[i], onAction);
+		}
 	});
 
 	let disconnectInterval: number | undefined = undefined;
@@ -42,9 +57,6 @@
 		disconnectInterval = setInterval(logout, 15000);
 	}
 </script>
-
-
-<svelte:window on:mousemove={onAction} on:click={onAction} on:scroll={onAction} on:keypress={onAction} />
 
 {#if account !== undefined}
 	<div

@@ -30,34 +30,42 @@
 			})
 			.then((res) => {
 				if (account) account.wants_to_staff = res.data.wants_to_staff;
-			})
-			
-			disconnectInterval = setInterval(logout, 15000);
-		});
-	
-		let disconnectInterval: number | undefined = undefined;
-	
-		function logout() {
-			authApi()
-				.logout({ withCredentials: true })
-				.then(() => {
-					clearInterval(disconnectInterval);
-					goto('/comptoir');
-				});
-		}
-	
-		function onAction() {
-			clearInterval(disconnectInterval);
-			disconnectInterval = setInterval(logout, 15000);
-		}
-</script>
+			});
 
-<svelte:window
-	on:mousemove={onAction}
-	on:click={onAction}
-	on:scroll={onAction}
-	on:keypress={onAction}
-/>
+		disconnectInterval = setInterval(logout, 15000);
+
+		// trigger action on any event
+		let events = [
+			'mousemove',
+			'mousedown',
+			'keypress',
+			'DOMMouseScroll',
+			'mousewheel',
+			'touchmove',
+			'MSPointerMove',
+			'click'
+		];
+		for (let i in events) {
+			window.addEventListener(events[i], onAction);
+		}
+	}
+
+	let disconnectInterval: number | undefined = undefined;
+
+	function logout() {
+		authApi()
+			.logout({ withCredentials: true })
+			.then(() => {
+				clearInterval(disconnectInterval);
+				goto('/comptoir');
+			});
+	}
+
+	function onAction() {
+		clearInterval(disconnectInterval);
+		disconnectInterval = setInterval(logout, 15000);
+	}
+</script>
 
 {#if account !== undefined}
 	<div
