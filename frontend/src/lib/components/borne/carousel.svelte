@@ -35,7 +35,7 @@
 			src={api() + image.image_url}
 			alt="dommage"
 			draggable="false"
-			class="w-full object-cover overflow-hidden select-none"
+			class="w-full overflow-hidden select-none object-contain"
 		/>
 	{/each}
 </Carousel>
