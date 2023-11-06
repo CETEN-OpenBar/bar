@@ -237,7 +237,7 @@
 										<option value="ceten">Prix ceten</option>
 										<option value="staff">Prix staff</option>
 										<option value="vip">Prix VIP</option>
-										<option value="membre">Prix Membre</option>
+										<option value="membre_bureau">Prix Membre</option>
 										<option value="membre_privilegie">Prix Membre privilégié</option>
 									</select>
 								</div>
@@ -435,7 +435,7 @@
 						<option value="ceten">Prix réel ceten</option>
 						<option value="staff">Prix réel staff</option>
 						<option value="vip">Prix réel VIP</option>
-						<option value="membre">Prix réel Membre</option>
+						<option value="membre_bureau">Prix réel Membre</option>
 						<option value="membre_privilegie">Prix réel Membre privilégié</option>
 					</select>
 					<div class="relative">
@@ -661,7 +661,7 @@
 										<option value="ceten">Prix ceten</option>
 										<option value="staff">Prix staff</option>
 										<option value="vip">Prix VIP</option>
-										<option value="membre">Prix Membre</option>
+										<option value="membre_bureau">Prix Membre</option>
 										<option value="membre_privilegie">Prix Membre privilégié</option>
 									</select>
 								</th>
