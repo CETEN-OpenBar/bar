@@ -29,13 +29,15 @@
 	</Carousel>
 </div>
 
-<Carousel autoplay autoplayDuration={3000} arrows={false} dots={false}>
-	{#each images as image, i}
-		<img
-			src={api() + image.image_url}
-			alt="dommage"
-			draggable="false"
-			class="w-full overflow-hidden select-none object-contain"
-		/>
-	{/each}
-</Carousel>
+<div class="bg-slate-900">
+	<Carousel autoplay autoplayDuration={3000} arrows={false} dots={false}>
+		{#each images as image, i}
+			<img
+				src={api() + image.image_url}
+				alt="dommage"
+				draggable="false"
+				class="w-screen h-screen overflow-hidden select-none object-contain"
+			/>
+		{/each}
+	</Carousel>
+</div>
