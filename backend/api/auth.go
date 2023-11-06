@@ -388,8 +388,11 @@ func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams
 
 	account, err := s.DBackend.GetAccountByGoogle(c.Request().Context(), usr.ID)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			return ErrorAccNotFound(c)
+		account, err = s.DBackend.GetAccountByEmail(c.Request().Context(), usr.Email)
+		if err != nil {
+			if err == mongo.ErrNoDocuments {
+				return ErrorAccNotFound(c)
+			}
 		}
 		logrus.Error(err)
 		return ErrorRedirect(c, "#017")
