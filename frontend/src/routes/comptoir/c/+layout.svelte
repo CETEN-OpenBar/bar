@@ -39,6 +39,8 @@
 			'dragleave',
 			'dragover',
 			'dragstart',
+			'touchstart',
+			'touchend',
 		];
 		for (let i in events) {
 			window.addEventListener(events[i], onAction);
