@@ -4,6 +4,7 @@ import (
 	"bar/autogen"
 	"bar/internal/models"
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
@@ -33,6 +34,35 @@ func (b *Backend) GetItems(ctx context.Context, categoryID string, page, size ui
 		if state == string(autogen.ItemBuyable) {
 			filter["amount_left"] = bson.M{
 				"$gt": 0,
+			}
+			// Get seconds since day start
+			t := time.Since(time.Now().Truncate(24 * time.Hour)).Seconds()
+			// available_from <= t <= available_until or (available_from == nil && available_until == nil)
+			filter["$and"] = []bson.M{
+				{
+					"$or": []bson.M{
+						{
+							"available_from": bson.M{
+								"$lte": t,
+							},
+						},
+						{
+							"available_from": nil,
+						},
+					},
+				},
+				{
+					"$or": []bson.M{
+						{
+							"available_until": bson.M{
+								"$gte": t,
+							},
+						},
+						{
+							"available_until": nil,
+						},
+					},
+				},
 			}
 		}
 	}
@@ -79,6 +109,33 @@ func (b *Backend) CountItems(ctx context.Context, categoryID string, state strin
 		if state == string(autogen.ItemBuyable) {
 			filter["amount_left"] = bson.M{
 				"$gt": 0,
+			}
+			t := time.Since(time.Now().Truncate(24 * time.Hour)).Seconds()
+			filter["$and"] = []bson.M{
+				{
+					"$or": []bson.M{
+						{
+							"available_from": bson.M{
+								"$lte": t,
+							},
+						},
+						{
+							"available_from": nil,
+						},
+					},
+				},
+				{
+					"$or": []bson.M{
+						{
+							"available_until": bson.M{
+								"$gte": t,
+							},
+						},
+						{
+							"available_until": nil,
+						},
+					},
+				},
 			}
 		}
 	}

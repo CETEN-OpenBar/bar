@@ -4,6 +4,7 @@ import (
 	"bar/autogen"
 	"bar/internal/models"
 	"errors"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -72,6 +73,13 @@ func (s *Server) PostTransactions(c echo.Context) error {
 
 		if !item.IsMenu {
 			continue
+		}
+
+		t := uint64(time.Since(time.Now().Truncate(24 * time.Hour)).Seconds())
+
+		if item.AvailableFrom != nil && *item.AvailableFrom > t && item.AvailableUntil != nil && *item.AvailableUntil < t {
+			logrus.Warnf("Menu item %s is not available", item.Id.String())
+			return Error400(c)
 		}
 
 		for _, menuItem := range *item.Items {
@@ -143,6 +151,13 @@ func (s *Server) PostTransactions(c echo.Context) error {
 				logrus.Warnf("Item %s cannot be bought for that amount", item.Id.String())
 				return Error400(c)
 			}
+		}
+
+		t := uint64(time.Since(time.Now().Truncate(24 * time.Hour)).Seconds())
+
+		if item.AvailableFrom != nil && *item.AvailableFrom > t && item.AvailableUntil != nil && *item.AvailableUntil < t {
+			logrus.Warnf("Menu item %s is not available", item.Id.String())
+			return Error400(c)
 		}
 
 		transaction.Items = append(transaction.Items, autogen.TransactionItem{
