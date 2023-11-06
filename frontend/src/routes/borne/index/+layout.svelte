@@ -32,7 +32,14 @@
 				if (account) account.wants_to_staff = res.data.wants_to_staff;
 			})
 	}
+
+	function evtListen() {
+
+	}
 </script>
+
+<!-- listen for any event -->
+<svelte:window on:event={evtListen} />
 
 {#if account !== undefined}
 	<div

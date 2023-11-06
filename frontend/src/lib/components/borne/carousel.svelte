@@ -19,11 +19,11 @@
 	>
 		{#each texts as text, i}
 			<div
-				class="w-full h-full flex justify-center items-center p-2 select-none"
+				class="w-full h-full flex justify-center items-center p-4 select-none"
 				style={'color:' + text.color + '; background-color: #22283170'}
 				transition:fly={{ y: 100, duration: 1000, delay: 1000 }}
 			>
-				<p class="text-lg">{text.text}</p>
+				<p class="text-4xl">{text.text}</p>
 			</div>
 		{/each}
 	</Carousel>

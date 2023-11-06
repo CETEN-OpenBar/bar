@@ -179,12 +179,12 @@ type googleUser struct {
 
 func ErrorRedirect(c echo.Context, err string) error {
 	conf := config.GetConfig()
-	return c.Redirect(http.StatusPermanentRedirect, conf.ApiConfig.FrontendBasePath+"/mobile?rt=authError&rm="+err)
+	return c.Redirect(http.StatusPermanentRedirect, conf.ApiConfig.FrontendBasePath+"/borne/mobile?rt=authError&rm="+err)
 }
 
 func SuccessRedirect(c echo.Context) error {
 	conf := config.GetConfig()
-	return c.Redirect(http.StatusPermanentRedirect, conf.ApiConfig.FrontendBasePath+"/mobile?rt=authSuccess")
+	return c.Redirect(http.StatusPermanentRedirect, conf.ApiConfig.FrontendBasePath+"/borne/mobile?rt=authSuccess")
 }
 
 // (GET /auth/google/callback)
