@@ -393,9 +393,9 @@ func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams
 			if err == mongo.ErrNoDocuments {
 				return ErrorAccNotFound(c)
 			}
+			logrus.Error(err)
+			return ErrorRedirect(c, "#017")
 		}
-		logrus.Error(err)
-		return ErrorRedirect(c, "#017")
 	}
 
 	adminService, err := admin.NewService(c.Request().Context(), option.WithTokenSource(oauth2Config.TokenSource(c.Request().Context(), token)))
