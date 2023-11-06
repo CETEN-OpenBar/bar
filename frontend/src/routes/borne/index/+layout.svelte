@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { accountsApi } from '$lib/requests/requests';
+	import { accountsApi, authApi } from '$lib/requests/requests';
 	import type { Account } from '$lib/api';
 	import { onMount } from 'svelte';
 	import { store } from '$lib/store/store';
@@ -31,15 +31,33 @@
 			.then((res) => {
 				if (account) account.wants_to_staff = res.data.wants_to_staff;
 			})
-	}
-
-	function evtListen() {
-
-	}
+			
+			disconnectInterval = setInterval(logout, 15000);
+		});
+	
+		let disconnectInterval: number | undefined = undefined;
+	
+		function logout() {
+			authApi()
+				.logout({ withCredentials: true })
+				.then(() => {
+					clearInterval(disconnectInterval);
+					goto('/comptoir');
+				});
+		}
+	
+		function onAction() {
+			clearInterval(disconnectInterval);
+			disconnectInterval = setInterval(logout, 15000);
+		}
 </script>
 
-<!-- listen for any event -->
-<svelte:window on:event={evtListen} />
+<svelte:window
+	on:mousemove={onAction}
+	on:click={onAction}
+	on:scroll={onAction}
+	on:keypress={onAction}
+/>
 
 {#if account !== undefined}
 	<div
