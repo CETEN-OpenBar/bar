@@ -57,7 +57,7 @@
 			.logout({ withCredentials: true })
 			.then(() => {
 				clearInterval(disconnectInterval);
-				goto('/comptoir');
+				goto('/borne');
 			});
 	}
 
