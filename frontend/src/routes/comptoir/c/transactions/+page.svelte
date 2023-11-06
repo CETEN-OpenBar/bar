@@ -4,6 +4,8 @@
 	import Transactions from '$lib/components/comptoir/transactions.svelte';
 	import ReadCard from '$lib/components/readCard.svelte';
 	import { open_caisse, open_door, open_ventilo } from '$lib/local/local';
+	import NewRefill from '$lib/components/comptoir/newRefill.svelte';
+	import Refills from '$lib/components/comptoir/refills.svelte';
 
 	let to_call = open_door;
 	let infos = {
@@ -12,6 +14,11 @@
 	};
 	let askForCard = false;
 	let askForPin = false;
+	let newRefill = false;
+
+	function close() {
+		newRefill = false;
+	}
 </script>
 
 {#if askForCard}
@@ -91,10 +98,18 @@
 
 		<button
 			class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
-			on:click={() => goto('/comptoir/c/refills')}>Recharges</button
+			on:click={() => goto('/comptoir/c/refills')}>Historique rechargements</button
+		>
+		<button
+			class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all mr-2"
+			on:click={() => (newRefill = true)}>Nouvelle Recharge</button
 		>
 	</div>
 	<hr class="col-span-3" />
 
 	<Transactions amount={6} />
+
+	{#if newRefill}
+		<NewRefill {close} />
+	{/if}
 </div>
