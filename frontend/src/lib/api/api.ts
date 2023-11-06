@@ -935,6 +935,30 @@ export interface Item {
     'picture_uri': string;
     /**
      * 
+     * @type {number}
+     * @memberof Item
+     */
+    'available_from'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof Item
+     */
+    'available_until'?: number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Item
+     */
+    'is_menu': boolean;
+    /**
+     * 
+     * @type {Array<MenuItem>}
+     * @memberof Item
+     */
+    'items'?: Array<MenuItem>;
+    /**
+     * 
      * @type {ItemState}
      * @memberof Item
      */
@@ -1017,6 +1041,43 @@ export const ItemState = {
 export type ItemState = typeof ItemState[keyof typeof ItemState];
 
 
+/**
+ * 
+ * @export
+ * @interface MenuItem
+ */
+export interface MenuItem {
+    /**
+     * 
+     * @type {string}
+     * @memberof MenuItem
+     */
+    'id': string;
+    /**
+     * Name of the current item
+     * @type {string}
+     * @memberof MenuItem
+     */
+    'name': string;
+    /**
+     * Link to picture of the current item
+     * @type {string}
+     * @memberof MenuItem
+     */
+    'picture_uri': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof MenuItem
+     */
+    'promotion'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof MenuItem
+     */
+    'amount': number;
+}
 /**
  * 
  * @export
@@ -1163,6 +1224,30 @@ export interface NewItem {
      * @memberof NewItem
      */
     'buy_limit'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof NewItem
+     */
+    'available_from'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof NewItem
+     */
+    'available_until'?: number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof NewItem
+     */
+    'is_menu'?: boolean;
+    /**
+     * 
+     * @type {Array<MenuItem>}
+     * @memberof NewItem
+     */
+    'items'?: Array<MenuItem>;
     /**
      * Name of the current item
      * @type {string}
@@ -1500,6 +1585,18 @@ export interface TransactionItem {
     'unit_cost': number;
     /**
      * 
+     * @type {boolean}
+     * @memberof TransactionItem
+     */
+    'is_menu': boolean;
+    /**
+     * 
+     * @type {Array<MenuItem>}
+     * @memberof TransactionItem
+     */
+    'items'?: Array<MenuItem>;
+    /**
+     * 
      * @type {number}
      * @memberof TransactionItem
      */
@@ -1699,6 +1796,30 @@ export interface UpdateItem {
      * @memberof UpdateItem
      */
     'state'?: ItemState;
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateItem
+     */
+    'available_from'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateItem
+     */
+    'available_until'?: number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof UpdateItem
+     */
+    'is_menu'?: boolean;
+    /**
+     * 
+     * @type {Array<MenuItem>}
+     * @memberof UpdateItem
+     */
+    'items'?: Array<MenuItem>;
 }
 
 

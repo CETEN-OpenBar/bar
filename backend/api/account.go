@@ -401,14 +401,11 @@ func (s *Server) GetAccountAdmin(c echo.Context) error {
 	}
 
 	switch user.Role {
-	case autogen.AccountGhost:
-		return Error403(c)
-	case autogen.AccountStudent:
-		return Error403(c)
-	case autogen.AccountStudentWithBenefits:
-		return Error403(c)
 	default:
-		break
+		return PostItem403(c, "You are not allowed to do this")
+	case autogen.AccountMember:
+	case autogen.AccountAdmin:
+	case autogen.AccountSuperAdmin:
 	}
 
 	canRestore := user.Role == autogen.AccountSuperAdmin

@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { Item, ItemState } from '$lib/api';
+	import type { Item, ItemState, MenuItem } from '$lib/api';
 	import { api } from '$lib/config/config';
 	import { itemsApi } from '$lib/requests/requests';
 	import { formatPrice } from '$lib/utils';
 	import { onMount } from 'svelte';
-	import { fly } from 'svelte/transition';
+	import { fade, fly } from 'svelte/transition';
 
 	export let state: ItemState = 'buyable';
 	export let category: string = '';
@@ -15,6 +15,8 @@
 	let page: number = 0;
 	let maxPage: number = 0;
 	let limit: number = 12;
+
+	let menuPopup: MenuItem[] | undefined = undefined;
 
 	onMount(() => {
 		loadItems();
@@ -58,6 +60,44 @@
 	}
 </script>
 
+{#if menuPopup}
+	<!-- Show overlay -->
+	<button
+		class="absolute w-screen h-screen top-0 left-0 bg-black bg-opacity-50 flex flex-col items-center justify-center"
+		in:fade={{ duration: 200 }}
+		out:fade={{ duration: 200 }}
+		style="z-index: 100;"
+		on:click={() => {
+			menuPopup = undefined;
+		}}
+	/>
+
+	<div class="absolute w-full h-full top-0 left-0 flex justify-center items-center">
+		<div
+			class="flex flex-col items-center bg-white rounded-lg shadow-lg p-4"
+			style="z-index: 101;"
+			in:fade={{ duration: 200 }}
+		>
+			<div class="flex flex-col w-full justify-center">
+				<div class="text-xl font-bold self-center">Contenu :</div>
+				<div class="grid grid-cols-4 justify-between items-center w-full px-4 mt-4">
+					{#each menuPopup as item}
+						<div class="flex flex-col justify-center">
+							<img
+								draggable="false"
+								class="w-32 h-32 object-contain"
+								src={api() + item.picture_uri}
+								alt={item.name}	
+							/>
+							<span class="w-full text-lg font-bold text-center">{item.amount} {item.name}</span>
+						</div>
+					{/each}
+				</div>
+			</div>
+		</div>
+	</div>
+{/if}
+
 <!-- horizontal & overflows -->
 {#if items.length === 0}
 	<div class="col-span-7 flex flex-col items-center justify-center">
@@ -74,20 +114,35 @@
 				<!-- image wil be in a button box -->
 				<button
 					class="w-50 h-50 flex-shrink-0 flex flex-col items-center justify-between rounded-lg text-white transition-colors duration-300"
-					on:click={() => {
-						click(item);
-					}}
 				>
-					<img
-						draggable="false"
-						class="w-32 h-32 object-contain"
-						src={api() + item.picture_uri}
-						alt={item.name}
-					/>
-					<div class="flex flex-col">
-						<span class="text-lg font-bold">{item.name}</span>
-						<span class="text-sm">Prix: {formatPrice(item.display_price ?? 999)}</span>
-					</div>
+					<!-- add info svg on the top right -->
+					{#if item.is_menu}
+						<button
+							class="relative top-0 right-0 w-10 h-10"
+							on:click={() => {
+								menuPopup = item.items;
+							}}
+						>
+							<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:info" />
+						</button>
+					{/if}
+					<button
+						on:click={() => {
+							// check we are not clicking on the info button
+							click(item);
+						}}
+					>
+						<img
+							draggable="false"
+							class="w-32 h-32 object-contain"
+							src={api() + item.picture_uri}
+							alt={item.name}
+						/>
+						<div class="flex flex-col">
+							<span class="text-lg font-bold">{item.name}</span>
+							<span class="text-sm">Prix: {formatPrice(item.display_price ?? 999)}</span>
+						</div>
+					</button>
 				</button>
 			{/if}
 		{/each}

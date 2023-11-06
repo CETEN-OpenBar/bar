@@ -30,7 +30,7 @@ paths:
   /auth/google/begin/{qr_nonce}:
     description: Connect account to Google
     get:
-      summary: ''
+      summary: ""
       description: Connect account to Google
       operationId: connectAccount
       parameters:
@@ -41,31 +41,31 @@ paths:
           schema:
             type: string
       responses:
-        '301':
-          description: 'Redirect to the google oauth page'
+        "301":
+          description: "Redirect to the google oauth page"
           headers:
             Location:
-              description: 'Redirect to the google oauth page'
+              description: "Redirect to the google oauth page"
               schema:
                 type: string
-        '400':
-          description: 'Bad request'
+        "400":
+          description: "Bad request"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       tags:
         - auth
   /auth/google/callback:
     description: Callback for Google OAuth
     get:
-      summary: ''
+      summary: ""
       description: Callback for Google OAuth
       operationId: callback
       parameters:
@@ -82,25 +82,25 @@ paths:
           schema:
             type: string
       responses:
-        '301':
-          description: 'Redirect to the correct endpoint'
+        "301":
+          description: "Redirect to the correct endpoint"
           headers:
             Location:
-              description: 'Redirect to the correct endpoint'
+              description: "Redirect to the correct endpoint"
               schema:
                 type: string
-        '500':
-          description: 'Internal server error'
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       tags:
         - auth
   /auth/google:
     description: Connect to account with Google
     get:
-      summary: ''
+      summary: ""
       description: Connect account to Google
       operationId: connectGoogle
       parameters:
@@ -111,37 +111,37 @@ paths:
           schema:
             type: string
       responses:
-        '301':
-          description: 'Redirect to the google oauth page'
+        "301":
+          description: "Redirect to the google oauth page"
           headers:
             Location:
-              description: 'Redirect to the google oauth page'
+              description: "Redirect to the google oauth page"
               schema:
                 type: string
-        '400':
-          description: 'Bad request'
+        "400":
+          description: "Bad request"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
-          description: 'Not connected'
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not connected"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       tags:
         - auth
   /auth/card:
     description: Connect to account with card
     post:
-      summary: ''
+      summary: ""
       description: Connect account to card
       operationId: connectCard
       requestBody:
@@ -159,35 +159,35 @@ paths:
                 - card_id
                 - card_pin
       responses:
-        '200':
-          description: 'Successfully connected'
+        "200":
+          description: "Successfully connected"
           content:
             application/json:
               schema:
                 type: object
                 properties:
                   message:
-                    $ref: '#/components/schemas/Messages'
+                    $ref: "#/components/schemas/Messages"
                   account:
-                    $ref: '#/components/schemas/Account'
-        '400':
-          description: 'Bad request'
+                    $ref: "#/components/schemas/Account"
+        "400":
+          description: "Bad request"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
-          description: 'Not connected'
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not connected"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - local_token: []
       tags:
@@ -196,13 +196,13 @@ paths:
     description: Get the QR code to connect account to Google
     get:
       description: Websocket to listen for scan & callback (for cool animations)
-      summary: ''
+      summary: ""
       operationId: getBorneAuthQRWebsocket
       responses:
-        '101':
-          description: 'Switching Protocols'
+        "101":
+          description: "Switching Protocols"
           headers:
-            Connection: 
+            Connection:
               schema:
                 type: string
                 enum:
@@ -222,7 +222,7 @@ paths:
         - local_token: []
     post:
       description: Validate the connection to connect
-      summary: ''
+      summary: ""
       operationId: postBorneAuthQR
       requestBody:
         description: Nonce
@@ -236,46 +236,46 @@ paths:
               required:
                 - nonce
       responses:
-        '200':
-          description: 'Successfully connected'
+        "200":
+          description: "Successfully connected"
           content:
             application/json:
               schema:
                 type: object
                 properties:
                   message:
-                    $ref: '#/components/schemas/Messages'
+                    $ref: "#/components/schemas/Messages"
                   account:
-                    $ref: '#/components/schemas/Account'
-        '400':
-          description: 'Bad request'
+                    $ref: "#/components/schemas/Account"
+        "400":
+          description: "Bad request"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
-          description: 'Not connected'
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not connected"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
   /account/qr:
     description: Get the QR code to connect account to Google
     get:
       description: Websocket to listen for scan & callback (for cool animations)
-      summary: ''
+      summary: ""
       operationId: getAccountQRWebsocket
       responses:
-        '101':
-          description: 'Switching Protocols'
+        "101":
+          description: "Switching Protocols"
           headers:
-            Connection: 
+            Connection:
               schema:
                 type: string
                 enum:
@@ -292,7 +292,7 @@ paths:
                 type: string
               required: true
     post:
-      summary: ''
+      summary: ""
       description: Get the QR code to connect account to Google
       operationId: getAccountQR
       requestBody:
@@ -307,25 +307,25 @@ paths:
               required:
                 - card_pin
       responses:
-        '200':
+        "200":
           description: Successfully got QR code
           content:
             image/png:
               schema:
                 type: string
                 format: base64
-        '401':
-          description: 'Not connected'
+        "401":
+          description: "Not connected"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - auth: []
         - not_onboarded: []
@@ -334,24 +334,24 @@ paths:
   /logout:
     description: Logout
     get:
-      summary: ''
+      summary: ""
       description: Logout
       operationId: logout
       responses:
-        '204':
+        "204":
           description: Successfully logged out
-        '401':
-          description: 'Not connected'
+        "401":
+          description: "Not connected"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - auth: []
         - not_onboarded: []
@@ -360,11 +360,11 @@ paths:
   /account:
     description: Get the basic current account's information
     get:
-      summary: ''
+      summary: ""
       description: Get the basic current account's information
       operationId: getAccount
       responses:
-        '200':
+        "200":
           description: Successfully got account's info
           content:
             application/json:
@@ -372,21 +372,21 @@ paths:
                 type: object
                 properties:
                   message:
-                    $ref: '#/components/schemas/Messages'
+                    $ref: "#/components/schemas/Messages"
                   account:
-                    $ref: '#/components/schemas/Account'
-        '401':
-          description: 'Not connected'
+                    $ref: "#/components/schemas/Account"
+        "401":
+          description: "Not connected"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - auth: []
       tags:
@@ -411,7 +411,7 @@ paths:
                 - old_card_pin
                 - new_card_pin
       responses:
-        '200':
+        "200":
           description: Successfully updated account's card pin
           content:
             application/json:
@@ -419,39 +419,39 @@ paths:
                 type: object
                 properties:
                   message:
-                    $ref: '#/components/schemas/Messages'
+                    $ref: "#/components/schemas/Messages"
                   account:
-                    $ref: '#/components/schemas/Account'
-        '400':
-          description: 'Bad request'
+                    $ref: "#/components/schemas/Account"
+        "400":
+          description: "Bad request"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
-          description: 'Not connected'
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not connected"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Account not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Account not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '409':
-          description: 'Conflict'
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Conflict"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - auth: []
       tags:
@@ -459,10 +459,10 @@ paths:
   /account/admin:
     get:
       description: Check if the current account can access the admin panel
-      summary: ''
+      summary: ""
       operationId: getAccountAdmin
       responses:
-        '200':
+        "200":
           description: Successfully got account's info
           content:
             application/json:
@@ -470,7 +470,7 @@ paths:
                 type: object
                 properties:
                   message:
-                    $ref: '#/components/schemas/Messages'
+                    $ref: "#/components/schemas/Messages"
                   is_allowed:
                     type: boolean
                   can_restore:
@@ -478,30 +478,30 @@ paths:
                 required:
                   - is_allowed
                   - can_restore
-        '401':
-          description: 'Not connected'
+        "401":
+          description: "Not connected"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Account not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Account not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '409':
-          description: 'Conflict'
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Conflict"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - auth: []
       tags:
@@ -509,10 +509,10 @@ paths:
   /account/toggles/wants_to_staff:
     get:
       description: Toggles the wants_to_staff flag
-      summary: ''
+      summary: ""
       operationId: toggleAccountWantsToStaff
       responses:
-        '200':
+        "200":
           description: Changed account's wants_to_staff flag
           content:
             application/json:
@@ -520,35 +520,35 @@ paths:
                 type: object
                 properties:
                   message:
-                    $ref: '#/components/schemas/Messages'
+                    $ref: "#/components/schemas/Messages"
                   wants_to_staff:
                     type: boolean
                 required:
                   - wants_to_staff
-        '401':
-          description: 'Not connected'
+        "401":
+          description: "Not connected"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Account not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Account not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '409':
-          description: 'Conflict'
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Conflict"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - auth: []
       tags:
@@ -556,7 +556,7 @@ paths:
   /accounts:
     description: Get all accounts informations
     get:
-      summary: ''
+      summary: ""
       description: Get all accounts informations
       operationId: getAccounts
       parameters:
@@ -580,7 +580,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Returns new account's info
           content:
             application/json:
@@ -588,11 +588,11 @@ paths:
                 type: object
                 properties:
                   message:
-                    $ref: '#/components/schemas/Messages'
+                    $ref: "#/components/schemas/Messages"
                   accounts:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Account'
+                      $ref: "#/components/schemas/Account"
                   page:
                     type: integer
                     format: uint64
@@ -607,30 +607,30 @@ paths:
                   - page
                   - limit
                   - max_page
-        '401':
-          description: 'Not authorized'
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - accounts
     post:
-      summary: ''
+      summary: ""
       description: Add an account to the database
       operationId: postAccounts
       requestBody:
@@ -638,38 +638,38 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewAccount'
+              $ref: "#/components/schemas/NewAccount"
       responses:
-        '200':
+        "200":
           description: Successfully got accounts infos
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Account'
-        '401':
-          description: 'Not authorized'
+                $ref: "#/components/schemas/Account"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '409':
-          description: 'Conflict'
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Conflict"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
@@ -677,7 +677,7 @@ paths:
   /import/accounts:
     post:
       description: Import accounts from a CSV file
-      summary: ''
+      summary: ""
       operationId: importAccounts
       requestBody:
         description: Import accounts from a CSV file
@@ -690,7 +690,7 @@ paths:
                   type: string
                   format: binary
       responses:
-        '200':
+        "200":
           description: Successfully imported accounts
           content:
             application/json:
@@ -698,41 +698,41 @@ paths:
                 type: object
                 properties:
                   message:
-                    $ref: '#/components/schemas/Messages'
+                    $ref: "#/components/schemas/Messages"
                   not_accepted:
                     type: array
                     items:
                       type: string
-        '400':
-          description: 'Bad request'
+        "400":
+          description: "Bad request"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
-          description: 'Not authorized'
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '409':
-          description: 'Conflict'
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Conflict"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
@@ -740,7 +740,7 @@ paths:
   /accounts/{account_id}:
     description: Get the account's information
     get:
-      summary: ''
+      summary: ""
       description: Get the account's information
       operationId: getAccountId
       parameters:
@@ -749,44 +749,44 @@ paths:
           description: ID of the account
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '200':
+        "200":
           description: Successfully got account's info
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Account'
-        '401':
-          description: 'Not authorized'
+                $ref: "#/components/schemas/Account"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Account not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Account not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - accounts
     patch:
-      summary: ''
+      summary: ""
       description: Update account
       operationId: patchAccountId
       parameters:
@@ -795,49 +795,49 @@ paths:
           description: ID of the account
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateAccountAdmin'
+              $ref: "#/components/schemas/UpdateAccountAdmin"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Account'
-        '401':
-          description: 'Not authorized'
+                $ref: "#/components/schemas/Account"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Account not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Account not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - accounts
     delete:
-      summary: ''
+      summary: ""
       description: Delete account
       operationId: markDeleteAccountId
       parameters:
@@ -846,34 +846,34 @@ paths:
           description: ID of the account
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '204':
-          description: ''
-        '401':
-          description: 'Not authorized'
+        "204":
+          description: ""
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Account not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Account not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
@@ -881,7 +881,7 @@ paths:
   /accounts/{account_id}/toggles/wants_to_staff:
     get:
       description: Toggles the wants_to_staff flag
-      summary: ''
+      summary: ""
       operationId: adminToggleAccountWantsToStaff
       parameters:
         - name: account_id
@@ -889,9 +889,9 @@ paths:
           description: ID of the account
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '200':
+        "200":
           description: Changed account's wants_to_staff flag
           content:
             application/json:
@@ -899,35 +899,35 @@ paths:
                 type: object
                 properties:
                   message:
-                    $ref: '#/components/schemas/Messages'
+                    $ref: "#/components/schemas/Messages"
                   wants_to_staff:
                     type: boolean
                 required:
                   - wants_to_staff
-        '401':
-          description: 'Not connected'
+        "401":
+          description: "Not connected"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Account not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Account not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '409':
-          description: 'Conflict'
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Conflict"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
@@ -935,7 +935,7 @@ paths:
   /transactions:
     get:
       description: Get all active transactions (orders)
-      summary: ''
+      summary: ""
       operationId: getTransactions
       parameters:
         - name: page
@@ -958,10 +958,10 @@ paths:
           required: false
           schema:
             type: string
-            $ref: '#/components/schemas/TransactionState'
+            $ref: "#/components/schemas/TransactionState"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
@@ -970,7 +970,7 @@ paths:
                   transactions:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Transaction'
+                      $ref: "#/components/schemas/Transaction"
                   page:
                     type: integer
                     format: uint64
@@ -980,31 +980,31 @@ paths:
                   max_page:
                     type: integer
                     format: uint64
-        '401':
-          description: 'Not authorized'
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - transactions
   /account/transactions:
     get:
-      summary: ''
+      summary: ""
       description: Get all transactions
       operationId: getCurrentAccountTransactions
       parameters:
@@ -1028,10 +1028,10 @@ paths:
           required: false
           schema:
             type: string
-            $ref: '#/components/schemas/TransactionState'
+            $ref: "#/components/schemas/TransactionState"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
@@ -1040,7 +1040,7 @@ paths:
                   transactions:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Transaction'
+                      $ref: "#/components/schemas/Transaction"
                   page:
                     type: integer
                     format: uint64
@@ -1050,69 +1050,69 @@ paths:
                   max_page:
                     type: integer
                     format: uint64
-        '401':
-          description: 'Not authorized'
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - auth: []
       tags:
         - transactions
     post:
-      summary: ''
+      summary: ""
       description: Create a new transaction
       operationId: postTransactions
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewTransaction'
+              $ref: "#/components/schemas/NewTransaction"
       responses:
-        '201':
-          description: ''
+        "201":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Transaction'
-        '401':
-          description: 'Not connected'
+                $ref: "#/components/schemas/Transaction"
+        "401":
+          description: "Not connected"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Account not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Account not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - auth: []
       tags:
         - transactions
   /accounts/{account_id}/transactions:
     get:
-      summary: ''
+      summary: ""
       description: Get all transactions
       operationId: getAccountTransactions
       parameters:
@@ -1121,7 +1121,7 @@ paths:
           description: ID of the account
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
         - name: page
           in: query
           description: Page number
@@ -1142,10 +1142,10 @@ paths:
           required: false
           schema:
             type: string
-            $ref: '#/components/schemas/TransactionState'
+            $ref: "#/components/schemas/TransactionState"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
@@ -1154,7 +1154,7 @@ paths:
                   transactions:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Transaction'
+                      $ref: "#/components/schemas/Transaction"
                   page:
                     type: integer
                     format: uint64
@@ -1164,31 +1164,31 @@ paths:
                   max_page:
                     type: integer
                     format: uint64
-        '401':
-          description: 'Not authorized'
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - transactions
   /accounts/{account_id}/transactions/{transaction_id}:
     get:
-      summary: ''
+      summary: ""
       description: Get transaction
       operationId: getTransactionId
       parameters:
@@ -1197,44 +1197,44 @@ paths:
           description: ID of the account
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
         - name: transaction_id
           in: path
           description: ID of the transaction
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Transaction'
-        '401':
-          description: 'Not authorized'
+                $ref: "#/components/schemas/Transaction"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Transaction not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Transaction not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
@@ -1248,57 +1248,57 @@ paths:
           description: ID of the account
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
         - name: transaction_id
           in: path
           description: ID of the transaction
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
         - name: state
           in: query
           description: New state of the transaction
           required: true
           schema:
             type: string
-            $ref: '#/components/schemas/TransactionState'
+            $ref: "#/components/schemas/TransactionState"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
-          description: 'Not authorized'
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Account or transaction not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Account or transaction not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - transactions
     delete:
-      summary: ''
+      summary: ""
       description: Delete transaction
       operationId: markDeleteTransactionId
       parameters:
@@ -1307,44 +1307,44 @@ paths:
           description: ID of the account
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
         - name: transaction_id
           in: path
           description: ID of the transaction
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
-          description: 'Not authorized'
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Transaction not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Transaction not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
@@ -1359,25 +1359,25 @@ paths:
           description: ID of the account
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
         - name: transaction_id
           in: path
           description: ID of the transaction
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
         - name: item_id
           in: path
           description: ID of the item
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
         - name: state
           in: query
           description: New state of the item
           required: false
           schema:
-            $ref: '#/components/schemas/TransactionItemState'
+            $ref: "#/components/schemas/TransactionItemState"
         - name: amount
           in: query
           description: New amount of the item
@@ -1393,36 +1393,36 @@ paths:
             type: integer
             format: uint64
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
-          description: 'Not authorized'
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Account, transaction or item not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Account, transaction or item not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
@@ -1461,8 +1461,8 @@ paths:
             type: string
             format: date
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
@@ -1471,7 +1471,7 @@ paths:
                   refills:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Refill'
+                      $ref: "#/components/schemas/Refill"
                   page:
                     type: integer
                     format: uint64
@@ -1481,24 +1481,24 @@ paths:
                   max_page:
                     type: integer
                     format: uint64
-        '401':
-          description: 'Not authorized'
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
@@ -1537,8 +1537,8 @@ paths:
             type: string
             format: date
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
@@ -1547,7 +1547,7 @@ paths:
                   refills:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Refill'
+                      $ref: "#/components/schemas/Refill"
                   page:
                     type: integer
                     format: uint64
@@ -1562,18 +1562,18 @@ paths:
                   - page
                   - limit
                   - max_page
-        '401':
-          description: 'Not authorized'
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - auth: []
       tags:
@@ -1618,8 +1618,8 @@ paths:
             type: string
             format: date
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
@@ -1628,48 +1628,48 @@ paths:
                   refills:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Refill'
+                      $ref: "#/components/schemas/Refill"
                   page:
                     type: integer
                     format: uint64
-                    
+
                   limit:
                     type: integer
                     format: uint64
-                    
+
                   max_page:
                     type: integer
                     format: uint64
-                    
+
                 required:
                   - items
                   - page
                   - limit
                   - max_page
-        '401':
-          description: 'Not authorized'
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Account not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Account not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
@@ -1697,44 +1697,44 @@ paths:
           required: true
           schema:
             type: string
-            $ref: '#/components/schemas/RefillType'
+            $ref: "#/components/schemas/RefillType"
       responses:
-        '201':
-          description: ''
+        "201":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Refill'
-        '400':
-          description: 'Bad request'
+                $ref: "#/components/schemas/Refill"
+        "400":
+          description: "Bad request"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
-          description: 'Not authorized'
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Account not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Account not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
@@ -1749,70 +1749,70 @@ paths:
           description: ID of the account
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
         - name: refill_id
           in: path
           description: ID of the refill
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
         - name: state
           in: query
           description: New state of the refill
           required: false
           schema:
             type: string
-            $ref: '#/components/schemas/RefillState'
+            $ref: "#/components/schemas/RefillState"
         - name: type
           in: query
           description: New type of the refill
           required: false
           schema:
             type: string
-            $ref: '#/components/schemas/RefillType'
+            $ref: "#/components/schemas/RefillType"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Refill'
-        '400':
-          description: 'Bad request'
+                $ref: "#/components/schemas/Refill"
+        "400":
+          description: "Bad request"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
-          description: 'Not connected'
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not connected"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Account or refill not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Account or refill not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '409':
-          description: 'Conflict'
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Conflict"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - auth: []
       tags:
@@ -1826,40 +1826,40 @@ paths:
           description: ID of the account
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
         - name: refill_id
           in: path
           description: ID of the refill
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '204':
-          description: ''
-        '401':
-          description: 'Not authorized'
+        "204":
+          description: ""
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Account or refill not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Account or refill not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
@@ -1869,20 +1869,20 @@ paths:
       description: Get all categories
       operationId: getCategories
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Category'
-        '500':
-          description: 'Internal server error'
+                  $ref: "#/components/schemas/Category"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - auth: []
       tags:
@@ -1896,44 +1896,44 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewCategory'
+              $ref: "#/components/schemas/NewCategory"
       responses:
-        '201':
-          description: ''
+        "201":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Category'
-        '400':
-          description: 'Bad request'
+                $ref: "#/components/schemas/Category"
+        "400":
+          description: "Bad request"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
-          description: 'Not authorized'
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '409':
-          description: 'Category already exists'
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Category already exists"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
@@ -1948,26 +1948,26 @@ paths:
           description: ID of the category
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Category'
-        '404':
-          description: 'Category not found'
+                $ref: "#/components/schemas/Category"
+        "404":
+          description: "Category not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - auth: []
       tags:
@@ -1981,51 +1981,51 @@ paths:
           description: ID of the category
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       requestBody:
         description: Category object
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateCategory'
+              $ref: "#/components/schemas/UpdateCategory"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Category'
-        '400':
-          description: 'Bad request'
+                $ref: "#/components/schemas/Category"
+        "400":
+          description: "Bad request"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
-          description: 'Not authorized'
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Category not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Category not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
@@ -2039,29 +2039,29 @@ paths:
           description: ID of the category
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '204':
-          description: ''
-        '404':
-          description: 'Category not found'
+        "204":
+          description: ""
+        "404":
+          description: "Category not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - categories
   /categories/{category_id}/picture:
-    get: 
-      description: 'Get a category picture'
+    get:
+      description: "Get a category picture"
       operationId: getCategoryPicture
       parameters:
         - name: category_id
@@ -2069,27 +2069,27 @@ paths:
           description: ID of the category
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             image/png:
               schema:
                 type: string
                 format: binary
-        '404':
-          description: 'Category not found'
+        "404":
+          description: "Category not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - auth: []
       tags:
@@ -2119,13 +2119,13 @@ paths:
           required: false
           schema:
             type: string
-            $ref: '#/components/schemas/ItemState'
+            $ref: "#/components/schemas/ItemState"
         - name: category_id
           in: query
           description: Filter by category
           required: false
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
         - name: name
           in: query
           description: Filter by name
@@ -2133,8 +2133,8 @@ paths:
           schema:
             type: string
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
@@ -2143,7 +2143,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Item'
+                      $ref: "#/components/schemas/Item"
                   page:
                     type: integer
                     format: uint64
@@ -2153,18 +2153,18 @@ paths:
                   max_page:
                     type: integer
                     format: uint64
-        '403':
-          description: 'Forbidden'
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
@@ -2179,7 +2179,7 @@ paths:
           description: ID of the category
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
         - name: page
           in: query
           description: Page number
@@ -2200,10 +2200,10 @@ paths:
           required: false
           schema:
             type: string
-            $ref: '#/components/schemas/ItemState'
+            $ref: "#/components/schemas/ItemState"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
@@ -2212,31 +2212,31 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Item'
+                      $ref: "#/components/schemas/Item"
                   page:
                     type: integer
                     format: uint64
-                    
+
                   limit:
                     type: integer
                     format: uint64
-                    
+
                   max_page:
                     type: integer
                     format: uint64
-                    
-        '404':
-          description: 'Category not found'
+
+        "404":
+          description: "Category not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError' 
+                $ref: "#/components/schemas/HTTPError"
       security:
         - auth: []
       tags:
@@ -2250,51 +2250,51 @@ paths:
           description: ID of the category
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       requestBody:
         description: Item object
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewItem'
+              $ref: "#/components/schemas/NewItem"
       responses:
-        '201':
-          description: ''
+        "201":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Item'
-        '400':
-          description: 'Bad request'
+                $ref: "#/components/schemas/Item"
+        "400":
+          description: "Bad request"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
-          description: 'Not authorized'
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '409':
-          description: 'Item already exists'
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Item already exists"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
@@ -2309,57 +2309,57 @@ paths:
           description: ID of the category
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
         - name: item_id
           in: path
           description: ID of the item
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       requestBody:
         description: Item object
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateItem'
+              $ref: "#/components/schemas/UpdateItem"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Item'
-        '400':
-          description: 'Bad request'
+                $ref: "#/components/schemas/Item"
+        "400":
+          description: "Bad request"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
-          description: 'Not authorized'
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Item not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Item not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
@@ -2373,47 +2373,47 @@ paths:
           description: ID of the category
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
         - name: item_id
           in: path
           description: ID of the item
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '204':
-          description: ''
-        '401':
-          description: 'Not authorized'
+        "204":
+          description: ""
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Item not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Item not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - items
   /categories/{category_id}/items/{item_id}/picture:
     get:
-      description: 'Get an item picture'
+      description: "Get an item picture"
       operationId: getItemPicture
       parameters:
         - name: category_id
@@ -2421,60 +2421,60 @@ paths:
           description: ID of the category
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
         - name: item_id
           in: path
           description: ID of the item
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             image/png:
               schema:
                 type: string
                 format: binary
-        '404':
-          description: 'Item not found'
+        "404":
+          description: "Item not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - auth: []
       tags:
         - items
   /carousel/images:
     get:
-      description: 'Get carousel images'
+      description: "Get carousel images"
       operationId: getCarouselImages
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CarouselImage'
-        '500':
-          description: 'Internal server error'
+                  $ref: "#/components/schemas/CarouselImage"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       tags:
         - carousel
     post:
-      description: 'Add a carousel image'
+      description: "Add a carousel image"
       operationId: addCarouselImage
       requestBody:
         description: Carousel image object
@@ -2482,51 +2482,51 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/CarouselImageUpload'
+              $ref: "#/components/schemas/CarouselImageUpload"
       responses:
-        '201':
-          description: ''
+        "201":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CarouselImage'
-        '400':
-          description: 'Bad request'
+                $ref: "#/components/schemas/CarouselImage"
+        "400":
+          description: "Bad request"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
-          description: 'Not authorized'
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '409':
-          description: 'Item already exists'
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Item already exists"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - carousel
   /carousel/images/{image_id}:
     get:
-      description: 'Get a carousel image'
+      description: "Get a carousel image"
       operationId: getCarouselImage
       parameters:
         - name: image_id
@@ -2534,31 +2534,31 @@ paths:
           description: ID of the image
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             image/*:
               schema:
                 type: string
                 format: binary
-        '404':
-          description: 'Image not found'
+        "404":
+          description: "Image not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       tags:
         - carousel
     delete:
-      description: 'Delete a carousel image'
+      description: "Delete a carousel image"
       operationId: markDeleteCarouselImage
       parameters:
         - name: image_id
@@ -2566,61 +2566,61 @@ paths:
           description: ID of the image
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '204':
-          description: 'Success'
-        '401':
-          description: 'Not authorized'
+        "204":
+          description: "Success"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Image not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Image not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - carousel
   /carousel/texts:
     get:
-      description: 'Get carousel texts'
+      description: "Get carousel texts"
       operationId: getCarouselTexts
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CarouselText'
-        '500':
-          description: 'Internal server error'
+                  $ref: "#/components/schemas/CarouselText"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       tags:
         - carousel
     post:
-      description: 'Add a carousel text'
+      description: "Add a carousel text"
       operationId: addCarouselText
       requestBody:
         description: Carousel text object
@@ -2628,51 +2628,51 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CarouselTextCreate'
+              $ref: "#/components/schemas/CarouselTextCreate"
       responses:
-        '201':
-          description: ''
+        "201":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CarouselText'
-        '400':
-          description: 'Bad request'
+                $ref: "#/components/schemas/CarouselText"
+        "400":
+          description: "Bad request"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
-          description: 'Not authorized'
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '409':
-          description: 'Item already exists'
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Item already exists"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - carousel
   /carousel/texts/{text_id}:
     delete:
-      description: 'Delete a carousel text'
+      description: "Delete a carousel text"
       operationId: markDeleteCarouselText
       parameters:
         - name: text_id
@@ -2680,41 +2680,41 @@ paths:
           description: ID of the text
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '204':
-          description: 'Success'
-        '401':
-          description: 'Not authorized'
+        "204":
+          description: "Success"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Text not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Text not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - carousel
   /deleted/accounts:
     get:
-      description: 'Get deleted accounts'
+      description: "Get deleted accounts"
       operationId: getDeletedAccounts
       parameters:
         - name: page
@@ -2737,8 +2737,8 @@ paths:
           schema:
             type: string
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
@@ -2747,49 +2747,49 @@ paths:
                   accounts:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Account'
+                      $ref: "#/components/schemas/Account"
                   page:
                     type: integer
                     format: uint64
-                    
+
                   limit:
                     type: integer
                     format: uint64
-                    
+
                   max_page:
                     type: integer
                     format: uint64
-                    
+
                 required:
                   - accounts
                   - page
                   - limit
                   - max_page
-        '401':
-          description: 'Not authorized'
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - deleted
   /deleted/accounts/{account_id}:
     patch:
-      description: 'Restore a deleted account'
+      description: "Restore a deleted account"
       operationId: restoreDeletedAccount
       parameters:
         - name: account_id
@@ -2797,52 +2797,52 @@ paths:
           description: ID of the account
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '204':
-          description: 'Success'
-        '400':
-          description: 'Bad request'
+        "204":
+          description: "Success"
+        "400":
+          description: "Bad request"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
-          description: 'Not authorized'
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Account not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Account not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '409':
-          description: 'Account already exists'
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Account already exists"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - deleted
     delete:
-      description: 'Permanently deletes an account (SUPERADMIN)'
+      description: "Permanently deletes an account (SUPERADMIN)"
       operationId: deleteAccount
       parameters:
         - name: account_id
@@ -2850,47 +2850,47 @@ paths:
           description: ID of the account
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '204':
-          description: 'Success'
-        '401':
-          description: 'Not authorized'
+        "204":
+          description: "Success"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Account not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Account not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '409':
-          description: 'Account already exists'
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Account already exists"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - deleted
   /deleted/transactions:
     get:
-      description: 'Get deleted transactions'
+      description: "Get deleted transactions"
       operationId: getDeletedTransactions
       parameters:
         - name: page
@@ -2908,8 +2908,8 @@ paths:
             type: integer
             format: uint64
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
@@ -2918,49 +2918,49 @@ paths:
                   transactions:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Transaction'
+                      $ref: "#/components/schemas/Transaction"
                   page:
                     type: integer
                     format: uint64
-                    
+
                   limit:
                     type: integer
                     format: uint64
-                    
+
                   max_page:
                     type: integer
                     format: uint64
-                    
+
                 required:
                   - transactions
                   - page
                   - limit
                   - max_page
-        '401':
-          description: 'Not authorized'
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - deleted
   /deleted/transactions/{transaction_id}:
     patch:
-      description: 'Restore a deleted transaction'
+      description: "Restore a deleted transaction"
       operationId: restoreDeletedTransaction
       parameters:
         - name: transaction_id
@@ -2968,52 +2968,52 @@ paths:
           description: ID of the transaction
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '204':
-          description: 'Success'
-        '400':
-          description: 'Bad request'
+        "204":
+          description: "Success"
+        "400":
+          description: "Bad request"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
-          description: 'Not authorized'
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Transaction not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Transaction not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '409':
-          description: 'Transaction already exists'
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Transaction already exists"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - deleted
     delete:
-      description: 'Permanently deletes a transaction (SUPERADMIN)'
+      description: "Permanently deletes a transaction (SUPERADMIN)"
       operationId: deleteTransaction
       parameters:
         - name: transaction_id
@@ -3021,47 +3021,47 @@ paths:
           description: ID of the transaction
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '204':
-          description: 'Success'
-        '401':
-          description: 'Not authorized'
+        "204":
+          description: "Success"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Transaction not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Transaction not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '409':
-          description: 'Transaction already exists'
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Transaction already exists"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - deleted
   /deleted/refills:
     get:
-      description: 'Get deleted refills'
+      description: "Get deleted refills"
       operationId: getDeletedRefills
       parameters:
         - name: page
@@ -3079,8 +3079,8 @@ paths:
             type: integer
             format: uint64
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
@@ -3089,49 +3089,49 @@ paths:
                   refills:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Refill'
+                      $ref: "#/components/schemas/Refill"
                   page:
                     type: integer
                     format: uint64
-                    
+
                   limit:
                     type: integer
                     format: uint64
-                    
+
                   max_page:
                     type: integer
                     format: uint64
-                    
+
                 required:
                   - refills
                   - page
                   - limit
                   - max_page
-        '401':
-          description: 'Not authorized'
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - deleted
   /deleted/refills/{refill_id}:
     patch:
-      description: 'Restore a deleted refill'
+      description: "Restore a deleted refill"
       operationId: restoreDeletedRefill
       parameters:
         - name: refill_id
@@ -3139,52 +3139,52 @@ paths:
           description: ID of the refill
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '204':
-          description: 'Success'
-        '400':
-          description: 'Bad request'
+        "204":
+          description: "Success"
+        "400":
+          description: "Bad request"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
-          description: 'Not authorized'
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Refill not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Refill not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '409':
-          description: 'Refill already exists'
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Refill already exists"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - deleted
     delete:
-      description: 'Permanently deletes a refill (SUPERADMIN)'
+      description: "Permanently deletes a refill (SUPERADMIN)"
       operationId: deleteRefill
       parameters:
         - name: refill_id
@@ -3192,47 +3192,47 @@ paths:
           description: ID of the refill
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '204':
-          description: 'Success'
-        '401':
-          description: 'Not authorized'
+        "204":
+          description: "Success"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Refill not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Refill not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '409':
-          description: 'Refill already exists'
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Refill already exists"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - deleted
   /deleted/categories:
     get:
-      description: 'Get deleted categories'
+      description: "Get deleted categories"
       operationId: getDeletedCategories
       parameters:
         - name: page
@@ -3250,8 +3250,8 @@ paths:
             type: integer
             format: uint64
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
@@ -3260,7 +3260,7 @@ paths:
                   categories:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Category'
+                      $ref: "#/components/schemas/Category"
                   page:
                     type: integer
                     format: uint64
@@ -3275,31 +3275,31 @@ paths:
                   - page
                   - limit
                   - max_page
-        '401':
-          description: 'Not authorized'
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - deleted
   /deleted/categories/{category_id}:
     patch:
-      description: 'Restore a deleted category'
+      description: "Restore a deleted category"
       operationId: restoreDeletedCategory
       parameters:
         - name: category_id
@@ -3307,52 +3307,52 @@ paths:
           description: ID of the category
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '204':
-          description: 'Success'
-        '400':
-          description: 'Bad request'
+        "204":
+          description: "Success"
+        "400":
+          description: "Bad request"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
-          description: 'Not authorized'
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Category not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Category not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '409':
-          description: 'Category already exists'
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Category already exists"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - deleted
     delete:
-      description: 'Permanently deletes a category (SUPERADMIN)'
+      description: "Permanently deletes a category (SUPERADMIN)"
       operationId: deleteCategory
       parameters:
         - name: category_id
@@ -3360,47 +3360,47 @@ paths:
           description: ID of the category
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '204':
-          description: 'Success'
-        '401':
-          description: 'Not authorized'
+        "204":
+          description: "Success"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Category not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Category not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '409':
-          description: 'Category already exists'
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Category already exists"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - deleted
   /deleted/items:
     get:
-      description: 'Get deleted items'
+      description: "Get deleted items"
       operationId: getDeletedItems
       parameters:
         - name: page
@@ -3418,8 +3418,8 @@ paths:
             type: integer
             format: uint64
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
@@ -3428,49 +3428,49 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Item'
+                      $ref: "#/components/schemas/Item"
                   page:
                     type: integer
                     format: uint64
-                    
+
                   limit:
                     type: integer
                     format: uint64
-                    
+
                   max_page:
                     type: integer
                     format: uint64
-                    
+
                 required:
                   - items
                   - page
                   - limit
                   - max_page
-        '401':
-          description: 'Not authorized'
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - deleted
   /deleted/items/{item_id}:
     patch:
-      description: 'Restore a deleted item'
+      description: "Restore a deleted item"
       operationId: restoreDeletedItem
       parameters:
         - name: item_id
@@ -3478,52 +3478,52 @@ paths:
           description: ID of the item
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '204':
-          description: 'Success'
-        '400':
-          description: 'Bad request'
+        "204":
+          description: "Success"
+        "400":
+          description: "Bad request"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
-          description: 'Not authorized'
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Item not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Item not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '409':
-          description: 'Item already exists'
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Item already exists"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - deleted
     delete:
-      description: 'Permanently deletes an item (SUPERADMIN)'
+      description: "Permanently deletes an item (SUPERADMIN)"
       operationId: deleteItem
       parameters:
         - name: item_id
@@ -3531,47 +3531,47 @@ paths:
           description: ID of the item
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '204':
-          description: 'Success'
-        '401':
-          description: 'Not authorized'
+        "204":
+          description: "Success"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Item not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Item not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '409':
-          description: 'Item already exists'
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Item already exists"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - deleted
   /deleted/carousel/images:
     get:
-      description: 'Get deleted carousel images'
+      description: "Get deleted carousel images"
       operationId: getDeletedCarouselImages
       parameters:
         - name: page
@@ -3589,8 +3589,8 @@ paths:
             type: integer
             format: uint64
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
@@ -3599,49 +3599,49 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/CarouselImage'
+                      $ref: "#/components/schemas/CarouselImage"
                   page:
                     type: integer
                     format: uint64
-                    
+
                   limit:
                     type: integer
                     format: uint64
-                    
+
                   max_page:
                     type: integer
                     format: uint64
-                    
+
                 required:
                   - items
                   - page
                   - limit
                   - max_page
-        '401':
-          description: 'Not authorized'
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - deleted
   /deleted/carousel/images/{image_id}:
     patch:
-      description: 'Restore a deleted carousel image'
+      description: "Restore a deleted carousel image"
       operationId: restoreDeletedCarouselImage
       parameters:
         - name: image_id
@@ -3649,52 +3649,52 @@ paths:
           description: ID of the carousel image
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '204':
-          description: 'Success'
-        '400':
-          description: 'Bad request'
+        "204":
+          description: "Success"
+        "400":
+          description: "Bad request"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
-          description: 'Not authorized'
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Carousel image not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Carousel image not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '409':
-          description: 'Carousel image already exists'
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Carousel image already exists"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - deleted
     delete:
-      description: 'Permanently deletes a carousel image (SUPERADMIN)'
+      description: "Permanently deletes a carousel image (SUPERADMIN)"
       operationId: deleteCarouselImage
       parameters:
         - name: image_id
@@ -3702,47 +3702,47 @@ paths:
           description: ID of the carousel image
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '204':
-          description: 'Success'
-        '401':
-          description: 'Not authorized'
+        "204":
+          description: "Success"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Carousel image not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Carousel image not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '409':
-          description: 'Carousel image already exists'
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Carousel image already exists"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - deleted
   /deleted/carousel/texts:
     get:
-      description: 'Get deleted carousel texts'
+      description: "Get deleted carousel texts"
       operationId: getDeletedCarouselTexts
       parameters:
         - name: page
@@ -3760,8 +3760,8 @@ paths:
             type: integer
             format: uint64
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
@@ -3770,49 +3770,49 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/CarouselText'
+                      $ref: "#/components/schemas/CarouselText"
                   page:
                     type: integer
                     format: uint64
-                    
+
                   limit:
                     type: integer
                     format: uint64
-                    
+
                   max_page:
                     type: integer
                     format: uint64
-                    
+
                 required:
                   - items
                   - page
                   - limit
                   - max_page
-        '401':
-          description: 'Not authorized'
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - deleted
   /deleted/carousel/texts/{text_id}:
     patch:
-      description: 'Restore a deleted carousel text'
+      description: "Restore a deleted carousel text"
       operationId: restoreDeletedCarouselText
       parameters:
         - name: text_id
@@ -3820,52 +3820,52 @@ paths:
           description: ID of the carousel text
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '204':
-          description: 'Success'
-        '400':
-          description: 'Bad request'
+        "204":
+          description: "Success"
+        "400":
+          description: "Bad request"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '401':
-          description: 'Not authorized'
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Carousel text not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Carousel text not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '409':
-          description: 'Carousel text already exists'
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Carousel text already exists"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
         - deleted
     delete:
-      description: 'Permanently deletes a carousel text (SUPERADMIN)'
+      description: "Permanently deletes a carousel text (SUPERADMIN)"
       operationId: deleteCarouselText
       parameters:
         - name: text_id
@@ -3873,40 +3873,40 @@ paths:
           description: ID of the carousel text
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: "#/components/schemas/UUID"
       responses:
-        '204':
-          description: 'Success'
-        '401':
-          description: 'Not authorized'
+        "204":
+          description: "Success"
+        "401":
+          description: "Not authorized"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '403':
-          description: 'Forbidden'
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '404':
-          description: 'Carousel text not found'
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Carousel text not found"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '409':
-          description: 'Carousel text already exists'
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Carousel text already exists"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
-        '500':
-          description: 'Internal server error'
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HTTPError'
+                $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
       tags:
@@ -3985,9 +3985,9 @@ components:
       type: object
       properties:
         message:
-          $ref: '#/components/schemas/Messages'
+          $ref: "#/components/schemas/Messages"
         error_code:
-          $ref: '#/components/schemas/ErrorCodes'
+          $ref: "#/components/schemas/ErrorCodes"
       required:
         - message
         - error_code
@@ -4007,9 +4007,9 @@ components:
           format: int64
           example: 1000 (10.00€)
         role:
-          $ref: '#/components/schemas/AccountRole'
+          $ref: "#/components/schemas/AccountRole"
         price_role:
-          $ref: '#/components/schemas/AccountPriceRole'
+          $ref: "#/components/schemas/AccountPriceRole"
       required:
         - first_name
         - last_name
@@ -4032,15 +4032,15 @@ components:
           format: int64
           example: 1000
         role:
-          $ref: '#/components/schemas/AccountRole'
+          $ref: "#/components/schemas/AccountRole"
         price_role:
-          $ref: '#/components/schemas/AccountPriceRole'
+          $ref: "#/components/schemas/AccountPriceRole"
         restrictions:
           type: array
           items:
-            $ref: '#/components/schemas/AccountRestrictions'
+            $ref: "#/components/schemas/AccountRestrictions"
         state:
-          $ref: '#/components/schemas/AccountState'
+          $ref: "#/components/schemas/AccountState"
     AccountState:
       type: string
       description: State of the account
@@ -4103,7 +4103,7 @@ components:
       type: object
       properties:
         id:
-          $ref: '#/components/schemas/UUID'
+          $ref: "#/components/schemas/UUID"
         first_name:
           type: string
         last_name:
@@ -4127,22 +4127,22 @@ components:
         card_pin:
           type: string
           x-oapi-codegen-extra-tags:
-            json: '-' # ignore this field in json
+            json: "-" # ignore this field in json
         role:
-          $ref: '#/components/schemas/AccountRole'
+          $ref: "#/components/schemas/AccountRole"
         price_role:
-          $ref: '#/components/schemas/AccountPriceRole'
+          $ref: "#/components/schemas/AccountPriceRole"
         restrictions:
           type: array
           items:
-            $ref: '#/components/schemas/AccountRestrictions'
+            $ref: "#/components/schemas/AccountRestrictions"
         state:
-          $ref: '#/components/schemas/AccountState'
+          $ref: "#/components/schemas/AccountState"
         deleted_at:
           type: integer
           format: uint64
         deleted_by:
-          $ref: '#/components/schemas/UUID'
+          $ref: "#/components/schemas/UUID"
         wants_to_staff:
           type: boolean
       required:
@@ -4172,7 +4172,7 @@ components:
       type: object
       properties:
         prices:
-          $ref: '#/components/schemas/ItemPrices'
+          $ref: "#/components/schemas/ItemPrices"
         amount_left:
           type: integer
           format: uint64
@@ -4186,7 +4186,7 @@ components:
           format: uint64
           example: 32
         category_id:
-          $ref: '#/components/schemas/UUID'
+          $ref: "#/components/schemas/UUID"
         name:
           type: string
           description: Name of the current item
@@ -4201,7 +4201,19 @@ components:
           type: integer
           format: uint64
         state:
-          $ref: '#/components/schemas/ItemState'
+          $ref: "#/components/schemas/ItemState"
+        available_from:
+          type: integer
+          format: uint64
+        available_until:
+          type: integer
+          format: uint64
+        is_menu:
+          type: boolean
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/MenuItem"
     ItemPrices:
       type: object
       properties:
@@ -4245,7 +4257,7 @@ components:
       type: object
       properties:
         prices:
-          $ref: '#/components/schemas/ItemPrices'
+          $ref: "#/components/schemas/ItemPrices"
         promotion:
           type: integer
           format: uint64
@@ -4264,6 +4276,18 @@ components:
           type: integer
           format: uint64
           example: 32
+        available_from:
+          type: integer
+          format: uint64
+        available_until:
+          type: integer
+          format: uint64
+        is_menu:
+          type: boolean
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/MenuItem"
         name:
           type: string
           description: Name of the current item
@@ -4272,7 +4296,7 @@ components:
           format: base64
           description: Picture of the current item
         state:
-          $ref: '#/components/schemas/ItemState'
+          $ref: "#/components/schemas/ItemState"
       required:
         - prices
         - amount_left
@@ -4285,11 +4309,11 @@ components:
       type: object
       properties:
         id:
-          $ref: '#/components/schemas/UUID'
+          $ref: "#/components/schemas/UUID"
         prices:
-          $ref: '#/components/schemas/ItemPrices'
+          $ref: "#/components/schemas/ItemPrices"
         display_prices:
-          $ref: '#/components/schemas/ItemPrices'
+          $ref: "#/components/schemas/ItemPrices"
         display_price:
           type: integer
           format: uint64
@@ -4314,20 +4338,34 @@ components:
           format: uint64
           example: 32
         category_id:
-          $ref: '#/components/schemas/UUID'
+          $ref: "#/components/schemas/UUID"
         name:
           type: string
           description: Name of the current item
         picture_uri:
           type: string
           description: Link to picture of the current item
+        # An item can be available between certain hours
+        available_from:
+          type: integer
+          format: uint64
+        available_until:
+          type: integer
+          format: uint64
+        # A menu contains multiple items (but no other menus)
+        is_menu:
+          type: boolean
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/MenuItem"
         state:
-          $ref: '#/components/schemas/ItemState'
+          $ref: "#/components/schemas/ItemState"
         deleted_at:
           type: integer
           format: uint64
         deleted_by:
-          $ref: '#/components/schemas/UUID'
+          $ref: "#/components/schemas/UUID"
       required:
         - id
         - prices
@@ -4337,6 +4375,31 @@ components:
         - name
         - picture_uri
         - state
+        - is_menu
+    MenuItem:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        name:
+          type: string
+          description: Name of the current item
+        picture_uri:
+          type: string
+          description: Link to picture of the current item
+        promotion:
+          type: integer
+          format: uint64
+          example: 3000 (-30%)
+        amount:
+          type: integer
+          format: uint64
+          example: 32
+      required:
+        - id
+        - amount
+        - name
+        - picture_uri
     UpdateCategory:
       type: object
       properties:
@@ -4369,7 +4432,7 @@ components:
       type: object
       properties:
         id:
-          $ref: '#/components/schemas/UUID'
+          $ref: "#/components/schemas/UUID"
         name:
           type: string
           description: Name of the current category
@@ -4383,7 +4446,7 @@ components:
           type: integer
           format: uint64
         deleted_by:
-          $ref: '#/components/schemas/UUID'
+          $ref: "#/components/schemas/UUID"
       required:
         - id
         - name
@@ -4418,7 +4481,7 @@ components:
       type: object
       properties:
         item_id:
-          $ref: '#/components/schemas/UUID'
+          $ref: "#/components/schemas/UUID"
         picture_uri:
           type: string
           description: Link to picture of the current item
@@ -4434,11 +4497,17 @@ components:
         unit_cost:
           type: integer
           format: uint64
+        is_menu:
+          type: boolean
+        items: 
+          type: array
+          items:
+            $ref: "#/components/schemas/MenuItem"
         total_cost:
           type: integer
           format: uint64
         state:
-          $ref: '#/components/schemas/TransactionItemState'
+          $ref: "#/components/schemas/TransactionItemState"
       required:
         - item_id
         - item_name
@@ -4448,15 +4517,16 @@ components:
         - total_cost
         - state
         - picture_uri
+        - is_menu
     Transaction:
       type: object
       properties:
         id:
-          $ref: '#/components/schemas/UUID'
+          $ref: "#/components/schemas/UUID"
         items:
           type: array
           items:
-            $ref: '#/components/schemas/TransactionItem'
+            $ref: "#/components/schemas/TransactionItem"
         account_id:
           type: string
         account_name:
@@ -4466,12 +4536,12 @@ components:
           type: integer
           format: uint64
         state:
-          $ref: '#/components/schemas/TransactionState'
+          $ref: "#/components/schemas/TransactionState"
         deleted_at:
           type: integer
           format: uint64
         deleted_by:
-          $ref: '#/components/schemas/UUID'
+          $ref: "#/components/schemas/UUID"
       required:
         - id
         - items
@@ -4483,7 +4553,7 @@ components:
       type: object
       properties:
         item_id:
-          $ref: '#/components/schemas/UUID'
+          $ref: "#/components/schemas/UUID"
         amount:
           type: integer
           format: uint64
@@ -4496,7 +4566,7 @@ components:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/NewTransactionItem'
+            $ref: "#/components/schemas/NewTransactionItem"
         card_pin:
           type: string
           description: Pin of the card
@@ -4525,10 +4595,10 @@ components:
     Refill:
       type: object
       properties:
-        id: 
-          $ref: '#/components/schemas/UUID'
+        id:
+          $ref: "#/components/schemas/UUID"
         account_id:
-          $ref: '#/components/schemas/UUID'
+          $ref: "#/components/schemas/UUID"
         account_name:
           type: string
           description: Name of the account
@@ -4537,25 +4607,25 @@ components:
           format: int64
           example: 1050 (10.50€)
         state:
-          $ref: '#/components/schemas/RefillState'
+          $ref: "#/components/schemas/RefillState"
         issued_at:
           type: integer
           format: uint64
         issued_by:
-          $ref: '#/components/schemas/UUID'
+          $ref: "#/components/schemas/UUID"
         issued_by_name:
           type: string
         canceled_by:
-          $ref: '#/components/schemas/UUID'
+          $ref: "#/components/schemas/UUID"
         canceled_by_name:
           type: string
         type:
-          $ref: '#/components/schemas/RefillType'
+          $ref: "#/components/schemas/RefillType"
         deleted_at:
           type: integer
           format: uint64
         deleted_by:
-          $ref: '#/components/schemas/UUID'
+          $ref: "#/components/schemas/UUID"
       required:
         - id
         - account_id
@@ -4581,8 +4651,8 @@ components:
     CarouselText:
       type: object
       properties:
-        id: 
-          $ref: '#/components/schemas/UUID'
+        id:
+          $ref: "#/components/schemas/UUID"
         text:
           type: string
           description: Text to display
@@ -4594,7 +4664,7 @@ components:
           type: integer
           format: uint64
         deleted_by:
-          $ref: '#/components/schemas/UUID'
+          $ref: "#/components/schemas/UUID"
       required:
         - id
         - text
@@ -4611,8 +4681,8 @@ components:
     CarouselImage:
       type: object
       properties:
-        id: 
-          $ref: '#/components/schemas/UUID'
+        id:
+          $ref: "#/components/schemas/UUID"
         image_url:
           type: string
           description: Image to display
@@ -4620,7 +4690,7 @@ components:
           type: integer
           format: uint64
         deleted_by:
-          $ref: '#/components/schemas/UUID'
+          $ref: "#/components/schemas/UUID"
       required:
         - id
         - image_url

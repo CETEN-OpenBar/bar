@@ -101,6 +101,21 @@ func (b *Backend) MarkDeleteCategory(ctx context.Context, id, by string) error {
 		return res.Err()
 	}
 
+	// Move all items from this category to the "Uncategorized" category
+	_, err := b.db.Collection(ItemsCollection).UpdateMany(ctx,
+		bson.M{
+			"category_id": uuid.MustParse(id),
+		},
+		bson.M{
+			"$set": bson.M{
+				"category_id": "",
+			},
+		},
+	)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

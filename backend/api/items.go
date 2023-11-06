@@ -2,7 +2,6 @@ package api
 
 import (
 	"bar/autogen"
-	"bar/internal/models"
 	"bar/internal/storage"
 	"crypto/sha1"
 	"encoding/base64"
@@ -10,7 +9,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -94,68 +92,6 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 		MaxPage: &maxPage,
 	}.VisitGetCategoryItemsResponse(c.Response())
 
-	return nil
-}
-
-// (POST /categories/{category_id}/items)
-func (s *Server) PostItem(c echo.Context, categoryId autogen.UUID) error {
-	_, err := MustGetUser(c)
-	if err != nil {
-		return nil
-	}
-
-	var p autogen.NewItem
-	if err := c.Bind(&p); err != nil {
-		logrus.Error(err)
-		return Error400(c)
-	}
-
-	d, err := base64.StdEncoding.DecodeString(p.Picture)
-	if err != nil {
-		logrus.Error(err)
-		return Error400(c)
-	}
-
-	// Check MIME type
-	if !strings.Contains(http.DetectContentType(d), "image") {
-		logrus.Error(err)
-		return Error400(c)
-	}
-
-	uid := uuid.New()
-
-	// Save image to storage
-	err = storage.SaveFile("items/"+uid.String(), d)
-	if err != nil {
-		logrus.Error(err)
-		return Error500(c)
-	}
-
-	item := &models.Item{
-		Item: autogen.Item{
-			Id:              uid,
-			CategoryId:      categoryId,
-			Name:            p.Name,
-			Prices:          p.Prices,
-			PictureUri:      "/categories/" + categoryId.String() + "/items/" + uid.String() + "/picture",
-			Promotion:       p.Promotion,
-			PromotionEndsAt: p.PromotionEndsAt,
-			State:           p.State,
-			AmountLeft:      p.AmountLeft,
-			BuyLimit:        p.BuyLimit,
-			OptimalAmount:   p.OptimalAmount,
-		},
-	}
-
-	// Save item to database
-	err = s.DBackend.CreateItem(c.Request().Context(), item)
-	if err != nil {
-		logrus.Error(err)
-		return Error500(c)
-	}
-
-	logrus.Infof("Item %s created by %s", item.Id.String(), item.CategoryId)
-	autogen.PostItem201JSONResponse(item.Item).VisitPostItemResponse(c.Response())
 	return nil
 }
 

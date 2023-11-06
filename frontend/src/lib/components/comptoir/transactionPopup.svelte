@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ItemState, TransactionItemState, type Transaction } from '$lib/api';
+	import { ItemState, TransactionItemState, type Transaction, type MenuItem } from '$lib/api';
 	import { api } from '$lib/config/config';
 	import { transactionsApi } from '$lib/requests/requests';
 	import { formatPrice } from '$lib/utils';
@@ -12,6 +12,7 @@
 	let newTransaction: Transaction = structuredClone(transaction);
 	let success = '';
 	let error = '';
+	let shownMenu: MenuItem[] | undefined;
 
 	function saveTransaction() {
 		for (let i = 0; i < newTransaction.items.length; i++) {
@@ -102,11 +103,27 @@
 						{#if item.state == TransactionItemState.TransactionItemFinished}
 							: Terminé
 						{/if}
-						<img
-							src={api() + item.picture_uri}
-							alt="ca charge"
-							class="self-center w-10 h-10 rounded-2xl"
-						/>
+						<!-- add tooltip if menu -->
+						{#if item.is_menu}
+							<button
+								class="flex text-white font-bold p-2 rounded justify-center"
+								on:click={() => {
+									shownMenu = item.items;
+								}}
+							>
+								<img
+									src={api() + item.picture_uri}
+									alt="ca charge"
+									class="self-center w-10 h-10 rounded-2xl"
+								/>
+							</button>
+						{:else}
+							<img
+								src={api() + item.picture_uri}
+								alt="ca charge"
+								class="self-center w-10 h-10 rounded-2xl"
+							/>
+						{/if}
 						<div class="flex flex-col">
 							<div>
 								Total: {item.item_amount}
@@ -175,6 +192,27 @@
 				{/each}
 			</div>
 		</div>
+
+		{#if shownMenu}
+			<div class="w-full h-1 bg-gray-200" />
+
+			<div class="w-full text-center text-lg font-bold">Ce menu contient:</div>
+
+			<div class="grid grid-cols-5 max-h-64 p-5 gap-5">
+				{#each shownMenu as item}
+					<div class="flex flex-col justify-center text-center break-words rounded-xl bg-slate-200">
+						{item.name ? item.name : 'Test'}
+						<img
+							src={api() + item.picture_uri}
+							alt="..."
+							class="self-center w-10 h-10 rounded-2xl"
+						/>
+					</div>
+				{/each}
+			</div>
+
+			<div class="w-full h-1 bg-gray-200" />
+		{/if}
 
 		<div class="grid grid-cols-2 gap-4 p-8">
 			<!-- Save & cancel -->

@@ -21,6 +21,12 @@
 	// Red => account related
 
 	modules.push({
+		name: 'Création de menu',
+		color: 'bg-green-600',
+		link: '/panel/products/create-menu'
+	});
+
+	modules.push({
 		name: 'Dashboard',
 		color: 'bg-blue-600',
 		link: '/panel/dash'
@@ -45,14 +51,14 @@
 	});
 
 	// fill with rdm bullshit for test
-	// TODO: remove this bs
-	for (let i = 0; i < 100; i++) {
-		modules.push({
-			name: 'Module ' + i,
-			color: 'bg-blue-600',
-			link: '/panel/dash'
-		});
-	}
+	// TODO: uncomment if you need to test this
+	// for (let i = 0; i < 100; i++) {
+	// 	modules.push({
+	// 		name: 'Module ' + i,
+	// 		color: 'bg-blue-600',
+	// 		link: '/panel/dash'
+	// 	});
+	// }
 
 	// Sort the modules by name
 	modules.sort((a, b) => a.name.localeCompare(b.name));
