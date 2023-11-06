@@ -23,7 +23,7 @@
 				goto('/borne');
 			});
 
-		disconnectInterval = setInterval(logout, 15000);
+		disconnectInterval = setInterval(logout, 60000);
 
 		// trigger action on any event
 		let events = [
@@ -34,7 +34,13 @@
 			'mousewheel',
 			'touchmove',
 			'MSPointerMove',
-			'click'
+			'click',
+			'drag',
+			'dragend',
+			'dragenter',
+			'dragleave',
+			'dragover',
+			'dragstart',
 		];
 		for (let i in events) {
 			window.addEventListener(events[i], onAction);
@@ -54,7 +60,7 @@
 
 	function onAction() {
 		clearInterval(disconnectInterval);
-		disconnectInterval = setInterval(logout, 15000);
+		disconnectInterval = setInterval(logout, 60000);
 	}
 </script>
 

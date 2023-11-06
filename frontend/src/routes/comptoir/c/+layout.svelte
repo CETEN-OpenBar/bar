@@ -24,7 +24,22 @@
 		disconnectInterval = setInterval(logout, 300000);
 
 		// trigger action on any event
-		let events = ['mousemove', 'mousedown', 'keypress', 'DOMMouseScroll', 'mousewheel', 'touchmove', 'MSPointerMove', 'click'];
+		let events = [
+			'mousemove',
+			'mousedown',
+			'keypress',
+			'DOMMouseScroll',
+			'mousewheel',
+			'touchmove',
+			'MSPointerMove',
+			'click',
+			'drag',
+			'dragend',
+			'dragenter',
+			'dragleave',
+			'dragover',
+			'dragstart',
+		];
 		for (let i in events) {
 			window.addEventListener(events[i], onAction);
 		}
@@ -47,7 +62,6 @@
 		disconnectInterval = setInterval(logout, 300000);
 	}
 </script>
-
 
 {#if account !== undefined}
 	<div id="main" class="absolute top-0 left-0 w-screen h-screen" style="background-color:black;">
