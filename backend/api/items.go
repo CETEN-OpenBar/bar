@@ -42,7 +42,7 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 		size = 100
 	}
 
-	var state = ""
+	state := ""
 	if params.State != nil {
 		state = string(*params.State)
 	}
@@ -60,7 +60,7 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 	if err != nil {
 		return Error500(c)
 	}
-	var maxPage = uint64(count) / size
+	maxPage := uint64(count) / size
 
 	if page > maxPage {
 		page = maxPage
@@ -74,11 +74,11 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 	var items []autogen.Item
 
 	for _, item := range data {
-		var rp = item.RealPrice(account.PriceRole)
+		rp := item.RealPrice(account.PriceRole)
 		item.DisplayPrice = &rp
 
 		if account.HasPrivileges() {
-			var rp = item.RealPrices()
+			rp := item.RealPrices()
 			item.DisplayPrices = &rp
 		}
 
@@ -262,7 +262,7 @@ func (s *Server) PatchItem(c echo.Context, categoryId autogen.UUID, itemId autog
 		}
 	}
 
-	var rp = item.RealPrices()
+	rp := item.RealPrices()
 	item.DisplayPrices = &rp
 
 	// Save item to database
@@ -340,9 +340,9 @@ func (s *Server) GetAllItems(c echo.Context, params autogen.GetAllItemsParams) e
 		size = 100
 	}
 
-	var state = ""
-	var categoryId = ""
-	var name = ""
+	state := ""
+	categoryId := ""
+	name := ""
 	if params.State != nil {
 		state = string(*params.State)
 	}
@@ -357,7 +357,7 @@ func (s *Server) GetAllItems(c echo.Context, params autogen.GetAllItemsParams) e
 	if err != nil {
 		return Error500(c)
 	}
-	var maxPage = uint64(count) / size
+	maxPage := uint64(count) / size
 
 	if page > maxPage {
 		page = maxPage
@@ -371,11 +371,11 @@ func (s *Server) GetAllItems(c echo.Context, params autogen.GetAllItemsParams) e
 	var items []autogen.Item
 
 	for _, item := range data {
-		var rp = item.RealPrice(account.PriceRole)
+		rp := item.RealPrice(account.PriceRole)
 		item.DisplayPrice = &rp
 
 		if account.HasPrivileges() {
-			var rp = item.RealPrices()
+			rp := item.RealPrices()
 			item.DisplayPrices = &rp
 		}
 

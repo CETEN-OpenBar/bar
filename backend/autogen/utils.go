@@ -19,6 +19,8 @@ func (i *Item) RealPrice(r AccountPriceRole) uint64 {
 		price = i.Prices.Ceten
 	case AccountPriceExte:
 		price = i.Prices.Exte
+	case AccountPriceInterne:
+		price = i.Prices.Interne
 	case AccountPriceMembreBureau:
 		price = i.Prices.MembreBureau
 	case AccountPriceMembrePrivilegie:
@@ -27,6 +29,8 @@ func (i *Item) RealPrice(r AccountPriceRole) uint64 {
 		price = i.Prices.Staff
 	case AccountPriceVIP:
 		price = i.Prices.Vip
+	default:
+		price = i.Prices.Exte
 	}
 
 	if i.Promotion == nil {
@@ -35,12 +39,17 @@ func (i *Item) RealPrice(r AccountPriceRole) uint64 {
 	if i.PromotionEndsAt != nil && uint64(time.Now().Unix()) > *i.PromotionEndsAt {
 		return price
 	}
+
+	if price == 0 {
+		price = i.Prices.Exte
+	}
+
 	return uint64(float64(price) * (1.0 - (float64(*i.Promotion) / 100.0)))
 }
 
 func (i *Item) RealPrices() ItemPrices {
 	// TODO: modify this when modifying price roles
-	var prices = i.Prices
+	prices := i.Prices
 
 	if i.Promotion == nil {
 		return prices
