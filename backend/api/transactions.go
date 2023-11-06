@@ -99,9 +99,11 @@ func (s *Server) PostTransactions(c echo.Context) error {
 
 	transaction.TotalCost = transactionCost
 
-	if account.Balance < int64(transactionCost) {
-		logrus.Warnf("Account %s does not have enough money", accountID)
-		return Error400(c)
+	if account.Role != autogen.AccountGhost {
+		if account.Balance < int64(transactionCost) {
+			logrus.Warnf("Account %s does not have enough money", accountID)
+			return Error400(c)
+		}
 	}
 
 	_, err = s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {

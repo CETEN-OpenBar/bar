@@ -20,7 +20,7 @@
 </script>
 
 <!-- horizontal & overflows -->
-<div class="flex flex-row gap-5 items-center w-full h-full overflow-x-auto overflow-y-hidden" use:dragscroll>
+<div class="flex flex-row gap-5 items-center w-full h-full overflow-x-auto" use:dragscroll>
 	{#each categories as category}
 		<button
 			class="w-32 flex-shrink-0 flex flex-col items-center justify-center m-2 rounded-lg text-white transition-colors duration-300"

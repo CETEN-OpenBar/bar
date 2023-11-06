@@ -5,6 +5,7 @@
 	import { formatPrice } from '$lib/utils';
 	import { onDestroy, onMount } from 'svelte';
 	import TransactionPopup from './transactionPopup.svelte';
+	import { dragscroll } from '@svelte-put/dragscroll';
 
 	export let amount: number = 4;
 
@@ -37,7 +38,8 @@
 				let newTransactions = [];
 				for (let transaction of res.data.transactions) {
 					let items: Array<TransactionItem> = [];
-					for (let item of transaction.items) {
+					
+					for (let item of transaction.items??[]) {
 						if (countedItems >= maxItemPerTransaction) break;
 						if (countedItems + item.item_amount > maxItemPerTransaction) {
 							item.item_amount = maxItemPerTransaction - countedItems;
@@ -72,13 +74,13 @@
 			<div class="text-lg font-semibold">Transactions</div>
 			<div class="text-lg font-semibold">Montant</div>
 		</div>
-		<div class="flex flex-col">
+		<div class="flex flex-col max-h-[80vh] overflow-auto" use:dragscroll>
 			{#each transactions as transaction}
 				<button
 					on:click={() => (displayTransaction = transaction)}
 					class="flex flex-col mt-5 border-4 border-white rounded-xl {transaction.state == 'started'
 						? 'animate-pulse bg-green-100'
-						: ''} {transaction.state == 'canceled' ? 'bg-gray-200' : ''} {transaction.state ==
+						: ''} {transaction.state == 'canceled' ? 'bg-red-200' : ''} {transaction.state ==
 					'finished'
 						? 'bg-green-200'
 						: ''}"

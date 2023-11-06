@@ -22,6 +22,12 @@
 			});
 
 		disconnectInterval = setInterval(logout, 15000);
+
+		// trigger action on any event
+		let events = ['mousemove', 'mousedown', 'keypress', 'DOMMouseScroll', 'mousewheel', 'touchmove', 'MSPointerMove', 'click'];
+		for (let i in events) {
+			window.addEventListener(events[i], onAction);
+		}
 	});
 
 	let disconnectInterval: number | undefined = undefined;
@@ -36,12 +42,12 @@
 	}
 
 	function onAction() {
+		console.log('action');
 		clearInterval(disconnectInterval);
 		disconnectInterval = setInterval(logout, 15000);
 	}
 </script>
 
-<svelte:window on:mousemove={onAction} on:click={onAction} on:scroll={onAction} on:keypress={onAction} />
 
 {#if account !== undefined}
 	<div id="main" class="absolute top-0 left-0 w-screen h-screen" style="background-color:black;">
