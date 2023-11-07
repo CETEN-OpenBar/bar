@@ -52,12 +52,13 @@
 	let disconnectInterval: number | undefined = undefined;
 
 	function logout() {
-		// authApi()
-		// 	.logout({ withCredentials: true })
-		// 	.then(() => {
-		// 		clearInterval(disconnectInterval);
-		// 		goto('/borne');
-		// 	});
+		// TODO: don't forget to uncomment this
+		authApi()
+			.logout({ withCredentials: true })
+			.then(() => {
+				clearInterval(disconnectInterval);
+				goto('/borne');
+			});
 	}
 
 	function onAction() {

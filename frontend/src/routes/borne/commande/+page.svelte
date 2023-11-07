@@ -56,6 +56,9 @@
 			if (found.amount >= (found.item.buy_limit ?? 9999)) {
 				return;
 			}
+			if (found.amount >= (found.item.amount_left ?? 9999)) {
+				return;
+			}
 			found.amount++;
 			order = newOrder;
 			orderPrice += item.display_price ?? 999;

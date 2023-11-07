@@ -8,7 +8,21 @@
 
 	export let state: ItemState = 'buyable';
 	export let category: string = '';
+
 	export let click: (item: Item) => void;
+
+	// Update item when clicking on it
+	function clickWrapper(item: Item) {
+		loadItems();
+		// Update current item
+		for (let i = 0; i < items.length; i++) {
+			if (items[i].id === item.id) {
+				item = items[i];
+				break;
+			}
+		}
+		click(item);
+	}
 
 	let items: Item[] = [];
 
@@ -87,7 +101,7 @@
 								draggable="false"
 								class="w-32 h-32 object-contain"
 								src={api() + item.picture_uri}
-								alt={item.name}	
+								alt={item.name}
 							/>
 							<span class="w-full text-lg font-bold text-center">{item.amount} {item.name}</span>
 						</div>
