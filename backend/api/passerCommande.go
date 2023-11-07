@@ -59,6 +59,7 @@ func (s *Server) PostTransactions(c echo.Context) error {
 
 	// Check for menus in transaction first, add thos item without a price to the transaction
 	for _, potentialItem := range potentialTransaction.Items {
+
 		item, ok := fetchedItems[potentialItem.ItemId.String()]
 		if !ok {
 			// Verify that item exists, can be bought, is in stock, and can be bought for that amount
@@ -77,6 +78,7 @@ func (s *Server) PostTransactions(c echo.Context) error {
 		}
 
 		if !item.IsMenu {
+			delete(fetchedItems, item.Id.String())
 			continue
 		}
 
