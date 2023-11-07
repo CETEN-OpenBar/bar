@@ -77,11 +77,23 @@ func (s *Server) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 				if err == mongo.ErrNoDocuments {
 					// Delete cookie
 					userSess.Options.MaxAge = -1
+					adminSess.Options.MaxAge = -1
 					userSess.Save(c.Request(), c.Response())
+					adminSess.Save(c.Request(), c.Response())
 					return ErrorAccNotFound(c)
 				}
 				logrus.Error(err)
 				return Error500(c)
+			}
+
+			if account.IsBlocked() {
+				logrus.Warnf("Account %s is blocked", accountID)
+				// Delete cookie
+				userSess.Options.MaxAge = -1
+				adminSess.Options.MaxAge = -1
+				userSess.Save(c.Request(), c.Response())
+				adminSess.Save(c.Request(), c.Response())
+				return Error403(c)
 			}
 
 			c.Set("userLogged", true)

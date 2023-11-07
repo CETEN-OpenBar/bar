@@ -30,6 +30,16 @@ func (o *Account) IsAdmin() bool {
 	return o.Role == autogen.AccountAdmin || o.Role == autogen.AccountSuperAdmin || o.Role == autogen.AccountMember
 }
 
+func (o *Account) IsBlocked() bool {
+	var blocked bool
+	for _, res := range o.Restrictions {
+		if res == autogen.AccountBlocked {
+			blocked = true
+		}
+	}
+	return blocked
+}
+
 // ToJSON converts the model to JSON
 func (o *Account) ToJSON() []byte {
 	data, err := json.Marshal(o)

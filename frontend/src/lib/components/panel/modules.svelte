@@ -27,28 +27,34 @@
 	});
 
 	modules.push({
-		name: 'Dashboard',
-		color: 'bg-blue-600',
-		link: '/panel/dash'
-	});
-
-	modules.push({
-		name: 'Création de comptes',
+		name: 'Dé/bloquer un compte',
 		color: 'bg-red-600',
-		link: '/panel/accounts'
+		link: '/panel/accounts/restrict'
 	});
 
-	modules.push({
-		name: 'Création de produits',
-		color: 'bg-green-600',
-		link: '/panel/accounts'
-	});
+	// modules.push({
+	// 	name: 'Dashboard',
+	// 	color: 'bg-blue-600',
+	// 	link: '/panel/dash'
+	// });
 
-	modules.push({
-		name: 'Restock',
-		color: 'bg-green-600',
-		link: '/panel/accounts'
-	});
+	// modules.push({
+	// 	name: 'Création de comptes',
+	// 	color: 'bg-red-600',
+	// 	link: '/panel/accounts'
+	// });
+
+	// modules.push({
+	// 	name: 'Création de produits',
+	// 	color: 'bg-green-600',
+	// 	link: '/panel/accounts'
+	// });
+
+	// modules.push({
+	// 	name: 'Restock',
+	// 	color: 'bg-green-600',
+	// 	link: '/panel/accounts'
+	// });
 
 	// fill with rdm bullshit for test
 	// TODO: uncomment if you need to test this
