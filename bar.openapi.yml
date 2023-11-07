@@ -2712,6 +2712,178 @@ paths:
         - admin_auth: []
       tags:
         - carousel
+  /restocks:
+    get:
+      description: "Get restocks"
+      operationId: getRestocks
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            format: uint64
+        - name: limit
+          in: query
+          description: Number of restocks per page
+          required: false
+          schema:
+            type: integer
+            format: uint64
+        - name: search
+          in: query
+          description: search string
+          schema:
+            type: string
+        - name: sort
+          in: query
+          description: sort string
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  restocks:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Restock"
+                  page:
+                    type: integer
+                    format: uint64
+                  limit:
+                    type: integer
+                    format: uint64
+                  max_page:
+                    type: integer
+                    format: uint64
+                required:
+                  - restocks
+                  - page
+                  - limit
+                  - max_page
+        "400":
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not authenticated"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - admin_auth: []
+      tags:
+        - restocks
+    post:
+      description: "Create a restock"
+      operationId: createRestock
+      requestBody:
+        description: "Restock to create"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewRestock"
+      responses:
+        "201":
+          description: "Created"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Restock"
+        "400":
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not authenticated"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Restock already exists"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      tags:
+        - restocks
+  /restocks/{restock_id}:
+    delete:
+      description: "Delete a restock"
+      operationId: deleteRestock
+      parameters:
+        - name: restock_id
+          in: path
+          description: ID of the restock
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "204":
+          description: "Deleted"
+        "401":
+          description: "Not authenticated"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Restock not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      tags:
+        - restocks
   /deleted/accounts:
     get:
       description: "Get deleted accounts"
@@ -4740,6 +4912,132 @@ components:
       required:
         - id
         - image_url
+    NewRestockItem:
+      type: object
+      properties:
+        item_id:
+          $ref: "#/components/schemas/UUID"
+        amount_of_bundle:
+          type: integer
+          format: uint64
+        amount_per_bundle:
+          type: integer
+          format: uint64
+        bundle_cost_ht:
+          type: integer
+          format: uint64
+        tva:
+          type: integer
+          format: uint64
+      required:
+        - item_id
+        - amount_of_bundle
+        - amount_per_bundle
+        - bundle_cost_ht
+        - tva
+    NewRestock:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/NewRestockItem"
+        total_cost_ht:
+          type: integer
+          format: uint64
+        total_cost_ttc:
+          type: integer
+          format: uint64
+        driver_id:
+          type: string
+          description: ID of the driver
+        type:
+          $ref: "#/components/schemas/RestockType"
+      required:
+        - items
+        - total_cost_ht
+        - total_cost_ttc
+        - driver_id
+        - type
+    RestockItem:
+      type: object
+      properties:
+        item_id:
+          $ref: "#/components/schemas/UUID"
+        item_name:
+          type: string
+          description: Name of the current item
+        item_picture_uri:
+          type: string
+          description: Link to picture of the current item
+        amount_of_bundle:
+          type: integer
+          format: uint64
+        amount_per_bundle:
+          type: integer
+          format: uint64
+        bundle_cost_ht:
+          type: integer
+          format: uint64
+        tva:
+          type: integer
+          format: uint64
+      required:
+        - item_id
+        - item_name
+        - item_picture_uri
+        - amount_of_bundle
+        - amount_per_bundle
+        - bundle_cost_ht
+        - tva
+    RestockType:
+      type: string
+      enum:
+        - auchan
+        - auchan_drive
+        - viennoiserie
+        - promocash
+      x-enum-varnames:
+        - RestockAuchan
+        - RestockAuchanDrive
+        - RestockViennoiserie
+        - RestockPromocash
+    Restock:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/RestockItem"
+        total_cost_ht:
+          type: integer
+          format: uint64
+        total_cost_ttc:
+          type: integer
+          format: uint64
+        driver_id:
+          type: string
+          description: ID of the driver
+        driver_name:
+          type: string
+          description: Name of the driver
+        id:
+          $ref: "#/components/schemas/UUID"
+        type:
+          $ref: "#/components/schemas/RestockType"
+        deleted_at:
+          type: integer
+          format: uint64
+        deleted_by:
+          $ref: "#/components/schemas/UUID"
+      required:
+        - items
+        - total_cost_ht
+        - total_cost_ttc
+        - driver_id
+        - driver_name
+        - id
+        - type
   securitySchemes:
     auth:
       type: apiKey

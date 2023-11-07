@@ -754,6 +754,37 @@ export interface GetRefills200Response {
 /**
  * 
  * @export
+ * @interface GetRestocks200Response
+ */
+export interface GetRestocks200Response {
+    /**
+     * 
+     * @type {Array<Restock>}
+     * @memberof GetRestocks200Response
+     */
+    'restocks': Array<Restock>;
+    /**
+     * 
+     * @type {number}
+     * @memberof GetRestocks200Response
+     */
+    'page': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof GetRestocks200Response
+     */
+    'limit': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof GetRestocks200Response
+     */
+    'max_page': number;
+}
+/**
+ * 
+ * @export
  * @interface GetSelfRefills200Response
  */
 export interface GetSelfRefills200Response {
@@ -1315,6 +1346,82 @@ export interface NewItem {
 /**
  * 
  * @export
+ * @interface NewRestock
+ */
+export interface NewRestock {
+    /**
+     * 
+     * @type {Array<NewRestockItem>}
+     * @memberof NewRestock
+     */
+    'items': Array<NewRestockItem>;
+    /**
+     * 
+     * @type {number}
+     * @memberof NewRestock
+     */
+    'total_cost_ht': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof NewRestock
+     */
+    'total_cost_ttc': number;
+    /**
+     * ID of the driver
+     * @type {string}
+     * @memberof NewRestock
+     */
+    'driver_id': string;
+    /**
+     * 
+     * @type {RestockType}
+     * @memberof NewRestock
+     */
+    'type': RestockType;
+}
+
+
+/**
+ * 
+ * @export
+ * @interface NewRestockItem
+ */
+export interface NewRestockItem {
+    /**
+     * 
+     * @type {string}
+     * @memberof NewRestockItem
+     */
+    'item_id': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof NewRestockItem
+     */
+    'amount_of_bundle': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof NewRestockItem
+     */
+    'amount_per_bundle': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof NewRestockItem
+     */
+    'bundle_cost_ht': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof NewRestockItem
+     */
+    'tva': number;
+}
+/**
+ * 
+ * @export
  * @interface NewTransaction
  */
 export interface NewTransaction {
@@ -1510,6 +1617,134 @@ export const RefillType = {
 } as const;
 
 export type RefillType = typeof RefillType[keyof typeof RefillType];
+
+
+/**
+ * 
+ * @export
+ * @interface Restock
+ */
+export interface Restock {
+    /**
+     * 
+     * @type {Array<RestockItem>}
+     * @memberof Restock
+     */
+    'items': Array<RestockItem>;
+    /**
+     * 
+     * @type {number}
+     * @memberof Restock
+     */
+    'total_cost_ht': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof Restock
+     */
+    'total_cost_ttc': number;
+    /**
+     * ID of the driver
+     * @type {string}
+     * @memberof Restock
+     */
+    'driver_id': string;
+    /**
+     * Name of the driver
+     * @type {string}
+     * @memberof Restock
+     */
+    'driver_name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Restock
+     */
+    'id': string;
+    /**
+     * 
+     * @type {RestockType}
+     * @memberof Restock
+     */
+    'type': RestockType;
+    /**
+     * 
+     * @type {number}
+     * @memberof Restock
+     */
+    'deleted_at'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Restock
+     */
+    'deleted_by'?: string;
+}
+
+
+/**
+ * 
+ * @export
+ * @interface RestockItem
+ */
+export interface RestockItem {
+    /**
+     * 
+     * @type {string}
+     * @memberof RestockItem
+     */
+    'item_id': string;
+    /**
+     * Name of the current item
+     * @type {string}
+     * @memberof RestockItem
+     */
+    'item_name': string;
+    /**
+     * Link to picture of the current item
+     * @type {string}
+     * @memberof RestockItem
+     */
+    'item_picture_uri': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof RestockItem
+     */
+    'amount_of_bundle': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof RestockItem
+     */
+    'amount_per_bundle': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof RestockItem
+     */
+    'bundle_cost_ht': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof RestockItem
+     */
+    'tva': number;
+}
+/**
+ * 
+ * @export
+ * @enum {string}
+ */
+
+export const RestockType = {
+    RestockAuchan: 'auchan',
+    RestockAuchanDrive: 'auchan_drive',
+    RestockViennoiserie: 'viennoiserie',
+    RestockPromocash: 'promocash'
+} as const;
+
+export type RestockType = typeof RestockType[keyof typeof RestockType];
 
 
 /**
@@ -6860,6 +7095,262 @@ export class RefillsApi extends BaseAPI {
      */
     public postRefill(accountId: string, amount: number, type: RefillType, options?: AxiosRequestConfig) {
         return RefillsApiFp(this.configuration).postRefill(accountId, amount, type, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+/**
+ * RestocksApi - axios parameter creator
+ * @export
+ */
+export const RestocksApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * Create a restock
+         * @param {NewRestock} newRestock Restock to create
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createRestock: async (newRestock: NewRestock, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'newRestock' is not null or undefined
+            assertParamExists('createRestock', 'newRestock', newRestock)
+            const localVarPath = `/restocks`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(newRestock, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Delete a restock
+         * @param {string} restockId ID of the restock
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteRestock: async (restockId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'restockId' is not null or undefined
+            assertParamExists('deleteRestock', 'restockId', restockId)
+            const localVarPath = `/restocks/{restock_id}`
+                .replace(`{${"restock_id"}}`, encodeURIComponent(String(restockId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get restocks
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of restocks per page
+         * @param {string} [search] search string
+         * @param {string} [sort] sort string
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getRestocks: async (page?: number, limit?: number, search?: string, sort?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/restocks`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+            if (sort !== undefined) {
+                localVarQueryParameter['sort'] = sort;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * RestocksApi - functional programming interface
+ * @export
+ */
+export const RestocksApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = RestocksApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * Create a restock
+         * @param {NewRestock} newRestock Restock to create
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createRestock(newRestock: NewRestock, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Restock>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createRestock(newRestock, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Delete a restock
+         * @param {string} restockId ID of the restock
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteRestock(restockId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteRestock(restockId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Get restocks
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of restocks per page
+         * @param {string} [search] search string
+         * @param {string} [sort] sort string
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getRestocks(page?: number, limit?: number, search?: string, sort?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetRestocks200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getRestocks(page, limit, search, sort, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+    }
+};
+
+/**
+ * RestocksApi - factory interface
+ * @export
+ */
+export const RestocksApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = RestocksApiFp(configuration)
+    return {
+        /**
+         * Create a restock
+         * @param {NewRestock} newRestock Restock to create
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createRestock(newRestock: NewRestock, options?: any): AxiosPromise<Restock> {
+            return localVarFp.createRestock(newRestock, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Delete a restock
+         * @param {string} restockId ID of the restock
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteRestock(restockId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteRestock(restockId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get restocks
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of restocks per page
+         * @param {string} [search] search string
+         * @param {string} [sort] sort string
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getRestocks(page?: number, limit?: number, search?: string, sort?: string, options?: any): AxiosPromise<GetRestocks200Response> {
+            return localVarFp.getRestocks(page, limit, search, sort, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * RestocksApi - object-oriented interface
+ * @export
+ * @class RestocksApi
+ * @extends {BaseAPI}
+ */
+export class RestocksApi extends BaseAPI {
+    /**
+     * Create a restock
+     * @param {NewRestock} newRestock Restock to create
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof RestocksApi
+     */
+    public createRestock(newRestock: NewRestock, options?: AxiosRequestConfig) {
+        return RestocksApiFp(this.configuration).createRestock(newRestock, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Delete a restock
+     * @param {string} restockId ID of the restock
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof RestocksApi
+     */
+    public deleteRestock(restockId: string, options?: AxiosRequestConfig) {
+        return RestocksApiFp(this.configuration).deleteRestock(restockId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get restocks
+     * @param {number} [page] Page number
+     * @param {number} [limit] Number of restocks per page
+     * @param {string} [search] search string
+     * @param {string} [sort] sort string
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof RestocksApi
+     */
+    public getRestocks(page?: number, limit?: number, search?: string, sort?: string, options?: AxiosRequestConfig) {
+        return RestocksApiFp(this.configuration).getRestocks(page, limit, search, sort, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

@@ -116,6 +116,24 @@ type DBackend interface {
 	GetAllTransactions(ctx context.Context, page uint64, size uint64, state string) ([]*models.Transaction, error)
 	CountAllTransactions(ctx context.Context, state string) (uint64, error)
 
+	// Restock's CRUD
+	CreateRestock(ctx context.Context, t *models.Restock) error
+	GetRestock(ctx context.Context, id string) (*models.Restock, error)
+	UpdateRestock(ctx context.Context, t *models.Restock) error
+	MarkDeleteRestock(ctx context.Context, id, by string) error
+	UnMarkDeleteRestock(ctx context.Context, id string) error
+	DeleteRestock(ctx context.Context, id string) error
+	RestoreRestock(ctx context.Context, id string) error
+
+	GetDeletedRestocks(ctx context.Context, page uint64, size uint64) ([]*models.Restock, error)
+	CountDeletedRestocks(ctx context.Context) (uint64, error)
+
+	GetRestocks(ctx context.Context, account string, page uint64, size uint64) ([]*models.Restock, error)
+	CountRestocks(ctx context.Context, account string) (uint64, error)
+
+	GetAllRestocks(ctx context.Context, page uint64, size uint64) ([]*models.Restock, error)
+	CountAllRestocks(ctx context.Context) (uint64, error)
+
 	// Other requests that are not CRUD but still needed
 	GetAccountByEmail(ctx context.Context, email string) (*models.Account, error)
 	GetAccountByGoogle(ctx context.Context, googleID string) (*models.Account, error)

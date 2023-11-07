@@ -16,6 +16,7 @@ var (
 		"carousel_texts",
 		"carousel_images",
 		"accounts",
+		"restocks",
 	}
 
 	// Add indexes to index "id" which is text & unique
@@ -193,6 +194,23 @@ var (
 				}),
 			},
 		},
+		"restocks": {
+			mongo.IndexModel{
+				Keys: bson.M{
+					"created_at": 1,
+				},
+			},
+			mongo.IndexModel{
+				Keys: bson.M{
+					"id": 1,
+				},
+				Options: options.Index().SetUnique(true).SetPartialFilterExpression(bson.M{
+					"id": bson.M{
+						"$exists": true,
+					},
+				}),
+			},
+		},
 	}
 
 	TransactionsCollection   = "transactions"
@@ -202,6 +220,7 @@ var (
 	CarouselTextsCollection  = "carousel_texts"
 	CarouselImagesCollection = "carousel_images"
 	AccountsCollection       = "accounts"
+	RestocksCollection       = "restocks"
 )
 
 func (b *Backend) CreateCollections() error {

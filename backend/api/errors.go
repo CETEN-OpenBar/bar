@@ -121,3 +121,12 @@ func ErrorTransactionNotFound(c echo.Context) error {
 	resp.VisitDeleteTransactionResponse(c.Response())
 	return nil
 }
+
+func ErrorRestockNotFound(c echo.Context) error {
+	resp := autogen.DeleteTransaction404JSONResponse{
+		Message:   autogen.MsgRefillNotFound,
+		ErrorCode: autogen.ErrRefillNotFound,
+	}
+	resp.VisitDeleteTransactionResponse(c.Response())
+	return nil
+}
