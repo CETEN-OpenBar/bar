@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Transaction, TransactionItem } from '$lib/api';
+	import type { Transaction, TransactionItem, TransactionState } from '$lib/api';
 	import { api } from '$lib/config/config';
 	import { transactionsApi } from '$lib/requests/requests';
 	import { formatPrice } from '$lib/utils';
@@ -27,9 +27,11 @@
 		clearInterval(interval);
 	});
 
+	let st: TransactionState | undefined = 'started';
+
 	function reloadTransactions() {
 		transactionsApi()
-			.getTransactions(page, amount, undefined, { withCredentials: true })
+			.getTransactions(page, amount, st, { withCredentials: true })
 			.then((res) => {
 				page = res.data.page ?? 0;
 				maxPage = res.data.max_page ?? 0;
@@ -38,8 +40,8 @@
 				let newTransactions = [];
 				for (let transaction of res.data.transactions) {
 					let items: Array<TransactionItem> = [];
-					
-					for (let item of transaction.items??[]) {
+
+					for (let item of transaction.items ?? []) {
 						if (countedItems >= maxItemPerTransaction) break;
 						if (countedItems + item.item_amount > maxItemPerTransaction) {
 							item.item_amount = maxItemPerTransaction - countedItems;
@@ -72,6 +74,26 @@
 	<div class="flex flex-col">
 		<div class="flex flex-row justify-between">
 			<div class="text-lg font-semibold">Transactions</div>
+			<div class="text-lg font-semibold">
+				Filtre :
+				<button
+					class="bg-gray-700 p-2 rounded-lg"
+					on:click={() => {
+						if (st == 'started') {
+							st = undefined;
+						} else {
+							st = 'started';
+						}
+						reloadTransactions();
+					}}
+				>
+					{#if st == 'started'}
+						En cours
+					{:else}
+						Tout
+					{/if}
+				</button>
+			</div>
 			<div class="text-lg font-semibold">Montant</div>
 		</div>
 		<div class="flex flex-col max-h-[80vh] overflow-auto" use:dragscroll>
