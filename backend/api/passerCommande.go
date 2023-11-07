@@ -42,6 +42,11 @@ func (s *Server) PostTransactions(c echo.Context) error {
 		return Error400(c)
 	}
 
+	if potentialTransaction.Items == nil || len(potentialTransaction.Items) == 0 {
+		logrus.Warnf("Transaction %s has no items", transaction.Id.String())
+		return Error400(c)
+	}
+
 	if !account.VerifyPin(potentialTransaction.CardPin) {
 		autogen.PostTransactions401JSONResponse{
 			Message:   autogen.MsgNotAuthenticated,
