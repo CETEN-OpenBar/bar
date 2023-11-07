@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Item, ItemState, MenuItem } from '$lib/api';
+	import type { Item, ItemState, MenuCategory, MenuItem } from '$lib/api';
 	import { api } from '$lib/config/config';
 	import { itemsApi } from '$lib/requests/requests';
 	import { formatPrice } from '$lib/utils';
@@ -30,7 +30,11 @@
 	let maxPage: number = 0;
 	let limit: number = 12;
 
-	let menuPopup: MenuItem[] | undefined = undefined;
+	type MenuPopup = {
+		items: MenuItem[] | undefined;
+		categories: MenuCategory[] | undefined;
+	};
+	let menuPopup: MenuPopup | undefined;
 
 	onMount(() => {
 		loadItems();
@@ -95,11 +99,22 @@
 			<div class="flex flex-col w-full justify-center">
 				<div class="text-xl font-bold self-center">Contenu :</div>
 				<div class="grid grid-cols-4 justify-between items-center w-full px-4 mt-4">
-					{#each menuPopup as item}
+					{#each menuPopup.categories??[] as cat}
 						<div class="flex flex-col justify-center">
 							<img
 								draggable="false"
-								class="w-32 h-32 object-contain"
+								class="w-32 h-32 object-contain self-center bg-gray-200"
+								src={api() + cat.picture_uri}
+								alt={cat.name}
+							/>
+							<span class="w-full text-lg font-bold text-center">{cat.amount} {cat.name}</span>
+						</div>
+					{/each}
+					{#each menuPopup.items??[] as item}
+						<div class="flex flex-col justify-center">
+							<img
+								draggable="false"
+								class="w-32 h-32 object-contain bg-gray-200"
 								src={api() + item.picture_uri}
 								alt={item.name}
 							/>
@@ -134,7 +149,10 @@
 						<button
 							class="relative top-0 right-0 w-10 h-10"
 							on:click={() => {
-								menuPopup = item.items;
+								menuPopup = {
+									items: item.menu_items,
+									categories: item.menu_categories
+								}
 							}}
 						>
 							<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:info" />

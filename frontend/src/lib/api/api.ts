@@ -956,7 +956,13 @@ export interface Item {
      * @type {Array<MenuItem>}
      * @memberof Item
      */
-    'items'?: Array<MenuItem>;
+    'menu_items'?: Array<MenuItem>;
+    /**
+     * 
+     * @type {Array<MenuCategory>}
+     * @memberof Item
+     */
+    'menu_categories'?: Array<MenuCategory>;
     /**
      * 
      * @type {ItemState}
@@ -1041,6 +1047,37 @@ export const ItemState = {
 export type ItemState = typeof ItemState[keyof typeof ItemState];
 
 
+/**
+ * 
+ * @export
+ * @interface MenuCategory
+ */
+export interface MenuCategory {
+    /**
+     * 
+     * @type {string}
+     * @memberof MenuCategory
+     */
+    'id': string;
+    /**
+     * Name of the category
+     * @type {string}
+     * @memberof MenuCategory
+     */
+    'name': string;
+    /**
+     * Link to picture of the category
+     * @type {string}
+     * @memberof MenuCategory
+     */
+    'picture_uri': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof MenuCategory
+     */
+    'amount': number;
+}
 /**
  * 
  * @export
@@ -1247,7 +1284,13 @@ export interface NewItem {
      * @type {Array<MenuItem>}
      * @memberof NewItem
      */
-    'items'?: Array<MenuItem>;
+    'menu_items'?: Array<MenuItem>;
+    /**
+     * 
+     * @type {Array<MenuCategory>}
+     * @memberof NewItem
+     */
+    'menu_categories'?: Array<MenuCategory>;
     /**
      * Name of the current item
      * @type {string}
@@ -1306,6 +1349,12 @@ export interface NewTransactionItem {
      * @memberof NewTransactionItem
      */
     'amount': number;
+    /**
+     * 
+     * @type {Array<NewTransactionItem>}
+     * @memberof NewTransactionItem
+     */
+    'picked_categories_items'?: Array<NewTransactionItem>;
 }
 /**
  * 
@@ -1594,7 +1643,19 @@ export interface TransactionItem {
      * @type {Array<MenuItem>}
      * @memberof TransactionItem
      */
-    'items'?: Array<MenuItem>;
+    'menu_items'?: Array<MenuItem>;
+    /**
+     * 
+     * @type {Array<MenuCategory>}
+     * @memberof TransactionItem
+     */
+    'menu_categories'?: Array<MenuCategory>;
+    /**
+     * 
+     * @type {Array<TransactionItem>}
+     * @memberof TransactionItem
+     */
+    'picked_categories_items'?: Array<TransactionItem>;
     /**
      * 
      * @type {number}
@@ -1819,7 +1880,13 @@ export interface UpdateItem {
      * @type {Array<MenuItem>}
      * @memberof UpdateItem
      */
-    'items'?: Array<MenuItem>;
+    'menu_items'?: Array<MenuItem>;
+    /**
+     * 
+     * @type {Array<MenuCategory>}
+     * @memberof UpdateItem
+     */
+    'menu_categories'?: Array<MenuCategory>;
 }
 
 

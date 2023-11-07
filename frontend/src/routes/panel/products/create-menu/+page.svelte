@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Category, Item, ItemPrices, MenuItem, NewItem } from '$lib/api';
+	import type { Category, Item, ItemPrices, MenuCategory, MenuItem, NewItem } from '$lib/api';
 	import { api } from '$lib/config/config';
 	import { itemsApi, categoriesApi } from '$lib/requests/requests';
 	import { file2Base64, formatPrice, parsePrice } from '$lib/utils';
@@ -26,6 +26,7 @@
 		name: string;
 		category: Category | null;
 		items: Item[] | null;
+		categories: MenuCategory[] | undefined;
 		prices: ItemPrices;
 		available_from?: number;
 		available_to?: number;
@@ -39,6 +40,7 @@
 		name: '',
 		category: null,
 		items: null,
+		categories: undefined,
 		prices: {
 			interne: 0,
 			exte: 0,
@@ -80,7 +82,8 @@
 			optimal_amount: steps.optimal_amount,
 			buy_limit: steps.buy_limit,
 			picture: steps.picture,
-			items: subItems,
+			menu_items: subItems,
+			menu_categories: steps.categories,
 			is_menu: true,
 			state: 'buyable'
 		};
@@ -169,7 +172,7 @@
 		{/if}
 		{#if currentStep >= 2}
 			<div id="product" class="bg-slate-100 flex flex-col rounded-xl border-2 p-4">
-				<div class="text-3xl text-center font-bold p-5">Choix de produits</div>
+				<div class="text-3xl text-center font-bold p-5">Mettre des produits (catégories dans l'étape suivante)</div>
 
 				<div class="flex flex-row justify-center">
 					<input
@@ -300,6 +303,9 @@
 						class="w-32 flex flex-col flex-shrink-0 bg-blue-100 hover:bg-blue-200 rounded-sm p-5 text-center text-lg"
 						on:click={() => {
 							currentStep = 4;
+							setTimeout(() => {
+								document.getElementById('categ')?.scrollIntoView({ behavior: 'smooth' });
+							}, 100);
 						}}
 					>
 						Suivant
@@ -308,6 +314,137 @@
 			</div>
 		{/if}
 		{#if currentStep >= 3}
+			<div id="categ" class="bg-slate-100 flex flex-col rounded-xl border-2 p-4">
+				<div class="text-3xl text-center font-bold p-5">Mettre des catégories</div>
+
+				<div class="flex flex-row justify-center">
+					<input
+						type="text"
+						class="w-1/2 rounded-lg p-2 border-2 border-slate-200"
+						placeholder="Rechercher une categorie"
+						bind:value={searchCategory}
+					/>
+				</div>
+
+				<div class="grid grid-cols-4 h-32 items-center gap-3 overflow-x-auto mt-2">
+					{#each categories as i}
+						{#if i.name.toLowerCase().includes(searchCategory.toLowerCase())}
+							<button
+								class="w-32 flex flex-col flex-shrink-0 bg-blue-100 hover:bg-blue-200 rounded-sm p-5 text-center text-lg"
+								on:click={() => {
+									currentStep = 3;
+									if (!steps.categories) steps.categories = [];
+
+									for (let j = 0; j < steps.categories.length; j++) {
+										if (steps.categories[j].id === i.id) {
+											return;
+										}
+									}
+
+									let temp = steps.categories;
+									temp.push({
+										id: i.id,
+										amount: 1,
+										name: i.name,
+										picture_uri: i.picture_uri
+									});
+									steps.categories = temp;
+
+									setTimeout(() => {
+										// scroll to id
+										const item = document.getElementById(i.id);
+										if (item !== null) {
+											item.scrollIntoView({ behavior: 'smooth' });
+										}
+									}, 100);
+								}}
+							>
+								{i.name}
+							</button>
+						{/if}
+					{/each}
+				</div>
+
+				<div class="grid grid-cols-4 max-h-96 justify-center mt-5 overflow-x-auto">
+					{#each steps.categories ?? [] as i}
+						<div class="flex flex-col">
+							<div
+								class="flex flex-col items-center justify-center bg-slate-200 rounded-lg p-5 m-2 h-48"
+							>
+								<img
+									draggable="false"
+									class="w-32 h-32 object-contain"
+									src={api() + i.picture_uri}
+									alt={i.name}
+								/>
+								<span id={i.id} class="text-lg font-bold">{i.name}</span>
+
+								<!-- - , amount, + -->
+								<div class="grid grid-cols-3 bg-slate-300 w-full">
+									<button
+										class="flex flex-col items-center justify-center bg-red-100 rounded-lg p-2"
+										on:click={() => {
+											// Remove 1 from amount
+											let temp = steps.categories ?? [];
+											for (let j = 0; j < temp.length; j++) {
+												if (temp[j].id === i.id) {
+													if (temp[j].amount === 1) {
+														temp = temp.filter((item) => item.id !== i.id);
+													} else {
+														temp[j].amount--;
+													}
+													break;
+												}
+											}
+											steps.categories = temp;
+										}}
+									>
+										-
+									</button>
+
+									<div
+										class="flex flex-col items-center justify-center bg-slate-200 rounded-lg p-2"
+									>
+										{#each steps.categories ?? [] as j}
+											{#if j.id === i.id}
+												{j.amount}
+											{/if}
+										{/each}
+									</div>
+									<button
+										class="flex flex-col items-center justify-center bg-green-100 rounded-lg p-2"
+										on:click={() => {
+											// Add 1 to amount
+											let temp = steps.categories ?? [];
+											for (let j = 0; j < temp.length; j++) {
+												if (temp[j].id === i.id) {
+													temp[j].amount++;
+													break;
+												}
+											}
+											steps.categories = temp;
+										}}
+										>+
+									</button>
+								</div>
+							</div>
+						</div>
+					{/each}
+				</div>
+
+				<div class="flex flex-row justify-center mt-5">
+					<button
+						class="w-32 flex flex-col flex-shrink-0 bg-blue-100 hover:bg-blue-200 rounded-sm p-5 text-center text-lg"
+						on:click={() => {
+							currentStep = 4;
+						}}
+					>
+						Suivant
+					</button>
+				</div>
+			</div>
+		{/if}
+		{#if currentStep >= 4}
 			<div class="bg-slate-100 flex flex-col rounded-xl border-2 p-4">
 				<div class="text-3xl text-center font-bold p-5">Informations</div>
 
@@ -482,7 +619,7 @@
 				</div>
 			</div>
 		{/if}
-		{#if currentStep >= 4}
+		{#if currentStep >= 5}
 			<div id="end" class="bg-slate-100 flex flex-col rounded-xl border-2 p-4 mb-20">
 				<div class="text-3xl text-center font-bold p-5">Récapitulatif</div>
 

@@ -4210,10 +4210,14 @@ components:
           format: uint64
         is_menu:
           type: boolean
-        items:
+        menu_items:
           type: array
           items:
             $ref: "#/components/schemas/MenuItem"
+        menu_categories:
+          type: array
+          items:
+            $ref: "#/components/schemas/MenuCategory"
     ItemPrices:
       type: object
       properties:
@@ -4284,10 +4288,14 @@ components:
           format: uint64
         is_menu:
           type: boolean
-        items:
+        menu_items:
           type: array
           items:
             $ref: "#/components/schemas/MenuItem"
+        menu_categories:
+          type: array
+          items:
+            $ref: "#/components/schemas/MenuCategory"
         name:
           type: string
           description: Name of the current item
@@ -4353,12 +4361,18 @@ components:
           type: integer
           format: uint64
         # A menu contains multiple items (but no other menus)
+
         is_menu:
           type: boolean
-        items:
+        menu_items:
           type: array
           items:
             $ref: "#/components/schemas/MenuItem"
+        menu_categories:
+          type: array
+          items:
+            $ref: "#/components/schemas/MenuCategory"
+        
         state:
           $ref: "#/components/schemas/ItemState"
         deleted_at:
@@ -4391,6 +4405,26 @@ components:
           type: integer
           format: uint64
           example: 3000 (-30%)
+        amount:
+          type: integer
+          format: uint64
+          example: 32
+      required:
+        - id
+        - amount
+        - name
+        - picture_uri
+    MenuCategory:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        name:
+          type: string
+          description: Name of the category
+        picture_uri:
+          type: string
+          description: Link to picture of the category
         amount:
           type: integer
           format: uint64
@@ -4499,10 +4533,18 @@ components:
           format: uint64
         is_menu:
           type: boolean
-        items: 
+        menu_items:
           type: array
           items:
             $ref: "#/components/schemas/MenuItem"
+        menu_categories:
+          type: array
+          items:
+            $ref: "#/components/schemas/MenuCategory"
+        picked_categories_items:
+          type: array
+          items:
+            $ref: "#/components/schemas/TransactionItem"
         total_cost:
           type: integer
           format: uint64
@@ -4557,6 +4599,10 @@ components:
         amount:
           type: integer
           format: uint64
+        picked_categories_items:
+          type: array
+          items:
+            $ref: "#/components/schemas/NewTransactionItem"
       required:
         - item_id
         - amount

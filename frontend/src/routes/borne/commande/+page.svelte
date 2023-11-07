@@ -8,6 +8,7 @@
 	import type {
 		Account,
 		Item,
+		MenuCategory,
 		NewTransaction,
 		NewTransactionItem,
 		TransactionItem
@@ -24,7 +25,11 @@
 	let account: Account | undefined = undefined;
 	let unsub: () => void;
 
-	type NewTransactionItemWithItem = NewTransactionItem & { item: Item };
+	type NewTransactionItemWithItem = NewTransactionItem & {
+		category: string;
+		item: Item;
+		pickedItems: NewTransactionItem[] | undefined;
+	};
 
 	let order: NewTransactionItemWithItem[] = [];
 	let orderPrice: number = 0;
@@ -48,6 +53,67 @@
 		}, 10);
 	};
 
+	type MenuPopup = {
+		categories: MenuCategory[] | undefined;
+		pickedItems: NewTransactionItemWithItem[];
+		tItem: NewTransactionItemWithItem;
+		step: number;
+	};
+	let menuPicks: MenuPopup | undefined = undefined;
+
+	let clickItemMenu: (item: Item) => void = (item: Item) => {
+		let newPicks = menuPicks?.pickedItems ?? [];
+
+		if (newPicks.find((i) => i.item_id == item.id)) {
+			let found = newPicks.find((i) => i.item_id == item.id)!;
+			if (found.amount >= (found.item.buy_limit ?? 9999)) {
+				return;
+			}
+			if (found.amount >= (found.item.amount_left ?? 9999)) {
+				return;
+			}
+			found.amount++;
+		} else {
+			let newTItem: NewTransactionItemWithItem = {
+				category: currentCatgory,
+				item_id: item.id,
+				amount: 1,
+				item: item,
+				pickedItems: undefined
+			};
+
+			newPicks.push(newTItem);
+		}
+
+		if (menuPicks) {
+			let amt = 0;
+			for (let i = 0; i < menuPicks.pickedItems.length; i++) {
+				if (menuPicks.pickedItems[i].category == currentCatgory) {
+					amt += menuPicks.pickedItems[i].amount;
+				}
+			}
+
+			menuPicks.pickedItems = newPicks;
+
+			if (amt >= (menuPicks.categories ?? [])[menuPicks.step].amount) {
+				menuPicks.step++;
+				if (menuPicks.step >= (menuPicks.categories ?? []).length) {
+					menuPicks.step = 0;
+
+					menuPicks.tItem.pickedItems = menuPicks.pickedItems;
+
+					let newOrder = order;
+					newOrder.push(menuPicks.tItem);
+					order = newOrder;
+					orderPrice += menuPicks.tItem.item.display_price ?? 999;
+					menuPicks = undefined;
+					return;
+				}
+				changeCategory((menuPicks.tItem.item.menu_categories ?? [])[menuPicks.step].id);
+			}
+		}
+	};
+
 	let clickItem: (item: Item) => void = (item: Item) => {
 		let newOrder = order;
 
@@ -68,11 +134,24 @@
 		let newTItem: NewTransactionItemWithItem = {
 			item_id: item.id,
 			amount: 1,
-			item: item
+			item: item,
+			pickedItems: undefined,
+			category: ''
 		};
-		newOrder.push(newTItem);
-		order = newOrder;
-		orderPrice += item.display_price ?? 999;
+
+		if (item.is_menu && item.menu_categories) {
+			menuPicks = {
+				categories: item.menu_categories,
+				pickedItems: [],
+				tItem: newTItem,
+				step: 0
+			};
+			changeCategory(item.menu_categories[0].id);
+		} else {
+			newOrder.push(newTItem);
+			order = newOrder;
+			orderPrice += item.display_price ?? 999;
+		}
 	};
 
 	function removeItem(item: NewTransactionItemWithItem, amount: number = 1) {
@@ -119,7 +198,13 @@
 			items: order.map((item) => {
 				return {
 					item_id: item.item_id,
-					amount: item.amount
+					amount: item.amount,
+					picked_categories_items: item.pickedItems?.map((i) => {
+						return {
+							item_id: i.item_id,
+							amount: i.amount
+						};
+					})
 				};
 			}),
 			card_pin: card_pin
@@ -175,34 +260,75 @@
 	class="absolute w-screen h-screen top-0 left-0 overflow-y-hidden"
 	style="background-color:#393E46"
 >
-	<div class="{sidebar ? 'w-4/5' : 'w-full'} h-full relative transition-all ease-in-out">
-		<div class="p-4 flex justify-between" style="background-color:#222831">
-			<button
-				class="flex items-center h-1/2 space-x-2 px-4 py-2 mr-2 rounded-lg bg-green-500 hover:bg-green-600 transition-colors duration-300"
-				on:click={() => {
-					goto('/borne/index');
-				}}
-			>
-				<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:chevron-left" />
-			</button>
-			<Categories {changeCategory} />
-			<button
-				class="flex items-center space-x-2 px-4 py-2 ml-2 rounded-lg bg-green-500 hover:bg-green-600 transition-colors duration-300 animate-pulse"
-				on:click={() => {
-					sidebar = !sidebar;
-				}}
-			>
-				{#if sidebar}
-					<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:chevron-right" />
-				{:else}
+	{#if !menuPicks}
+		<div class="{sidebar ? 'w-4/5' : 'w-full'} h-full relative transition-all ease-in-out">
+			<div class="p-4 flex justify-between" style="background-color:#222831">
+				<button
+					class="flex items-center h-1/2 space-x-2 px-4 py-2 mr-2 rounded-lg bg-green-500 hover:bg-green-600 transition-colors duration-300"
+					on:click={() => {
+						goto('/borne/index');
+					}}
+				>
 					<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:chevron-left" />
-				{/if}
-			</button>
+				</button>
+				<Categories {changeCategory} />
+				<button
+					class="flex items-center space-x-2 px-4 py-2 ml-2 rounded-lg bg-green-500 hover:bg-green-600 transition-colors duration-300 animate-pulse"
+					on:click={() => {
+						sidebar = !sidebar;
+					}}
+				>
+					{#if sidebar}
+						<iconify-icon
+							class="text-white align-middle text-2xl"
+							icon="akar-icons:chevron-right"
+						/>
+					{:else}
+						<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:chevron-left" />
+					{/if}
+				</button>
+			</div>
+			{#if currentCatgory != ''}
+				<Items category={currentCatgory} click={clickItem} />
+			{/if}
 		</div>
-		{#if currentCatgory != ''}
-			<Items category={currentCatgory} click={clickItem} />
-		{/if}
-	</div>
+	{:else}
+		<div class="{sidebar ? 'w-4/5' : 'w-full'} h-full relative transition-all ease-in-out">
+			<div class="p-4 flex justify-between" style="background-color:#222831">
+				<button
+					class="flex items-center h-1/2 space-x-2 px-4 py-2 mr-2 rounded-lg bg-green-500 hover:bg-green-600 transition-colors duration-300"
+					on:click={() => {
+						goto('/borne/index');
+					}}
+				>
+					<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:chevron-left" />
+				</button>
+				<!-- Title -->
+				<h1 class="text-white text-md md:text-md lg:text-2xl">
+					Choix de {(menuPicks.categories ?? [])[menuPicks.step].amount}
+					{(menuPicks.categories ?? [])[menuPicks.step].name}
+				</h1>
+				<button
+					class="flex items-center space-x-2 px-4 py-2 ml-2 rounded-lg bg-green-500 hover:bg-green-600 transition-colors duration-300 animate-pulse"
+					on:click={() => {
+						sidebar = !sidebar;
+					}}
+				>
+					{#if sidebar}
+						<iconify-icon
+							class="text-white align-middle text-2xl"
+							icon="akar-icons:chevron-right"
+						/>
+					{:else}
+						<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:chevron-left" />
+					{/if}
+				</button>
+			</div>
+			{#if currentCatgory != ''}
+				<Items category={currentCatgory} click={clickItemMenu} />
+			{/if}
+		</div>
+	{/if}
 	{#if sidebar}
 		<div
 			class="absolute top-0 right-0 w-1/5 h-screen"

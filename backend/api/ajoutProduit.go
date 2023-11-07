@@ -64,19 +64,19 @@ func (s *Server) PostItem(c echo.Context, categoryId autogen.UUID) error {
 		isMenu = *p.IsMenu
 	}
 
-	if !isMenu && p.Items != nil && len(*p.Items) > 0 {
+	if !isMenu && p.MenuItems != nil && len(*p.MenuItems) > 0 {
 		isMenu = true
 		p.IsMenu = &isMenu
 	}
 
 	if isMenu {
 		// Verify that the menu is correct
-		if p.Items == nil || len(*p.Items) == 0 {
-			return PostItem400(c, "Menu must contain at least one item")
+		if (p.MenuItems == nil || len(*p.MenuItems) == 0) && (p.MenuCategories == nil || len(*p.MenuCategories) == 0) {
+			return PostItem400(c, "Menu must contain at least one item / category")
 		}
 
 		// Verify that all items exists
-		for i, menuItem := range *p.Items {
+		for i, menuItem := range *p.MenuItems {
 			item, err := s.DBackend.GetItem(c.Request().Context(), menuItem.Id.String())
 			if err != nil {
 				if err == mongo.ErrNoDocuments {
@@ -90,7 +90,22 @@ func (s *Server) PostItem(c echo.Context, categoryId autogen.UUID) error {
 			}
 			menuItem.Name = item.Name
 			menuItem.PictureUri = item.PictureUri
-			(*p.Items)[i] = menuItem
+			(*p.MenuItems)[i] = menuItem
+		}
+
+		// Verify that all categories exists
+		for i, menuCategory := range *p.MenuCategories {
+			cat, err := s.DBackend.GetCategory(c.Request().Context(), menuCategory.Id.String())
+			if err != nil {
+				if err == mongo.ErrNoDocuments {
+					return PostItem400(c, "Category in menu does not exist")
+				}
+				logrus.Error(err)
+				return PostItem500(c, "Unknown error while verifying menu")
+			}
+			menuCategory.Name = cat.Name
+			menuCategory.PictureUri = cat.PictureUri
+			(*p.MenuCategories)[i] = menuCategory
 		}
 	}
 
@@ -131,7 +146,8 @@ func (s *Server) PostItem(c echo.Context, categoryId autogen.UUID) error {
 			AvailableFrom:   p.AvailableFrom,
 			AvailableUntil:  p.AvailableUntil,
 			IsMenu:          isMenu,
-			Items:           p.Items,
+			MenuItems:       p.MenuItems,
+			MenuCategories:  p.MenuCategories,
 		},
 	}
 

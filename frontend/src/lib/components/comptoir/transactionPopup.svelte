@@ -1,5 +1,12 @@
 <script lang="ts">
-	import { ItemState, TransactionItemState, type Transaction, type MenuItem } from '$lib/api';
+	import {
+		ItemState,
+		TransactionItemState,
+		type Transaction,
+		type MenuItem,
+		type MenuCategory,
+		type TransactionItem
+	} from '$lib/api';
 	import { api } from '$lib/config/config';
 	import { transactionsApi } from '$lib/requests/requests';
 	import { formatPrice } from '$lib/utils';
@@ -12,36 +19,49 @@
 	let newTransaction: Transaction = structuredClone(transaction);
 	let success = '';
 	let error = '';
-	let shownMenu: MenuItem[] | undefined;
 
-	function saveTransaction() {
+	type MenuPopup = {
+		items: MenuItem[] | undefined;
+		categories: MenuCategory[] | undefined;
+		pickedItems: TransactionItem[] | undefined;
+	};
+	let menuPopup: MenuPopup | undefined;
+
+	async function saveTransaction() {
 		for (let i = 0; i < newTransaction.items.length; i++) {
 			let item = newTransaction.items[i];
 
 			// @ts-ignore
 			if (item.state == transaction.items[i].state) item.state = undefined;
-			console.log(item.state, transaction.items[i].state);
 
-			transactionsApi()
-				.patchTransactionItemId(
-					newTransaction.account_id,
-					newTransaction.id,
-					item.item_id,
-					item.state,
-					item.item_amount,
-					item.item_already_done,
-					{
-						withCredentials: true
-					}
-				)
-				.then(() => {
-					transaction = newTransaction;
-					success = 'Changements enregistrée';
-					setTimeout(() => {
-						success = '';
-					}, 1500);
-					reloadTransaction();
-				});
+			let res = await transactionsApi().patchTransactionItemId(
+				newTransaction.account_id,
+				newTransaction.id,
+				item.item_id,
+				item.state,
+				item.item_amount,
+				item.item_already_done,
+				{
+					withCredentials: true
+				}
+			);
+
+			if (res.status != 200) {
+				error = "Une erreur s'est produite";
+				setTimeout(() => {
+					error = '';
+				}, 1500);
+				return;
+			}
+		}
+
+		if (!error) {
+			transaction = newTransaction;
+			success = 'Changements enregistrée';
+			setTimeout(() => {
+				success = '';
+			}, 1500);
+			reloadTransaction();
 		}
 	}
 
@@ -108,7 +128,11 @@
 							<button
 								class="flex text-white font-bold p-2 rounded justify-center"
 								on:click={() => {
-									shownMenu = item.items;
+									menuPopup = {
+										items: item.menu_items,
+										categories: item.menu_categories,
+										pickedItems: item.picked_categories_items
+									};
 								}}
 							>
 								<img
@@ -193,17 +217,37 @@
 			</div>
 		</div>
 
-		{#if shownMenu}
+		{#if menuPopup != undefined}
 			<div class="w-full h-1 bg-gray-200" />
 
 			<div class="w-full text-center text-lg font-bold">Ce menu contient:</div>
 
 			<div class="grid grid-cols-5 max-h-64 p-5 gap-5">
-				{#each shownMenu as item}
+				{#each menuPopup.categories ?? [] as cat}
+					<div class="flex flex-col justify-center text-center break-words rounded-xl bg-slate-200">
+						{cat.name ? cat.name : 'Test'}
+						<img
+							src={api() + cat.picture_uri}
+							alt="..."
+							class="self-center w-10 h-10 rounded-2xl"
+						/>
+					</div>
+				{/each}
+				{#each menuPopup.items ?? [] as item}
 					<div class="flex flex-col justify-center text-center break-words rounded-xl bg-slate-200">
 						{item.name ? item.name : 'Test'}
 						<img
 							src={api() + item.picture_uri}
+							alt="..."
+							class="self-center w-10 h-10 rounded-2xl"
+						/>
+					</div>
+				{/each}
+				{#each menuPopup.pickedItems ?? [] as pickedItem}
+					<div class="flex flex-col justify-center text-center break-words rounded-xl bg-slate-200">
+						{pickedItem.item_name ? pickedItem.item_name : 'Test'}
+						<img
+							src={api() + pickedItem.picture_uri}
 							alt="..."
 							class="self-center w-10 h-10 rounded-2xl"
 						/>
@@ -237,8 +281,8 @@
 			<div class="flex flex-col gap-4 p-8">
 				<button
 					class="bg-green-500 rounded-xl text-white text-md font-bold p-2 h-20 w-full"
-					on:click={() => {
-						saveTransaction();
+					on:click={async () => {
+						await saveTransaction();
 						transactionsApi()
 							.patchTransactionId(newTransaction.account_id, newTransaction.id, 'finished', {
 								withCredentials: true
