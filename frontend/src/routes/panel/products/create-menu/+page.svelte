@@ -92,7 +92,7 @@
 			.postItem(steps.category.id, newItem, { withCredentials: true })
 			.then((res) => {
 				if (res.status === 201) {
-					window.location.href = '/panel/products';
+					window.location.href = '/panel';
 				}
 			});
 	}
