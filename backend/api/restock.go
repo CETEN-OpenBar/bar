@@ -114,6 +114,12 @@ func (s *Server) CreateRestock(c echo.Context) error {
 
 			item.AmountLeft += restockItem.AmountOfBundle * restockItem.AmountPerBundle
 
+			err = s.DBackend.UpdateItem(c.Request().Context(), item)
+			if err != nil {
+				logrus.Error(err)
+				return nil, Error500(c)
+			}
+
 			restock.Items = append(restock.Items, restockItem)
 		}
 
