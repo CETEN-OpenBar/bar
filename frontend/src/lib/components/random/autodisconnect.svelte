@@ -3,8 +3,8 @@
 	import { authApi } from '$lib/requests/requests';
 	import { onDestroy, onMount } from 'svelte';
 
-	export const delay: number = 60000;
-	export const location: string = '/borne';
+	export let delay: number = 60000;
+	export let location: string = '/borne';
 
 	let disconnectInterval: number | undefined = undefined;
 
