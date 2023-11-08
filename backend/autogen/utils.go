@@ -82,3 +82,37 @@ func (a *Account) HasPrivileges() bool {
 	// TODO: modify this when modifying roles
 	return a.Role == "admin" || a.Role == "superadmin" || a.Role == "member" || a.Role == "ghost"
 }
+
+func Pager(page *uint64, limit *uint64, count *uint64) (dbPage uint64, pageOut uint64, limitOut uint64, maxPage uint64) {
+	// We make sure that page is filled, it's going to be 0 otherwise
+	if page != nil {
+		pageOut = *page
+	}
+	// We make sure that limit is filled, it's going to be 0 otherwise
+	if limit != nil {
+		limitOut = *limit
+	}
+	// We block the limit to 100
+	if limitOut > 100 {
+		limitOut = 100
+	}
+
+	// We calculate the max page (0 if count is nil)
+	if count != nil {
+		maxPage = *count / limitOut
+	}
+
+	if count != nil && *count%limitOut == 0 && maxPage > 0 {
+		maxPage--
+	}
+	if pageOut > maxPage+1 {
+		pageOut = maxPage
+	}
+	if pageOut > 0 {
+		pageOut--
+	}
+
+	dbPage = pageOut
+	pageOut++
+	return
+}

@@ -483,25 +483,25 @@ export interface GetAllItems200Response {
      * @type {Array<Item>}
      * @memberof GetAllItems200Response
      */
-    'items'?: Array<Item>;
+    'items': Array<Item>;
     /**
      * 
      * @type {number}
      * @memberof GetAllItems200Response
      */
-    'page'?: number;
+    'page': number;
     /**
      * 
      * @type {number}
      * @memberof GetAllItems200Response
      */
-    'limit'?: number;
+    'limit': number;
     /**
      * 
      * @type {number}
      * @memberof GetAllItems200Response
      */
-    'max_page'?: number;
+    'max_page': number;
 }
 /**
  * 
@@ -630,99 +630,6 @@ export interface GetDeletedCategories200Response {
 /**
  * 
  * @export
- * @interface GetDeletedItems200Response
- */
-export interface GetDeletedItems200Response {
-    /**
-     * 
-     * @type {Array<Item>}
-     * @memberof GetDeletedItems200Response
-     */
-    'items': Array<Item>;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetDeletedItems200Response
-     */
-    'page': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetDeletedItems200Response
-     */
-    'limit': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetDeletedItems200Response
-     */
-    'max_page': number;
-}
-/**
- * 
- * @export
- * @interface GetDeletedRefills200Response
- */
-export interface GetDeletedRefills200Response {
-    /**
-     * 
-     * @type {Array<Refill>}
-     * @memberof GetDeletedRefills200Response
-     */
-    'refills': Array<Refill>;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetDeletedRefills200Response
-     */
-    'page': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetDeletedRefills200Response
-     */
-    'limit': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetDeletedRefills200Response
-     */
-    'max_page': number;
-}
-/**
- * 
- * @export
- * @interface GetDeletedTransactions200Response
- */
-export interface GetDeletedTransactions200Response {
-    /**
-     * 
-     * @type {Array<Transaction>}
-     * @memberof GetDeletedTransactions200Response
-     */
-    'transactions': Array<Transaction>;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetDeletedTransactions200Response
-     */
-    'page': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetDeletedTransactions200Response
-     */
-    'limit': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetDeletedTransactions200Response
-     */
-    'max_page': number;
-}
-/**
- * 
- * @export
  * @interface GetRefills200Response
  */
 export interface GetRefills200Response {
@@ -731,25 +638,25 @@ export interface GetRefills200Response {
      * @type {Array<Refill>}
      * @memberof GetRefills200Response
      */
-    'refills'?: Array<Refill>;
+    'refills': Array<Refill>;
     /**
      * 
      * @type {number}
      * @memberof GetRefills200Response
      */
-    'page'?: number;
+    'page': number;
     /**
      * 
      * @type {number}
      * @memberof GetRefills200Response
      */
-    'limit'?: number;
+    'limit': number;
     /**
      * 
      * @type {number}
      * @memberof GetRefills200Response
      */
-    'max_page'?: number;
+    'max_page': number;
 }
 /**
  * 
@@ -785,37 +692,6 @@ export interface GetRestocks200Response {
 /**
  * 
  * @export
- * @interface GetSelfRefills200Response
- */
-export interface GetSelfRefills200Response {
-    /**
-     * 
-     * @type {Array<Refill>}
-     * @memberof GetSelfRefills200Response
-     */
-    'refills'?: Array<Refill>;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetSelfRefills200Response
-     */
-    'page': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetSelfRefills200Response
-     */
-    'limit': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetSelfRefills200Response
-     */
-    'max_page': number;
-}
-/**
- * 
- * @export
  * @interface GetTransactions200Response
  */
 export interface GetTransactions200Response {
@@ -824,25 +700,25 @@ export interface GetTransactions200Response {
      * @type {Array<Transaction>}
      * @memberof GetTransactions200Response
      */
-    'transactions'?: Array<Transaction>;
+    'transactions': Array<Transaction>;
     /**
      * 
      * @type {number}
      * @memberof GetTransactions200Response
      */
-    'page'?: number;
+    'page': number;
     /**
      * 
      * @type {number}
      * @memberof GetTransactions200Response
      */
-    'limit'?: number;
+    'limit': number;
     /**
      * 
      * @type {number}
      * @memberof GetTransactions200Response
      */
-    'max_page'?: number;
+    'max_page': number;
 }
 /**
  * 
@@ -5449,7 +5325,7 @@ export const DeletedApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getDeletedItems(page?: number, limit?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetDeletedItems200Response>> {
+        async getDeletedItems(page?: number, limit?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAllItems200Response>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getDeletedItems(page, limit, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -5460,7 +5336,7 @@ export const DeletedApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getDeletedRefills(page?: number, limit?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetDeletedRefills200Response>> {
+        async getDeletedRefills(page?: number, limit?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetRefills200Response>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getDeletedRefills(page, limit, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -5471,7 +5347,7 @@ export const DeletedApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getDeletedTransactions(page?: number, limit?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetDeletedTransactions200Response>> {
+        async getDeletedTransactions(page?: number, limit?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetTransactions200Response>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getDeletedTransactions(page, limit, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -5666,7 +5542,7 @@ export const DeletedApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getDeletedItems(page?: number, limit?: number, options?: any): AxiosPromise<GetDeletedItems200Response> {
+        getDeletedItems(page?: number, limit?: number, options?: any): AxiosPromise<GetAllItems200Response> {
             return localVarFp.getDeletedItems(page, limit, options).then((request) => request(axios, basePath));
         },
         /**
@@ -5676,7 +5552,7 @@ export const DeletedApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getDeletedRefills(page?: number, limit?: number, options?: any): AxiosPromise<GetDeletedRefills200Response> {
+        getDeletedRefills(page?: number, limit?: number, options?: any): AxiosPromise<GetRefills200Response> {
             return localVarFp.getDeletedRefills(page, limit, options).then((request) => request(axios, basePath));
         },
         /**
@@ -5686,7 +5562,7 @@ export const DeletedApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getDeletedTransactions(page?: number, limit?: number, options?: any): AxiosPromise<GetDeletedTransactions200Response> {
+        getDeletedTransactions(page?: number, limit?: number, options?: any): AxiosPromise<GetTransactions200Response> {
             return localVarFp.getDeletedTransactions(page, limit, options).then((request) => request(axios, basePath));
         },
         /**
@@ -6859,7 +6735,7 @@ export const RefillsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getAccountRefills(accountId: string, page?: number, limit?: number, startDate?: string, endDate?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetSelfRefills200Response>> {
+        async getAccountRefills(accountId: string, page?: number, limit?: number, startDate?: string, endDate?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetRefills200Response>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getAccountRefills(accountId, page, limit, startDate, endDate, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -6885,7 +6761,7 @@ export const RefillsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getSelfRefills(page?: number, limit?: number, startDate?: string, endDate?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetSelfRefills200Response>> {
+        async getSelfRefills(page?: number, limit?: number, startDate?: string, endDate?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetRefills200Response>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getSelfRefills(page, limit, startDate, endDate, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -6945,7 +6821,7 @@ export const RefillsApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAccountRefills(accountId: string, page?: number, limit?: number, startDate?: string, endDate?: string, options?: any): AxiosPromise<GetSelfRefills200Response> {
+        getAccountRefills(accountId: string, page?: number, limit?: number, startDate?: string, endDate?: string, options?: any): AxiosPromise<GetRefills200Response> {
             return localVarFp.getAccountRefills(accountId, page, limit, startDate, endDate, options).then((request) => request(axios, basePath));
         },
         /**
@@ -6969,7 +6845,7 @@ export const RefillsApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getSelfRefills(page?: number, limit?: number, startDate?: string, endDate?: string, options?: any): AxiosPromise<GetSelfRefills200Response> {
+        getSelfRefills(page?: number, limit?: number, startDate?: string, endDate?: string, options?: any): AxiosPromise<GetRefills200Response> {
             return localVarFp.getSelfRefills(page, limit, startDate, endDate, options).then((request) => request(axios, basePath));
         },
         /**

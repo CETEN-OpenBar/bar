@@ -21,16 +21,6 @@ func (s *Server) GetDeletedAccounts(c echo.Context, params autogen.GetDeletedAcc
 		return ErrorNotAuthenticated(c)
 	}
 
-	var page uint64
-	if params.Page != nil {
-		page = *params.Page
-	}
-
-	var limit uint64 = 10
-	if params.Limit != nil {
-		limit = *params.Limit
-	}
-
 	var search string
 	if params.Search != nil {
 		search = *params.Search
@@ -42,17 +32,10 @@ func (s *Server) GetDeletedAccounts(c echo.Context, params autogen.GetDeletedAcc
 		return Error500(c)
 	}
 
-	var maxPage = uint64(count) / limit
+	// Make sure the last page is not empty
+	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	if page > maxPage {
-		page = maxPage
-	}
-
-	if limit > 100 {
-		limit = 100
-	}
-
-	data, err := s.DBackend.GetDeletedAccounts(c.Request().Context(), page, limit, search)
+	data, err := s.DBackend.GetDeletedAccounts(c.Request().Context(), dbpage, limit, search)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -133,33 +116,16 @@ func (s *Server) GetDeletedCarouselImages(c echo.Context, params autogen.GetDele
 		return ErrorNotAuthenticated(c)
 	}
 
-	var page uint64
-	if params.Page != nil {
-		page = *params.Page
-	}
-
-	var limit uint64 = 10
-	if params.Limit != nil {
-		limit = *params.Limit
-	}
-
 	count, err := s.DBackend.CountDeletedCarouselImages(c.Request().Context())
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
 	}
 
-	var maxPage = uint64(count) / limit
+	// Make sure the last page is not empty
+	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	if page > maxPage {
-		page = maxPage
-	}
-
-	if limit > 100 {
-		limit = 100
-	}
-
-	data, err := s.DBackend.GetDeletedCarouselImages(c.Request().Context(), page, limit)
+	data, err := s.DBackend.GetDeletedCarouselImages(c.Request().Context(), dbpage, limit)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -246,33 +212,16 @@ func (s *Server) GetDeletedCarouselTexts(c echo.Context, params autogen.GetDelet
 		return ErrorNotAuthenticated(c)
 	}
 
-	var page uint64
-	if params.Page != nil {
-		page = *params.Page
-	}
-
-	var limit uint64 = 10
-	if params.Limit != nil {
-		limit = *params.Limit
-	}
-
 	count, err := s.DBackend.CountDeletedCarouselTexts(c.Request().Context())
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
 	}
 
-	var maxPage = uint64(count) / limit
+	// Make sure the last page is not empty
+	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	if page > maxPage {
-		page = maxPage
-	}
-
-	if limit > 100 {
-		limit = 100
-	}
-
-	data, err := s.DBackend.GetDeletedCarouselTexts(c.Request().Context(), page, limit)
+	data, err := s.DBackend.GetDeletedCarouselTexts(c.Request().Context(), dbpage, limit)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -353,33 +302,16 @@ func (s *Server) GetDeletedCategories(c echo.Context, params autogen.GetDeletedC
 		return ErrorNotAuthenticated(c)
 	}
 
-	var page uint64
-	if params.Page != nil {
-		page = *params.Page
-	}
-
-	var limit uint64 = 10
-	if params.Limit != nil {
-		limit = *params.Limit
-	}
-
 	count, err := s.DBackend.CountDeletedCategories(c.Request().Context())
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
 	}
 
-	var maxPage = uint64(count) / limit
+	// Make sure the last page is not empty
+	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	if page > maxPage {
-		page = maxPage
-	}
-
-	if limit > 100 {
-		limit = 100
-	}
-
-	data, err := s.DBackend.GetDeletedCategories(c.Request().Context(), page, limit)
+	data, err := s.DBackend.GetDeletedCategories(c.Request().Context(), dbpage, limit)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -466,33 +398,16 @@ func (s *Server) GetDeletedItems(c echo.Context, params autogen.GetDeletedItemsP
 		return ErrorNotAuthenticated(c)
 	}
 
-	var page uint64
-	if params.Page != nil {
-		page = *params.Page
-	}
-
-	var limit uint64 = 10
-	if params.Limit != nil {
-		limit = *params.Limit
-	}
-
 	count, err := s.DBackend.CountDeletedItems(c.Request().Context())
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
 	}
 
-	var maxPage = uint64(count) / limit
+	// Make sure the last page is not empty
+	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	if page > maxPage {
-		page = maxPage
-	}
-
-	if limit > 100 {
-		limit = 100
-	}
-
-	data, err := s.DBackend.GetDeletedItems(c.Request().Context(), page, limit)
+	data, err := s.DBackend.GetDeletedItems(c.Request().Context(), dbpage, limit)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -579,33 +494,16 @@ func (s *Server) GetDeletedRefills(c echo.Context, params autogen.GetDeletedRefi
 		return ErrorNotAuthenticated(c)
 	}
 
-	var page uint64
-	if params.Page != nil {
-		page = *params.Page
-	}
-
-	var limit uint64 = 10
-	if params.Limit != nil {
-		limit = *params.Limit
-	}
-
 	count, err := s.DBackend.CountDeletedRefills(c.Request().Context())
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
 	}
 
-	var maxPage = uint64(count) / limit
+	// Make sure the last page is not empty
+	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	if page > maxPage {
-		page = maxPage
-	}
-
-	if limit > 100 {
-		limit = 100
-	}
-
-	data, err := s.DBackend.GetDeletedRefills(c.Request().Context(), page, limit)
+	data, err := s.DBackend.GetDeletedRefills(c.Request().Context(), dbpage, limit)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -686,33 +584,16 @@ func (s *Server) GetDeletedTransactions(c echo.Context, params autogen.GetDelete
 		return ErrorNotAuthenticated(c)
 	}
 
-	var page uint64
-	if params.Page != nil {
-		page = *params.Page
-	}
-
-	var limit uint64 = 10
-	if params.Limit != nil {
-		limit = *params.Limit
-	}
-
 	count, err := s.DBackend.CountDeletedTransactions(c.Request().Context())
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
 	}
 
-	var maxPage = uint64(count) / limit
+	// Make sure the last page is not empty
+	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	if page > maxPage {
-		page = maxPage
-	}
-
-	if limit > 100 {
-		limit = 100
-	}
-
-	data, err := s.DBackend.GetDeletedTransactions(c.Request().Context(), page, limit)
+	data, err := s.DBackend.GetDeletedTransactions(c.Request().Context(), dbpage, limit)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)

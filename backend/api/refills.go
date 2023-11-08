@@ -34,29 +34,10 @@ func (s *Server) GetRefills(c echo.Context, params autogen.GetRefillsParams) err
 		return Error500(c)
 	}
 
-	var page uint64 = 0
-	if params.Page != nil {
-		page = *params.Page
-	}
-	if page > 0 {
-		page--
-	}
+	// Make sure the last page is not empty
+	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	var size uint64 = 10
-	if params.Limit != nil {
-		size = *params.Limit
-	}
-
-	if size > 100 {
-		size = 100
-	}
-
-	maxPage := uint64(count) / size
-	if page > maxPage {
-		page = maxPage
-	}
-
-	data, err := s.DBackend.GetAllRefills(c.Request().Context(), page, size, startsAt, endsAt)
+	data, err := s.DBackend.GetAllRefills(c.Request().Context(), dbpage, limit, startsAt, endsAt)
 	if err != nil {
 		return Error500(c)
 	}
@@ -69,13 +50,11 @@ func (s *Server) GetRefills(c echo.Context, params autogen.GetRefillsParams) err
 
 	logrus.Infof("Refills have been retrieved by %s", account.Id)
 
-	page++
-	maxPage++
 	autogen.GetRefills200JSONResponse{
-		Refills: &refills,
-		Limit:   &size,
-		Page:    &page,
-		MaxPage: &maxPage,
+		Refills: refills,
+		Limit:   limit,
+		Page:    page,
+		MaxPage: maxPage,
 	}.VisitGetRefillsResponse(c.Response())
 	return nil
 }
@@ -105,26 +84,10 @@ func (s *Server) GetSelfRefills(c echo.Context, params autogen.GetSelfRefillsPar
 		return Error500(c)
 	}
 
-	var page uint64 = 0
-	if params.Page != nil {
-		page = *params.Page
-	}
+	// Make sure the last page is not empty
+	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	var size uint64 = 10
-	if params.Limit != nil {
-		size = *params.Limit
-	}
-
-	if size > 100 {
-		size = 100
-	}
-
-	maxPage := uint64(count) / size
-	if page > maxPage {
-		page = maxPage
-	}
-
-	data, err := s.DBackend.GetRefills(c.Request().Context(), accountID, page, size, startsAt, endsAt)
+	data, err := s.DBackend.GetRefills(c.Request().Context(), accountID, dbpage, limit, startsAt, endsAt)
 	if err != nil {
 		return Error500(c)
 	}
@@ -136,8 +99,8 @@ func (s *Server) GetSelfRefills(c echo.Context, params autogen.GetSelfRefillsPar
 	}
 
 	autogen.GetSelfRefills200JSONResponse{
-		Refills: &refills,
-		Limit:   size,
+		Refills: refills,
+		Limit:   limit,
 		Page:    page,
 		MaxPage: maxPage,
 	}.VisitGetSelfRefillsResponse(c.Response())
@@ -177,26 +140,10 @@ func (s *Server) GetAccountRefills(c echo.Context, accountId string, params auto
 		return Error500(c)
 	}
 
-	var page uint64 = 0
-	if params.Page != nil {
-		page = *params.Page
-	}
+	// Make sure the last page is not empty
+	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	var size uint64 = 10
-	if params.Limit != nil {
-		size = *params.Limit
-	}
-
-	if size > 100 {
-		size = 100
-	}
-
-	maxPage := uint64(count) / size
-	if page > maxPage {
-		page = maxPage
-	}
-
-	data, err := s.DBackend.GetRefills(c.Request().Context(), account.Id.String(), page, size, startsAt, endsAt)
+	data, err := s.DBackend.GetRefills(c.Request().Context(), account.Id.String(), dbpage, limit, startsAt, endsAt)
 	if err != nil {
 		return Error500(c)
 	}
@@ -209,8 +156,8 @@ func (s *Server) GetAccountRefills(c echo.Context, accountId string, params auto
 
 	logrus.Infof("Refills have been retrieved by %s", account.Id)
 	autogen.GetAccountRefills200JSONResponse{
-		Refills: &refills,
-		Limit:   size,
+		Refills: refills,
+		Limit:   limit,
 		Page:    page,
 		MaxPage: maxPage,
 	}.VisitGetAccountRefillsResponse(c.Response())

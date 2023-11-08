@@ -15,22 +15,6 @@ func (s *Server) GetAccountTransactions(c echo.Context, accountId autogen.UUID, 
 		return nil
 	}
 
-	var page uint64
-	if params.Page != nil {
-		page = *params.Page
-	}
-	if page > 0 {
-		page--
-	}
-
-	var limit uint64 = 10
-	if params.Limit != nil {
-		limit = *params.Limit
-	}
-	if limit > 100 {
-		limit = 100
-	}
-
 	var state string
 	if params.State != nil {
 		state = string(*params.State)
@@ -42,13 +26,10 @@ func (s *Server) GetAccountTransactions(c echo.Context, accountId autogen.UUID, 
 		return Error500(c)
 	}
 
-	maxPage := count / limit
+	// Make sure the last page is not empty
+	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	if page > maxPage {
-		page = maxPage
-	}
-
-	data, err := s.DBackend.GetTransactions(c.Request().Context(), accountId.String(), page, limit, state)
+	data, err := s.DBackend.GetTransactions(c.Request().Context(), accountId.String(), dbpage, limit, state)
 	if err != nil {
 		return Error500(c)
 	}
@@ -58,13 +39,11 @@ func (s *Server) GetAccountTransactions(c echo.Context, accountId autogen.UUID, 
 		transactions[i] = transaction.Transaction
 	}
 
-	maxPage++
-	page++
 	autogen.GetAccountTransactions200JSONResponse{
-		Transactions: &transactions,
-		Limit:        &limit,
-		Page:         &page,
-		MaxPage:      &maxPage,
+		Transactions: transactions,
+		Limit:        limit,
+		Page:         page,
+		MaxPage:      maxPage,
 	}.VisitGetAccountTransactionsResponse(c.Response())
 	return nil
 }
@@ -79,22 +58,6 @@ func (s *Server) GetCurrentAccountTransactions(c echo.Context, params autogen.Ge
 
 	accountID := c.Get("userAccountID").(string)
 
-	var page uint64
-	if params.Page != nil {
-		page = *params.Page
-	}
-	if page > 0 {
-		page--
-	}
-
-	var limit uint64 = 10
-	if params.Limit != nil {
-		limit = *params.Limit
-	}
-	if limit > 100 {
-		limit = 100
-	}
-
 	var state string
 	if params.State != nil {
 		state = string(*params.State)
@@ -106,13 +69,10 @@ func (s *Server) GetCurrentAccountTransactions(c echo.Context, params autogen.Ge
 		return Error500(c)
 	}
 
-	maxPage := count / limit
+	// Make sure the last page is not empty
+	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	if page > maxPage {
-		page = maxPage
-	}
-
-	data, err := s.DBackend.GetTransactions(c.Request().Context(), accountID, page, limit, state)
+	data, err := s.DBackend.GetTransactions(c.Request().Context(), accountID, dbpage, limit, state)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -123,13 +83,11 @@ func (s *Server) GetCurrentAccountTransactions(c echo.Context, params autogen.Ge
 		transactions[i] = transaction.Transaction
 	}
 
-	maxPage++
-	page++
 	autogen.GetCurrentAccountTransactions200JSONResponse{
-		Transactions: &transactions,
-		Limit:        &limit,
-		Page:         &page,
-		MaxPage:      &maxPage,
+		Transactions: transactions,
+		Limit:        limit,
+		Page:         page,
+		MaxPage:      maxPage,
 	}.VisitGetCurrentAccountTransactionsResponse(c.Response())
 	return nil
 }
@@ -184,22 +142,6 @@ func (s *Server) GetTransactions(c echo.Context, params autogen.GetTransactionsP
 		return nil
 	}
 
-	var page uint64
-	if params.Page != nil {
-		page = *params.Page
-	}
-	if page > 0 {
-		page--
-	}
-
-	var limit uint64 = 10
-	if params.Limit != nil {
-		limit = *params.Limit
-	}
-	if limit > 100 {
-		limit = 100
-	}
-
 	var state string
 	if params.State != nil {
 		state = string(*params.State)
@@ -212,16 +154,9 @@ func (s *Server) GetTransactions(c echo.Context, params autogen.GetTransactionsP
 	}
 
 	// Make sure the last page is not empty
-	maxPage := count / limit
-	if count%limit == 0 {
-		maxPage--
-	}
+	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	if page > maxPage {
-		page = maxPage
-	}
-
-	data, err := s.DBackend.GetAllTransactions(c.Request().Context(), page, limit, state)
+	data, err := s.DBackend.GetAllTransactions(c.Request().Context(), dbpage, limit, state)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -232,12 +167,11 @@ func (s *Server) GetTransactions(c echo.Context, params autogen.GetTransactionsP
 		transactions[i] = transaction.Transaction
 	}
 
-	page++
 	autogen.GetTransactions200JSONResponse{
-		Transactions: &transactions,
-		Limit:        &limit,
-		Page:         &page,
-		MaxPage:      &maxPage,
+		Transactions: transactions,
+		Limit:        limit,
+		Page:         page,
+		MaxPage:      maxPage,
 	}.VisitGetTransactionsResponse(c.Response())
 	return nil
 }
