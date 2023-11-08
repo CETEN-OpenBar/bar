@@ -1,5 +1,5 @@
 <script lang="ts">
-	import  { type Account, type Refill, RefillState, RefillType } from '$lib/api';
+	import { type Account, type Refill, RefillState, RefillType } from '$lib/api';
 	import { refillsApi } from '$lib/requests/requests';
 	import { formatDate, formatPrice } from '$lib/utils';
 	import { onMount } from 'svelte';
@@ -82,7 +82,9 @@
 							<!-- End Header -->
 
 							<!-- Table -->
-							<table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 dark:bg-slate-800">
+							<table
+								class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 dark:bg-slate-800"
+							>
 								<thead class="bg-gray-50 dark:bg-slate-800">
 									<tr>
 										<th scope="col" class="px-6 py-3 text-left">
@@ -145,7 +147,7 @@
 											<td class="h-px w-72">
 												<div class="px-6 py-3">
 													<p class="text-sm dark:text-white/[.8] break-words p-2 bg-transparent">
-                                                        {refill.issued_by_name}
+														{refill.issued_by_name}
 													</p>
 												</div>
 											</td>
@@ -158,14 +160,16 @@
 											</td>
 											<td class="h-px w-72">
 												<div class="px-6 py-3">
-                                                    <select
-                                                        class="block text-sm dark:text-white/[.8] dark:bg-slate-800 break-words p-2 bg-transparent"
-                                                        bind:value={refill.type}
+													<select
+														class="block text-sm dark:text-white/[.8] dark:bg-slate-800 break-words p-2 bg-transparent"
+														bind:value={refill.type}
 														on:change={(e) => {
 															// @ts-ignore
 															refill.type = e.target?.value;
 															refillsApi()
-																.patchRefillId(account.id, refill.id, refill.state, refill.type, { withCredentials: true })
+																.patchRefillId(account.id, refill.id, refill.state, refill.type, {
+																	withCredentials: true
+																})
 																.then((res) => {
 																	reloadRefills();
 																})
@@ -173,23 +177,25 @@
 																	console.error(err);
 																});
 														}}
-                                                    >
-													<option value={RefillType.RefillOther}>Autre</option>
-													<option value={RefillType.RefillCash}>Liquide</option>
-													<option value={RefillType.RefillCard}>Carte</option>
-												</select>
+													>
+														<option value={RefillType.RefillOther}>Autre</option>
+														<option value={RefillType.RefillCash}>Liquide</option>
+														<option value={RefillType.RefillCard}>Carte</option>
+													</select>
 												</div>
 											</td>
 											<td class="h-px w-72">
 												<div class="px-6 py-3">
-                                                    <select
-                                                        class="block text-sm dark:text-white/[.8] dark:bg-slate-800 break-words p-2 bg-transparent"
-                                                        bind:value={refill.state}
+													<select
+														class="block text-sm dark:text-white/[.8] dark:bg-slate-800 break-words p-2 bg-transparent"
+														bind:value={refill.state}
 														on:change={(e) => {
 															// @ts-ignore
 															refill.state = e.target?.value;
 															refillsApi()
-																.patchRefillId(account.id, refill.id, refill.state, refill.type, { withCredentials: true })
+																.patchRefillId(account.id, refill.id, refill.state, refill.type, {
+																	withCredentials: true
+																})
 																.then((res) => {
 																	reloadRefills();
 																})
@@ -197,10 +203,10 @@
 																	console.error(err);
 																});
 														}}
-                                                    >
-                                                        <option value="{RefillState.Valid}">Valide</option>
-                                                        <option value="{RefillState.Canceled}">Annulé</option>
-                                                    </select>
+													>
+														<option value={RefillState.Valid}>Valide</option>
+														<option value={RefillState.Canceled}>Annulé</option>
+													</select>
 												</div>
 											</td>
 											<td class="h-px w-px whitespace-nowrap">
@@ -229,7 +235,10 @@
 											type="button"
 											class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
 											on:click={() => {
-												if (page > 0) {page--; reloadRefills();}
+												if (page > 0) {
+													page--;
+													reloadRefills();
+												}
 											}}
 										>
 											<svg
@@ -249,14 +258,17 @@
 										</button>
 
 										<p class="text-sm self-center text-gray-600 dark:text-gray-400">
-											Page {page + 1} / {max_page + 1}
+											Page {page} / {max_page + 1}
 										</p>
 
 										<button
 											type="button"
 											class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
 											on:click={() => {
-												if (page < max_page) {page++; reloadRefills();}
+												if (page <= max_page) {
+													page++;
+													reloadRefills();
+												}
 											}}
 										>
 											Suivant

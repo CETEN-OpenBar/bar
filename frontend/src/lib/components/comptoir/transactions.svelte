@@ -15,6 +15,18 @@
 
 	let page: number = 0;
 	let maxPage: number = 0;
+	let nextPage = () => {
+		if (page <= maxPage) {
+			page++;
+			reloadTransactions();
+		}
+	};
+	let prevPage = () => {
+		if (page > 0) {
+			page--;
+			reloadTransactions();
+		}
+	};
 
 	onMount(() => {
 		reloadTransactions();
@@ -140,24 +152,12 @@
 
 	<!-- Pagination -->
 	<div class="flex flex-row justify-center mt-5">
-		<button
-			class="bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
-			on:click={() => {
-				if (page > 0) {
-					page--;
-					reloadTransactions();
-				}
-			}}>&lt;</button
+		<button class="bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all" on:click={prevPage}
+			>&lt;</button
 		>
 		<div class="text-lg font-semibold self-center mx-2">{page}/{maxPage + 1}</div>
-		<button
-			class="bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
-			on:click={() => {
-				if (page <= maxPage) {
-					page++;
-					reloadTransactions();
-				}
-			}}>&gt;</button
+		<button class="bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all" on:click={nextPage}
+			>&gt;</button
 		>
 	</div>
 </div>

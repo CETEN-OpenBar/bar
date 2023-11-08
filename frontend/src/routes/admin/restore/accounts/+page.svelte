@@ -8,8 +8,20 @@
 	let accounts: Account[] = [];
 
 	let searchQuery = '';
-	let page = 0;
-	let max_page = 0;
+	let page: number = 0;
+	let maxPage: number = 0;
+	let nextPage = () => {
+		if (page <= maxPage) {
+			page++;
+			reloadAccounts();
+		}
+	};
+	let prevPage = () => {
+		if (page > 0) {
+			page--;
+			reloadAccounts();
+		}
+	};
 	let accounts_per_page = 10;
 
 	onMount(() => {
@@ -22,7 +34,7 @@
 			.then((res) => {
 				accounts = res.data.accounts ?? [];
 				page = res.data.page;
-				max_page = res.data.max_page;
+				maxPage = res.data.max_page;
 				accounts_per_page = res.data.limit;
 			});
 	}
@@ -273,9 +285,7 @@
 								<button
 									type="button"
 									class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
-									on:click={() => {
-										if (page > 1) page--;
-									}}
+									on:click={prevPage}
 								>
 									<svg
 										class="w-3 h-3"
@@ -294,15 +304,13 @@
 								</button>
 
 								<p class="text-sm self-center text-gray-600 dark:text-gray-400">
-									Page {page + 1} / {max_page + 1}
+									Page {page} / {maxPage + 1}
 								</p>
 
 								<button
 									type="button"
 									class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
-									on:click={() => {
-										if (page < max_page) page++;
-									}}
+									on:click={nextPage}
 								>
 									Suivant
 									<svg

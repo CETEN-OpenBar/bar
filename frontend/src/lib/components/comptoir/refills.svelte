@@ -13,6 +13,18 @@
 
 	let page: number = 0;
 	let maxPage: number = 0;
+	let nextPage = () => {
+		if (page <= maxPage) {
+			page++;
+			reloadRefills();
+		}
+	};
+	let prevPage = () => {
+		if (page > 0) {
+			page--;
+			reloadRefills();
+		}
+	};
 
 	onMount(() => {
 		reloadRefills();
@@ -101,22 +113,12 @@
 	<div class="flex flex-row justify-center mt-5">
 		<button
 			class="bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
-			on:click={() => {
-				if (page > 0) {
-					page--;
-					reloadRefills();
-				}
-			}}>&lt;</button
+			on:click={prevPage}>&lt;</button
 		>
 		<div class="text-lg font-semibold self-center mx-2">{page}/{maxPage}</div>
 		<button
 			class="bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
-			on:click={() => {
-				if (page < maxPage) {
-					page++;
-					reloadRefills();
-				}
-			}}>&gt;</button
+			on:click={nextPage}>&gt;</button
 		>
 	</div>
 </div>

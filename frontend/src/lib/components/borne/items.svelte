@@ -13,7 +13,7 @@
 
 	// Update item when clicking on it
 	function clickWrapper(item: Item) {
-		loadItems();
+		reloadItems();
 		// Update current item
 		for (let i = 0; i < items.length; i++) {
 			if (items[i].id === item.id) {
@@ -28,6 +28,18 @@
 
 	let page: number = 0;
 	let maxPage: number = 0;
+	let nextPage = () => {
+		if (page <= maxPage) {
+			page++;
+			reloadItems();
+		}
+	};
+	let prevPage = () => {
+		if (page > 0) {
+			page--;
+			reloadItems();
+		}
+	};
 	let limit: number = 12;
 
 	type MenuPopup = {
@@ -37,10 +49,10 @@
 	let menuPopup: MenuPopup | undefined;
 
 	onMount(() => {
-		loadItems();
+		reloadItems();
 	});
 
-	function loadItems() {
+	function reloadItems() {
 		itemsApi()
 			.getCategoryItems(category, page, limit, state, { withCredentials: true })
 			.then((res) => {
@@ -60,22 +72,6 @@
 	}
 
 	let direction = 1;
-
-	function nextPage() {
-		if (page < maxPage) {
-			page++;
-			direction = -1;
-			loadItems();
-		}
-	}
-
-	function prevPage() {
-		if (page > 1) {
-			page--;
-			direction = 1;
-			loadItems();
-		}
-	}
 </script>
 
 {#if menuPopup}
@@ -161,7 +157,7 @@
 					<button
 						on:click={() => {
 							// check we are not clicking on the info button
-							click(item);
+							clickWrapper(item);
 						}}
 					>
 						<img
