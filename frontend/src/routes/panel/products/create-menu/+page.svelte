@@ -6,7 +6,7 @@
 	import { onMount } from 'svelte';
 
 	onMount(async () => {
-		const c = await categoriesApi().getCategories({ withCredentials: true });
+		const c = await categoriesApi().getCategories(true, { withCredentials: true });
 		if (!Array.isArray(c.data)) {
 			return;
 		}

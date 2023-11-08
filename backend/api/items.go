@@ -250,6 +250,7 @@ func (s *Server) GetAllItems(c echo.Context, params autogen.GetAllItemsParams) e
 
 	count, err := s.DBackend.CountItems(c.Request().Context(), categoryId, state, name)
 	if err != nil {
+		logrus.Error(err)
 		return Error500(c)
 	}
 
@@ -258,6 +259,7 @@ func (s *Server) GetAllItems(c echo.Context, params autogen.GetAllItemsParams) e
 
 	data, err := s.DBackend.GetItems(c.Request().Context(), categoryId, dbpage, limit, state, name)
 	if err != nil {
+		logrus.Error(err)
 		return Error500(c)
 	}
 

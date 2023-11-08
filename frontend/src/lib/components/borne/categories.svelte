@@ -11,7 +11,7 @@
 
 	onMount(() => {
 		categoriesApi()
-			.getCategories({ withCredentials: true })
+			.getCategories(undefined, { withCredentials: true })
 			.then((res) => {
 				categories = res.data??[];
 				changeCategory(categories[0].id);

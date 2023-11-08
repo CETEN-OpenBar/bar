@@ -30,7 +30,7 @@
 
 	onMount(() => {
 		categoriesApi()
-			.getCategories({ withCredentials: true })
+			.getCategories(true, { withCredentials: true })
 			.then((res) => {
 				categories = res.data ?? [];
 				reloadItems();

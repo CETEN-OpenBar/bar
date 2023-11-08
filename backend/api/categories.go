@@ -17,9 +17,9 @@ import (
 )
 
 // (GET /categories)
-func (s *Server) GetCategories(c echo.Context) error {
+func (s *Server) GetCategories(c echo.Context, p autogen.GetCategoriesParams) error {
 	// Get account from cookie
-	_, err := MustGetUser(c)
+	user, err := MustGetUser(c)
 	if err != nil {
 		return nil
 	}
@@ -32,6 +32,11 @@ func (s *Server) GetCategories(c echo.Context) error {
 
 	var categories []autogen.Category
 	for _, category := range data {
+		if category.Hidden && p.Hidden == nil {
+			continue
+		} else if p.Hidden != nil && *p.Hidden && !user.IsAdmin() {
+			continue
+		}
 		categories = append(categories, category.Category)
 	}
 
@@ -170,6 +175,10 @@ func (s *Server) PatchCategory(c echo.Context, categoryId autogen.UUID) error {
 
 	if p.Position != nil {
 		category.Position = *p.Position
+	}
+
+	if p.Hidden != nil {
+		category.Hidden = *p.Hidden
 	}
 
 	if p.Picture != nil {

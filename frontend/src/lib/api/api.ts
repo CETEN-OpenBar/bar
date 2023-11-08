@@ -318,6 +318,12 @@ export interface Category {
     'position': number;
     /**
      * 
+     * @type {boolean}
+     * @memberof Category
+     */
+    'hidden': boolean;
+    /**
+     * 
      * @type {number}
      * @memberof Category
      */
@@ -1901,6 +1907,12 @@ export interface UpdateCategory {
      * @memberof UpdateCategory
      */
     'position'?: number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof UpdateCategory
+     */
+    'hidden'?: boolean;
 }
 /**
  * 
@@ -3753,10 +3765,11 @@ export const CategoriesApiAxiosParamCreator = function (configuration?: Configur
     return {
         /**
          * Get all categories
+         * @param {boolean} [hidden] Show hidden categories (admin only)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getCategories: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getCategories: async (hidden?: boolean, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/categories`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -3770,6 +3783,10 @@ export const CategoriesApiAxiosParamCreator = function (configuration?: Configur
             const localVarQueryParameter = {} as any;
 
             // authentication auth required
+
+            if (hidden !== undefined) {
+                localVarQueryParameter['hidden'] = hidden;
+            }
 
 
     
@@ -3977,11 +3994,12 @@ export const CategoriesApiFp = function(configuration?: Configuration) {
     return {
         /**
          * Get all categories
+         * @param {boolean} [hidden] Show hidden categories (admin only)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getCategories(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Category>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getCategories(options);
+        async getCategories(hidden?: boolean, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Category>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getCategories(hidden, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -4047,11 +4065,12 @@ export const CategoriesApiFactory = function (configuration?: Configuration, bas
     return {
         /**
          * Get all categories
+         * @param {boolean} [hidden] Show hidden categories (admin only)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getCategories(options?: any): AxiosPromise<Array<Category>> {
-            return localVarFp.getCategories(options).then((request) => request(axios, basePath));
+        getCategories(hidden?: boolean, options?: any): AxiosPromise<Array<Category>> {
+            return localVarFp.getCategories(hidden, options).then((request) => request(axios, basePath));
         },
         /**
          * Get a category
@@ -4111,12 +4130,13 @@ export const CategoriesApiFactory = function (configuration?: Configuration, bas
 export class CategoriesApi extends BaseAPI {
     /**
      * Get all categories
+     * @param {boolean} [hidden] Show hidden categories (admin only)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof CategoriesApi
      */
-    public getCategories(options?: AxiosRequestConfig) {
-        return CategoriesApiFp(this.configuration).getCategories(options).then((request) => request(this.axios, this.basePath));
+    public getCategories(hidden?: boolean, options?: AxiosRequestConfig) {
+        return CategoriesApiFp(this.configuration).getCategories(hidden, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

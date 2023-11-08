@@ -1885,6 +1885,13 @@ paths:
     get:
       description: Get all categories
       operationId: getCategories
+      parameters:
+        - name: hidden
+          in: query
+          description: Show hidden categories (admin only)
+          required: false
+          schema:
+            type: boolean
       responses:
         "200":
           description: ""
@@ -4628,6 +4635,8 @@ components:
         position:
           type: integer
           format: uint64
+        hidden:
+          type: boolean
     NewCategory:
       type: object
       properties:
@@ -4658,6 +4667,8 @@ components:
         position:
           type: integer
           format: uint64
+        hidden:
+          type: boolean
         deleted_at:
           type: integer
           format: uint64
@@ -4669,6 +4680,7 @@ components:
         - picture_uri
         - position
         - items
+        - hidden
     TransactionState:
       type: string
       enum:

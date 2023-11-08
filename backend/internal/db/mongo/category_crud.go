@@ -108,7 +108,7 @@ func (b *Backend) MarkDeleteCategory(ctx context.Context, id, by string) error {
 		},
 		bson.M{
 			"$set": bson.M{
-				"category_id": "",
+				"category_id": uuid.MustParse("00000000-0000-0000-0000-000000000000"),
 			},
 		},
 	)
