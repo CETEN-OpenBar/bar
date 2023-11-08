@@ -29,3 +29,4 @@ borne/OVMF.fd
 borne/build/
 
 data
+*.code-workspace
