@@ -117,7 +117,6 @@ func (s *Server) PostTransactions(c echo.Context) error {
 			item := fetchedItems[potentialItem.ItemId.String()]
 
 			if !item.IsMenu {
-				delete(fetchedItems, item.Id.String())
 				continue
 			}
 
