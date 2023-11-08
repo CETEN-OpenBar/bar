@@ -103,10 +103,10 @@ func (s *Server) CreateRestock(c echo.Context) error {
 			item, err := s.DBackend.GetItem(c.Request().Context(), item.ItemId.String())
 			if err != nil {
 				if err == mongo.ErrNoDocuments {
-					return ErrorItemNotFound(c)
+					return nil, ErrorItemNotFound(c)
 				}
 				logrus.Error(err)
-				return Error500(c)
+				return nil, Error500(c)
 			}
 
 			restockItem.ItemName = item.Name
@@ -120,8 +120,10 @@ func (s *Server) CreateRestock(c echo.Context) error {
 		err = s.DBackend.CreateRestock(c.Request().Context(), &restock)
 		if err != nil {
 			logrus.Error(err)
-			return Error500(c)
+			return nil, Error500(c)
 		}
+
+		return nil, nil
 	})
 	if err != nil {
 		logrus.Error(err)
