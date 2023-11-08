@@ -15,6 +15,18 @@
 
 	let page: number = 0;
 	let maxPage: number = 0;
+	let nextPage = () => {
+		if (page <= maxPage) {
+			page++;
+			reloadTransactions();
+		}
+	};
+	let prevPage = () => {
+		if (page > 0) {
+			page--;
+			reloadTransactions();
+		}
+	};
 
 	onMount(() => {
 		reloadTransactions();
@@ -29,6 +41,8 @@
 
 	let st: TransactionState | undefined = 'started';
 
+	type TransactionItemWithFakeAmount = TransactionItem & { item_fake_amount?: number };
+
 	function reloadTransactions() {
 		transactionsApi()
 			.getTransactions(page, amount, st, { withCredentials: true })
@@ -39,16 +53,15 @@
 				let countedItems = 0;
 				let newTransactions = [];
 				for (let transaction of res.data.transactions) {
-					let items: Array<TransactionItem> = [];
+					let items: Array<TransactionItemWithFakeAmount> = [];
 
-					for (let item of transaction.items ?? []) {
+					for (let r of transaction.items ?? []) {
+						let item = r as TransactionItemWithFakeAmount;
 						if (countedItems >= maxItemPerTransaction) break;
 						if (countedItems + item.item_amount > maxItemPerTransaction) {
-							item.item_amount = maxItemPerTransaction - countedItems;
+							item.item_fake_amount = maxItemPerTransaction - countedItems;
 						}
-						if (item.item_amount > 0) {
-							items.push(item);
-						}
+						items.push(item);
 					}
 					transaction.items = items;
 					newTransactions.push(transaction);
@@ -115,7 +128,7 @@
 							<div class="grid grid-cols-3 gap-2">
 								{#each transaction.items as item}
 									<!-- One for each item.amount -->
-									{#each Array(item.item_amount) as _}
+									{#each Array(item.item_fake_amount) as _}
 										<div class="flex flex-col justify-center">
 											<img
 												src={api() + item.picture_uri}
@@ -140,24 +153,12 @@
 
 	<!-- Pagination -->
 	<div class="flex flex-row justify-center mt-5">
-		<button
-			class="bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
-			on:click={() => {
-				if (page > 0) {
-					page--;
-					reloadTransactions();
-				}
-			}}>&lt;</button
+		<button class="bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all" on:click={prevPage}
+			>&lt;</button
 		>
 		<div class="text-lg font-semibold self-center mx-2">{page}/{maxPage + 1}</div>
-		<button
-			class="bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
-			on:click={() => {
-				if (page <= maxPage) {
-					page++;
-					reloadTransactions();
-				}
-			}}>&gt;</button
+		<button class="bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all" on:click={nextPage}
+			>&gt;</button
 		>
 	</div>
 </div>

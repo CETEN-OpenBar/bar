@@ -13,7 +13,7 @@
 
 	// Update item when clicking on it
 	function clickWrapper(item: Item) {
-		loadItems();
+		reloadItems();
 		// Update current item
 		for (let i = 0; i < items.length; i++) {
 			if (items[i].id === item.id) {
@@ -28,6 +28,18 @@
 
 	let page: number = 0;
 	let maxPage: number = 0;
+	let nextPage = () => {
+		if (page <= maxPage) {
+			page++;
+			reloadItems();
+		}
+	};
+	let prevPage = () => {
+		if (page > 0) {
+			page--;
+			reloadItems();
+		}
+	};
 	let limit: number = 12;
 
 	type MenuPopup = {
@@ -37,10 +49,10 @@
 	let menuPopup: MenuPopup | undefined;
 
 	onMount(() => {
-		loadItems();
+		reloadItems();
 	});
 
-	function loadItems() {
+	function reloadItems() {
 		itemsApi()
 			.getCategoryItems(category, page, limit, state, { withCredentials: true })
 			.then((res) => {
@@ -49,10 +61,7 @@
 				limit = res.data.limit ?? 15;
 
 				let newItems = res.data.items ?? [];
-				items = [];
-				setTimeout(() => {
-					items = newItems;
-				}, 1);
+				items = newItems;
 			})
 			.catch((err) => {
 				console.log(err);
@@ -60,22 +69,6 @@
 	}
 
 	let direction = 1;
-
-	function nextPage() {
-		if (page < maxPage) {
-			page++;
-			direction = -1;
-			loadItems();
-		}
-	}
-
-	function prevPage() {
-		if (page > 1) {
-			page--;
-			direction = 1;
-			loadItems();
-		}
-	}
 </script>
 
 {#if menuPopup}
@@ -99,7 +92,7 @@
 			<div class="flex flex-col w-full justify-center">
 				<div class="text-xl font-bold self-center">Contenu :</div>
 				<div class="grid grid-cols-4 justify-between items-center w-full px-4 mt-4">
-					{#each menuPopup.categories??[] as cat}
+					{#each menuPopup.categories ?? [] as cat}
 						<div class="flex flex-col justify-center">
 							<img
 								draggable="false"
@@ -110,7 +103,7 @@
 							<span class="w-full text-lg font-bold text-center">{cat.amount} {cat.name}</span>
 						</div>
 					{/each}
-					{#each menuPopup.items??[] as item}
+					{#each menuPopup.items ?? [] as item}
 						<div class="flex flex-col justify-center">
 							<img
 								draggable="false"
@@ -152,7 +145,7 @@
 								menuPopup = {
 									items: item.menu_items,
 									categories: item.menu_categories
-								}
+								};
 							}}
 						>
 							<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:info" />
@@ -161,7 +154,7 @@
 					<button
 						on:click={() => {
 							// check we are not clicking on the info button
-							click(item);
+							clickWrapper(item);
 						}}
 					>
 						<img
@@ -184,7 +177,7 @@
 <!-- Navigation -->
 <div class="absolute bottom-5 left-[50%] -translate-x-[50%] flex flex-col justify-center">
 	<div class="text-3xl text-white text-center">
-		{page}/{maxPage}
+		{page}/{maxPage + 1}
 	</div>
 	<div class="flex flex-row gap-4 justify-center items-center w-full h-16">
 		<button

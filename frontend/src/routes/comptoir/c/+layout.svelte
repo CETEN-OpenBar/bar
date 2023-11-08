@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { accountsApi, authApi } from '$lib/requests/requests';
+	import { accountsApi } from '$lib/requests/requests';
 	import type { Account } from '$lib/api';
 	import { onMount } from 'svelte';
 	import { store } from '$lib/store/store';
 	import 'iconify-icon';
+	import Autodisconnect from '$lib/components/random/autodisconnect.svelte';
 
 	let account: Account | undefined = undefined;
 
@@ -20,50 +21,10 @@
 			.catch(() => {
 				goto('/comptoir');
 			});
-
-		disconnectInterval = setInterval(logout, 300000);
-
-		// trigger action on any event
-		let events = [
-			'mousemove',
-			'mousedown',
-			'keypress',
-			'DOMMouseScroll',
-			'mousewheel',
-			'touchmove',
-			'MSPointerMove',
-			'click',
-			'drag',
-			'dragend',
-			'dragenter',
-			'dragleave',
-			'dragover',
-			'dragstart',
-			'touchstart',
-			'touchend',
-		];
-		for (let i in events) {
-			window.addEventListener(events[i], onAction);
-		}
 	});
-
-	let disconnectInterval: number | undefined = undefined;
-
-	function logout() {
-		authApi()
-			.logout({ withCredentials: true })
-			.then(() => {
-				clearInterval(disconnectInterval);
-				goto('/comptoir');
-			});
-	}
-
-	function onAction() {
-		console.log('action');
-		clearInterval(disconnectInterval);
-		disconnectInterval = setInterval(logout, 300000);
-	}
 </script>
+
+<Autodisconnect delay={900000} location="/comptoir" />
 
 {#if account !== undefined}
 	<div id="main" class="absolute top-0 left-0 w-screen h-screen" style="background-color:black;">

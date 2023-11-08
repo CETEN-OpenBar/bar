@@ -21,25 +21,6 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 	if err != nil {
 		return nil
 	}
-
-	var page uint64 = 1
-	if params.Page != nil {
-		page = uint64(*params.Page)
-	}
-
-	var size uint64 = 50
-	if params.Limit != nil {
-		size = uint64(*params.Limit)
-	}
-
-	if page > 0 {
-		page -= 1
-	}
-
-	if size > 100 {
-		size = 100
-	}
-
 	state := ""
 	if params.State != nil {
 		state = string(*params.State)
@@ -58,13 +39,11 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 	if err != nil {
 		return Error500(c)
 	}
-	maxPage := uint64(count) / size
 
-	if page > maxPage {
-		page = maxPage
-	}
+	// Make sure the last page is not empty
+	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	data, err := s.DBackend.GetItems(c.Request().Context(), categoryId.String(), page, size, state, "")
+	data, err := s.DBackend.GetItems(c.Request().Context(), categoryId.String(), dbpage, limit, state, "")
 	if err != nil {
 		return Error500(c)
 	}
@@ -83,13 +62,11 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 		items = append(items, item.Item)
 	}
 
-	page += 1
-	maxPage += 1
 	autogen.GetCategoryItems200JSONResponse{
-		Items:   &items,
-		Page:    &page,
-		Limit:   &size,
-		MaxPage: &maxPage,
+		Items:   items,
+		Page:    page,
+		Limit:   limit,
+		MaxPage: maxPage,
 	}.VisitGetCategoryItemsResponse(c.Response())
 
 	return nil
@@ -258,24 +235,6 @@ func (s *Server) GetAllItems(c echo.Context, params autogen.GetAllItemsParams) e
 		return nil
 	}
 
-	var page uint64 = 1
-	if params.Page != nil {
-		page = uint64(*params.Page)
-	}
-
-	var size uint64 = 50
-	if params.Limit != nil {
-		size = uint64(*params.Limit)
-	}
-
-	if page > 0 {
-		page -= 1
-	}
-
-	if size > 100 {
-		size = 100
-	}
-
 	state := ""
 	categoryId := ""
 	name := ""
@@ -291,16 +250,16 @@ func (s *Server) GetAllItems(c echo.Context, params autogen.GetAllItemsParams) e
 
 	count, err := s.DBackend.CountItems(c.Request().Context(), categoryId, state, name)
 	if err != nil {
+		logrus.Error(err)
 		return Error500(c)
 	}
-	maxPage := uint64(count) / size
 
-	if page > maxPage {
-		page = maxPage
-	}
+	// Make sure the last page is not empty
+	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	data, err := s.DBackend.GetItems(c.Request().Context(), categoryId, page, size, state, name)
+	data, err := s.DBackend.GetItems(c.Request().Context(), categoryId, dbpage, limit, state, name)
 	if err != nil {
+		logrus.Error(err)
 		return Error500(c)
 	}
 
@@ -318,13 +277,11 @@ func (s *Server) GetAllItems(c echo.Context, params autogen.GetAllItemsParams) e
 		items = append(items, item.Item)
 	}
 
-	page += 1
-	maxPage += 1
 	autogen.GetAllItems200JSONResponse{
-		Items:   &items,
-		Page:    &page,
-		Limit:   &size,
-		MaxPage: &maxPage,
+		Items:   items,
+		Page:    page,
+		Limit:   limit,
+		MaxPage: maxPage,
 	}.VisitGetAllItemsResponse(c.Response())
 
 	return nil

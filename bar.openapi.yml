@@ -603,10 +603,10 @@ paths:
                     type: integer
                     format: uint64
                 required:
-                  - accounts
                   - page
                   - limit
                   - max_page
+                  - accounts
         "401":
           description: "Not authorized"
           content:
@@ -980,6 +980,11 @@ paths:
                   max_page:
                     type: integer
                     format: uint64
+                required:
+                  - transactions
+                  - page
+                  - limit
+                  - max_page
         "401":
           description: "Not authorized"
           content:
@@ -1050,6 +1055,11 @@ paths:
                   max_page:
                     type: integer
                     format: uint64
+                required:
+                  - page
+                  - limit
+                  - max_page
+                  - transactions
         "401":
           description: "Not authorized"
           content:
@@ -1164,6 +1174,11 @@ paths:
                   max_page:
                     type: integer
                     format: uint64
+                required:
+                  - page
+                  - limit
+                  - max_page
+                  - transactions
         "401":
           description: "Not authorized"
           content:
@@ -1481,6 +1496,11 @@ paths:
                   max_page:
                     type: integer
                     format: uint64
+                required:
+                  - page
+                  - limit
+                  - max_page
+                  - refills
         "401":
           description: "Not authorized"
           content:
@@ -1558,7 +1578,7 @@ paths:
                     type: integer
                     format: uint64
                 required:
-                  - items
+                  - refills
                   - page
                   - limit
                   - max_page
@@ -1632,17 +1652,14 @@ paths:
                   page:
                     type: integer
                     format: uint64
-
                   limit:
                     type: integer
                     format: uint64
-
                   max_page:
                     type: integer
                     format: uint64
-
                 required:
-                  - items
+                  - refills
                   - page
                   - limit
                   - max_page
@@ -1868,6 +1885,13 @@ paths:
     get:
       description: Get all categories
       operationId: getCategories
+      parameters:
+        - name: hidden
+          in: query
+          description: Show hidden categories (admin only)
+          required: false
+          schema:
+            type: boolean
       responses:
         "200":
           description: ""
@@ -2153,6 +2177,11 @@ paths:
                   max_page:
                     type: integer
                     format: uint64
+                required:
+                  - items
+                  - page
+                  - limit
+                  - max_page
         "403":
           description: "Forbidden"
           content:
@@ -2216,14 +2245,17 @@ paths:
                   page:
                     type: integer
                     format: uint64
-
                   limit:
                     type: integer
                     format: uint64
-
                   max_page:
                     type: integer
                     format: uint64
+                required:
+                  - items
+                  - page
+                  - limit
+                  - max_page
 
         "404":
           description: "Category not found"
@@ -2923,15 +2955,12 @@ paths:
                   page:
                     type: integer
                     format: uint64
-
                   limit:
                     type: integer
                     format: uint64
-
                   max_page:
                     type: integer
                     format: uint64
-
                 required:
                   - accounts
                   - page
@@ -3094,15 +3123,12 @@ paths:
                   page:
                     type: integer
                     format: uint64
-
                   limit:
                     type: integer
                     format: uint64
-
                   max_page:
                     type: integer
                     format: uint64
-
                 required:
                   - transactions
                   - page
@@ -3265,15 +3291,12 @@ paths:
                   page:
                     type: integer
                     format: uint64
-
                   limit:
                     type: integer
                     format: uint64
-
                   max_page:
                     type: integer
                     format: uint64
-
                 required:
                   - refills
                   - page
@@ -3604,15 +3627,12 @@ paths:
                   page:
                     type: integer
                     format: uint64
-
                   limit:
                     type: integer
                     format: uint64
-
                   max_page:
                     type: integer
                     format: uint64
-
                 required:
                   - items
                   - page
@@ -3775,15 +3795,12 @@ paths:
                   page:
                     type: integer
                     format: uint64
-
                   limit:
                     type: integer
                     format: uint64
-
                   max_page:
                     type: integer
                     format: uint64
-
                 required:
                   - items
                   - page
@@ -4618,6 +4635,8 @@ components:
         position:
           type: integer
           format: uint64
+        hidden:
+          type: boolean
     NewCategory:
       type: object
       properties:
@@ -4648,6 +4667,8 @@ components:
         position:
           type: integer
           format: uint64
+        hidden:
+          type: boolean
         deleted_at:
           type: integer
           format: uint64
@@ -4659,6 +4680,7 @@ components:
         - picture_uri
         - position
         - items
+        - hidden
     TransactionState:
       type: string
       enum:

@@ -17,35 +17,16 @@ func (s *Server) GetRestocks(c echo.Context, params autogen.GetRestocksParams) e
 		return nil
 	}
 
-	var page uint64
-	if params.Page != nil {
-		page = *params.Page
-	}
-	if page > 0 {
-		page--
-	}
-
-	var limit uint64 = 10
-	if params.Limit != nil {
-		limit = *params.Limit
-	}
-	if limit > 100 {
-		limit = 100
-	}
-
 	count, err := s.DBackend.CountAllRestocks(c.Request().Context())
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
 	}
 
-	maxPage := count / limit
+	// Make sure the last page is not empty
+	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	if page > maxPage {
-		page = maxPage
-	}
-
-	data, err := s.DBackend.GetAllRestocks(c.Request().Context(), page, limit)
+	data, err := s.DBackend.GetAllRestocks(c.Request().Context(), dbpage, limit)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -56,7 +37,6 @@ func (s *Server) GetRestocks(c echo.Context, params autogen.GetRestocksParams) e
 		restocks[i] = r.Restock
 	}
 
-	page++
 	autogen.GetRestocks200JSONResponse{
 		Restocks: restocks,
 		Limit:    limit,

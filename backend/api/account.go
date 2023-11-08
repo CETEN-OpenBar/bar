@@ -73,24 +73,6 @@ func (s *Server) GetAccounts(c echo.Context, params autogen.GetAccountsParams) e
 		return nil
 	}
 
-	// Set up parameters
-	var page uint64 = 1
-	var limit uint64 = 10
-	if params.Page != nil {
-		page = *params.Page
-	}
-	if params.Limit != nil {
-		limit = *params.Limit
-	}
-
-	if page > 0 {
-		page -= 1
-	}
-
-	if limit > 100 {
-		limit = 100
-	}
-
 	var search string
 	if params.Search != nil {
 		search = *params.Search
@@ -102,10 +84,11 @@ func (s *Server) GetAccounts(c echo.Context, params autogen.GetAccountsParams) e
 		return Error500(c)
 	}
 
-	maxPage := uint64(count) / limit
+	// Make sure the last page is not empty
+	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
 	// Get accounts from database
-	accounts, err := s.DBackend.GetAccounts(c.Request().Context(), page, limit, search)
+	accounts, err := s.DBackend.GetAccounts(c.Request().Context(), dbpage, limit, search)
 	if err != nil {
 		return Error500(c)
 	}

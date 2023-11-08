@@ -21,6 +21,8 @@
 	import Error from '$lib/components/error.svelte';
 	import Success from '$lib/components/success.svelte';
 	import { goto } from '$app/navigation';
+	import Stars from '$lib/components/random/stars.svelte';
+	import Price from '$lib/components/random/price.svelte';
 
 	let account: Account | undefined = undefined;
 	let unsub: () => void;
@@ -119,6 +121,7 @@
 
 		if (newOrder.find((i) => i.item_id == item.id)) {
 			let found = newOrder.find((i) => i.item_id == item.id)!;
+			found.item = item;
 			if (found.amount >= (found.item.buy_limit ?? 9999)) {
 				return;
 			}
@@ -336,15 +339,21 @@
 			in:fly={{ x: 300, duration: 200 }}
 			out:fly={{ x: 300, duration: 200 }}
 		>
-			<div class="p-4 flex justify-between h-1/6">
+			<div class="px-4 py-1 flex justify-between h-[12%]">
 				<div
 					class="flex flex-col gap-5 justify-center items-center w-full h-full overflow-x-auto overflow-y-hidden"
 				>
 					<!-- Commande en cours title -->
-					<h1 class="text-white text-md md:text-md lg:text-2xl">Commande actuelle</h1>
+					<h1 class="text-white text-2xl font-semibold">Commande actuelle</h1>
 					<!-- Subtitle with current balance -->
-					<h2 class="text-white text-xs md:text-xs lg:text-xl">
-						Disponible: {formatPrice(account?.balance ?? 0)}
+					<h2 class="text-white text-md flex flex-row gap-2">
+						Disponible:
+						<div class="flex flex-col">
+							<Price amount={account?.balance ?? 0} />
+							{#if (account?.points ?? 0) > 0}
+								<Stars stars={account?.points ?? 0} />
+							{/if}
+						</div>
 					</h2>
 
 					<!-- Spacer -->
@@ -353,7 +362,7 @@
 			<hr class="w-full border-white" />
 
 			<!-- Items in current commande with buttons for + and - with how much there is and the cost -->
-			<div class="relative flex flex-col gap-5 justify-center items-center h-4/6 p-4">
+			<div class="relative flex flex-col gap-5 justify-center items-center h-[70%] p-4">
 				{#if order.length == 0}
 					<h1 class="text-white text-md md:text-md lg:text-2xl">Aucun article</h1>
 				{:else}
@@ -405,14 +414,29 @@
 				</div>
 			</div>
 			<hr class="w-full border-white" />
-			<div class="p-1 flex justify-between bottom-0 h-1/6">
+			<div class="p-1 flex justify-between bottom-0 h-[20%]">
 				<div
-					class="flex flex-col gap-1 justify-center items-center w-full h-full overflow-x-auto overflow-y-hidden"
+					class="flex flex-col gap-2 justify-center items-center w-full h-full overflow-x-auto overflow-y-hidden"
 				>
 					<h1 class="text-md md:text-md lg:text-2xl text-white">Total</h1>
-					<h2 class="text-md text-white">Coût: {formatPrice(orderPrice)}</h2>
-					<h2 class="text-md text-white">
-						Reste: {formatPrice((account?.balance ?? 0) - orderPrice)}
+					<h2 class="w-full text-md text-white flex flex-row gap-10 justify-center">
+						<div class="flex flex-col text-center">
+							<h3 class="font-semibold">Coût:</h3>
+							<Price amount={orderPrice} />
+						</div>
+						<div class="flex flex-col text-center">
+							<h3 class="font-semibold">Reste:</h3>
+							<div class="flex flex-col">
+								{#if orderPrice < (account?.points ?? 0)}
+									<Price amount={account?.balance ?? 0} />
+									{#if (account?.points ?? 0) > 0}
+										<Stars stars={(account?.points ?? 0) - orderPrice} />
+									{/if}
+								{:else}
+									<Price amount={(account?.balance ?? 0) - orderPrice + (account?.points ?? 0)} />
+								{/if}
+							</div>
+						</div>
 					</h2>
 
 					<button

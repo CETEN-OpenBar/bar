@@ -8,7 +8,8 @@
 	let selectedCategories: Category[] = [];
 	let newCategory: NewCategory = {
 		name: '',
-		picture: ''
+		picture: '',
+		position: 0
 	};
 
 	let page = 0;
@@ -16,7 +17,7 @@
 
 	onMount(() => {
 		categoriesApi()
-			.getCategories({ withCredentials: true })
+			.getCategories(true, { withCredentials: true })
 			.then((res) => {
 				categories = res.data ?? [];
 			});
@@ -45,6 +46,20 @@
 			});
 	}
 
+	function toggleHidden(id: string, state: boolean) {
+		if (!newCategory) return;
+		categoriesApi()
+			.patchCategory(id, { hidden: state }, { withCredentials: true })
+			.then((res) => {
+				categories = categories.map((ct) => {
+					if (ct.id === id) {
+						ct.hidden = state;
+					}
+					return ct;
+				});
+			});
+	}
+
 	function reuploadCategoryPicture(id: string, file: File) {
 		if (!newCategory) return;
 		file2Base64(file).then((base64) => {
@@ -54,7 +69,7 @@
 				.then((res) => {
 					categories = categories.map((ct) => {
 						if (ct.id === id) {
-							ct.picture_uri= res.data.picture_uri+"?"+Math.random();
+							ct.picture_uri = res.data.picture_uri + '?' + Math.random();
 						}
 						return ct;
 					});
@@ -222,6 +237,15 @@
 										</span>
 									</div>
 								</th>
+								<th scope="col" class="px-6 py-3 text-left">
+									<div class="flex items-center gap-x-2">
+										<span
+											class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+										>
+											Cachée
+										</span>
+									</div>
+								</th>
 
 								<th scope="col" class="px-6 py-3 text-right" />
 							</tr>
@@ -238,7 +262,7 @@
 
 											<input
 												type="text"
-												class="block text-sm dark:text-white/[.8]  break-words p-2 bg-transparent"
+												class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent"
 												value={category.name}
 												on:input={(e) => {
 													// @ts-ignore
@@ -274,6 +298,16 @@
 													class="w-full h-full rounded-md object-cover"
 												/>
 											{/if}
+										</div>
+									</td>
+									<td class="h-px w-px whitespace-nowrap">
+										<div class="px-6 py-1.5">
+											<input
+												type="checkbox"
+												checked={category.hidden}
+												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
+												on:change={() => toggleHidden(category.id, !category.hidden)}
+											/>
 										</div>
 									</td>
 									<td class="h-px w-px whitespace-nowrap">
