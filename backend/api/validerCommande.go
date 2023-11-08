@@ -57,16 +57,18 @@ func (s *Server) PatchTransactionId(c echo.Context, accountId autogen.UUID, tran
 				item.AmountLeft += txitem.ItemAmount
 
 				if txitem.IsMenu {
-					for _, subitem := range *txitem.MenuItems {
-						sItem, err := s.DBackend.GetItem(ctx, subitem.Id.String())
-						if err != nil {
-							continue
-						}
-						sItem.AmountLeft += subitem.Amount
-						err = s.DBackend.UpdateItem(ctx, sItem)
-						if err != nil {
-							logrus.Error(err)
-							return nil, errors.New("failed to update item")
+					if item.MenuItems != nil {
+						for _, subitem := range *txitem.MenuItems {
+							sItem, err := s.DBackend.GetItem(ctx, subitem.Id.String())
+							if err != nil {
+								continue
+							}
+							sItem.AmountLeft += subitem.Amount
+							err = s.DBackend.UpdateItem(ctx, sItem)
+							if err != nil {
+								logrus.Error(err)
+								return nil, errors.New("failed to update item")
+							}
 						}
 					}
 
@@ -204,20 +206,22 @@ func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, 
 			item.TotalCost = 0
 
 			if item.IsMenu {
-				for _, subitem := range *item.MenuItems {
-					origSubItem, err := s.DBackend.GetItem(c.Request().Context(), subitem.Id.String())
-					if err != nil {
-						if err == mongo.ErrNoDocuments {
-							continue
+				if item.MenuItems != nil {
+					for _, subitem := range *item.MenuItems {
+						origSubItem, err := s.DBackend.GetItem(c.Request().Context(), subitem.Id.String())
+						if err != nil {
+							if err == mongo.ErrNoDocuments {
+								continue
+							}
+							logrus.Error(err)
+							return nil, errors.New("failed to get item")
 						}
-						logrus.Error(err)
-						return nil, errors.New("failed to get item")
-					}
-					origSubItem.AmountLeft += subitem.Amount
-					err = s.DBackend.UpdateItem(c.Request().Context(), origSubItem)
-					if err != nil {
-						logrus.Error(err)
-						return nil, errors.New("failed to update item")
+						origSubItem.AmountLeft += subitem.Amount
+						err = s.DBackend.UpdateItem(c.Request().Context(), origSubItem)
+						if err != nil {
+							logrus.Error(err)
+							return nil, errors.New("failed to update item")
+						}
 					}
 				}
 
@@ -242,20 +246,22 @@ func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, 
 			transaction.TotalCost += item.TotalCost - oldCost
 
 			if item.IsMenu {
-				for _, subitem := range *item.MenuItems {
-					origSubItem, err := s.DBackend.GetItem(c.Request().Context(), subitem.Id.String())
-					if err != nil {
-						if err == mongo.ErrNoDocuments {
-							continue
+				if item.MenuItems != nil {
+					for _, subitem := range *item.MenuItems {
+						origSubItem, err := s.DBackend.GetItem(c.Request().Context(), subitem.Id.String())
+						if err != nil {
+							if err == mongo.ErrNoDocuments {
+								continue
+							}
+							logrus.Error(err)
+							return nil, errors.New("failed to get item")
 						}
-						logrus.Error(err)
-						return nil, errors.New("failed to get item")
-					}
-					origSubItem.AmountLeft += subitem.Amount * (oldAmount - item.ItemAmount)
-					err = s.DBackend.UpdateItem(c.Request().Context(), origSubItem)
-					if err != nil {
-						logrus.Error(err)
-						return nil, errors.New("failed to update item")
+						origSubItem.AmountLeft += subitem.Amount * (oldAmount - item.ItemAmount)
+						err = s.DBackend.UpdateItem(c.Request().Context(), origSubItem)
+						if err != nil {
+							logrus.Error(err)
+							return nil, errors.New("failed to update item")
+						}
 					}
 				}
 

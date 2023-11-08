@@ -153,7 +153,7 @@
 		<button
 			class="bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
 			on:click={() => {
-				if (page < maxPage) {
+				if (page <= maxPage) {
 					page++;
 					reloadTransactions();
 				}

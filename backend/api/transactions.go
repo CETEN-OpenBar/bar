@@ -211,7 +211,11 @@ func (s *Server) GetTransactions(c echo.Context, params autogen.GetTransactionsP
 		return Error500(c)
 	}
 
+	// Make sure the last page is not empty
 	maxPage := count / limit
+	if count%limit == 0 {
+		maxPage--
+	}
 
 	if page > maxPage {
 		page = maxPage
