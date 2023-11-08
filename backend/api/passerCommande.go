@@ -266,7 +266,13 @@ func (s *Server) PostTransactions(c echo.Context) error {
 		}
 
 		// update account balance
-		account.Balance -= int64(transactionCost)
+
+		account.Balance -= int64(transactionCost) - account.Points
+		account.Points -= int64(transactionCost)
+		if account.Points < 0 {
+			account.Points = 0
+		}
+
 		err = s.DBackend.UpdateAccount(ctx, account)
 		if err != nil {
 			logrus.Error(err)

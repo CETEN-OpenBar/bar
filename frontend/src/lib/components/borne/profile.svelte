@@ -6,6 +6,8 @@
 	import Error from '../error.svelte';
 	import Pin from './pin.svelte';
 	import Success from '../success.svelte';
+	import Stars from '../random/stars.svelte';
+	import Price from '../random/price.svelte';
 
 	export let account: Account;
 	export let logout: () => void;
@@ -89,8 +91,8 @@
 		>
 			<img
 				src={account.google_picture}
-				alt="User Avatar"
-				class={`w-14 rounded-full cursor-pointer`}
+				alt="Y'a pas"
+				class={`w-14 h-14 rounded-full cursor-pointer text-white`}
 			/>
 		</button>
 		<button
@@ -100,7 +102,10 @@
 			class="ml-2 self-center flex flex-col justify-start"
 		>
 			<h1 class="text-lg text-white font-bold">{account.first_name} {account.last_name}</h1>
-			<h2 class="text-md text-white self-start">{formatPrice(account.balance)}</h2>
+			<div class="flex flex-col justify-center">
+				<Price amount={account.balance} class="text-md text-white self-center" />
+				<Stars stars={account.points} class="text-md text-white self-center" />
+			</div>
 		</button>
 	</div>
 

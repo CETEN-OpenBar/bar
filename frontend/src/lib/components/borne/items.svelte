@@ -61,10 +61,7 @@
 				limit = res.data.limit ?? 15;
 
 				let newItems = res.data.items ?? [];
-				items = [];
-				setTimeout(() => {
-					items = newItems;
-				}, 1);
+				items = newItems;
 			})
 			.catch((err) => {
 				console.log(err);
@@ -95,7 +92,7 @@
 			<div class="flex flex-col w-full justify-center">
 				<div class="text-xl font-bold self-center">Contenu :</div>
 				<div class="grid grid-cols-4 justify-between items-center w-full px-4 mt-4">
-					{#each menuPopup.categories??[] as cat}
+					{#each menuPopup.categories ?? [] as cat}
 						<div class="flex flex-col justify-center">
 							<img
 								draggable="false"
@@ -106,7 +103,7 @@
 							<span class="w-full text-lg font-bold text-center">{cat.amount} {cat.name}</span>
 						</div>
 					{/each}
-					{#each menuPopup.items??[] as item}
+					{#each menuPopup.items ?? [] as item}
 						<div class="flex flex-col justify-center">
 							<img
 								draggable="false"
@@ -148,7 +145,7 @@
 								menuPopup = {
 									items: item.menu_items,
 									categories: item.menu_categories
-								}
+								};
 							}}
 						>
 							<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:info" />
@@ -180,7 +177,7 @@
 <!-- Navigation -->
 <div class="absolute bottom-5 left-[50%] -translate-x-[50%] flex flex-col justify-center">
 	<div class="text-3xl text-white text-center">
-		{page}/{maxPage}
+		{page}/{maxPage + 1}
 	</div>
 	<div class="flex flex-row gap-4 justify-center items-center w-full h-16">
 		<button

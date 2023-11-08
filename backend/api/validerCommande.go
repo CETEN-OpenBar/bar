@@ -36,7 +36,7 @@ func (s *Server) PatchTransactionId(c echo.Context, accountId autogen.UUID, tran
 		_, err = s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {
 
 			// update account balance
-			account.Balance += int64(transaction.TotalCost)
+			account.Points += int64(transaction.TotalCost)
 			err = s.DBackend.UpdateAccount(ctx, account)
 			if err != nil {
 				logrus.Error(err)
@@ -201,7 +201,7 @@ func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, 
 	_, err = s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {
 		if oldState != autogen.TransactionItemCanceled && item.State == autogen.TransactionItemCanceled {
 			origItem.AmountLeft += item.ItemAmount
-			account.Balance += int64(item.TotalCost)
+			account.Points += int64(item.TotalCost)
 			transaction.TotalCost -= item.TotalCost
 			item.TotalCost = 0
 
@@ -242,7 +242,7 @@ func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, 
 			}
 		} else {
 			origItem.AmountLeft += oldAmount - item.ItemAmount
-			account.Balance += int64(oldCost - item.TotalCost)
+			account.Points += int64(oldCost - item.TotalCost)
 			transaction.TotalCost += item.TotalCost - oldCost
 
 			if item.IsMenu {
