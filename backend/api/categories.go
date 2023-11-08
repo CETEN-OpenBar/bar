@@ -54,22 +54,24 @@ func (s *Server) PostCategory(c echo.Context) error {
 	// Get category from request
 	uid := uuid.New()
 
-	// Get image from p.Picture as base64
-	d, err := base64.StdEncoding.DecodeString(p.Picture)
-	if err != nil {
-		return Error400(c)
-	}
+	if p.Picture != "" {
+		// Get image from p.Picture as base64
+		d, err := base64.StdEncoding.DecodeString(p.Picture)
+		if err != nil {
+			return Error400(c)
+		}
 
-	// Check MIME type
-	if !strings.Contains(http.DetectContentType(d), "image") {
-		return Error400(c)
-	}
+		// Check MIME type
+		if !strings.Contains(http.DetectContentType(d), "image") {
+			return Error400(c)
+		}
 
-	// Save image to storage
-	err = storage.SaveFile("categories/"+uid.String(), d)
-	if err != nil {
-		logrus.Error(err)
-		return Error500(c)
+		// Save image to storage
+		err = storage.SaveFile("categories/"+uid.String(), d)
+		if err != nil {
+			logrus.Error(err)
+			return Error500(c)
+		}
 	}
 
 	category := &models.Category{
