@@ -89,35 +89,47 @@ func (s *Server) CreateRestock(c echo.Context) error {
 		},
 	}
 
-	for _, item := range body.Items {
-		restockItem := autogen.RestockItem{
-			AmountOfBundle:  item.AmountOfBundle,
-			AmountPerBundle: item.AmountPerBundle,
-			BundleCostHt:    item.BundleCostHt,
-			ItemId:          item.ItemId,
-			Tva:             item.Tva,
+	_, err = s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {
+		for _, item := range body.Items {
+			restockItem := autogen.RestockItem{
+				AmountOfBundle:  item.AmountOfBundle,
+				AmountPerBundle: item.AmountPerBundle,
+				BundleCostHt:    item.BundleCostHt,
+				ItemId:          item.ItemId,
+				Tva:             item.Tva,
+			}
+
+			// Get item to check if it exists
+			item, err := s.DBackend.GetItem(c.Request().Context(), item.ItemId.String())
+			if err != nil {
+				if err == mongo.ErrNoDocuments {
+					return ErrorItemNotFound(c)
+				}
+				logrus.Error(err)
+				return Error500(c)
+			}
+
+			restockItem.ItemName = item.Name
+			restockItem.ItemPictureUri = item.PictureUri
+
+			item.AmountLeft += restockItem.AmountOfBundle * restockItem.AmountPerBundle
+
+			restock.Items = append(restock.Items, restockItem)
 		}
 
-		// Get item to check if it exists
-		item, err := s.DBackend.GetItem(c.Request().Context(), item.ItemId.String())
+		err = s.DBackend.CreateRestock(c.Request().Context(), &restock)
 		if err != nil {
-			if err == mongo.ErrNoDocuments {
-				return ErrorItemNotFound(c)
-			}
 			logrus.Error(err)
 			return Error500(c)
 		}
-
-		restockItem.ItemName = item.Name
-		restockItem.ItemPictureUri = item.PictureUri
-
-		restock.Items = append(restock.Items, restockItem)
-	}
-
-	err = s.DBackend.CreateRestock(c.Request().Context(), &restock)
+	})
 	if err != nil {
 		logrus.Error(err)
-		return Error500(c)
+		return nil
+	}
+
+	if c.Response().Committed {
+		return nil
 	}
 
 	autogen.CreateRestock201JSONResponse(restock.Restock).VisitCreateRestockResponse(c.Response())
