@@ -13,7 +13,7 @@
 		categoriesApi()
 			.getCategories({ withCredentials: true })
 			.then((res) => {
-				categories = res.data;
+				categories = res.data??[];
 				changeCategory(categories[0].id);
 			});
 	});
@@ -32,7 +32,7 @@
 				draggable="false"
 				class="w-full"
 				src={api() + category.picture_uri}
-				alt={category.name}
+				alt="X"
 			/>
 			<span class="text-lg font-bold">{category.name}</span>
 		</button>
