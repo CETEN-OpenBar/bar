@@ -12,13 +12,14 @@
 	} from '$lib/api';
 	import Items from '$lib/components/borne/items.svelte';
 	import { api } from '$lib/config/config';
-	import { categoriesApi, itemsApi } from '$lib/requests/requests';
+	import { categoriesApi, itemsApi, restocksApi } from '$lib/requests/requests';
 	import { formatPrice, parsePrice } from '$lib/utils';
 	import { onMount } from 'svelte';
 
 	let sure: boolean = false;
 	let items: Item[] = [];
 
+	let restoks : Restock[] = [];
 	let newRestock: NewRestock = {
 		total_cost_ht: 0,
 		total_cost_ttc: 0,
@@ -44,6 +45,8 @@
 
 	onMount(() => {
 		reloadItems();
+		restocksApi()
+			.getRestocks(page, itemsPerPage, undefined, undefined, undefined)
 	});
 
 	function reloadItems() {
@@ -67,15 +70,18 @@
 		});
 		newRestock.total_cost_ttc = 0.0;
 		newRestock.items.forEach((item) => {
-			newRestock.total_cost_ttc +=
-				item.amount_of_bundle * item.bundle_cost_ht * (1 + item.tva / 100);
+			newRestock.total_cost_ttc += Math.floor((item.amount_of_bundle * item.bundle_cost_ht * (1 + item.tva / 10000)));
 		});
 
-		newRestock.total_cost_ht = parseFloat(newRestock.total_cost_ht.toFixed(2));
-		newRestock.total_cost_ttc = parseFloat(newRestock.total_cost_ttc.toFixed(2));
 	}
     
 function applyRestock() {
+	if (!sure) return;
+	restocksApi()
+		.createRestock(newRestock, { withCredentials: true })
+		.then((res) => {
+			restoks = [... restoks, res.data]
+		})
 
 }
 
@@ -100,8 +106,8 @@ function applyRestock() {
 			bind:value={newRestock.driver_id}
 		/>
 		<div>
-			<p class="text-white text-2xl ml-5">Total HT : {newRestock.total_cost_ht} €</p>
-			<p class="text-white text-2xl ml-5">Total TTC : {newRestock.total_cost_ttc} €</p>
+			<p class="text-white text-2xl ml-5">Total HT : {newRestock.total_cost_ht / 100} €</p>
+			<p class="text-white text-2xl ml-5">Total TTC : {newRestock.total_cost_ttc / 100} €</p>
 		</div>
 	</div>
 	<div class="flex flex-col">
@@ -223,7 +229,11 @@ function applyRestock() {
 							type="number"
 							class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							placeholder="Prix d'un lot HT"
-							bind:value={newItem.bundle_cost_ht}
+
+							on:change={(e) => {
+								// @ts-ignore
+								newItem.bundle_cost_ht = parsePrice(e.target?.value);
+							}}
 						/>
 					</div>
 				</td>
@@ -231,12 +241,15 @@ function applyRestock() {
 					<div class="flex flex-col">
 						<select
 							class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-							bind:value={newItem.tva}
+							on:change={(e) => {
+								// @ts-ignore
+								newItem.tva = parseInt(e.target?.value);
+							}}
 						>
 							<option value="0">0%</option>
-							<option value="5.5">5.5%</option>
-							<option value="10">10%</option>
-							<option value="20">20%</option>
+							<option value="550">5.5%</option>
+							<option value="1000">10%</option>
+							<option value="2000">20%</option>
 						</select>
 					</div>
 				</td>
@@ -248,7 +261,7 @@ function applyRestock() {
 							step="0.01"
 							type="number"
 							class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-							value={(newItem.bundle_cost_ht * (1 + newItem.tva / 100)).toFixed(2)}
+							value={formatPrice(newItem.bundle_cost_ht * (1 + newItem.tva / 10000))}
 						/>
 					</div>
 				</td>
@@ -258,13 +271,6 @@ function applyRestock() {
 							class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
 							on:click={() => {
 								newRestock.items.push(newItem);
-								newItem = {
-									item_id: '',
-									amount_of_bundle: 0,
-									amount_per_bundle: 0,
-									bundle_cost_ht: 0,
-									tva: 0
-								};
 								itemName = '';
 								updateTotalHTandTTC();
 							}}
@@ -308,7 +314,7 @@ function applyRestock() {
 							<div
 								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							>
-								<p>{item.bundle_cost_ht}</p>
+								<p>{formatPrice(item.bundle_cost_ht)}</p>
 							</div>
 						</div>
 					</td>
@@ -317,7 +323,7 @@ function applyRestock() {
 							<div
 								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							>
-								<p>{item.tva}%</p>
+								<p>{item.tva / 100}%</p>
 							</div>
 						</div>
 					</td>
@@ -326,7 +332,7 @@ function applyRestock() {
 							<div
 								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							>
-								<p>{(item.bundle_cost_ht * (1 + item.tva / 100)).toFixed(2)}</p>
+								<p>{formatPrice(item.bundle_cost_ht * (1 + item.tva / 10000))}</p>
 							</div>
 						</div>
 					</td>
