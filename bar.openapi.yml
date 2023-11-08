@@ -4949,8 +4949,7 @@ components:
           type: integer
           format: uint64
         driver_id:
-          type: string
-          description: ID of the driver
+          $ref: "#/components/schemas/UUID"
         type:
           $ref: "#/components/schemas/RestockType"
       required:
@@ -5016,8 +5015,7 @@ components:
           type: integer
           format: uint64
         driver_id:
-          type: string
-          description: ID of the driver
+          $ref: "#/components/schemas/UUID"
         driver_name:
           type: string
           description: Name of the driver
