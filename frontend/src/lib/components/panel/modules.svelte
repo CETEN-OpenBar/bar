@@ -32,6 +32,12 @@
 		link: '/panel/accounts/restrict'
 	});
 
+	modules.push({
+		name: 'Réappro',
+		color: 'bg-green-600',
+		link: '/panel/products/reappro'
+	});
+
 	// modules.push({
 	// 	name: 'Dashboard',
 	// 	color: 'bg-blue-600',

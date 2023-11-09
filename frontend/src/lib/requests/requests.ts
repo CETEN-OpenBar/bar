@@ -1,5 +1,6 @@
 import { Configuration } from '$lib/api';
 import {
+	RestocksApiFactory,
 	AuthApiFactory,
 	AccountsApiFactory,
 	ItemsApiFactory,
@@ -129,4 +130,19 @@ export const transactionsApi = () => {
 			}
 		})
 	);
+};
+
+export const restocksApi = () => {
+    return RestocksApiFactory(
+        new Configuration({
+            basePath: api(),
+            apiKey: (name: string) => {
+                if (name == 'X-Local-Token') {
+                    return local_token();
+                } else {
+                    return '';
+                }
+            }
+        })
+    );
 };

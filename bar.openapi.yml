@@ -4971,15 +4971,13 @@ components:
           type: integer
           format: uint64
         driver_id:
-          type: string
-          description: ID of the driver
+          $ref: "#/components/schemas/UUID"
         type:
           $ref: "#/components/schemas/RestockType"
       required:
         - items
         - total_cost_ht
         - total_cost_ttc
-        - driver_id
         - type
     RestockItem:
       type: object
@@ -5038,8 +5036,7 @@ components:
           type: integer
           format: uint64
         driver_id:
-          type: string
-          description: ID of the driver
+          $ref: "#/components/schemas/UUID"
         driver_name:
           type: string
           description: Name of the driver
@@ -5047,6 +5044,13 @@ components:
           $ref: "#/components/schemas/UUID"
         type:
           $ref: "#/components/schemas/RestockType"
+        created_at:
+          type: integer
+          format: uint64
+        created_by:
+          $ref: "#/components/schemas/UUID"
+        created_by_name:
+          type: string
         deleted_at:
           type: integer
           format: uint64
@@ -5056,10 +5060,11 @@ components:
         - items
         - total_cost_ht
         - total_cost_ttc
-        - driver_id
-        - driver_name
         - id
         - type
+        - created_at
+        - created_by
+        - created_by_name
   securitySchemes:
     auth:
       type: apiKey

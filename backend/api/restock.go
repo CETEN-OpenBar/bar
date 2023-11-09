@@ -3,6 +3,7 @@ package api
 import (
 	"bar/autogen"
 	"bar/internal/models"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -48,7 +49,7 @@ func (s *Server) GetRestocks(c echo.Context, params autogen.GetRestocksParams) e
 
 // (POST /restocks)
 func (s *Server) CreateRestock(c echo.Context) error {
-	_, err := MustGetAdmin(c)
+	usr, err := MustGetAdmin(c)
 	if err != nil {
 		return nil
 	}
@@ -61,43 +62,67 @@ func (s *Server) CreateRestock(c echo.Context) error {
 
 	restock := models.Restock{
 		Restock: autogen.Restock{
-			DriverId:     body.DriverId,
-			Id:           uuid.New(),
-			TotalCostHt:  body.TotalCostHt,
-			TotalCostTtc: body.TotalCostTtc,
-			Type:         body.Type,
+			DriverId:      body.DriverId,
+			Id:            uuid.New(),
+			TotalCostHt:   body.TotalCostHt,
+			TotalCostTtc:  body.TotalCostTtc,
+			Type:          body.Type,
+			CreatedAt:     uint64(time.Now().Unix()),
+			CreatedBy:     usr.Id,
+			CreatedByName: usr.Name(),
 		},
+		CreatedAt: time.Now().Unix(),
 	}
 
-	for _, item := range body.Items {
-		restockItem := autogen.RestockItem{
-			AmountOfBundle:  item.AmountOfBundle,
-			AmountPerBundle: item.AmountPerBundle,
-			BundleCostHt:    item.BundleCostHt,
-			ItemId:          item.ItemId,
-			Tva:             item.Tva,
-		}
-
-		// Get item to check if it exists
-		item, err := s.DBackend.GetItem(c.Request().Context(), item.ItemId.String())
-		if err != nil {
-			if err == mongo.ErrNoDocuments {
-				return ErrorItemNotFound(c)
+	_, err = s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {
+		for _, item := range body.Items {
+			restockItem := autogen.RestockItem{
+				AmountOfBundle:  item.AmountOfBundle,
+				AmountPerBundle: item.AmountPerBundle,
+				BundleCostHt:    item.BundleCostHt,
+				ItemId:          item.ItemId,
+				Tva:             item.Tva,
 			}
-			logrus.Error(err)
-			return Error500(c)
+
+			// Get item to check if it exists
+			item, err := s.DBackend.GetItem(c.Request().Context(), item.ItemId.String())
+			if err != nil {
+				if err == mongo.ErrNoDocuments {
+					return nil, ErrorItemNotFound(c)
+				}
+				logrus.Error(err)
+				return nil, Error500(c)
+			}
+
+			restockItem.ItemName = item.Name
+			restockItem.ItemPictureUri = item.PictureUri
+
+			item.AmountLeft += restockItem.AmountOfBundle * restockItem.AmountPerBundle
+
+			err = s.DBackend.UpdateItem(c.Request().Context(), item)
+			if err != nil {
+				logrus.Error(err)
+				return nil, Error500(c)
+			}
+
+			restock.Items = append(restock.Items, restockItem)
 		}
 
-		restockItem.ItemName = item.Name
-		restockItem.ItemPictureUri = item.PictureUri
+		err = s.DBackend.CreateRestock(c.Request().Context(), &restock)
+		if err != nil {
+			logrus.Error(err)
+			return nil, Error500(c)
+		}
 
-		restock.Items = append(restock.Items, restockItem)
-	}
-
-	err = s.DBackend.CreateRestock(c.Request().Context(), &restock)
+		return nil, nil
+	})
 	if err != nil {
 		logrus.Error(err)
-		return Error500(c)
+		return nil
+	}
+
+	if c.Response().Committed {
+		return nil
 	}
 
 	autogen.CreateRestock201JSONResponse(restock.Restock).VisitCreateRestockResponse(c.Response())

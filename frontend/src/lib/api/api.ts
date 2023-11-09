@@ -1250,11 +1250,11 @@ export interface NewRestock {
      */
     'total_cost_ttc': number;
     /**
-     * ID of the driver
+     * 
      * @type {string}
      * @memberof NewRestock
      */
-    'driver_id': string;
+    'driver_id'?: string;
     /**
      * 
      * @type {RestockType}
@@ -1526,17 +1526,17 @@ export interface Restock {
      */
     'total_cost_ttc': number;
     /**
-     * ID of the driver
+     * 
      * @type {string}
      * @memberof Restock
      */
-    'driver_id': string;
+    'driver_id'?: string;
     /**
      * Name of the driver
      * @type {string}
      * @memberof Restock
      */
-    'driver_name': string;
+    'driver_name'?: string;
     /**
      * 
      * @type {string}
@@ -1549,6 +1549,24 @@ export interface Restock {
      * @memberof Restock
      */
     'type': RestockType;
+    /**
+     * 
+     * @type {number}
+     * @memberof Restock
+     */
+    'created_at': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Restock
+     */
+    'created_by': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Restock
+     */
+    'created_by_name': string;
     /**
      * 
      * @type {number}
