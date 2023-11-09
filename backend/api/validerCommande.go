@@ -203,7 +203,6 @@ func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, 
 			origItem.AmountLeft += item.ItemAmount
 			account.Points += int64(item.TotalCost)
 			transaction.TotalCost -= item.TotalCost
-			item.TotalCost = 0
 
 			if item.IsMenu {
 				if item.MenuItems != nil {
@@ -281,6 +280,7 @@ func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, 
 				}
 			}
 		}
+		item.TotalCost = 0
 
 		err = s.DBackend.UpdateTransaction(ctx, transaction)
 		if err != nil {
