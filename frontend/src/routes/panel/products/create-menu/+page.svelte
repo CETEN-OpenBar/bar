@@ -465,15 +465,16 @@
 										// @ts-ignore
 										steps.prices[c] = parsePrice(e.target?.value);
 										let rT = rebounceTimeout.get(c);
-										clearTimeout(rT ?? 0);
+										clearTimeout(rT);
 										rT = setTimeout(() => {
 											// @ts-ignore
-											let r = formatPrice(parsePrice(e.target?.value));
+											let r = formatPrice(steps.prices[c]);
 											// @ts-ignore
 											e.target.placeholder = r;
 											// @ts-ignore
 											e.target.value = r;
 										}, 500);
+										rebounceTimeout.set(c, rT);
 									}}
 								/>
 							</div>

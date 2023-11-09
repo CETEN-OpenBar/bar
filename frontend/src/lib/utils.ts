@@ -4,13 +4,13 @@ export const parsePrice = (price: string) => {
         splt = price.split(',');
     } else if (price.includes('.')) {
         splt = price.split('.');
-    }
+    } 
 
     const cents = parseInt(splt.length>1 ? splt[1] : '00');
     const euros = parseInt(splt[0])
 
-    if (isNaN(cents) || isNaN(euros)) throw new Error('Invalid price');
-    if (cents >= 100 || cents < 0 || euros < 0) throw new Error('Invalid price');
+    if (isNaN(cents) || isNaN(euros)) throw new Error('Invalid price - 1');
+    if (cents >= 100 || cents < 0 || euros < 0) throw new Error('Invalid price - 2');
     
     let res = 0;
     if (splt.length > 1) res = euros * 100 + cents;
