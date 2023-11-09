@@ -82,6 +82,7 @@
     
 function applyRestock() {
 	if (!sure) return;
+	newRestock.driver_id = undefined;
 	restocksApi()
 		.createRestock(newRestock, { withCredentials: true })
 		.then((res) => {
@@ -104,12 +105,6 @@ function applyRestock() {
 			<option value="auchan">Auchan</option>
 			<option value="viennoiserie">Boulangerie Benoist</option>
 		</select>
-		<input
-			type="text"
-			class="rounded-lg border-transparent ml-3 appearance-none border border-gray-300 w-100 py-2 px-4 bg-white text-gray-700 mr-auto placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-			placeholder="Conducteur"
-			bind:value={newRestock.driver_id}
-		/>
 		<div>
 			<p class="text-white text-2xl ml-5">Total HT : {newRestock.total_cost_ht / 100} €</p>
 			<p class="text-white text-2xl ml-5">Total TTC : {newRestock.total_cost_ttc / 100} €</p>
@@ -411,7 +406,7 @@ function applyRestock() {
 							<div
 								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							>
-								<p>{restok.date}</p>
+								<p>{restok.created_at}</p>
 							</div>
 						</div>
 					</td>
@@ -429,7 +424,7 @@ function applyRestock() {
 							<div
 								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							>
-								<p>{restok.driver_id}</p>
+								<p>{restok.created_by_name}</p>
 							</div>
 						</div>
 					</td>

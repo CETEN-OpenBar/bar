@@ -3,6 +3,7 @@ package api
 import (
 	"bar/autogen"
 	"bar/internal/models"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -68,7 +69,7 @@ func (s *Server) GetRestocks(c echo.Context, params autogen.GetRestocksParams) e
 
 // (POST /restocks)
 func (s *Server) CreateRestock(c echo.Context) error {
-	_, err := MustGetAdmin(c)
+	usr, err := MustGetAdmin(c)
 	if err != nil {
 		return nil
 	}
@@ -81,12 +82,16 @@ func (s *Server) CreateRestock(c echo.Context) error {
 
 	restock := models.Restock{
 		Restock: autogen.Restock{
-			DriverId:     body.DriverId,
-			Id:           uuid.New(),
-			TotalCostHt:  body.TotalCostHt,
-			TotalCostTtc: body.TotalCostTtc,
-			Type:         body.Type,
+			DriverId:      body.DriverId,
+			Id:            uuid.New(),
+			TotalCostHt:   body.TotalCostHt,
+			TotalCostTtc:  body.TotalCostTtc,
+			Type:          body.Type,
+			CreatedAt:     uint64(time.Now().Unix()),
+			CreatedBy:     usr.Id,
+			CreatedByName: usr.Name(),
 		},
+		CreatedAt: time.Now().Unix(),
 	}
 
 	_, err = s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {
