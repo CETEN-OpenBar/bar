@@ -132,44 +132,46 @@
 		out:fly={{ x: direction * 300, duration: 500 }}
 	>
 		{#each items as item}
-			{#if item.amount_left > 0}
-				<!-- image wil be in a button box -->
-				<button
-					class="w-50 h-50 flex-shrink-0 flex flex-col items-center justify-between rounded-lg text-white transition-colors duration-300"
-				>
-					<!-- add info svg on the top right -->
-					{#if item.is_menu}
-						<button
-							class="relative top-0 right-0 w-10 h-10"
-							on:click={() => {
-								menuPopup = {
-									items: item.menu_items,
-									categories: item.menu_categories
-								};
-							}}
-						>
-							<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:info" />
-						</button>
-					{/if}
+			<!-- image wil be in a button box -->
+			<button
+				class="relative w-50 h-50 flex-shrink-0 flex flex-col items-center justify-center rounded-lg text-white transition-colors duration-300"
+			>
+				<!-- add info svg on the top right -->
+				{#if item.is_menu}
 					<button
+						class="relative top-0 right-0 w-10 h-10"
 						on:click={() => {
-							// check we are not clicking on the info button
-							clickWrapper(item);
+							menuPopup = {
+								items: item.menu_items,
+								categories: item.menu_categories
+							};
 						}}
 					>
-						<img
-							draggable="false"
-							class="w-32 h-32 object-contain"
-							src={api() + item.picture_uri}
-							alt={item.name}
-						/>
-						<div class="flex flex-col">
-							<span class="text-lg font-bold">{item.name}</span>
-							<span class="text-sm">Prix: {formatPrice(item.display_price ?? 999)}</span>
-						</div>
+						<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:info" />
 					</button>
+				{/if}
+				<button
+					on:click={() => {
+						// check we are not clicking on the info button
+						clickWrapper(item);
+					}}
+				>
+					<img
+						draggable="false"
+						class="w-full h-32 object-contain"
+						src={api() + item.picture_uri}
+						alt={item.name}
+					/>
+					<div class="flex flex-col">
+						<span class="text-lg font-bold">{item.name}</span>
+						<span class="text-sm">Prix: {formatPrice(item.display_price ?? 999)}</span>
+					</div>
 				</button>
-			{/if}
+				{#if item.amount_left <= 0}
+					<!-- Stock épuisé icon -->
+					<img class="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[70%] w-28 h-28 drop-shadow-2xl" alt="oof" src="/epuise.png"/>
+				{/if}
+			</button>
 		{/each}
 	</div>
 {/if}

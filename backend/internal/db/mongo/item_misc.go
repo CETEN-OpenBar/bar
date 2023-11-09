@@ -32,9 +32,6 @@ func (b *Backend) GetItems(ctx context.Context, categoryID string, page, size ui
 	if state != "" {
 		filter["state"] = state
 		if state == string(autogen.ItemBuyable) {
-			filter["amount_left"] = bson.M{
-				"$gt": 0,
-			}
 			// Get seconds since day start
 			t := time.Since(time.Now().Truncate(24 * time.Hour)).Seconds()
 			// available_from <= t <= available_until or (available_from == nil && available_until == nil)
@@ -107,9 +104,6 @@ func (b *Backend) CountItems(ctx context.Context, categoryID string, state strin
 	if state != "" {
 		filter["state"] = state
 		if state == string(autogen.ItemBuyable) {
-			filter["amount_left"] = bson.M{
-				"$gt": 0,
-			}
 			t := time.Since(time.Now().Truncate(24 * time.Hour)).Seconds()
 			filter["$and"] = []bson.M{
 				{
