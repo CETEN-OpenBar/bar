@@ -46,7 +46,12 @@
 	onMount(() => {
 		reloadItems();
 		restocksApi()
-			.getRestocks(page, itemsPerPage, undefined, undefined, undefined)
+			.getRestocks(page, itemsPerPage, undefined, undefined, {
+				withCredentials: true
+			})
+			.then((res) => {
+				restoks = res.data.restocks ?? [];
+			});
 	});
 
 	function reloadItems() {
@@ -399,6 +404,48 @@ function applyRestock() {
 					</p>
 				</th>
 			</tr>
+			{#each restoks as restok}
+				<tr>
+					<td class="px-6 py-3">
+						<div class="flex flex-col">
+							<div
+								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+							>
+								<p>{restok.date}</p>
+							</div>
+						</div>
+					</td>
+					<td class="px-6 py-3">
+						<div class="flex flex-col">
+							<div
+								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+							>
+								<p>{restok.type}</p>
+							</div>
+						</div>
+					</td>
+					<td class="px-6 py-3">
+						<div class="flex flex-col">
+							<div
+								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+							>
+								<p>{restok.driver_id}</p>
+							</div>
+						</div>
+					</td>
+					<td class="px-2 py-3">
+						<p
+							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+						>
+							{formatPrice(restok.total_cost_ttc)}
+						</p>
+					</td>
+				</tr>
+			{/each}
+
+
+
+
         </thead>
        
 
