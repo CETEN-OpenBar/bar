@@ -376,7 +376,9 @@
 						<button
 							class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
 							on:click={() => {
-								newRestock.items.push(newItem);
+								let t = newRestock.items
+								t.push(newItem)
+								newRestock.items = t
 								displayedValues = {
 									name: 'Nom du produit',
 									item_price_calc: 0,
@@ -403,14 +405,14 @@
 					</div>
 				</td></tr
 			>
-			{#each newRestock.items as item}
+			{#each newRestock.items as item, i}
 				<tr>
 					<td class="px-12 py-3">
 						<div class="flex flex-col">
 							<div
 								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							>
-								<p>{nameList[newRestock.items.indexOf(item)]}</p>
+								<p>{nameList[i]}</p>
 							</div>
 						</div>
 					</td>
@@ -482,7 +484,8 @@
 							<button
 								class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
 								on:click={() => {
-									newRestock.items.splice(newRestock.items.indexOf(item), 1);
+									newRestock.items = newRestock.items.filter((_, index) => index !== i);
+									nameList = nameList.filter((_, index) => index !== i);
 									updateTotalHTandTTC();
 								}}
 							>
