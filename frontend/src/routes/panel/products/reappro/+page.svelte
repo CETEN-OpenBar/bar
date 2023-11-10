@@ -39,6 +39,7 @@
 		name: string;
 		item_price_calc: number;
 		item_price: string;
+		item_price_ht: string;
 		amount_of_bundle: string;
 		amount_per_bundle: string;
 		bundle_cost_ht: string;
@@ -50,6 +51,7 @@
 		name: 'Nom du produit',
 		item_price_calc: 0,
 		item_price: 'Prix coûtant TTC',
+		item_price_ht: 'Prix coûtant HT',
 		amount_of_bundle: 'Nombre de lots',
 		amount_per_bundle: 'Nombre de produits par lots',
 		bundle_cost_ht: "Prix d'un lot HT",
@@ -110,7 +112,11 @@
 		newItem.bundle_cost_ht = Math.ceil(
 			(displayedValues.item_price_calc * newItem.amount_per_bundle) / (1 + newItem.tva / 10000)
 		);
-		
+
+		displayedValues.item_price_ht = formatPrice(
+											displayedValues.item_price_calc / (1 + (newItem.tva??0) / 10000)
+										);
+										
 		displayedValues.bundle_cost_ht = formatPrice(newItem.bundle_cost_ht);
 		displayedValues.bundle_cost_ttc = formatPrice(displayedValues.item_price_calc * newItem.amount_per_bundle);
 	}
@@ -142,6 +148,13 @@
 							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 						>
 							Nom
+						</span>
+					</th>
+					<th scope="col" class="px-3 py-3 w-48">
+						<span
+							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+						>
+							Prix coûtant HT
 						</span>
 					</th>
 					<th scope="col" class="px-3 py-3 w-48">
@@ -230,6 +243,9 @@
 									on:click={() => {
 										displayedValues.name = item.name;
 										displayedValues.item_price = formatPrice(item.prices.membre_bureau);
+										displayedValues.item_price_ht = formatPrice(
+											item.prices.membre_bureau / (1 + (item.last_tva??0) / 10000)
+										);
 										displayedValues.item_price_calc = item.prices.membre_bureau;
 										displayedValues.tva = item.last_tva ?? 0;
 										newItem.tva = item.last_tva ?? 0;
@@ -243,6 +259,15 @@
 								</button>
 							{/each}
 						{/if}
+					</div>
+				</td>
+				<td class="px-3 py-3">
+					<div class="flex flex-col">
+						<input
+							class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+							disabled
+							placeholder={displayedValues.item_price_ht}
+						/>
 					</div>
 				</td>
 				<td class="px-3 py-3">
@@ -356,6 +381,7 @@
 									name: 'Nom du produit',
 									item_price_calc: 0,
 									item_price: 'Prix coûtant TTC',
+									item_price_ht: 'Prix coûtant HT',
 									amount_of_bundle: 'Nombre de lots',
 									amount_per_bundle: 'Nombre de produits par lots',
 									bundle_cost_ht: "Prix d'un lot HT",
@@ -385,6 +411,15 @@
 								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							>
 								<p>{nameList[newRestock.items.indexOf(item)]}</p>
+							</div>
+						</div>
+					</td>
+					<td class="px-3 py-3">
+						<div class="flex flex-col">
+							<div
+								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+							>
+								<p>{formatPrice((item.bundle_cost_ht / item.amount_per_bundle))}</p>
 							</div>
 						</div>
 					</td>
