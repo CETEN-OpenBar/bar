@@ -37,3 +37,10 @@ export const file2Base64 = (file: File): Promise<string> => {
         reader.onerror = (error) => reject(error);
     });
 };
+
+export const time2Utc = (time: number): number => {
+    // Time is in second, we need to get the delta between local time and UTC time
+    const d = new Date();
+    const delta = d.getTimezoneOffset() * 60;
+    return time + delta;
+}

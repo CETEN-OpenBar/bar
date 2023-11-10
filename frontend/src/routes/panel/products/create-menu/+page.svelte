@@ -2,7 +2,7 @@
 	import type { Category, Item, ItemPrices, MenuCategory, MenuItem, NewItem } from '$lib/api';
 	import { api } from '$lib/config/config';
 	import { itemsApi, categoriesApi } from '$lib/requests/requests';
-	import { file2Base64, formatPrice, parsePrice } from '$lib/utils';
+	import { file2Base64, formatPrice, parsePrice, time2Utc } from '$lib/utils';
 	import { onMount } from 'svelte';
 
 	onMount(async () => {
@@ -15,7 +15,6 @@
 	});
 
 	let currentStep = 0;
-	let rebounceTimeout: Map<string, number> = new Map();
 
 	let searchCategory = '';
 	let categories: Category[] = [];
@@ -172,7 +171,9 @@
 		{/if}
 		{#if currentStep >= 2}
 			<div id="product" class="bg-slate-100 flex flex-col rounded-xl border-2 p-4">
-				<div class="text-3xl text-center font-bold p-5">Mettre des produits (catégories dans l'étape suivante)</div>
+				<div class="text-3xl text-center font-bold p-5">
+					Mettre des produits (catégories dans l'étape suivante)
+				</div>
 
 				<div class="flex flex-row justify-center">
 					<input
@@ -437,6 +438,9 @@
 						class="w-32 flex flex-col flex-shrink-0 bg-blue-100 hover:bg-blue-200 rounded-sm p-5 text-center text-lg"
 						on:click={() => {
 							currentStep = 4;
+							setTimeout(() => {
+								document.getElementById('info')?.scrollIntoView({ behavior: 'smooth' });
+							}, 100);
 						}}
 					>
 						Suivant
@@ -445,7 +449,7 @@
 			</div>
 		{/if}
 		{#if currentStep >= 4}
-			<div class="bg-slate-100 flex flex-col rounded-xl border-2 p-4">
+			<div id="info" class="bg-slate-100 flex flex-col rounded-xl border-2 p-4">
 				<div class="text-3xl text-center font-bold p-5">Informations</div>
 
 				<!-- Ask for all the prices -->
@@ -461,20 +465,15 @@
 									class="py-3 px-4 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
 									required
 									aria-describedby="text-error"
-									on:keyup={(e) => {
+									on:change={(e) => {
 										// @ts-ignore
 										steps.prices[c] = parsePrice(e.target?.value);
-										let rT = rebounceTimeout.get(c);
-										clearTimeout(rT);
-										rT = setTimeout(() => {
-											// @ts-ignore
-											let r = formatPrice(steps.prices[c]);
-											// @ts-ignore
-											e.target.placeholder = r;
-											// @ts-ignore
-											e.target.value = r;
-										}, 500);
-										rebounceTimeout.set(c, rT);
+										// @ts-ignore
+										let r = formatPrice(steps.prices[c]);
+										// @ts-ignore
+										e.target.placeholder = r;
+										// @ts-ignore
+										e.target.value = r;
 									}}
 								/>
 							</div>
@@ -497,6 +496,10 @@
 									// @ts-ignore
 									steps.amount_left = parseInt(e.target?.value);
 								}}
+								on:change={(e) => {
+									// @ts-ignore
+									steps.amount_left = parseInt(e.target?.value);
+								}}
 							/>
 						</div>
 					</div>
@@ -514,6 +517,10 @@
 									// @ts-ignore
 									steps.buy_limit = parseInt(e.target?.value);
 								}}
+								on:change={(e) => {
+									// @ts-ignore
+									steps.buy_limit = parseInt(e.target?.value);
+								}}
 							/>
 						</div>
 					</div>
@@ -528,6 +535,10 @@
 								required
 								aria-describedby="text-error"
 								on:keyup={(e) => {
+									// @ts-ignore
+									steps.optimal_amount = parseInt(e.target?.value);
+								}}
+								on:change={(e) => {
 									// @ts-ignore
 									steps.optimal_amount = parseInt(e.target?.value);
 								}}
@@ -578,7 +589,7 @@
 								aria-describedby="text-error"
 								on:change={(e) => {
 									// @ts-ignore
-									steps.available_from = e.target?.valueAsNumber / 1000;
+									steps.available_from = time2Utc(e.target?.valueAsNumber / 1000);
 								}}
 							/>
 						</div>
@@ -598,7 +609,7 @@
 								aria-describedby="text-error"
 								on:change={(e) => {
 									// @ts-ignore
-									steps.available_to = e.target?.valueAsNumber / 1000;
+									steps.available_to = time2Utc(e.target?.valueAsNumber / 1000);
 								}}
 							/>
 						</div>
