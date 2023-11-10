@@ -222,7 +222,7 @@
 							}}
 						/>
 					</div>
-					<div class="absolute rounded-b-lg bg-slate-100 -translate-y-2">
+					<div class="absolute rounded-b-lg bg-slate-100 -translate-y-2 flex flex-col">
 						{#if searchName.length > 0}
 							{#each items as item}
 								<button
@@ -361,6 +361,13 @@
 									bundle_cost_ht: "Prix d'un lot HT",
 									tva: 0,
 									bundle_cost_ttc: "Prix d'un lot TTC"
+								};
+								newItem = {
+									item_id: '',
+									amount_of_bundle: 0,
+									amount_per_bundle: 0,
+									bundle_cost_ht: 0,
+									tva: 0
 								};
 								console.log(newRestock.items);
 								updateTotalHTandTTC();
