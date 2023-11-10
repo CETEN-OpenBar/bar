@@ -137,14 +137,55 @@ func (s *Server) DeleteRestock(c echo.Context, restockId autogen.UUID) error {
 		return nil
 	}
 
-	// Get restock from database
-	err = s.DBackend.MarkDeleteRestock(c.Request().Context(), restockId.String(), account.Id.String())
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			return ErrorRestockNotFound(c)
+	_, err = s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {
+
+		// Remove restock from all items
+		restock, err := s.DBackend.GetRestock(c.Request().Context(), restockId.String())
+		if err != nil {
+			if err == mongo.ErrNoDocuments {
+				return nil, ErrorRestockNotFound(c)
+			}
+			logrus.Error(err)
+			return nil, Error500(c)
 		}
+
+		for _, item := range restock.Items {
+			i, err := s.DBackend.GetItem(c.Request().Context(), item.ItemId.String())
+			if err != nil {
+				if err == mongo.ErrNoDocuments {
+					return nil, ErrorItemNotFound(c)
+				}
+				logrus.Error(err)
+				return nil, Error500(c)
+			}
+
+			i.AmountLeft -= item.AmountOfBundle * item.AmountPerBundle
+
+			err = s.DBackend.UpdateItem(c.Request().Context(), i)
+			if err != nil {
+				logrus.Error(err)
+				return nil, Error500(c)
+			}
+		}
+
+		// Get restock from database
+		err = s.DBackend.MarkDeleteRestock(c.Request().Context(), restockId.String(), account.Id.String())
+		if err != nil {
+			if err == mongo.ErrNoDocuments {
+				return nil, ErrorRestockNotFound(c)
+			}
+			logrus.Error(err)
+			return nil, Error500(c)
+		}
+		return nil, nil
+	})
+	if err != nil {
 		logrus.Error(err)
-		return Error500(c)
+		return nil
+	}
+
+	if c.Response().Committed {
+		return nil
 	}
 
 	logrus.Infof("Restock %s marked as deleted by %s", restockId.String(), account.Id)
