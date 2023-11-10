@@ -110,7 +110,7 @@
 	function updatePrices() {
 		// Calculate from displayedValues.item_price_calc, displayedValues.amount_of_bundle and TVA
 		newItem.bundle_cost_ht = Math.ceil(
-			(displayedValues.item_price_calc * newItem.amount_per_bundle) / (1 + newItem.tva / 10000)
+			(displayedValues.item_price_calc) / (1 + newItem.tva / 10000)
 		);
 
 		displayedValues.item_price_ht = formatPrice(
@@ -419,7 +419,7 @@
 							<div
 								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							>
-								<p>{formatPrice((item.bundle_cost_ht / item.amount_per_bundle))}</p>
+								<p>{formatPrice((item.bundle_cost_ht * item.amount_per_bundle * item.amount_of_bundle))}</p>
 							</div>
 						</div>
 					</td>
@@ -428,7 +428,7 @@
 							<div
 								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							>
-								<p>{formatPrice((item.bundle_cost_ht / item.amount_per_bundle) * (1 + item.tva / 10000))}</p>
+								<p>{formatPrice((item.bundle_cost_ht * item.amount_per_bundle * item.amount_of_bundle) * (1 + item.tva / 10000))}</p>
 							</div>
 						</div>
 					</td>
