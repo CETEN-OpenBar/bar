@@ -1,10 +1,5 @@
 <script lang="ts">
-	import type {
-		Item,
-		NewRestock,
-		NewRestockItem,
-		Restock,
-	} from '$lib/api';
+	import type { Item, NewRestock, NewRestockItem, Restock } from '$lib/api';
 	import { itemsApi, restocksApi } from '$lib/requests/requests';
 	import { formatPrice, parsePrice } from '$lib/utils';
 	import { onMount } from 'svelte';
@@ -94,7 +89,6 @@
 				item.amount_of_bundle * item.bundle_cost_ht * (1 + item.tva / 10000)
 			);
 		});
-		console.log(newRestock.total_cost_ht, newRestock.total_cost_ttc);
 	}
 
 	function applyRestock() {
@@ -110,15 +104,17 @@
 	function updatePrices() {
 		// Calculate from displayedValues.item_price_calc, displayedValues.amount_of_bundle and TVA
 		newItem.bundle_cost_ht = Math.ceil(
-			(displayedValues.item_price_calc) / (1 + newItem.tva / 10000)
+			(displayedValues.item_price_calc * newItem.amount_per_bundle) / (1 + newItem.tva / 10000)
 		);
 
 		displayedValues.item_price_ht = formatPrice(
-											displayedValues.item_price_calc / (1 + (newItem.tva??0) / 10000)
-										);
-										
+			displayedValues.item_price_calc / (1 + (newItem.tva ?? 0) / 10000)
+		);
+
 		displayedValues.bundle_cost_ht = formatPrice(newItem.bundle_cost_ht);
-		displayedValues.bundle_cost_ttc = formatPrice(displayedValues.item_price_calc * newItem.amount_per_bundle);
+		displayedValues.bundle_cost_ttc = formatPrice(
+			displayedValues.item_price_calc * newItem.amount_per_bundle
+		);
 	}
 </script>
 
@@ -135,8 +131,12 @@
 			<option value="viennoiserie">Boulangerie Benoist</option>
 		</select>
 		<div>
-			<p class="dark:text-white text-2xl ml-5">Total HT : {formatPrice(newRestock.total_cost_ht)}</p>
-			<p class="dark:text-white text-2xl ml-5">Total TTC : {formatPrice(newRestock.total_cost_ttc)}</p>
+			<p class="dark:text-white text-2xl ml-5">
+				Total HT : {formatPrice(newRestock.total_cost_ht)}
+			</p>
+			<p class="dark:text-white text-2xl ml-5">
+				Total TTC : {formatPrice(newRestock.total_cost_ttc)}
+			</p>
 		</div>
 	</div>
 	<div class="flex flex-col">
@@ -244,14 +244,13 @@
 										displayedValues.name = item.name;
 										displayedValues.item_price = formatPrice(item.prices.membre_bureau);
 										displayedValues.item_price_ht = formatPrice(
-											item.prices.membre_bureau / (1 + (item.last_tva??0) / 10000)
+											item.prices.membre_bureau / (1 + (item.last_tva ?? 0) / 10000)
 										);
 										displayedValues.item_price_calc = item.prices.membre_bureau;
 										displayedValues.tva = item.last_tva ?? 0;
 										newItem.tva = item.last_tva ?? 0;
 										newItem.item_id = item.id;
 										searchName = '';
-										nameList.push(item.name);
 										updatePrices();
 									}}
 								>
@@ -359,7 +358,8 @@
 							placeholder={displayedValues.bundle_cost_ttc}
 							on:change={(e) => {
 								// @ts-ignore
-								newItem.bundle_cost_ht = parsePrice(e.target?.value) / (1 + (newItem.tva ?? 0) / 10000);
+								newItem.bundle_cost_ht =
+									parsePrice(e.target?.value) / (1 + (newItem.tva ?? 0) / 10000);
 								let r = formatPrice(newItem.bundle_cost_ht);
 								displayedValues.bundle_cost_ht = r;
 								displayedValues.bundle_cost_ttc = formatPrice(
@@ -368,7 +368,7 @@
 								// @ts-ignore
 								e.target.value = r;
 							}}
-							/>
+						/>
 					</div>
 				</td>
 				<td class="px-6 py-3">
@@ -376,9 +376,12 @@
 						<button
 							class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
 							on:click={() => {
-								let t = newRestock.items
-								t.push(newItem)
-								newRestock.items = t
+								let t = newRestock.items;
+								let n = nameList;
+								t.unshift(newItem);
+								n.unshift(displayedValues.name);
+								newRestock.items = t;
+								nameList = nameList;
 								displayedValues = {
 									name: 'Nom du produit',
 									item_price_calc: 0,
@@ -421,7 +424,7 @@
 							<div
 								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							>
-								<p>{formatPrice((item.bundle_cost_ht * item.amount_per_bundle * item.amount_of_bundle))}</p>
+								<p>{formatPrice(item.bundle_cost_ht * item.amount_of_bundle)}</p>
 							</div>
 						</div>
 					</td>
@@ -430,7 +433,11 @@
 							<div
 								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							>
-								<p>{formatPrice((item.bundle_cost_ht * item.amount_per_bundle * item.amount_of_bundle) * (1 + item.tva / 10000))}</p>
+								<p>
+									{formatPrice(
+										item.bundle_cost_ht * item.amount_of_bundle * (1 + item.tva / 10000)
+									)}
+								</p>
 							</div>
 						</div>
 					</td>
