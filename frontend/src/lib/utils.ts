@@ -6,6 +6,7 @@ export const parsePrice = (price: string) => {
         splt = price.split('.');
     } 
 
+    if (splt.length>1 && splt[1].length === 1) splt[1] += '0';
     const cents = parseInt(splt.length>1 ? splt[1] : '00');
     const euros = parseInt(splt[0])
 

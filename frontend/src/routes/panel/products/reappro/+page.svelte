@@ -1,25 +1,18 @@
 <script lang="ts">
 	import type {
-		UpdateItem,
 		Item,
-		AccountPriceRole,
-		ItemState,
 		NewRestock,
 		NewRestockItem,
-		RestockItem,
 		Restock,
-		Category
 	} from '$lib/api';
-	import Items from '$lib/components/borne/items.svelte';
-	import { api } from '$lib/config/config';
-	import { categoriesApi, itemsApi, restocksApi } from '$lib/requests/requests';
+	import { itemsApi, restocksApi } from '$lib/requests/requests';
 	import { formatPrice, parsePrice } from '$lib/utils';
 	import { onMount } from 'svelte';
 
 	let sure: boolean = false;
 	let items: Item[] = [];
 
-	let restoks : Restock[] = [];
+	let restoks: Restock[] = [];
 	let newRestock: NewRestock = {
 		total_cost_ht: 0,
 		total_cost_ttc: 0,
@@ -30,12 +23,9 @@
 
 	let page = 0;
 	let max_page = 0;
-	let itemsPerPage = 10;
+	let itemsPerPage = 4;
 
-	let itemName: string = '';
 	let nameList: string[] = [];
-	let itemPrice: number;
-	let bundle_ttc: number;
 	let newItem: NewRestockItem = {
 		item_id: '',
 		amount_of_bundle: 0,
@@ -44,6 +34,28 @@
 		tva: 0
 	};
 	let searchName: string = '';
+
+	type dV = {
+		name: string;
+		item_price_calc: number;
+		item_price: string;
+		amount_of_bundle: string;
+		amount_per_bundle: string;
+		bundle_cost_ht: string;
+		tva: number;
+		bundle_cost_ttc: string;
+	};
+
+	let displayedValues: dV = {
+		name: 'Nom du produit',
+		item_price_calc: 0,
+		item_price: 'Prix coûtant TTC',
+		amount_of_bundle: 'Nombre de lots',
+		amount_per_bundle: 'Nombre de produits par lots',
+		bundle_cost_ht: "Prix d'un lot HT",
+		tva: 0,
+		bundle_cost_ttc: "Prix d'un lot TTC"
+	};
 
 	onMount(() => {
 		reloadItems();
@@ -72,32 +84,36 @@
 	function updateTotalHTandTTC() {
 		newRestock.total_cost_ht = 0.0;
 		newRestock.items.forEach((item) => {
-			newRestock.total_cost_ht +=
-				item.amount_of_bundle * item.bundle_cost_ht;
+			newRestock.total_cost_ht += item.amount_of_bundle * item.bundle_cost_ht;
 		});
 		newRestock.total_cost_ttc = 0.0;
 		newRestock.items.forEach((item) => {
-			newRestock.total_cost_ttc += Math.floor((item.amount_of_bundle * item.bundle_cost_ht * (1 + item.tva / 10000)));
+			newRestock.total_cost_ttc += Math.floor(
+				item.amount_of_bundle * item.bundle_cost_ht * (1 + item.tva / 10000)
+			);
 		});
-
+		console.log(newRestock.total_cost_ht, newRestock.total_cost_ttc);
 	}
-    
-function applyRestock() {
-	if (!sure) return;
-	newRestock.driver_id = undefined;
-	restocksApi()
-		.createRestock(newRestock, { withCredentials: true })
-		.then((res) => {
-			restoks = [... restoks, res.data]
-		})
 
-}
+	function applyRestock() {
+		if (!sure) return;
+		newRestock.driver_id = undefined;
+		restocksApi()
+			.createRestock(newRestock, { withCredentials: true })
+			.then((res) => {
+				restoks = [...restoks, res.data];
+			});
+	}
 
-function updatePrices(){
-	newItem.bundle_cost_ht = Number((itemPrice * newItem.amount_per_bundle / (1 + newItem.tva / 10000)).toFixed(0))
-	bundle_ttc = itemPrice * newItem.amount_per_bundle;
-}
-
+	function updatePrices() {
+		// Calculate from displayedValues.item_price_calc, displayedValues.amount_of_bundle and TVA
+		newItem.bundle_cost_ht = Math.ceil(
+			(displayedValues.item_price_calc * newItem.amount_per_bundle) / (1 + newItem.tva / 10000)
+		);
+		
+		displayedValues.bundle_cost_ht = formatPrice(newItem.bundle_cost_ht);
+		displayedValues.bundle_cost_ttc = formatPrice(displayedValues.item_price_calc * newItem.amount_per_bundle);
+	}
 </script>
 
 <div class="max-w-[95%] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
@@ -113,8 +129,8 @@ function updatePrices(){
 			<option value="viennoiserie">Boulangerie Benoist</option>
 		</select>
 		<div>
-			<p class="text-white text-2xl ml-5">Total HT : {newRestock.total_cost_ht / 100} €</p>
-			<p class="text-white text-2xl ml-5">Total TTC : {newRestock.total_cost_ttc / 100} €</p>
+			<p class="dark:text-white text-2xl ml-5">Total HT : {formatPrice(newRestock.total_cost_ht)}</p>
+			<p class="dark:text-white text-2xl ml-5">Total TTC : {formatPrice(newRestock.total_cost_ttc)}</p>
 		</div>
 	</div>
 	<div class="flex flex-col">
@@ -126,6 +142,13 @@ function updatePrices(){
 							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 						>
 							Nom
+						</span>
+					</th>
+					<th scope="col" class="px-3 py-3 w-48">
+						<span
+							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+						>
+							Prix coûtant TTC
 						</span>
 					</th>
 					<th scope="col" class="px-3 py-3">
@@ -142,7 +165,7 @@ function updatePrices(){
 							Nbr produits par lots
 						</span>
 					</th>
-					<th scope="col" class="px-6 py-3">
+					<th scope="col" class="px-6 py-3 w-48">
 						<span
 							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 						>
@@ -156,7 +179,7 @@ function updatePrices(){
 							TVA
 						</span>
 					</th>
-					<th scope="col" class="px-6 py-3">
+					<th scope="col" class="px-6 py-3 w-48">
 						<span
 							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 						>
@@ -173,36 +196,63 @@ function updatePrices(){
 				</tr>
 			</thead>
 			<tr>
-				<td class="px-12 py-3">
+				<td class="relative px-12 py-3">
 					<div class="flex flex-col">
 						<input
 							type="text"
-							class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-							placeholder="Nom du produit"
-							bind:value={itemName}
+							class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent placeholder:text-slate-500"
+							placeholder={displayedValues.name}
 							on:input={(e) => {
 								// @ts-ignore
 								searchName = e.target.value.toLowerCase();
 								reloadItems();
 							}}
+							on:change={(e) => {
+								// @ts-ignore
+								e.target.value = '';
+							}}
+							on:focusout={() => {
+								setTimeout(() => {
+									searchName = '';
+								}, 200);
+							}}
+							on:focusin={(e) => {
+								// @ts-ignore
+								searchName = e.target.value.toLowerCase();
+							}}
 						/>
 					</div>
-					{#if searchName.length > 1}
-						{#each items as item}
-							<div
-								class="bg-white p-2"
-								on:click={() => {
-									itemName = item.name;
-									itemPrice = item.prices['membre_bureau'];
-									newItem.item_id = item.id;
-									searchName = '';
-									nameList.push(item.name);
-								}}
-							>
-								{item.name}
-							</div>
-						{/each}
-					{/if}
+					<div class="absolute rounded-b-lg bg-slate-100 -translate-y-2">
+						{#if searchName.length > 0}
+							{#each items as item}
+								<button
+									class="p-2"
+									on:click={() => {
+										displayedValues.name = item.name;
+										displayedValues.item_price = formatPrice(item.prices.membre_bureau);
+										displayedValues.item_price_calc = item.prices.membre_bureau;
+										displayedValues.tva = item.last_tva ?? 0;
+										newItem.tva = item.last_tva ?? 0;
+										newItem.item_id = item.id;
+										searchName = '';
+										nameList.push(item.name);
+										updatePrices();
+									}}
+								>
+									{item.name}
+								</button>
+							{/each}
+						{/if}
+					</div>
+				</td>
+				<td class="px-3 py-3">
+					<div class="flex flex-col">
+						<input
+							class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+							disabled
+							placeholder={displayedValues.item_price}
+						/>
+					</div>
 				</td>
 				<td class="px-3 py-3">
 					<div class="flex flex-col">
@@ -213,7 +263,9 @@ function updatePrices(){
 							min="1"
 							max="1000"
 							bind:value={newItem.amount_of_bundle}
-							on:change={() =>{updatePrices();}}
+							on:change={() => {
+								updatePrices();
+							}}
 						/>
 					</div>
 				</td>
@@ -226,7 +278,9 @@ function updatePrices(){
 							min="1"
 							max="1000"
 							bind:value={newItem.amount_per_bundle}
-							on:change={() =>{updatePrices();}}
+							on:change={() => {
+								updatePrices();
+							}}
 						/>
 					</div>
 				</td>
@@ -237,9 +291,18 @@ function updatePrices(){
 							max="100000"
 							type="number"
 							class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-							placeholder="Prix d'un lot HT"
-							bind:value={newItem.bundle_cost_ht}
-							on:change={() =>{bundle_ttc = Number((newItem.bundle_cost_ht * (1 + newItem.tva / 10000)).toFixed(0))}}
+							placeholder={displayedValues.bundle_cost_ht}
+							on:change={(e) => {
+								// @ts-ignore
+								newItem.bundle_cost_ht = parsePrice(e.target?.value);
+								let r = formatPrice(newItem.bundle_cost_ht);
+								displayedValues.bundle_cost_ht = r;
+								// @ts-ignore
+								e.target.value = r;
+								displayedValues.bundle_cost_ttc = formatPrice(
+									Number((newItem.bundle_cost_ht * (1 + newItem.tva / 10000)).toFixed(0))
+								);
+							}}
 						/>
 					</div>
 				</td>
@@ -252,6 +315,7 @@ function updatePrices(){
 								newItem.tva = parseInt(e.target?.value);
 								updatePrices();
 							}}
+							bind:value={displayedValues.tva}
 						>
 							<option value="0">0%</option>
 							<option value="550">5.5%</option>
@@ -267,9 +331,19 @@ function updatePrices(){
 							max="100000"
 							type="number"
 							class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-							bind:value={bundle_ttc}
-							on:change={() =>{newItem.bundle_cost_ht = Number((bundle_ttc / (1 + newItem.tva / 10000)).toFixed(0))}}
-						/>
+							placeholder={displayedValues.bundle_cost_ttc}
+							on:change={(e) => {
+								// @ts-ignore
+								newItem.bundle_cost_ht = parsePrice(e.target?.value) / (1 + (newItem.tva ?? 0) / 10000);
+								let r = formatPrice(newItem.bundle_cost_ht);
+								displayedValues.bundle_cost_ht = r;
+								displayedValues.bundle_cost_ttc = formatPrice(
+									Number((newItem.bundle_cost_ht * (1 + newItem.tva / 10000)).toFixed(0))
+								);
+								// @ts-ignore
+								e.target.value = r;
+							}}
+							/>
 					</div>
 				</td>
 				<td class="px-6 py-3">
@@ -278,7 +352,17 @@ function updatePrices(){
 							class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
 							on:click={() => {
 								newRestock.items.push(newItem);
-								itemName = '';
+								displayedValues = {
+									name: 'Nom du produit',
+									item_price_calc: 0,
+									item_price: 'Prix coûtant TTC',
+									amount_of_bundle: 'Nombre de lots',
+									amount_per_bundle: 'Nombre de produits par lots',
+									bundle_cost_ht: "Prix d'un lot HT",
+									tva: 0,
+									bundle_cost_ttc: "Prix d'un lot TTC"
+								};
+								console.log(newRestock.items);
 								updateTotalHTandTTC();
 							}}
 						>
@@ -295,6 +379,15 @@ function updatePrices(){
 								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							>
 								<p>{nameList[newRestock.items.indexOf(item)]}</p>
+							</div>
+						</div>
+					</td>
+					<td class="px-3 py-3">
+						<div class="flex flex-col">
+							<div
+								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+							>
+								<p>{formatPrice((item.bundle_cost_ht / item.amount_per_bundle) * (1 + item.tva / 10000))}</p>
 							</div>
 						</div>
 					</td>
@@ -367,7 +460,10 @@ function updatePrices(){
 			<input class="m-2 mr-auto max-w-lg w-6 h-6" type="checkbox" bind:checked={sure} />
 
 			{#if sure}
-				<button on:click={() => applyRestock()} class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+				<button
+					on:click={() => applyRestock()}
+					class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+				>
 					<p class="font-bold text-white text-2xl">Terminer la réappro</p>
 				</button>
 			{/if}
@@ -444,12 +540,6 @@ function updatePrices(){
 					</td>
 				</tr>
 			{/each}
-
-
-
-
-        </thead>
-       
-
-    </table>
+		</thead>
+	</table>
 </div>

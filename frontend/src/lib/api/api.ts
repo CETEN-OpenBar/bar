@@ -887,6 +887,12 @@ export interface Item {
      * @type {number}
      * @memberof Item
      */
+    'last_tva'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof Item
+     */
     'deleted_at'?: number;
     /**
      * 

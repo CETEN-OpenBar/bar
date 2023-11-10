@@ -98,6 +98,7 @@ func (s *Server) CreateRestock(c echo.Context) error {
 			restockItem.ItemPictureUri = item.PictureUri
 
 			item.AmountLeft += restockItem.AmountOfBundle * restockItem.AmountPerBundle
+			item.LastTva = &restockItem.Tva
 
 			err = s.DBackend.UpdateItem(c.Request().Context(), item)
 			if err != nil {

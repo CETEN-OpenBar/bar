@@ -4542,15 +4542,12 @@ components:
         picture_uri:
           type: string
           description: Link to picture of the current item
-        # An item can be available between certain hours
         available_from:
           type: integer
           format: uint64
         available_until:
           type: integer
           format: uint64
-        # A menu contains multiple items (but no other menus)
-
         is_menu:
           type: boolean
         menu_items:
@@ -4561,9 +4558,11 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/MenuCategory"
-        
         state:
           $ref: "#/components/schemas/ItemState"
+        last_tva:
+          type: integer
+          format: uint64
         deleted_at:
           type: integer
           format: uint64
