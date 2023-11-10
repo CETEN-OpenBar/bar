@@ -369,7 +369,6 @@
 									bundle_cost_ht: 0,
 									tva: 0
 								};
-								console.log(newRestock.items);
 								updateTotalHTandTTC();
 							}}
 						>

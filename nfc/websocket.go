@@ -35,7 +35,9 @@ func cardReader(w http.ResponseWriter, r *http.Request) {
 func server() {
 	http.HandleFunc("/", cardReader)
 	http.HandleFunc("/config.json", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		http.ServeFile(w, r, "config.json")
 	})
+	logrus.Info("listening on ", *addr)
 	logrus.Fatal(http.ListenAndServe(*addr, nil))
 }
