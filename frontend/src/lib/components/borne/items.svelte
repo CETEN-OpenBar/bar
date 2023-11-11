@@ -61,7 +61,11 @@
 				limit = res.data.limit ?? 15;
 
 				let newItems = res.data.items ?? [];
-				items = newItems;
+
+				items = [];
+				setTimeout(() => {
+					items = newItems;
+				}, 100);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -123,7 +127,7 @@
 <!-- horizontal & overflows -->
 {#if items.length === 0}
 	<div class="col-span-7 flex flex-col items-center justify-center">
-		<span class="text-3xl text-white">Aucun article</span>
+		<span class="text-3xl text-white" in:fade={{ duration: 200, delay: 100 }}>Aucun article</span>
 	</div>
 {:else}
 	<div
@@ -169,7 +173,11 @@
 				</button>
 				{#if item.amount_left <= 0}
 					<!-- Stock épuisé icon -->
-					<img class="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[70%] w-28 h-28 drop-shadow-2xl" alt="oof" src="/epuise.png"/>
+					<img
+						class="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[70%] w-28 h-28 drop-shadow-2xl"
+						alt="oof"
+						src="/epuise.webp"
+					/>
 				{/if}
 			</button>
 		{/each}
