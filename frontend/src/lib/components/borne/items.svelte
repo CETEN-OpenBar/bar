@@ -29,7 +29,7 @@
 	let page: number = 0;
 	let maxPage: number = 0;
 	let nextPage = () => {
-		if (page <= maxPage) {
+		if (page < maxPage) {
 			page++;
 			reloadItems();
 		}
@@ -179,7 +179,7 @@
 <!-- Navigation -->
 <div class="absolute bottom-5 left-[50%] -translate-x-[50%] flex flex-col justify-center">
 	<div class="text-3xl text-white text-center">
-		{page}/{maxPage + 1}
+		{page}/{maxPage}
 	</div>
 	<div class="flex flex-row gap-4 justify-center items-center w-full h-16">
 		<button

@@ -16,7 +16,7 @@
 	let page: number = 0;
 	let maxPage: number = 0;
 	let nextPage = () => {
-		if (page <= maxPage) {
+		if (page < maxPage) {
 			page++;
 			reloadTransactions();
 		}
@@ -156,7 +156,7 @@
 		<button class="bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all" on:click={prevPage}
 			>&lt;</button
 		>
-		<div class="text-lg font-semibold self-center mx-2">{page}/{maxPage + 1}</div>
+		<div class="text-lg font-semibold self-center mx-2">{page}/{maxPage}</div>
 		<button class="bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all" on:click={nextPage}
 			>&gt;</button
 		>
