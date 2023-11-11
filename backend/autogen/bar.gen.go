@@ -811,10 +811,10 @@ type GetRefillsParams struct {
 	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
 
 	// StartDate Start date of the refill
-	StartDate *openapi_types.Date `form:"start_date,omitempty" json:"start_date,omitempty" bson:"start_date"`
+	StartDate *string `form:"start_date,omitempty" json:"start_date,omitempty" bson:"start_date"`
 
 	// EndDate End date of the refill
-	EndDate *openapi_types.Date `form:"end_date,omitempty" json:"end_date,omitempty" bson:"end_date"`
+	EndDate *string `form:"end_date,omitempty" json:"end_date,omitempty" bson:"end_date"`
 }
 
 // GetRestocksParams defines parameters for GetRestocks.
@@ -9290,15 +9290,15 @@ var swaggerSpec = []string{
 	"gAtRjRNWgugYBAFM2ZqpRkVlsgbToXPyUmJOszh+8AQlqGmwnSDdx+f0UTKNo4DultAqaFJKrdZo01e8",
 	"n289/f3W+4jOGU8z3cYDSeilYBYlwKgh/QLpSRxvZyTqHj2i2jJg9VJAZUz9VsDznjYpB+WdmweURZvK",
 	"Ze9ieG3cV86HZPu6UYxmKDOIyl/F94FZkBalunQsPlvbZELDiNFsBkOPtd30Fh+gJIEBhdv9osngkat7",
-	"KJkggEPOLfouyCqKBbWJimJ7X0tE1LaGQqlezs3sc9cUYOrxlw2NB7b1DQ/TcVjd9YqRZUnNGqkOe5aE",
-	"9oPCJOw/pAv86hP41bQhlQO6k5Wd3xWLpZRilFAU3LbL0aKSUYgWZdslRXOgd+pBqHq/CNOOXhGmG1TM",
-	"t0gGlpRrKQR5A4vwV4Win6uhH4j3CCaU9e4ksJ0ElgTGD7SMzuZTDPkz07kUq0leUeGqKF3H68of4X3B",
-	"M6ZwJ17kUeQFHBiLN5ZXR5UtgAnUhI7/9tSBmxPeVp5BGXhcVbOGj/KvroAVcTbdIgDyAPq81DoQN29g",
-	"jMTNYdvIebU8fz9chnm3WYbZtldtG3jFOtwUxLHH6t1B3WXyCuEQYvKtyVzZ6pjTzTt+1nHAoaA4P+dw",
-	"8a4u3tXZBG02gbbSX55ES9aVEEwZjv1jf05pejwcxigA8RwRevzj6MeRz7i6LCesAjyaAPyawhgGaJGA",
-	"JHh4nUA6BGk0vHtjaMBqP8B7FE9fTzGr5iuw1WPtYsAj7JCXEYi/IeqGKg6T8ycz2UTrQsfQQRklo7+2",
-	"SayaV9ikHoFn1430jHmvMASxt0AJfPi2ek3J1FOZV7Y8no4Srm6ROUprh7YRNPXCD9s9lHgExLChAyFg",
-	"TBCoz3rww/3iNcNibFHFiAkRPImwjJ5ke08eLl32kMdNPX15+r8AAAD//8qNtS5ZeAEA",
+	"KJkggEPOLfouyCqKBbWJimJ7X0tE1LaGQqlezs3sc9cUYOrxlw2NB7b1DQ/TcVjd9WrWR3WYsyS0HwQm",
+	"YfcQLrCrT2BX04ZTDuhOTnZ+1yuWUopJQlFw2y4ni0pGIVmUbZeUzIHeqQef6v0iTDt6RZgepgwsKddS",
+	"CPIGFuGtCkU/VwM/EO8QTCjr3UlgOwksCYwfWBmdyacY8mekcylWk7yiwlVRuo7Xkz/C+4JnTOFMvMij",
+	"yAs4MBZvKK+OKlsAE6gJHf/tqYM2J7ytPGMy8LiqZg0f5V9dASni7LlFAOQB8nmpdaBt3sAYaZvDtpHz",
+	"aHm+frgM826zDLNtr9Y28Ip1OCmIY4/Vu4O6S+QVwiHE5FuTubLVMaWbd+ys4wBDQXF+juHiWV08q7MJ",
+	"2mwCbaW/PImWrCshmDIc+8f+nNL0eDiMUQDiOSL0+MfRjyOfcXVZTlgFeDQB+DWFMQzQIgFJ8PA6gXQI",
+	"0mh498bQgNV+gPconr6eYlbNV2Crx9LFgEfQIS8jEH9D1A1VHBbnT2KyidaFjqGDMgpGf02TWDWvsEk9",
+	"ws6uG+kZ815hCGJvgRL48G31GpKppzJvbHn8HCVc3SJzlNYOZSNo6oUfpnso8QiIYUMHQsCYIFCf7eCH",
+	"98VrhcXYoooREyI4EmEZHcn2njwcuuwhj4t6+vL0fwEAAP//cx0dyzl4AQA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

@@ -5,6 +5,7 @@ import (
 	"bar/internal/models"
 	"errors"
 	"math"
+	"strconv"
 	"time"
 
 	"github.com/google/uuid"
@@ -22,11 +23,11 @@ func (s *Server) GetRefills(c echo.Context, params autogen.GetRefillsParams) err
 
 	var startsAt uint64 = 0
 	if params.StartDate != nil {
-		startsAt = uint64(params.StartDate.Unix())
+		startsAt, _ = strconv.ParseUint(*params.StartDate, 10, 64)
 	}
 	var endsAt uint64 = math.MaxInt64
 	if params.EndDate != nil {
-		endsAt = uint64(params.EndDate.Unix())
+		endsAt, _ = strconv.ParseUint(*params.EndDate, 10, 64)
 	}
 
 	count, err := s.DBackend.CountAllRefills(c.Request().Context(), startsAt, endsAt)

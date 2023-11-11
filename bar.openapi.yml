@@ -1467,14 +1467,12 @@ paths:
           required: false
           schema:
             type: string
-            format: date
         - name: end_date
           in: query
           description: End date of the refill
           required: false
           schema:
             type: string
-            format: date
       responses:
         "200":
           description: ""
