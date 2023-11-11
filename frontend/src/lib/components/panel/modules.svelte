@@ -45,9 +45,9 @@
 	});
 
 	modules.push({
-		name: 'Rechargements',
+		name: 'Trésorerie',
 		color: 'bg-blue-600',
-		link: '/panel/treso/recharges'
+		link: '/panel/treso'
 	});
 
 	// Sort the modules by name
