@@ -1,7 +1,6 @@
 package autogen
 
 import (
-	"fmt"
 	"math"
 	"time"
 )
@@ -105,8 +104,6 @@ func Pager(page *uint64, limit *uint64, count *uint64) (dbPage uint64, pageOut u
 	if count != nil {
 		maxPageFloat := float64(*count) / float64(limitOut)
 		maxPage = uint64(math.Ceil(maxPageFloat))
-
-		fmt.Println(maxPageFloat, maxPage)
 	}
 
 	if pageOut > maxPage+1 {
