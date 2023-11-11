@@ -14,7 +14,7 @@ func (b *Backend) CreateTransaction(ctx context.Context, tx *models.Transaction)
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
-	tx.CreatedAt = time.Now().Unix()
+	tx.Transaction.CreatedAt = uint64(time.Now().Unix())
 
 	_, err := b.db.Collection(TransactionsCollection).InsertOne(ctx, tx)
 	if err != nil {

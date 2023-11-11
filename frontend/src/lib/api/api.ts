@@ -1728,6 +1728,12 @@ export interface Transaction {
      * @memberof Transaction
      */
     'deleted_by'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Transaction
+     */
+    'created_at': number;
 }
 
 
@@ -6545,15 +6551,11 @@ export const RefillsApiAxiosParamCreator = function (configuration?: Configurati
             }
 
             if (startDate !== undefined) {
-                localVarQueryParameter['start_date'] = (startDate as any instanceof Date) ?
-                    (startDate as any).toISOString().substr(0,10) :
-                    startDate;
+                localVarQueryParameter['start_date'] = startDate;
             }
 
             if (endDate !== undefined) {
-                localVarQueryParameter['end_date'] = (endDate as any instanceof Date) ?
-                    (endDate as any).toISOString().substr(0,10) :
-                    endDate;
+                localVarQueryParameter['end_date'] = endDate;
             }
 
 

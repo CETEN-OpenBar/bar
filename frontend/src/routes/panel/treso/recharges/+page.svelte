@@ -124,7 +124,7 @@
 								<th class="px-4">Opérateur</th>
 								<th class="px-4">Annulé par</th>
 								<th class="px-4">Montant</th>
-								<th class="px-4">Heure</th>
+								<th class="px-4">Date</th>
 							</tr>
 						</thead>
 						<tbody>

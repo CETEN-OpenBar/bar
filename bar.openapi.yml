@@ -4775,6 +4775,9 @@ components:
           format: uint64
         deleted_by:
           $ref: "#/components/schemas/UUID"
+        created_at:
+          type: integer
+          format: uint64
       required:
         - id
         - items
@@ -4782,6 +4785,7 @@ components:
         - account_name
         - total_cost
         - state
+        - created_at
     NewTransactionItem:
       type: object
       properties:
