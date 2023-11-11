@@ -138,7 +138,6 @@ func (s *Server) DeleteRestock(c echo.Context, restockId autogen.UUID) error {
 	}
 
 	_, err = s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {
-
 		// Remove restock from all items
 		restock, err := s.DBackend.GetRestock(c.Request().Context(), restockId.String())
 		if err != nil {

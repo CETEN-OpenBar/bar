@@ -289,6 +289,73 @@ export interface CarouselTextCreate {
 /**
  * 
  * @export
+ * @interface CashMovement
+ */
+export interface CashMovement {
+    /**
+     * 
+     * @type {string}
+     * @memberof CashMovement
+     */
+    'id': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof CashMovement
+     */
+    'amount': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof CashMovement
+     */
+    'old_amount': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof CashMovement
+     */
+    'reason': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof CashMovement
+     */
+    'created_at': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof CashMovement
+     */
+    'created_by': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CashMovement
+     */
+    'created_by_name': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof CashMovement
+     */
+    'deleted_at'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof CashMovement
+     */
+    'deleted_by'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CashMovement
+     */
+    'deleted_by_name'?: string;
+}
+/**
+ * 
+ * @export
  * @interface Category
  */
 export interface Category {
@@ -506,6 +573,37 @@ export interface GetAllItems200Response {
      * 
      * @type {number}
      * @memberof GetAllItems200Response
+     */
+    'max_page': number;
+}
+/**
+ * 
+ * @export
+ * @interface GetCashMovements200Response
+ */
+export interface GetCashMovements200Response {
+    /**
+     * 
+     * @type {Array<CashMovement>}
+     * @memberof GetCashMovements200Response
+     */
+    'cash_movements': Array<CashMovement>;
+    /**
+     * 
+     * @type {number}
+     * @memberof GetCashMovements200Response
+     */
+    'page': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof GetCashMovements200Response
+     */
+    'limit': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof GetCashMovements200Response
      */
     'max_page': number;
 }
@@ -3783,6 +3881,134 @@ export class CarouselApi extends BaseAPI {
      */
     public markDeleteCarouselText(textId: string, options?: AxiosRequestConfig) {
         return CarouselApiFp(this.configuration).markDeleteCarouselText(textId, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+/**
+ * CashMovementsApi - axios parameter creator
+ * @export
+ */
+export const CashMovementsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * Get cash movements
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of cash movements per page
+         * @param {string} [search] search string
+         * @param {string} [sort] sort string
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getCashMovements: async (page?: number, limit?: number, search?: string, sort?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/cash_movements`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+            if (sort !== undefined) {
+                localVarQueryParameter['sort'] = sort;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * CashMovementsApi - functional programming interface
+ * @export
+ */
+export const CashMovementsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = CashMovementsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * Get cash movements
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of cash movements per page
+         * @param {string} [search] search string
+         * @param {string} [sort] sort string
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getCashMovements(page?: number, limit?: number, search?: string, sort?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetCashMovements200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getCashMovements(page, limit, search, sort, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+    }
+};
+
+/**
+ * CashMovementsApi - factory interface
+ * @export
+ */
+export const CashMovementsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = CashMovementsApiFp(configuration)
+    return {
+        /**
+         * Get cash movements
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of cash movements per page
+         * @param {string} [search] search string
+         * @param {string} [sort] sort string
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getCashMovements(page?: number, limit?: number, search?: string, sort?: string, options?: any): AxiosPromise<GetCashMovements200Response> {
+            return localVarFp.getCashMovements(page, limit, search, sort, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * CashMovementsApi - object-oriented interface
+ * @export
+ * @class CashMovementsApi
+ * @extends {BaseAPI}
+ */
+export class CashMovementsApi extends BaseAPI {
+    /**
+     * Get cash movements
+     * @param {number} [page] Page number
+     * @param {number} [limit] Number of cash movements per page
+     * @param {string} [search] search string
+     * @param {string} [sort] sort string
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof CashMovementsApi
+     */
+    public getCashMovements(page?: number, limit?: number, search?: string, sort?: string, options?: AxiosRequestConfig) {
+        return CashMovementsApiFp(this.configuration).getCashMovements(page, limit, search, sort, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

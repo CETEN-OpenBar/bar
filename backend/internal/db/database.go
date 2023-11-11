@@ -134,6 +134,23 @@ type DBackend interface {
 	GetAllRestocks(ctx context.Context, page uint64, size uint64) ([]*models.Restock, error)
 	CountAllRestocks(ctx context.Context) (uint64, error)
 
+	// CashMovement's CRUD
+	CreateCashMovement(ctx context.Context, t *models.CashMovement) error
+	GetCashMovement(ctx context.Context, id string) (*models.CashMovement, error)
+	UpdateCashMovement(ctx context.Context, t *models.CashMovement) error
+	MarkDeleteCashMovement(ctx context.Context, id, by string) error
+	UnMarkDeleteCashMovement(ctx context.Context, id string) error
+	DeleteCashMovement(ctx context.Context, id string) error
+	RestoreCashMovement(ctx context.Context, id string) error
+
+	GetLatestCashMovement(ctx context.Context) (*models.CashMovement, error)
+
+	GetDeletedCashMovements(ctx context.Context, page uint64, size uint64) ([]*models.CashMovement, error)
+	CountDeletedCashMovements(ctx context.Context) (uint64, error)
+
+	GetAllCashMovements(ctx context.Context, page uint64, size uint64, search string) ([]*models.CashMovement, error)
+	CountAllCashMovements(ctx context.Context, search string) (uint64, error)
+
 	// Other requests that are not CRUD but still needed
 	GetAccountByEmail(ctx context.Context, email string) (*models.Account, error)
 	GetAccountByGoogle(ctx context.Context, googleID string) (*models.Account, error)
