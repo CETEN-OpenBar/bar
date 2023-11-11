@@ -212,7 +212,7 @@ func (s *Server) PostRefill(c echo.Context, accountId string, params autogen.Pos
 		}
 
 		if params.Type == autogen.RefillCash {
-			err = s.createCashMovement(ctx, admin.Id, admin.Name(), int64(params.Amount), fmt.Sprintf("Recharge %s sur le compte de %s par %s", refill.Id, account.Name(), admin.Name()))
+			err = s.createCashMovement(ctx, admin.Id, admin.Name(), int64(params.Amount), fmt.Sprintf("Recharge %s", refill.Id))
 			if err != nil {
 				return nil, errors.New("failed to create cash movement")
 			}
@@ -265,7 +265,7 @@ func (s *Server) PatchRefillId(c echo.Context, accountId autogen.UUID, refillId 
 				refill.CanceledBy = &admin.Id
 				refill.CanceledByName = &name
 
-				err = s.createCashMovement(ctx, admin.Id, admin.Name(), -int64(refill.Amount), fmt.Sprintf("Annulation de recharge %s sur le compte de %s par %s", refill.Id, account.Name(), admin.Name()))
+				err = s.createCashMovement(ctx, admin.Id, admin.Name(), -int64(refill.Amount), fmt.Sprintf("Annulation de recharge %s", refill.Id))
 				if err != nil {
 					return nil, errors.New("failed to create cash movement")
 				}
@@ -274,7 +274,7 @@ func (s *Server) PatchRefillId(c echo.Context, accountId autogen.UUID, refillId 
 				refill.CanceledBy = nil
 				refill.CanceledByName = nil
 
-				err = s.createCashMovement(ctx, admin.Id, admin.Name(), int64(refill.Amount), fmt.Sprintf("Revalidation de recharge %s sur le compte de %s par %s", refill.Id, account.Name(), admin.Name()))
+				err = s.createCashMovement(ctx, admin.Id, admin.Name(), int64(refill.Amount), fmt.Sprintf("Revalidation de recharge %s", refill.Id))
 				if err != nil {
 					return nil, errors.New("failed to create cash movement")
 				}
