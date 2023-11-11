@@ -78,7 +78,29 @@ func (s *Server) GetCashMovements(c echo.Context, params autogen.GetCashMovement
 }
 
 // (POST /cash_movements)
-func (s *Server) CreateCashMovement(ctx echo.Context) error {
+func (s *Server) CreateCashMovement(c echo.Context) error {
+	admin, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
+
+	var params autogen.CreateCashMovementJSONRequestBody
+	if err := c.Bind(&params); err != nil {
+		logrus.Error(err)
+		return Error400(c)
+	}
+
+	_, err = s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {
+		if err := s.createCashMovement(ctx, admin.Id, admin.Name(), params.Amount, params.Reason); err != nil {
+			return nil, err
+		}
+
+		return nil, nil
+	})
+	if err != nil {
+		return Error500(c)
+	}
+
 	return nil
 }
 

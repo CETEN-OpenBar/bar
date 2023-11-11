@@ -32,6 +32,25 @@
 		maxPage = resp.data.max_page ?? 0;
 	}
 
+    async function transfertCaisse() {
+        let resp = await cashMovementsApi().getCashMovements(0, 1, undefined,{
+            withCredentials: true
+        });
+
+        let lastCashMovement = resp.data.cash_movements?.[0];
+
+        if (lastCashMovement) {
+            await cashMovementsApi().createCashMovement({
+                amount: -lastCashMovement.amount,
+                reason: "Transfert de caisse",
+            }, {
+                withCredentials: true
+            });
+
+            await reloadCashMovements();
+        }
+    }
+
 	onMount(async () => {
 		await reloadCashMovements();
 	});
@@ -52,6 +71,16 @@
 				}}
 			/>
 			<button class="rounded-r-lg bg-slate-200 p-4"> &#x1F50D; </button>
+		</div>
+	</div>
+	<div class="flex flex-col p-5 gap-3">
+		<div class="flex flex-row gap-4">
+            <button class="p-4 bg-red-200 rounded-lg" on:click={transfertCaisse}>
+                Transfert de caisse
+            </button>
+            <a class="p-4 bg-green-200 rounded-lg" href="majcaisse">
+                Mise a jour de caisse
+            </a>
 		</div>
 	</div>
 	<div
