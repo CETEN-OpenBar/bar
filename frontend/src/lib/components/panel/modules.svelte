@@ -44,6 +44,12 @@
 		link: '/panel/categories/reposition'
 	});
 
+	modules.push({
+		name: 'Rechargements',
+		color: 'bg-blue-600',
+		link: '/panel/treso/recharges'
+	});
+
 	// Sort the modules by name
 	modules.sort((a, b) => a.name.localeCompare(b.name));
 </script>
