@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from "$app/stores";
+	import { page } from '$app/stores';
 
 	// New type for modules with Name, Color and Link
 	type Module = {
@@ -38,39 +38,11 @@
 		link: '/panel/products/reappro'
 	});
 
-	// modules.push({
-	// 	name: 'Dashboard',
-	// 	color: 'bg-blue-600',
-	// 	link: '/panel/dash'
-	// });
-
-	// modules.push({
-	// 	name: 'Création de comptes',
-	// 	color: 'bg-red-600',
-	// 	link: '/panel/accounts'
-	// });
-
-	// modules.push({
-	// 	name: 'Création de produits',
-	// 	color: 'bg-green-600',
-	// 	link: '/panel/accounts'
-	// });
-
-	// modules.push({
-	// 	name: 'Restock',
-	// 	color: 'bg-green-600',
-	// 	link: '/panel/accounts'
-	// });
-
-	// fill with rdm bullshit for test
-	// TODO: uncomment if you need to test this
-	// for (let i = 0; i < 100; i++) {
-	// 	modules.push({
-	// 		name: 'Module ' + i,
-	// 		color: 'bg-blue-600',
-	// 		link: '/panel/dash'
-	// 	});
-	// }
+	modules.push({
+		name: 'Repositioner les catégories',
+		color: 'bg-blue-600',
+		link: '/panel/categories/reposition'
+	});
 
 	// Sort the modules by name
 	modules.sort((a, b) => a.name.localeCompare(b.name));
@@ -90,13 +62,14 @@
 		{/if}
 	{/each}
 
-
 	<!-- if page is not whole, fill it with invisible modules -->
 	{#if currentPage == modules.length % 12 && modules.length % 12 != 0}
 		{#each Array(12 - (modules.length % 12)) as _}
-		<div class="flex flex-col items-center justify-center h-32 w-64 break-words flex-wrap text-center rounded-lg shadow-lg ">
-			<p class="text-2xl font-bold text-white p-5"></p>
-		</div>
+			<div
+				class="flex flex-col items-center justify-center h-32 w-64 break-words flex-wrap text-center rounded-lg shadow-lg"
+			>
+				<p class="text-2xl font-bold text-white p-5" />
+			</div>
 		{/each}
 	{/if}
 </div>
@@ -114,10 +87,7 @@
 		Précédent
 	</button>
 	<button
-		class="text-white font-bold py-2 px-4 rounded-r {(currentPage +
-			1) *
-			12 <
-		modules.length
+		class="text-white font-bold py-2 px-4 rounded-r {(currentPage + 1) * 12 < modules.length
 			? 'bg-blue-600 hover:bg-blue-700'
 			: 'bg-gray-400 pointer-events-none'}"
 		on:click={() => {

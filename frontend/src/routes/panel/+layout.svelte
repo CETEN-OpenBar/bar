@@ -28,7 +28,7 @@
 			aria-label="Global"
 		>
 			<div class="flex items-center justify-between">
-				<a class="flex-none text-xl font-semibold text-white" href="#" aria-label="Panel admin"
+				<a class="flex-none text-xl font-semibold text-white" href="/panel" aria-label="Panel admin"
 					>(Nouveau) Panel admin</a
 				>
 				<div class="sm:hidden">
