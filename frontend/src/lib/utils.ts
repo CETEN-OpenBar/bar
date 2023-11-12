@@ -30,6 +30,13 @@ export const formatDate = (date: number): string => {
     return d.toLocaleDateString('fr-FR');
 }
 
+export const formatDateTime = (date: number): string => {
+    // date is in unix seconds
+    const d = new Date(date * 1000);
+    // We need day and hour
+    return `${d.toLocaleDateString('fr-FR')} ${d.toLocaleTimeString('fr-FR')}`;
+}
+
 export const file2Base64 = (file: File): Promise<string> => {
     return new Promise<string>((resolve, reject) => {
         const reader = new FileReader();

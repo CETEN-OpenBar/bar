@@ -289,6 +289,73 @@ export interface CarouselTextCreate {
 /**
  * 
  * @export
+ * @interface CashMovement
+ */
+export interface CashMovement {
+    /**
+     * 
+     * @type {string}
+     * @memberof CashMovement
+     */
+    'id': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof CashMovement
+     */
+    'amount': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof CashMovement
+     */
+    'old_amount': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof CashMovement
+     */
+    'reason': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof CashMovement
+     */
+    'created_at': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof CashMovement
+     */
+    'created_by': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CashMovement
+     */
+    'created_by_name': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof CashMovement
+     */
+    'deleted_at'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof CashMovement
+     */
+    'deleted_by'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CashMovement
+     */
+    'deleted_by_name'?: string;
+}
+/**
+ * 
+ * @export
  * @interface Category
  */
 export interface Category {
@@ -506,6 +573,37 @@ export interface GetAllItems200Response {
      * 
      * @type {number}
      * @memberof GetAllItems200Response
+     */
+    'max_page': number;
+}
+/**
+ * 
+ * @export
+ * @interface GetCashMovements200Response
+ */
+export interface GetCashMovements200Response {
+    /**
+     * 
+     * @type {Array<CashMovement>}
+     * @memberof GetCashMovements200Response
+     */
+    'cash_movements': Array<CashMovement>;
+    /**
+     * 
+     * @type {number}
+     * @memberof GetCashMovements200Response
+     */
+    'page': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof GetCashMovements200Response
+     */
+    'limit': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof GetCashMovements200Response
      */
     'max_page': number;
 }
@@ -1113,6 +1211,25 @@ export interface NewAccount {
 }
 
 
+/**
+ * 
+ * @export
+ * @interface NewCashMovement
+ */
+export interface NewCashMovement {
+    /**
+     * 
+     * @type {number}
+     * @memberof NewCashMovement
+     */
+    'amount': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof NewCashMovement
+     */
+    'reason': string;
+}
 /**
  * 
  * @export
@@ -1728,6 +1845,12 @@ export interface Transaction {
      * @memberof Transaction
      */
     'deleted_by'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Transaction
+     */
+    'created_at': number;
 }
 
 
@@ -3777,6 +3900,258 @@ export class CarouselApi extends BaseAPI {
      */
     public markDeleteCarouselText(textId: string, options?: AxiosRequestConfig) {
         return CarouselApiFp(this.configuration).markDeleteCarouselText(textId, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+/**
+ * CashMovementsApi - axios parameter creator
+ * @export
+ */
+export const CashMovementsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * Create a cash movement
+         * @param {NewCashMovement} newCashMovement Cash movement to create
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createCashMovement: async (newCashMovement: NewCashMovement, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'newCashMovement' is not null or undefined
+            assertParamExists('createCashMovement', 'newCashMovement', newCashMovement)
+            const localVarPath = `/cash_movements`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(newCashMovement, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Delete a cash movement
+         * @param {string} cashMovementId ID of the cash movement
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteCashMovement: async (cashMovementId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'cashMovementId' is not null or undefined
+            assertParamExists('deleteCashMovement', 'cashMovementId', cashMovementId)
+            const localVarPath = `/cash_movements/{cash_movement_id}`
+                .replace(`{${"cash_movement_id"}}`, encodeURIComponent(String(cashMovementId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get cash movements
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of cash movements per page
+         * @param {string} [search] search string
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getCashMovements: async (page?: number, limit?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/cash_movements`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * CashMovementsApi - functional programming interface
+ * @export
+ */
+export const CashMovementsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = CashMovementsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * Create a cash movement
+         * @param {NewCashMovement} newCashMovement Cash movement to create
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createCashMovement(newCashMovement: NewCashMovement, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CashMovement>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createCashMovement(newCashMovement, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Delete a cash movement
+         * @param {string} cashMovementId ID of the cash movement
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteCashMovement(cashMovementId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteCashMovement(cashMovementId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Get cash movements
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of cash movements per page
+         * @param {string} [search] search string
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getCashMovements(page?: number, limit?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetCashMovements200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getCashMovements(page, limit, search, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+    }
+};
+
+/**
+ * CashMovementsApi - factory interface
+ * @export
+ */
+export const CashMovementsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = CashMovementsApiFp(configuration)
+    return {
+        /**
+         * Create a cash movement
+         * @param {NewCashMovement} newCashMovement Cash movement to create
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createCashMovement(newCashMovement: NewCashMovement, options?: any): AxiosPromise<CashMovement> {
+            return localVarFp.createCashMovement(newCashMovement, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Delete a cash movement
+         * @param {string} cashMovementId ID of the cash movement
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteCashMovement(cashMovementId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteCashMovement(cashMovementId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get cash movements
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of cash movements per page
+         * @param {string} [search] search string
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getCashMovements(page?: number, limit?: number, search?: string, options?: any): AxiosPromise<GetCashMovements200Response> {
+            return localVarFp.getCashMovements(page, limit, search, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * CashMovementsApi - object-oriented interface
+ * @export
+ * @class CashMovementsApi
+ * @extends {BaseAPI}
+ */
+export class CashMovementsApi extends BaseAPI {
+    /**
+     * Create a cash movement
+     * @param {NewCashMovement} newCashMovement Cash movement to create
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof CashMovementsApi
+     */
+    public createCashMovement(newCashMovement: NewCashMovement, options?: AxiosRequestConfig) {
+        return CashMovementsApiFp(this.configuration).createCashMovement(newCashMovement, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Delete a cash movement
+     * @param {string} cashMovementId ID of the cash movement
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof CashMovementsApi
+     */
+    public deleteCashMovement(cashMovementId: string, options?: AxiosRequestConfig) {
+        return CashMovementsApiFp(this.configuration).deleteCashMovement(cashMovementId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get cash movements
+     * @param {number} [page] Page number
+     * @param {number} [limit] Number of cash movements per page
+     * @param {string} [search] search string
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof CashMovementsApi
+     */
+    public getCashMovements(page?: number, limit?: number, search?: string, options?: AxiosRequestConfig) {
+        return CashMovementsApiFp(this.configuration).getCashMovements(page, limit, search, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -6545,15 +6920,11 @@ export const RefillsApiAxiosParamCreator = function (configuration?: Configurati
             }
 
             if (startDate !== undefined) {
-                localVarQueryParameter['start_date'] = (startDate as any instanceof Date) ?
-                    (startDate as any).toISOString().substr(0,10) :
-                    startDate;
+                localVarQueryParameter['start_date'] = startDate;
             }
 
             if (endDate !== undefined) {
-                localVarQueryParameter['end_date'] = (endDate as any instanceof Date) ?
-                    (endDate as any).toISOString().substr(0,10) :
-                    endDate;
+                localVarQueryParameter['end_date'] = endDate;
             }
 
 

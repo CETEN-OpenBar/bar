@@ -8,14 +8,14 @@ import (
 )
 
 type (
-	Transaction struct {
-		PrivateID           primitive.ObjectID `bson:"_id,omitempty" json:"-"`
-		autogen.Transaction `bson:",inline"`
+	CashMovement struct {
+		PrivateID            primitive.ObjectID `bson:"_id,omitempty" json:"-"`
+		autogen.CashMovement `bson:",inline"`
 	}
 )
 
 // ToJSON converts the model to JSON
-func (o *Transaction) ToJSON() []byte {
+func (o *CashMovement) ToJSON() []byte {
 	data, err := json.Marshal(o)
 	if err != nil {
 		panic(err)

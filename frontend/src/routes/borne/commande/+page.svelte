@@ -66,6 +66,10 @@
 	let clickItemMenu: (item: Item) => void = (item: Item) => {
 		let newPicks = menuPicks?.pickedItems ?? [];
 
+		if (item.amount_left == 0) {
+			return;
+		}
+
 		if (newPicks.find((i) => i.item_id == item.id)) {
 			let found = newPicks.find((i) => i.item_id == item.id)!;
 			if (found.amount >= (found.item.buy_limit ?? 9999)) {

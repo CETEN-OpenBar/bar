@@ -14,6 +14,7 @@ func (b *Backend) GetAllCategories(ctx context.Context) ([]*models.Category, err
 	defer cancel()
 
 	var categories []*models.Category
+	// All categories sorted by position
 	cursor, err := b.db.Collection(CategoriesCollection).Find(ctx, bson.M{
 		"$or": []bson.M{
 			{
@@ -25,7 +26,7 @@ func (b *Backend) GetAllCategories(ctx context.Context) ([]*models.Category, err
 				"deleted_at": nil,
 			},
 		},
-	})
+	}, options.Find().SetSort(bson.M{"position": 1}))
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return categories, nil

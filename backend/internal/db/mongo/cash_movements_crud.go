@@ -10,13 +10,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (b *Backend) CreateTransaction(ctx context.Context, tx *models.Transaction) error {
+func (b *Backend) CreateCashMovement(ctx context.Context, tx *models.CashMovement) error {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
-	tx.Transaction.CreatedAt = uint64(time.Now().Unix())
+	tx.CashMovement.CreatedAt = uint64(time.Now().Unix())
 
-	_, err := b.db.Collection(TransactionsCollection).InsertOne(ctx, tx)
+	_, err := b.db.Collection(CashMovementsCollection).InsertOne(ctx, tx)
 	if err != nil {
 		return err
 	}
@@ -24,12 +24,12 @@ func (b *Backend) CreateTransaction(ctx context.Context, tx *models.Transaction)
 	return nil
 }
 
-func (b *Backend) GetTransaction(ctx context.Context, id string) (*models.Transaction, error) {
+func (b *Backend) GetCashMovement(ctx context.Context, id string) (*models.CashMovement, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
-	var tx models.Transaction
-	err := b.db.Collection(TransactionsCollection).FindOne(ctx,
+	var tx models.CashMovement
+	err := b.db.Collection(CashMovementsCollection).FindOne(ctx,
 		bson.M{
 			"id": uuid.MustParse(id),
 
@@ -52,11 +52,11 @@ func (b *Backend) GetTransaction(ctx context.Context, id string) (*models.Transa
 	return &tx, nil
 }
 
-func (b *Backend) UpdateTransaction(ctx context.Context, tx *models.Transaction) error {
+func (b *Backend) UpdateCashMovement(ctx context.Context, tx *models.CashMovement) error {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
-	res := b.db.Collection(TransactionsCollection).FindOneAndUpdate(ctx,
+	res := b.db.Collection(CashMovementsCollection).FindOneAndUpdate(ctx,
 		bson.M{
 			"id": tx.Id,
 
@@ -82,11 +82,11 @@ func (b *Backend) UpdateTransaction(ctx context.Context, tx *models.Transaction)
 	return nil
 }
 
-func (b *Backend) MarkDeleteTransaction(ctx context.Context, id, by string) error {
+func (b *Backend) MarkDeleteCashMovement(ctx context.Context, id, by string) error {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
-	res := b.db.Collection(TransactionsCollection).FindOneAndUpdate(ctx,
+	res := b.db.Collection(CashMovementsCollection).FindOneAndUpdate(ctx,
 		bson.M{
 			"id": uuid.MustParse(id),
 		},
@@ -104,11 +104,11 @@ func (b *Backend) MarkDeleteTransaction(ctx context.Context, id, by string) erro
 	return nil
 }
 
-func (b *Backend) UnMarkDeleteTransaction(ctx context.Context, id string) error {
+func (b *Backend) UnMarkDeleteCashMovement(ctx context.Context, id string) error {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
-	res := b.db.Collection(TransactionsCollection).FindOneAndUpdate(ctx,
+	res := b.db.Collection(CashMovementsCollection).FindOneAndUpdate(ctx,
 		bson.M{
 			"id": uuid.MustParse(id),
 		},
@@ -126,11 +126,11 @@ func (b *Backend) UnMarkDeleteTransaction(ctx context.Context, id string) error 
 	return nil
 }
 
-func (b *Backend) DeleteTransaction(ctx context.Context, id string) error {
+func (b *Backend) DeleteCashMovement(ctx context.Context, id string) error {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
-	res := b.db.Collection(TransactionsCollection).FindOneAndDelete(ctx,
+	res := b.db.Collection(CashMovementsCollection).FindOneAndDelete(ctx,
 		bson.M{
 			"id": uuid.MustParse(id),
 		},
@@ -142,11 +142,11 @@ func (b *Backend) DeleteTransaction(ctx context.Context, id string) error {
 	return nil
 }
 
-func (b *Backend) RestoreTransaction(ctx context.Context, id string) error {
+func (b *Backend) RestoreCashMovement(ctx context.Context, id string) error {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
-	res := b.db.Collection(TransactionsCollection).FindOneAndUpdate(ctx,
+	res := b.db.Collection(CashMovementsCollection).FindOneAndUpdate(ctx,
 		bson.M{
 			"id": uuid.MustParse(id),
 		},
@@ -164,12 +164,12 @@ func (b *Backend) RestoreTransaction(ctx context.Context, id string) error {
 	return nil
 }
 
-func (b *Backend) GetDeletedTransactions(ctx context.Context, page uint64, size uint64) ([]*models.Transaction, error) {
+func (b *Backend) GetDeletedCashMovements(ctx context.Context, page uint64, size uint64) ([]*models.CashMovement, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
-	var accs []*models.Transaction
-	cursor, err := b.db.Collection(TransactionsCollection).Find(ctx,
+	var accs []*models.CashMovement
+	cursor, err := b.db.Collection(CashMovementsCollection).Find(ctx,
 		bson.M{
 			"deleted_at": bson.M{
 				"$ne": nil,
@@ -187,11 +187,11 @@ func (b *Backend) GetDeletedTransactions(ctx context.Context, page uint64, size 
 	return accs, nil
 }
 
-func (b *Backend) CountDeletedTransactions(ctx context.Context) (uint64, error) {
+func (b *Backend) CountDeletedCashMovements(ctx context.Context) (uint64, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
-	count, err := b.db.Collection(TransactionsCollection).CountDocuments(ctx, bson.M{
+	count, err := b.db.Collection(CashMovementsCollection).CountDocuments(ctx, bson.M{
 		"deleted_at": bson.M{
 			"$ne": nil,
 		},

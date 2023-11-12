@@ -9,7 +9,7 @@
 	let page: number = 0;
 	let maxPage: number = 0;
 	let nextPage = () => {
-		if (page <= maxPage) {
+		if (page < maxPage) {
 			page++;
 			reloadCategories();
 		}
@@ -179,7 +179,7 @@
 								</button>
 
 								<p class="text-sm self-center text-gray-600 dark:text-gray-400">
-									Page {page} / {maxPage + 1}
+									Page {page} / {maxPage}
 								</p>
 
 								<button

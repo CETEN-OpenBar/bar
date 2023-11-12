@@ -1,6 +1,9 @@
 package autogen
 
-import "time"
+import (
+	"math"
+	"time"
+)
 
 func OptionalString(s string) *string {
 	if s == "" {
@@ -99,12 +102,10 @@ func Pager(page *uint64, limit *uint64, count *uint64) (dbPage uint64, pageOut u
 
 	// We calculate the max page (0 if count is nil)
 	if count != nil {
-		maxPage = *count / limitOut
+		maxPageFloat := float64(*count) / float64(limitOut)
+		maxPage = uint64(math.Ceil(maxPageFloat))
 	}
 
-	if count != nil && *count%limitOut == 0 && maxPage > 0 {
-		maxPage--
-	}
 	if pageOut > maxPage+1 {
 		pageOut = maxPage
 	}

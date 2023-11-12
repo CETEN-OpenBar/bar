@@ -4,7 +4,9 @@ import (
 	"bar/autogen"
 	"bar/internal/models"
 	"errors"
+	"fmt"
 	"math"
+	"strconv"
 	"time"
 
 	"github.com/google/uuid"
@@ -22,11 +24,11 @@ func (s *Server) GetRefills(c echo.Context, params autogen.GetRefillsParams) err
 
 	var startsAt uint64 = 0
 	if params.StartDate != nil {
-		startsAt = uint64(params.StartDate.Unix())
+		startsAt, _ = strconv.ParseUint(*params.StartDate, 10, 64)
 	}
 	var endsAt uint64 = math.MaxInt64
 	if params.EndDate != nil {
-		endsAt = uint64(params.EndDate.Unix())
+		endsAt, _ = strconv.ParseUint(*params.EndDate, 10, 64)
 	}
 
 	count, err := s.DBackend.CountAllRefills(c.Request().Context(), startsAt, endsAt)
@@ -199,15 +201,23 @@ func (s *Server) PostRefill(c echo.Context, accountId string, params autogen.Pos
 	account.Balance += int64(params.Amount)
 
 	_, err = s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {
-		err := s.DBackend.CreateRefill(c.Request().Context(), refill)
+		err := s.DBackend.CreateRefill(ctx, refill)
 		if err != nil {
 			return nil, errors.New("failed to create refill")
 		}
 
-		err = s.DBackend.UpdateAccount(c.Request().Context(), account)
+		err = s.DBackend.UpdateAccount(ctx, account)
 		if err != nil {
 			return nil, errors.New("failed to update account")
 		}
+
+		if params.Type == autogen.RefillCash {
+			err = s.createCashMovement(ctx, admin.Id, admin.Name(), int64(params.Amount), fmt.Sprintf("Recharge %s", refill.Id))
+			if err != nil {
+				return nil, errors.New("failed to create cash movement")
+			}
+		}
+
 		return nil, nil
 	})
 	if err != nil {
@@ -242,29 +252,39 @@ func (s *Server) PatchRefillId(c echo.Context, accountId autogen.UUID, refillId 
 		return Error500(c)
 	}
 
-	if params.State != nil {
-		oldState := refill.State
-		refill.State = *params.State
-
-		if oldState == autogen.Valid && *params.State == autogen.Canceled {
-			account.Balance -= int64(refill.Amount)
-
-			name := admin.Name()
-
-			refill.CanceledBy = &admin.Id
-			refill.CanceledByName = &name
-		} else if oldState == autogen.Canceled && *params.State == autogen.Valid {
-			account.Balance += int64(refill.Amount)
-			refill.CanceledBy = nil
-			refill.CanceledByName = nil
-		}
-	}
-
-	if params.Type != nil {
-		refill.Type = *params.Type
-	}
-
 	_, err = s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {
+		if params.State != nil {
+			oldState := refill.State
+			refill.State = *params.State
+
+			if oldState == autogen.Valid && *params.State == autogen.Canceled {
+				account.Balance -= int64(refill.Amount)
+
+				name := admin.Name()
+
+				refill.CanceledBy = &admin.Id
+				refill.CanceledByName = &name
+
+				err = s.createCashMovement(ctx, admin.Id, admin.Name(), -int64(refill.Amount), fmt.Sprintf("Annulation de recharge %s", refill.Id))
+				if err != nil {
+					return nil, errors.New("failed to create cash movement")
+				}
+			} else if oldState == autogen.Canceled && *params.State == autogen.Valid {
+				account.Balance += int64(refill.Amount)
+				refill.CanceledBy = nil
+				refill.CanceledByName = nil
+
+				err = s.createCashMovement(ctx, admin.Id, admin.Name(), int64(refill.Amount), fmt.Sprintf("Revalidation de recharge %s", refill.Id))
+				if err != nil {
+					return nil, errors.New("failed to create cash movement")
+				}
+			}
+		}
+
+		if params.Type != nil {
+			refill.Type = *params.Type
+		}
+
 		err := s.DBackend.UpdateRefill(ctx, refill)
 		if err != nil {
 			return nil, errors.New("failed to update refill")
