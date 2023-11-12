@@ -1,11 +1,11 @@
 <p align="center">
   <p align="center">
-    <a href="https://github.com/yyewolf/bar/releases/latest"><img alt="Release" src="https://img.shields.io/github/release/yyewolf/bar.svg?style=flat-square"></a>
+    <a href="https://github.com/CETEN-OpenBar/bar/releases/latest"><img alt="Release" src="https://img.shields.io/github/release/CETEN-OpenBar/bar.svg?style=flat-square"></a>
     <a href="/LICENSE"><img alt="Software License" src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square"></a>
-    <a href="https://codeclimate.com/github/yyewolf/bar/test_coverage"><img src="https://api.codeclimate.com/v1/badges/d9fcf617937d6026221f/test_coverage" /></a>
-    <a href="https://codeclimate.com/github/yyewolf/bar/maintainability"><img src="https://api.codeclimate.com/v1/badges/d9fcf617937d6026221f/maintainability" /></a>
-    <a href="https://goreportcard.com/report/github.com/yyewolf/bar/backend"><img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/yyewolf/bar/backend"></a>
-    <a href="https://godoc.org/github.com/yyewolf/bar/backend"><img src="https://godoc.org/github.com/yyewolf/bar/backend?status.svg" alt="GoDoc"></a>
+    <a href="https://codeclimate.com/github/CETEN-OpenBar/bar/test_coverage"><img src="https://api.codeclimate.com/v1/badges/d9fcf617937d6026221f/test_coverage" /></a>
+    <a href="https://codeclimate.com/github/CETEN-OpenBar/bar/maintainability"><img src="https://api.codeclimate.com/v1/badges/d9fcf617937d6026221f/maintainability" /></a>
+    <a href="https://goreportcard.com/report/github.com/CETEN-OpenBar/bar/backend"><img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/CETEN-OpenBar/bar/backend"></a>
+    <a href="https://godoc.org/github.com/CETEN-OpenBar/bar/backend"><img src="https://godoc.org/github.com/CETEN-OpenBar/bar/backend?status.svg" alt="GoDoc"></a>
   </p>
 </p>
 
