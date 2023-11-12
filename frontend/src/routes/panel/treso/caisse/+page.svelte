@@ -3,7 +3,6 @@
 	import type { CashMovement } from '$lib/api';
 	import { cashMovementsApi } from '$lib/requests/requests';
 	import { onMount } from 'svelte';
-	import { stringify } from 'postcss';
 
 	let cashMovements: CashMovement[] = [];
 	let page: number = 0;
@@ -32,29 +31,155 @@
 		maxPage = resp.data.max_page ?? 0;
 	}
 
-    async function transfertCaisse() {
-        let resp = await cashMovementsApi().getCashMovements(0, 1, undefined,{
-            withCredentials: true
-        });
+	async function transfertCaisse() {
+		let resp = await cashMovementsApi().getCashMovements(0, 1, undefined, {
+			withCredentials: true
+		});
 
-        let lastCashMovement = resp.data.cash_movements?.[0];
+		let lastCashMovement = resp.data.cash_movements?.[0];
 
-        if (lastCashMovement) {
-            await cashMovementsApi().createCashMovement({
-                amount: -lastCashMovement.amount,
-                reason: "Transfert de caisse",
-            }, {
-                withCredentials: true
-            });
+		if (lastCashMovement) {
+			await cashMovementsApi().createCashMovement(
+				{
+					amount: -lastCashMovement.amount,
+					reason: 'Transfert de caisse'
+				},
+				{
+					withCredentials: true
+				}
+			);
 
-            await reloadCashMovements();
-        }
-    }
+			await reloadCashMovements();
+		}
+	}
 
 	onMount(async () => {
 		await reloadCashMovements();
 	});
+
+	let majcaisse = false;
+	let amounts: Map<number, number> = new Map();
+	let amountsType: string[] = [
+		'1',
+		'5',
+		'10',
+		'20',
+		'50',
+		'100',
+		'200',
+		'500',
+		'1000',
+		'2000',
+		'5000'
+	];
+	let amountsNames: string[] = [
+		'Pièces de 1 centime',
+		'Pièces de 5 centimes',
+		'Pièces de 10 centimes',
+		'Pièces de 20 centimes',
+		'Pièces de 50 centimes',
+		'Pièces de 1 euro',
+		'Pièces de 2 euros',
+		'Billets de 5 euros',
+		'Billets de 10 euros',
+		'Billets de 20 euros',
+		'Billets de 50 euros'
+	];
 </script>
+
+{#if majcaisse}
+	<!-- overlay -->
+	<button
+		class="fixed inset-0 w-full h-full bg-black bg-opacity-50 cursor-default"
+		style="z-index: 10"
+		aria-hidden="true"
+		on:click={() => (majcaisse = false)}
+	/>
+
+	<!-- modal -->
+	<div class="fixed inset-0 flex items-center justify-center z-10" aria-hidden="true">
+		<div class="max-w-3xl w-full bg-white dark:bg-slate-800 shadow-lg rounded-lg p-6 sm:p-8">
+			<div class="flex flex-col gap-4">
+				<h1 class="text-2xl font-semibold">Mise a jour de la caisse</h1>
+				<div class="grid grid-cols-3 gap-4">
+					{#each amountsType as amount, index}
+						<div class="flex flex-row gap-4 justify-center">
+							<label for={index.toString()} class="self-center text-lg font-semibold"
+								>{amountsNames[index]}:</label
+							>
+							<input
+								id={index.toString()}
+								class="rounded-md bg-slate-200 p-4 w-20"
+								type="number"
+								min="0"
+								step="1"
+								placeholder="Montant"
+								on:change={(e) => {
+									let t = amounts;
+									// @ts-ignore
+									t.set(index, parseInt(e.target.value));
+									amounts = t;
+								}}
+								value={amounts.get(index) ?? 0}
+							/>
+						</div>
+					{/each}
+				</div>
+				<div class="text-3xl font-medium">
+					Total: {formatPrice(
+						Array.from(amounts.entries()).reduce((acc, [index, amount]) => {
+							return acc + amount * parseInt(amountsType[index]);
+						}, 0)
+					)}
+				</div>
+				<!-- Calculate diff with last cash movement -->
+				<div class="text-3xl font-medium">
+					Ecart: {formatPrice(
+						Array.from(amounts.entries()).reduce((acc, [index, amount]) => {
+							return acc + amount * parseInt(amountsType[index]);
+						}, 0) - (cashMovements[0]?.amount ?? 0)
+					)}
+				</div>
+				<div class="flex flex-col gap-4">
+					<div class="flex flex-row gap-4">
+						<button
+							class="p-4 bg-red-200 rounded-lg"
+							on:click={() => {
+								majcaisse = false;
+							}}
+						>
+							Annuler
+						</button>
+						<button
+							class="p-4 bg-green-200 rounded-lg"
+							on:click={async () => {
+								// Add all amounts
+								await cashMovementsApi().createCashMovement(
+									{
+										amount:
+											Array.from(amounts.entries()).reduce((acc, [index, amount]) => {
+												return acc + amount * parseInt(amountsType[index]);
+											}, 0) - (cashMovements[0]?.amount ?? 0),
+										reason: 'Mise a jour de caisse'
+									},
+									{
+										withCredentials: true
+									}
+								);
+
+								await reloadCashMovements();
+
+								majcaisse = false;
+							}}
+						>
+							Valider
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{/if}
 
 <div class="w-full flex flex-col items-center">
 	<div class="flex flex-col p-5 gap-3">
@@ -75,12 +200,18 @@
 	</div>
 	<div class="flex flex-col p-5 gap-3">
 		<div class="flex flex-row gap-4">
-            <button class="p-4 bg-red-200 rounded-lg" on:click={transfertCaisse}>
-                Transfert de caisse
-            </button>
-            <a class="p-4 bg-green-200 rounded-lg" href="majcaisse">
-                Mise a jour de caisse
-            </a>
+			<button class="p-4 bg-red-200 rounded-lg" on:click={transfertCaisse}>
+				Transfert de caisse
+			</button>
+			<button
+				class="p-4 bg-green-200 rounded-lg"
+				on:click={() => {
+					majcaisse = true;
+					amounts = new Map();
+				}}
+			>
+				Mise a jour de caisse
+			</button>
 		</div>
 	</div>
 	<div
