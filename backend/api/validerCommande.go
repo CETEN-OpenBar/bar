@@ -31,6 +31,10 @@ func (s *Server) PatchTransactionId(c echo.Context, accountId autogen.UUID, tran
 
 	oldState := transaction.State
 
+	if oldState == params.State {
+		return Error400(c)
+	}
+
 	if oldState != autogen.TransactionCanceled && params.State == autogen.TransactionCanceled {
 		transaction.State = params.State
 		_, err = s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {
@@ -165,83 +169,35 @@ func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, 
 	oldCost := item.TotalCost
 
 	if params.State != nil {
+		if oldState == *params.State {
+			return Error400(c)
+		}
+
+		if oldState == autogen.TransactionItemCanceled {
+			return Error400(c)
+		}
+
 		item.State = *params.State
-	} else if params.Amount != nil {
-		if *params.Amount > oldAmount {
-			return Error400(c)
-		}
-		item.ItemAmount = *params.Amount
-		item.TotalCost = *params.Amount * item.UnitCost
-	}
-
-	if params.AlreadyDone != nil {
-		if *params.AlreadyDone > item.ItemAmount {
-			return Error400(c)
-		}
-		item.ItemAlreadyDone = *params.AlreadyDone
-		if item.ItemAlreadyDone == item.ItemAmount {
-			item.State = autogen.TransactionItemFinished
-		}
-	}
-
-	origItem, err := s.DBackend.GetItem(c.Request().Context(), itemId.String())
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			return ErrorItemNotFound(c)
-		}
-		logrus.Error(err)
-		return Error500(c)
-	}
-
-	if oldState == autogen.TransactionItemCanceled && item.State != autogen.TransactionItemCanceled {
-		// Can't do that
-		return Error400(c)
 	}
 
 	_, err = s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {
-		if oldState != autogen.TransactionItemCanceled && item.State == autogen.TransactionItemCanceled {
-			origItem.AmountLeft += item.ItemAmount
-			account.Points += int64(item.TotalCost)
-			transaction.TotalCost -= item.TotalCost
-
-			if item.IsMenu {
-				if item.MenuItems != nil {
-					for _, subitem := range *item.MenuItems {
-						origSubItem, err := s.DBackend.GetItem(c.Request().Context(), subitem.Id.String())
-						if err != nil {
-							if err == mongo.ErrNoDocuments {
-								continue
-							}
-							logrus.Error(err)
-							return nil, errors.New("failed to get item")
-						}
-						origSubItem.AmountLeft += subitem.Amount
-						err = s.DBackend.UpdateItem(c.Request().Context(), origSubItem)
-						if err != nil {
-							logrus.Error(err)
-							return nil, errors.New("failed to update item")
-						}
-					}
-				}
-
-				if item.PickedCategoriesItems != nil {
-					for _, pickedItem := range *item.PickedCategoriesItems {
-						pItem, err := s.DBackend.GetItem(ctx, pickedItem.ItemId.String())
-						if err != nil {
-							continue
-						}
-						pItem.AmountLeft += pickedItem.ItemAmount
-						err = s.DBackend.UpdateItem(ctx, pItem)
-						if err != nil {
-							logrus.Error(err)
-							return nil, errors.New("failed to update item")
-						}
-					}
-				}
+		origItem, err := s.DBackend.GetItem(c.Request().Context(), itemId.String())
+		if err != nil {
+			if err == mongo.ErrNoDocuments {
+				return nil, ErrorItemNotFound(c)
 			}
-		} else {
-			origItem.AmountLeft += oldAmount - item.ItemAmount
-			account.Points += int64(oldCost - item.TotalCost)
+			logrus.Error(err)
+			return nil, Error500(c)
+		}
+
+		if params.Amount != nil {
+			if *params.Amount > oldAmount {
+				return nil, Error400(c)
+			}
+			item.ItemAmount = *params.Amount
+			item.TotalCost = *params.Amount * item.UnitCost
+
+			// Calculate transaction total cost
 			transaction.TotalCost += item.TotalCost - oldCost
 
 			if item.IsMenu {
@@ -280,7 +236,59 @@ func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, 
 				}
 			}
 		}
-		item.TotalCost = 0
+
+		if params.AlreadyDone != nil {
+			if *params.AlreadyDone > item.ItemAmount {
+				return nil, Error400(c)
+			}
+			item.ItemAlreadyDone = *params.AlreadyDone
+			if item.ItemAlreadyDone == item.ItemAmount {
+				item.State = autogen.TransactionItemFinished
+			}
+		}
+
+		if oldState != autogen.TransactionItemCanceled && item.State == autogen.TransactionItemCanceled {
+			origItem.AmountLeft += item.ItemAmount
+			account.Points += int64(item.TotalCost)
+			transaction.TotalCost -= item.TotalCost
+			item.TotalCost = 0
+
+			if item.IsMenu {
+				if item.MenuItems != nil {
+					for _, subitem := range *item.MenuItems {
+						origSubItem, err := s.DBackend.GetItem(c.Request().Context(), subitem.Id.String())
+						if err != nil {
+							if err == mongo.ErrNoDocuments {
+								continue
+							}
+							logrus.Error(err)
+							return nil, errors.New("failed to get item")
+						}
+						origSubItem.AmountLeft += subitem.Amount
+						err = s.DBackend.UpdateItem(c.Request().Context(), origSubItem)
+						if err != nil {
+							logrus.Error(err)
+							return nil, errors.New("failed to update item")
+						}
+					}
+				}
+
+				if item.PickedCategoriesItems != nil {
+					for _, pickedItem := range *item.PickedCategoriesItems {
+						pItem, err := s.DBackend.GetItem(ctx, pickedItem.ItemId.String())
+						if err != nil {
+							continue
+						}
+						pItem.AmountLeft += pickedItem.ItemAmount
+						err = s.DBackend.UpdateItem(ctx, pItem)
+						if err != nil {
+							logrus.Error(err)
+							return nil, errors.New("failed to update item")
+						}
+					}
+				}
+			}
+		}
 
 		err = s.DBackend.UpdateTransaction(ctx, transaction)
 		if err != nil {
