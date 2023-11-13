@@ -13,7 +13,7 @@
 
 	// Update item when clicking on it
 	function clickWrapper(item: Item) {
-		reloadItems();
+		reloadItems(false);
 		// Update current item
 		for (let i = 0; i < items.length; i++) {
 			if (items[i].id === item.id) {
@@ -52,7 +52,7 @@
 		reloadItems();
 	});
 
-	function reloadItems() {
+	function reloadItems(anim: boolean = true) {
 		itemsApi()
 			.getCategoryItems(category, page, limit, state, { withCredentials: true })
 			.then((res) => {
@@ -60,12 +60,15 @@
 				page = res.data.page ?? 0;
 				limit = res.data.limit ?? 15;
 
-				let newItems = res.data.items ?? [];
-
-				items = [];
-				setTimeout(() => {
-					items = newItems;
-				}, 100);
+				if (anim) {
+					let newItems = res.data.items ?? [];
+					items = [];
+					setTimeout(() => {
+						items = newItems;
+					}, 10);
+				} else {
+					items = res.data.items ?? [];
+				}
 			})
 			.catch((err) => {
 				console.log(err);
