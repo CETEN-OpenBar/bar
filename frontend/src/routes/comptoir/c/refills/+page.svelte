@@ -12,6 +12,12 @@
 		newRefill = false;
 	}
 
+	function reset(){
+		askForCard = false;
+		askForPin = false;
+		to_call = () => {};
+	}
+
 	let to_call = open_door;
 	let infos = {
 		card_id: '',
@@ -27,7 +33,7 @@
 		id="overlay"
 		class="absolute w-full h-full top-0 left-0 bg-black bg-opacity-50 flex justify-center items-center z-10 hover:cursor-default"
 		on:click={() => {
-			askForCard = false;
+			reset();
 		}}
 	/>
 
@@ -38,7 +44,7 @@
 			<button
 				class="absolute top-0 right-0 p-2 text-xl font-bold m-2 rounded-full transition-all text-black"
 				on:click={() => {
-					askForCard = false;
+					reset();
 				}}
 			>
 				<iconify-icon icon="mdi:close" />
@@ -49,10 +55,9 @@
 
 	<ReadCard
 		callback={(id) => {
-			if (id == '') askForCard = false;
 			infos.card_id = id;
-			askForCard = false;
 			askForPin = true;
+			askForCard = false;
 		}}
 	/>
 {/if}
@@ -60,11 +65,9 @@
 {#if askForPin}
 	<Pin
 		callback={(pin) => {
-			if (pin == '') askForPin = false;
 			infos.card_pin = pin;
-			askForCard = false;
-			askForPin = false;
 			to_call(infos.card_id, infos.card_pin);
+			reset();
 		}}
 	/>
 {/if}
