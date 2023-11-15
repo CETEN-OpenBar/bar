@@ -121,6 +121,11 @@ func routes(e *echo.Echo) {
 			return err
 		}
 
+		// Check if context has been closed
+		if c.Response().Committed {
+			return nil
+		}
+
 		return sendToACM(c, []byte("1"))
 	})
 
@@ -129,12 +134,22 @@ func routes(e *echo.Echo) {
 			return err
 		}
 
+		// Check if context has been closed
+		if c.Response().Committed {
+			return nil
+		}
+
 		return sendToACM(c, []byte("2"))
 	})
 
 	e.POST("/ventilo", func(c echo.Context) error {
 		if err := checkRequest(c); err != nil {
 			return err
+		}
+
+		// Check if context has been closed
+		if c.Response().Committed {
+			return nil
 		}
 
 		return sendToACM(c, []byte("3"))
