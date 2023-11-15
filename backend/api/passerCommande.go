@@ -266,11 +266,11 @@ func (s *Server) PostTransactions(c echo.Context) error {
 		}
 
 		// update account balance
-
-		account.Balance -= int64(transactionCost) - account.Points
-		account.Points -= int64(transactionCost)
-		if account.Points < 0 {
+		if int64(transactionCost) > account.Points {
+			account.Balance -= int64(transactionCost) - account.Points
 			account.Points = 0
+		} else {
+			account.Points -= int64(transactionCost)
 		}
 
 		err = s.DBackend.UpdateAccount(ctx, account)
