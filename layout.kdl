@@ -22,7 +22,7 @@ layout {
 	}
 
 	tab name="editor" {
-		pane cwd="./" command="hx" {
+		pane cwd="./" command="nvim" {
 			args "./"
 		}
 	}

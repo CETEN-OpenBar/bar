@@ -45,7 +45,7 @@
 <div id="popup" class="absolute w-full h-full top-0 left-0 flex justify-center items-center">
 	<div
 		class="relative text-black flex flex-col justify-center items-center gap-4 p-10 h-96 bg-white rounded-xl shadow-xl z-20"
-	>
+			>
 		<!-- button to close the popup -->
 		<button
 			class="absolute top-0 right-0 p-2 text-xl font-bold m-2 rounded-full transition-all text-black"
@@ -61,7 +61,22 @@
 		{:else}
 			<h1 class="text-3xl">Veuillez entrer le montant de la recharge.</h1>
 
-			<div class="flex flex-col gap-8">
+			<div 
+				class="flex flex-col gap-8"
+				on:keypress={(e) => {
+					if (e.key == 'Enter')
+						refillsApi()
+							.postRefill(card.id, card.amount, card.type, { withCredentials: true })
+							.then(() => {
+								success = 'Recharge effectuée avec succès.';
+								close();
+							})
+							.catch(() => {
+								error = 'Une erreur est survenue.';
+							});
+					}
+				}
+				>
 				<div class="flex flex-col">
 					<label for="price-new" class="block text-xl mb-2 align-middle">Montant :</label>
 					<input
@@ -113,6 +128,7 @@
 			<button
 				class="text-3xl bg-green-500 p-4 rounded-xl hover:bg-green-700 transition-all text-white"
 				on:click={() => {
+					console.log(card);
 					refillsApi()
 						.postRefill(card.id, card.amount, card.type, { withCredentials: true })
 						.then(() => {
