@@ -31,7 +31,7 @@
 			vip: 0,
 			interne: 0,
 			membre_bureau: 0,
-			membre_privilegie: 0,
+			membre_privilegie: 0
 		} as ItemPrices,
 		amount_left: 0,
 		buy_limit: undefined,
@@ -232,8 +232,8 @@
 										required
 										aria-describedby="text-error"
 										bind:value={newItemPriceRole}
-										on:change={// resets the value of the price input
-										() => {
+										on:change={() => {
+											// resets the value of the price input
 											// Remove the value of elems with id "price"
 											let elems = document.querySelectorAll('[id=price-new]');
 											elems.forEach((elem) => {
@@ -481,15 +481,9 @@
 
 						<div class="px-4 mx-4 grid grid-cols-3 gap-4">
 							<!-- Titles -->
-							<div class="text-lg dark:text-white">
-								Par catégorie
-							</div>
-							<div class="text-lg dark:text-white">
-								Par état
-							</div>
-							<div class="text-lg dark:text-white">
-								Par nom
-							</div>
+							<div class="text-lg dark:text-white">Par catégorie</div>
+							<div class="text-lg dark:text-white">Par état</div>
+							<div class="text-lg dark:text-white">Par nom</div>
 							<div class="relative mt-4 w-96 md:mt-0">
 								<!-- filter by category -->
 								<select
@@ -522,7 +516,7 @@
 									on:change={(e) => {
 										// @ts-ignore
 										let val = e.target?.value;
-										if (val == "") searchState = undefined;
+										if (val == '') searchState = undefined;
 										else searchState = val;
 										reloadItems();
 									}}
@@ -896,7 +890,7 @@
 								</button>
 
 								<p class="text-sm self-center text-gray-600 dark:text-gray-400">
-									Page {page} / {maxPage+1}
+									Page {page} / {maxPage + 1}
 								</p>
 
 								<button
