@@ -7,7 +7,7 @@
 	import NewRefill from '$lib/components/comptoir/newRefill.svelte';
 	import Refills from '$lib/components/comptoir/refills.svelte';
 
-	function reset(){
+	function reset() {
 		askForCard = false;
 		askForPin = false;
 		to_call = () => {};
@@ -107,6 +107,13 @@
 			class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all mr-2"
 			on:click={() => (newRefill = true)}>Nouvelle Recharge</button
 		>
+		<!-- disconnection button -->
+		<button
+			class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
+			on:click={() => goto('/comptoir')}
+		>
+			Deconnexion
+		</button>
 	</div>
 	<hr class="col-span-3" />
 
