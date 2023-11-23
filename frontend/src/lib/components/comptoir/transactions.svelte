@@ -128,16 +128,15 @@
 							<div class="grid grid-cols-3 gap-2">
 								{#each transaction.items as item}
 									<!-- One for each item.amount -->
-									{#each Array(item.item_fake_amount) as _}
-										<div class="flex flex-col justify-center">
-											<img
-												src={api() + item.picture_uri}
-												alt="ca charge"
-												class="w-10 h-10 rounded-2xl self-center"
-											/>
-											<div class="text-center text-black">{item.item_name}</div>
-										</div>
-									{/each}
+									<div class="flex flex-col justify-center">
+										<img
+											src={api() + item.picture_uri}
+											alt="ca charge"
+											class="w-10 h-10 rounded-2xl self-center"
+										/>
+										<div class="text-center text-black">{item.item_name}</div>
+										<div class="text-center text-black">x {item.item_amount}</div>
+									</div>
 								{/each}
 							</div>
 						</div>
