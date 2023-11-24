@@ -252,8 +252,16 @@ func (s *Server) PostTransactions(c echo.Context) error {
 
 		transaction.TotalCost = transactionCost
 
+		// update account balance
+		if int64(transactionCost) > account.Points {
+			account.Balance -= int64(transactionCost) - account.Points
+			account.Points = 0
+		} else {
+			account.Points -= int64(transactionCost)
+		}
+
 		if account.Role != autogen.AccountGhost {
-			if account.Balance < int64(transactionCost) {
+			if account.Balance < 0 {
 				logrus.Warnf("Account %s does not have enough money", accountID)
 				return nil, Error400(c)
 			}
@@ -263,14 +271,6 @@ func (s *Server) PostTransactions(c echo.Context) error {
 		if err != nil {
 			logrus.Error(err)
 			return nil, errors.New("failed to create transaction")
-		}
-
-		// update account balance
-		if int64(transactionCost) > account.Points {
-			account.Balance -= int64(transactionCost) - account.Points
-			account.Points = 0
-		} else {
-			account.Points -= int64(transactionCost)
 		}
 
 		err = s.DBackend.UpdateAccount(ctx, account)
