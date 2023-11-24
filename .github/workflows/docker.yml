@@ -80,3 +80,15 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    needs: [push_back_to_registry, push_front_to_registry]
+    name: Deploy to production
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Deploy to production
+        run: |
+          curl -X GET ${{ env.CD_URL }}
