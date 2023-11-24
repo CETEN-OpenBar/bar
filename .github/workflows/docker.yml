@@ -90,5 +90,4 @@ jobs:
       packages: write
     steps:
       - name: Deploy to production
-        run: |
-          curl -X GET ${{ env.CD_URL }}
+        run: curl -X GET ${{ secrets.CD_URL }}
