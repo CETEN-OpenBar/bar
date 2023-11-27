@@ -99,6 +99,7 @@ func (s *Server) CreateRestock(c echo.Context) error {
 
 			item.AmountLeft += restockItem.AmountOfBundle * restockItem.AmountPerBundle
 			item.LastTva = &restockItem.Tva
+			item.Prices.MembreBureau = uint64(float64(restockItem.BundleCostHt) / float64(restockItem.AmountOfBundle))
 
 			err = s.DBackend.UpdateItem(c.Request().Context(), item)
 			if err != nil {
