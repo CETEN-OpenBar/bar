@@ -508,13 +508,11 @@
 														});
 												}}
 											>
-												<option value="interne">Interne</option>
-												<option value="exte">Exte</option>
+												<option value="externe">Externe</option>
 												<option value="ceten">CETEN</option>
-												<option value="vip">VIP</option>
 												<option value="staff">Staff</option>
-												<option value="membre">Membre</option>
-												<option value="membre_privilegie">Membre privilégié</option>
+												<option value="coutant">Coutant</option>
+												<option value="privilegies">Membre privilégié</option>
 											</select>
 										</div>
 									</td>

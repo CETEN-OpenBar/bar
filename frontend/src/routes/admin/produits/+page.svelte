@@ -25,13 +25,12 @@
 		name: '',
 		picture: '',
 		prices: {
-			exte: 0,
+			externe: 0,
 			ceten: 0,
-			staff: 0,
-			vip: 0,
-			interne: 0,
-			membre_bureau: 0,
-			membre_privilegie: 0
+			staff_bar: 0,
+			coutant: 0,
+			privilegies: 0,
+			menu: 0,
 		} as ItemPrices,
 		amount_left: 0,
 		buy_limit: undefined,
@@ -244,13 +243,12 @@
 											});
 										}}
 									>
-										<option value="interne">Prix interne</option>
-										<option value="exte">Prix externe</option>
-										<option value="ceten">Prix ceten</option>
-										<option value="staff">Prix staff</option>
-										<option value="vip">Prix VIP</option>
-										<option value="membre_bureau">Prix Membre</option>
-										<option value="membre_privilegie">Prix Membre privilégié</option>
+										<option value="coutant">Prix réel coutant</option>
+										<option value="externe">Prix réel externe</option>
+										<option value="ceten">Prix réel ceten</option>
+										<option value="staff_bar">Prix réel staff</option>
+										<option value="privilegies">Prix réel privilégiés</option>
+										<option value="menu">Prix réel menu</option>
 									</select>
 								</div>
 
@@ -442,13 +440,12 @@
 						aria-describedby="text-error"
 						bind:value={promoItemPriceRole}
 					>
-						<option value="interne">Prix réel interne</option>
-						<option value="exte">Prix réel externe</option>
+						<option value="coutant">Prix réel coutant</option>
+						<option value="externe">Prix réel externe</option>
 						<option value="ceten">Prix réel ceten</option>
-						<option value="staff">Prix réel staff</option>
-						<option value="vip">Prix réel VIP</option>
-						<option value="membre_bureau">Prix réel Membre</option>
-						<option value="membre_privilegie">Prix réel Membre privilégié</option>
+						<option value="staff_bar">Prix réel staff</option>
+						<option value="privilegies">Prix réel privilégiés</option>
+						<option value="menu">Prix réel menu</option>
 					</select>
 					<div class="relative">
 						<span class="self-center text-sm text-gray-400"
@@ -662,13 +659,12 @@
 											});
 										}}
 									>
-										<option value="interne">Prix interne</option>
-										<option value="exte">Prix externe</option>
-										<option value="ceten">Prix ceten</option>
-										<option value="staff">Prix staff</option>
-										<option value="vip">Prix VIP</option>
-										<option value="membre_bureau">Prix Membre</option>
-										<option value="membre_privilegie">Prix Membre privilégié</option>
+										<option value="coutant">Prix réel coutant</option>
+										<option value="externe">Prix réel externe</option>
+										<option value="ceten">Prix réel ceten</option>
+										<option value="staff_bar">Prix réel staff</option>
+										<option value="privilegies">Prix réel privilégiés</option>
+										<option value="menu">Prix réel menu</option>
 									</select>
 								</th>
 								<th scope="col" class="px-6 py-3 text-right" />
