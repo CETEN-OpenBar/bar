@@ -20,20 +20,18 @@ func (i *Item) RealPrice(r AccountPriceRole) uint64 {
 	switch r {
 	case AccountPriceCeten:
 		price = i.Prices.Ceten
-	case AccountPriceExte:
-		price = i.Prices.Exte
-	case AccountPriceInterne:
-		price = i.Prices.Interne
-	case AccountPriceMembreBureau:
-		price = i.Prices.MembreBureau
-	case AccountPriceMembrePrivilegie:
-		price = i.Prices.MembrePrivilegie
-	case AccountPriceStaff:
-		price = i.Prices.Staff
-	case AccountPriceVIP:
-		price = i.Prices.Vip
+	case AccountPriceExterne:
+		price = i.Prices.Externe
+	case AccountPriceCoutant:
+		price = i.Prices.Coutant
+	case AccountPricePrivilegies:
+		price = i.Prices.Privilegies
+	case AccountPriceStaffBar:
+		price = i.Prices.StaffBar
+	case AccountPriceMenu:
+		price = i.Prices.Menu
 	default:
-		price = i.Prices.Exte
+		price = i.Prices.Externe
 	}
 
 	if i.Promotion == nil {
@@ -44,7 +42,7 @@ func (i *Item) RealPrice(r AccountPriceRole) uint64 {
 	}
 
 	if price == 0 {
-		price = i.Prices.Exte
+		price = i.Prices.Externe
 	}
 
 	return uint64(float64(price) * (1.0 - (float64(*i.Promotion) / 100.0)))
@@ -62,12 +60,12 @@ func (i *Item) RealPrices() ItemPrices {
 	}
 
 	return ItemPrices{
-		Ceten:            uint64(float64(i.Prices.Ceten) * (1.0 - (float64(*i.Promotion) / 100.0))),
-		Exte:             uint64(float64(i.Prices.Exte) * (1.0 - (float64(*i.Promotion) / 100.0))),
-		MembreBureau:     uint64(float64(i.Prices.MembreBureau) * (1.0 - (float64(*i.Promotion) / 100.0))),
-		MembrePrivilegie: uint64(float64(i.Prices.MembrePrivilegie) * (1.0 - (float64(*i.Promotion) / 100.0))),
-		Staff:            uint64(float64(i.Prices.Staff) * (1.0 - (float64(*i.Promotion) / 100.0))),
-		Vip:              uint64(float64(i.Prices.Vip) * (1.0 - (float64(*i.Promotion) / 100.0))),
+		Ceten:       uint64(float64(i.Prices.Ceten) * (1.0 - (float64(*i.Promotion) / 100.0))),
+		Externe:     uint64(float64(i.Prices.Externe) * (1.0 - (float64(*i.Promotion) / 100.0))),
+		Coutant:     uint64(float64(i.Prices.Coutant) * (1.0 - (float64(*i.Promotion) / 100.0))),
+		Privilegies: uint64(float64(i.Prices.Privilegies) * (1.0 - (float64(*i.Promotion) / 100.0))),
+		StaffBar:    uint64(float64(i.Prices.StaffBar) * (1.0 - (float64(*i.Promotion) / 100.0))),
+		Menu:        uint64(float64(i.Prices.Menu) * (1.0 - (float64(*i.Promotion) / 100.0))),
 	}
 }
 

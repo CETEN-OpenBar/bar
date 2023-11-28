@@ -115,22 +115,22 @@ func part1(mongoDB db.DBackend, mariaDB *sql.DB) {
 
 		switch status {
 		case "0":
-			priceRole = autogen.AccountPriceInterne
+			priceRole = autogen.AccountPriceExterne
 			role = autogen.AccountStudent
 		case "1":
 			priceRole = autogen.AccountPriceCeten
 			role = autogen.AccountStudent
 		case "2":
-			priceRole = autogen.AccountPriceVIP
+			priceRole = autogen.AccountPricePrivilegies
 			role = autogen.AccountStudent
 		case "3":
-			priceRole = autogen.AccountPriceStaff
+			priceRole = autogen.AccountPriceStaffBar
 			role = autogen.AccountStudent
 		case "4":
-			priceRole = autogen.AccountPriceMembrePrivilegie
+			priceRole = autogen.AccountPricePrivilegies
 			role = autogen.AccountStudent
 		case "5":
-			priceRole = autogen.AccountPriceMembreBureau
+			priceRole = autogen.AccountPriceCoutant
 			role = autogen.AccountMember
 		}
 
@@ -235,20 +235,17 @@ func part2(mongoDB db.DBackend, mariaDB *sql.DB) {
 		categoryId := Categories[categorie]
 
 		cetenPrice, _ := strconv.Atoi(strings.ReplaceAll(priceCeten, ".", ""))
-		vipPrice, _ := strconv.Atoi(strings.ReplaceAll(priceVip, ".", ""))
 		staffPrice, _ := strconv.Atoi(strings.ReplaceAll(priceStaff, ".", ""))
 		privilegiePrice, _ := strconv.Atoi(strings.ReplaceAll(pricePrivilegie, ".", ""))
 		bureauPrice, _ := strconv.Atoi(strings.ReplaceAll(priceBureau, ".", ""))
 		extePrice, _ := strconv.Atoi(strings.ReplaceAll(priceExte, ".", ""))
 
 		prices := autogen.ItemPrices{
-			Ceten:            uint64(cetenPrice),
-			Vip:              uint64(vipPrice),
-			Staff:            uint64(staffPrice),
-			MembrePrivilegie: uint64(privilegiePrice),
-			MembreBureau:     uint64(bureauPrice),
-			Exte:             uint64(extePrice),
-			Interne:          uint64(extePrice),
+			Ceten:       uint64(cetenPrice),
+			StaffBar:    uint64(staffPrice),
+			Privilegies: uint64(privilegiePrice),
+			Coutant:     uint64(bureauPrice),
+			Externe:     uint64(extePrice),
 		}
 
 		uid := uuid.New()
