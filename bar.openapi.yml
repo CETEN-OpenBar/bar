@@ -4424,13 +4424,6 @@ components:
       description: Role of the account
       example: student
       enum:
-        # - membre_bureau
-        # - membre_privilegie
-        # - staff
-        # - vip
-        # - ceten
-        # - exte
-        # - interne
         - coutant
         - privilegies
         - staff_bar
@@ -4438,13 +4431,6 @@ components:
         - ceten
         - externe
       x-enum-varnames:
-        # - AccountPriceMembreBureau
-        # - AccountPriceMembrePrivilegie
-        # - AccountPriceStaff
-        # - AccountPriceVIP
-        # - AccountPriceCeten
-        # - AccountPriceExte
-        # - AccountPriceInterne
         - AccountPriceCoutant
         - AccountPriceStaffBar
         - AccountPricePrivilegies
@@ -4573,34 +4559,6 @@ components:
     ItemPrices:
       type: object
       properties:
-        # membre_bureau:
-        #   type: integer
-        #   format: uint64
-        #   example: 1000
-        # membre_privilegie:
-        #   type: integer
-        #   format: uint64
-        #   example: 1000
-        # staff:
-        #   type: integer
-        #   format: uint64
-        #   example: 1000
-        # vip:
-        #   type: integer
-        #   format: uint64
-        #   example: 1000
-        # ceten:
-        #   type: integer
-        #   format: uint64
-        #   example: 1000
-        # exte:
-        #   type: integer
-        #   format: uint64
-        #   example: 1000
-        # interne:
-        #   type: integer
-        #   format: uint64
-        #   example: 1000
         coutant:
           type: integer
           format: uint64
@@ -4626,13 +4584,6 @@ components:
           format: uint64
           example: 1000
       required:
-        # - membre_bureau
-        # - membre_privilegie
-        # - staff
-        # - vip
-        # - ceten
-        # - exte
-        # - interne
         - coutant
         - staff_bar
         - privilegies
