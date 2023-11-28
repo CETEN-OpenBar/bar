@@ -5,8 +5,9 @@ services:
     build:
       dockerfile: Dockerfile
       network: host
-      context: frontend
+      context: .
+    user: 1001:1001
     volumes:
       - ./static/config.json:/app/build/config.json:ro
     ports:
-      - 9998:8080
+      - 9998:3000
