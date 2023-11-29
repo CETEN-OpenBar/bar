@@ -2563,6 +2563,38 @@ export const AccountsApiAxiosParamCreator = function (configuration?: Configurat
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * Listen for changes on account
+         * @summary 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        watchAccount: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/account/watch`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication auth required
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -2693,6 +2725,16 @@ export const AccountsApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.toggleAccountWantsToStaff(options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
+        /**
+         * Listen for changes on account
+         * @summary 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async watchAccount(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConnectCard200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.watchAccount(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
     }
 };
 
@@ -2811,6 +2853,15 @@ export const AccountsApiFactory = function (configuration?: Configuration, baseP
          */
         toggleAccountWantsToStaff(options?: any): AxiosPromise<ToggleAccountWantsToStaff200Response> {
             return localVarFp.toggleAccountWantsToStaff(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Listen for changes on account
+         * @summary 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        watchAccount(options?: any): AxiosPromise<ConnectCard200Response> {
+            return localVarFp.watchAccount(options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -2951,6 +3002,17 @@ export class AccountsApi extends BaseAPI {
      */
     public toggleAccountWantsToStaff(options?: AxiosRequestConfig) {
         return AccountsApiFp(this.configuration).toggleAccountWantsToStaff(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Listen for changes on account
+     * @summary 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AccountsApi
+     */
+    public watchAccount(options?: AxiosRequestConfig) {
+        return AccountsApiFp(this.configuration).watchAccount(options).then((request) => request(this.axios, this.basePath));
     }
 }
 

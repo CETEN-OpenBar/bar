@@ -5,6 +5,7 @@ import (
 	"context"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func (b *Backend) GetAccounts(ctx context.Context, page uint64, size uint64, query string) ([]*models.Account, error) {
@@ -160,4 +161,20 @@ func (b *Backend) GetAccountByEmail(ctx context.Context, email string) (*models.
 	}
 
 	return &account, nil
+}
+
+func (b *Backend) ListenForChanges(ctx context.Context, coll string, fn func(*mongo.ChangeStream)) error {
+	ctx, cancel := b.TimeoutContext(ctx)
+	defer cancel()
+
+	// Watch for changes
+	cs, err := b.db.Collection(coll).Watch(ctx, mongo.Pipeline{})
+	if err != nil {
+		return err
+	}
+
+	// Call function
+	fn(cs)
+
+	return nil
 }

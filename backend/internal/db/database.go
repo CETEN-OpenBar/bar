@@ -38,6 +38,7 @@ type DBackend interface {
 
 	GetDeletedAccounts(ctx context.Context, page uint64, size uint64, query string) ([]*models.Account, error)
 	CountDeletedAccounts(ctx context.Context, query string) (uint64, error)
+	ListenForChanges(ctx context.Context, coll string, fn func(*mongo.ChangeStream)) error
 
 	// CarouselText's CRUD
 	CreateCarouselText(ctx context.Context, ct *models.CarouselText) error

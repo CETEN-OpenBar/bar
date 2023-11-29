@@ -10,7 +10,23 @@
 
 	let account: Account | undefined = undefined;
 
-	onMount(() => {
+	async function listenForChanges() {
+		accountsApi()
+			.watchAccount({
+				withCredentials: true
+			})
+			.then((res) => {
+				account = res.data.account;
+				store.set({ account });
+			})
+			.finally(() => {
+				setTimeout(() => {
+					listenForChanges();
+				}, 1000);
+			});
+	}
+
+	onMount(async () => {
 		accountsApi()
 			.getAccount({
 				withCredentials: true
@@ -22,6 +38,8 @@
 			.catch(() => {
 				goto('/borne');
 			});
+
+		listenForChanges();
 	});
 </script>
 

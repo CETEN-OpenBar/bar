@@ -456,6 +456,34 @@ paths:
         - auth: []
       tags:
         - accounts
+  /account/watch:
+    description: Listen for changes on account
+    get:
+      summary: ""
+      description: Listen for changes on account
+      operationId: watchAccount
+      responses:
+        "200":
+          description: Successfully got account's info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    $ref: "#/components/schemas/Messages"
+                  account:
+                    $ref: "#/components/schemas/Account"
+        "401":
+          description: "Not connected"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - auth: []
+      tags:
+        - accounts
   /account/admin:
     get:
       description: Check if the current account can access the admin panel
