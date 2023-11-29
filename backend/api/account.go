@@ -153,7 +153,7 @@ func (s *Server) PostAccounts(c echo.Context) error {
 		return Error500(c)
 	}
 
-	logrus.Info("Account created: ", account.Account.Id, " by ", admin.Id.String())
+	logrus.WithField("account", account.Name()).WithField("by", admin.Name()).Info("Account created")
 	autogen.PostAccounts200JSONResponse(account.Account).VisitPostAccountsResponse(c.Response())
 	return nil
 }
@@ -173,14 +173,14 @@ func (s *Server) MarkDeleteAccountId(c echo.Context, accountId autogen.UUID) err
 		return Error500(c)
 	}
 
-	logrus.Info("Account marked as deleted: ", accountId, " by ", admin.Id.String())
+	logrus.WithField("account", accountId.String()).WithField("by", admin.Name()).Info("Account marked for deletion")
 	autogen.DeleteAccount204Response{}.VisitDeleteAccountResponse(c.Response())
 	return nil
 }
 
 // (GET /accounts/{account_id})
 func (s *Server) GetAccountId(c echo.Context, accountId autogen.UUID) error {
-	admin, err := MustGetAdmin(c)
+	_, err := MustGetAdmin(c)
 	if err != nil {
 		return nil
 	}
@@ -193,7 +193,6 @@ func (s *Server) GetAccountId(c echo.Context, accountId autogen.UUID) error {
 		return Error500(c)
 	}
 
-	logrus.Info("Account retrieved: ", accountId, " by ", admin.Id.String())
 	autogen.GetAccountId200JSONResponse(account.Account).VisitGetAccountIdResponse(c.Response())
 	return nil
 }
@@ -277,7 +276,7 @@ func (s *Server) PatchAccountId(c echo.Context, accountId autogen.UUID) error {
 		return Error500(c)
 	}
 
-	logrus.Info("Account updated: ", accountId, " by ", admin.Id.String())
+	logrus.WithField("account", account.Name()).WithField("by", admin.Name()).Info("Account updated")
 	autogen.PatchAccountId200JSONResponse(account.Account).VisitPatchAccountIdResponse(c.Response())
 	return nil
 }
@@ -369,7 +368,7 @@ func (s *Server) ImportAccounts(c echo.Context) error {
 		}
 	}
 
-	logrus.Info("Accounts imported: ", len(records)-len(notProcessed), " by ", admin.Id.String())
+	logrus.WithField("by", admin.Name()).Info("Accounts imported")
 	autogen.ImportAccounts200JSONResponse{
 		NotAccepted: &notProcessed,
 	}.VisitImportAccountsResponse(c.Response())
@@ -438,7 +437,7 @@ func (s *Server) AdminToggleAccountWantsToStaff(c echo.Context, accountId autoge
 
 	account.WantsToStaff = !account.WantsToStaff
 
-	logrus.Infof("[%s] Updated %s's wants to staff flag to %v", admin.Id.String(), accountId.String(), account.WantsToStaff)
+	logrus.WithField("account", account.Name()).WithField("by", admin.Name()).Info("Account has been set to 'wants_to_staff'.")
 	err = s.UpdateAccount(c.Request().Context(), account)
 	if err != nil {
 		return Error500(c)

@@ -158,7 +158,7 @@ func (s *Server) PostItem(c echo.Context, categoryId autogen.UUID) error {
 		return PostItem500(c, "Could not save item")
 	}
 
-	logrus.Infof("Item %s created by %s", item.Id.String(), usr.Id.String())
+	logrus.WithField("item", item.Name).WithField("by", usr.Name()).Info("Item created")
 	autogen.PostItem201JSONResponse(item.Item).VisitPostItemResponse(c.Response())
 	return nil
 }

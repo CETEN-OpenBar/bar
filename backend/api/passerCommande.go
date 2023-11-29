@@ -15,17 +15,14 @@ import (
 // (POST /account/transactions)
 func (s *Server) PostTransactions(c echo.Context) error {
 	// Get account from cookie
-	_, err := MustGetUser(c)
+	account, err := MustGetUser(c)
 	if err != nil {
 		return nil
 	}
 
-	accountID := c.Get("userAccountID").(string)
-	account := c.Get("userAccount").(*models.Account)
-
 	transaction := &models.Transaction{
 		Transaction: autogen.Transaction{
-			AccountId:   accountID,
+			AccountId:   account.Id.String(),
 			AccountName: account.Name(),
 			State:       autogen.TransactionStarted,
 			Id:          uuid.New(),
@@ -42,7 +39,7 @@ func (s *Server) PostTransactions(c echo.Context) error {
 	}
 
 	if potentialTransaction.Items == nil || len(potentialTransaction.Items) == 0 {
-		logrus.Warnf("Transaction %s has no items", transaction.Id.String())
+		logrus.WithField("account", account.Name()).Warn("Transaction has no items")
 		return Error400(c)
 	}
 
@@ -54,16 +51,18 @@ func (s *Server) PostTransactions(c echo.Context) error {
 		return nil
 	}
 
+	logrus.WithField("transaction", transaction.Id.String()).WithField("account", account.Name()).Info("Creating transaction")
+
 	_, err = s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {
 		var transactionCost uint64
 		var fetchedItems = make(map[string]*models.Item)
 
 		// Fill up fetchedItems first to avoid multiple updates
 		for _, potentialItem := range potentialTransaction.Items {
-			item, ok := fetchedItems[potentialItem.ItemId.String()]
+			_, ok := fetchedItems[potentialItem.ItemId.String()]
 			if !ok {
 				// Verify that item exists, can be bought, is in stock, and can be bought for that amount
-				item, err = s.DBackend.GetItem(c.Request().Context(), potentialItem.ItemId.String())
+				item, err := s.DBackend.GetItem(c.Request().Context(), potentialItem.ItemId.String())
 				if err != nil {
 					if err == mongo.ErrNoDocuments {
 						return nil, ErrorItemNotFound(c)
@@ -73,7 +72,7 @@ func (s *Server) PostTransactions(c echo.Context) error {
 				}
 				fetchedItems[potentialItem.ItemId.String()] = item
 			} else {
-				logrus.Warnf("Item %s already fetched", item.Id.String())
+				logrus.WithField("account", account.Name()).Warn("Transaction has duplicate items")
 				return nil, Error400(c)
 			}
 		}
@@ -95,7 +94,7 @@ func (s *Server) PostTransactions(c echo.Context) error {
 				fetchedItems[mItem.Id.String()] = mItem
 			}
 			if potentialItem.PickedCategoriesItems == nil && item.MenuCategories != nil && len(*item.MenuCategories) > 0 {
-				logrus.Warnf("Menu item %s has no picked categories", item.Id.String())
+				logrus.WithField("account", account.Name()).Warn("Transaction has no picked items for menu")
 				return nil, Error400(c)
 			}
 			for _, pickedItem := range *potentialItem.PickedCategoriesItems {
@@ -123,7 +122,7 @@ func (s *Server) PostTransactions(c echo.Context) error {
 			t := uint64(time.Since(time.Now().Truncate(24 * time.Hour)).Seconds())
 
 			if item.AvailableFrom != nil && *item.AvailableFrom > t && item.AvailableUntil != nil && *item.AvailableUntil < t {
-				logrus.Warnf("Menu item %s is not available", item.Id.String())
+				logrus.WithField("account", account.Name()).Warn("Menu is not available")
 				return nil, Error400(c)
 			}
 
@@ -139,16 +138,16 @@ func (s *Server) PostTransactions(c echo.Context) error {
 				fetchedItems[mItem.Id.String()] = mItem
 
 				if mItem.State == autogen.ItemNotBuyable {
-					logrus.Warnf("Menu item %s is not buyable", item.Id.String())
+					logrus.WithField("account", account.Name()).Warn("Menu item is not buyable")
 					return nil, Error400(c)
 				}
 				if mItem.AmountLeft < menuItem.Amount {
-					logrus.Warnf("Menu item %s is not in stock", item.Id.String())
+					logrus.WithField("account", account.Name()).Warn("Menu item is not in stock")
 					return nil, Error400(c)
 				}
 				if mItem.BuyLimit != nil {
 					if *item.BuyLimit < menuItem.Amount {
-						logrus.Warnf("Menu item %s cannot be bought for that amount", item.Id.String())
+						logrus.WithField("account", account.Name()).Warn("Menu item cannot be bought for that amount")
 						return nil, Error400(c)
 					}
 				}
@@ -168,7 +167,7 @@ func (s *Server) PostTransactions(c echo.Context) error {
 					}
 				}
 				if !found {
-					logrus.Warnf("Item %s is not in menu but was supplied", pItem.Id.String())
+					logrus.WithField("account", account.Name()).Warn("Menu item is not in menu category")
 					return nil, Error400(c)
 				}
 			}
@@ -184,7 +183,7 @@ func (s *Server) PostTransactions(c echo.Context) error {
 					}
 				}
 				if amountPicked > menuCategory.Amount {
-					logrus.Warnf("Menu category %s cannot be picked for that amount", menuCategory.Id.String())
+					logrus.WithField("account", account.Name()).Warn("Menu category is picked more than the amount")
 					return nil, Error400(c)
 				}
 			}
@@ -194,16 +193,16 @@ func (s *Server) PostTransactions(c echo.Context) error {
 			item := fetchedItems[potentialItem.ItemId.String()]
 
 			if item.State == autogen.ItemNotBuyable {
-				logrus.Warnf("Item %s is not buyable", item.Id.String())
+				logrus.WithField("account", account.Name()).Warn("Item is not buyable")
 				return nil, Error400(c)
 			}
 			if item.AmountLeft < potentialItem.Amount {
-				logrus.Warnf("Item %s is not in stock", item.Id.String())
+				logrus.WithField("account", account.Name()).Warn("Item is not in stock")
 				return nil, Error400(c)
 			}
 			if item.BuyLimit != nil {
 				if *item.BuyLimit < potentialItem.Amount {
-					logrus.Warnf("Item %s cannot be bought for that amount", item.Id.String())
+					logrus.WithField("account", account.Name()).Warn("Item cannot be bought for that amount")
 					return nil, Error400(c)
 				}
 			}
@@ -211,7 +210,7 @@ func (s *Server) PostTransactions(c echo.Context) error {
 			t := uint64(time.Since(time.Now().Truncate(24 * time.Hour)).Seconds())
 
 			if item.AvailableFrom != nil && *item.AvailableFrom > t && item.AvailableUntil != nil && *item.AvailableUntil < t {
-				logrus.Warnf("Menu item %s is not available", item.Id.String())
+				logrus.WithField("account", account.Name()).Warn("Item is not available")
 				return nil, Error400(c)
 			}
 
@@ -262,7 +261,7 @@ func (s *Server) PostTransactions(c echo.Context) error {
 
 		if account.Role != autogen.AccountGhost {
 			if account.Balance < 0 {
-				logrus.Warnf("Account %s does not have enough money", accountID)
+				logrus.WithField("account", account.Name()).Warn("Account has not enough balance to order.")
 				return nil, Error400(c)
 			}
 		}
@@ -298,7 +297,6 @@ func (s *Server) PostTransactions(c echo.Context) error {
 	if c.Response().Committed {
 		return nil
 	}
-
 	autogen.PostTransactions201JSONResponse(transaction.Transaction).VisitPostTransactionsResponse(c.Response())
 	return nil
 }

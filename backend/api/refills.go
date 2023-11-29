@@ -17,7 +17,7 @@ import (
 
 // (GET /refills)
 func (s *Server) GetRefills(c echo.Context, params autogen.GetRefillsParams) error {
-	account, err := MustGetAdmin(c)
+	_, err := MustGetAdmin(c)
 	if err != nil {
 		return nil
 	}
@@ -49,8 +49,6 @@ func (s *Server) GetRefills(c echo.Context, params autogen.GetRefillsParams) err
 	for _, refill := range data {
 		refills = append(refills, refill.Refill)
 	}
-
-	logrus.Infof("Refills have been retrieved by %s", account.Id)
 
 	autogen.GetRefills200JSONResponse{
 		Refills: refills,
@@ -156,7 +154,6 @@ func (s *Server) GetAccountRefills(c echo.Context, accountId string, params auto
 		refills = append(refills, refill.Refill)
 	}
 
-	logrus.Infof("Refills have been retrieved by %s", account.Id)
 	autogen.GetAccountRefills200JSONResponse{
 		Refills: refills,
 		Limit:   limit,
@@ -224,7 +221,7 @@ func (s *Server) PostRefill(c echo.Context, accountId string, params autogen.Pos
 		return Error500(c)
 	}
 
-	logrus.Infof("Refill %s has been created by %s", refill.Id, account.Id)
+	logrus.WithField("refill", refill.Id.String()).WithField("account", account.Name()).Info("Refill created")
 	autogen.PostRefill201JSONResponse(refill.Refill).VisitPostRefillResponse(c.Response())
 	return nil
 }
@@ -301,7 +298,7 @@ func (s *Server) PatchRefillId(c echo.Context, accountId autogen.UUID, refillId 
 		return Error500(c)
 	}
 
-	logrus.Infof("Refill %s has been updated by %s", refill.Id, account.Id)
+	logrus.WithField("refill", refill.Id.String()).WithField("account", account.Name()).Info("Refill updated")
 	autogen.PatchRefillId200JSONResponse(refill.Refill).VisitPatchRefillIdResponse(c.Response())
 	return nil
 }
@@ -326,7 +323,7 @@ func (s *Server) MarkDeleteRefill(c echo.Context, accountId autogen.UUID, refill
 		return Error500(c)
 	}
 
-	logrus.Infof("Refill %s has been marked deleted by %s", refillId, account.Id)
+	logrus.WithField("refill", refillId.String()).WithField("account", account.Name()).Info("Refill marked for deletion")
 	autogen.MarkDeleteAccountId204Response{}.VisitMarkDeleteAccountIdResponse(c.Response())
 	return nil
 }

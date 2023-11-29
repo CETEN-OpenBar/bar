@@ -94,7 +94,7 @@ func (s *Server) MarkDeleteItem(c echo.Context, categoryId autogen.UUID, itemId 
 		return Error500(c)
 	}
 
-	logrus.Infof("Item %s deleted by %s", itemId.String(), admin.Id.String())
+	logrus.WithField("item", itemId.String()).WithField("by", admin.Name()).Info("Item marked for deletion")
 	autogen.DeleteItem204Response{}.VisitDeleteItemResponse(c.Response())
 	return nil
 }
@@ -185,7 +185,7 @@ func (s *Server) PatchItem(c echo.Context, categoryId autogen.UUID, itemId autog
 		return Error500(c)
 	}
 
-	logrus.Infof("Item %s updated by %s", item.Id.String(), admin.Id.String())
+	logrus.WithField("item", item.Name).WithField("by", admin.Name()).Info("Item updated")
 	autogen.PostItem201JSONResponse(item.Item).VisitPostItemResponse(c.Response())
 	return nil
 }

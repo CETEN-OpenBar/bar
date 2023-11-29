@@ -109,7 +109,7 @@ func (s *Server) MarkDeleteTransactionId(c echo.Context, accountId autogen.UUID,
 		return Error500(c)
 	}
 
-	logrus.Infof("Transaction %s marked as deleted by %s", transactionId.String(), account.Id)
+	logrus.WithField("transaction", transactionId.String()).WithField("by", account.Name()).Info("Transaction marked for deletion")
 	autogen.MarkDeleteTransactionId200JSONResponse{}.VisitMarkDeleteTransactionIdResponse(c.Response())
 	return nil
 }

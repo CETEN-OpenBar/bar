@@ -95,7 +95,7 @@ func (s *Server) PostCategory(c echo.Context) error {
 		return Error500(c)
 	}
 
-	logrus.Infof("Category %s created by %s", category.Id.String(), admin.Id.String())
+	logrus.WithField("category", category.Name).WithField("by", admin.Name()).Info("Category added")
 	autogen.PostCategory201JSONResponse(category.Category).VisitPostCategoryResponse(c.Response())
 	return nil
 }
@@ -122,7 +122,7 @@ func (s *Server) MarkDeleteCategory(c echo.Context, categoryId autogen.UUID) err
 		return Error500(c)
 	}
 
-	logrus.Infof("Category %s marked deleted by %s", categoryId.String(), admin.Id.String())
+	logrus.WithField("category", categoryId.String()).WithField("by", admin.Name()).Info("Category marked for deletion")
 	autogen.MarkDeleteCategory204Response{}.VisitMarkDeleteCategoryResponse(c.Response())
 	return nil
 }
@@ -207,7 +207,7 @@ func (s *Server) PatchCategory(c echo.Context, categoryId autogen.UUID) error {
 		return Error500(c)
 	}
 
-	logrus.Infof("Category %s updated by %s", categoryId.String(), admin.Id.String())
+	logrus.WithField("category", category.Name).WithField("by", admin.Name()).Info("Category updated")
 	autogen.PatchCategory200JSONResponse(category.Category).VisitPatchCategoryResponse(c.Response())
 	return nil
 }

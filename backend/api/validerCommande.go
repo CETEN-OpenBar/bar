@@ -117,6 +117,7 @@ func (s *Server) PatchTransactionId(c echo.Context, accountId autogen.UUID, tran
 			logrus.Error(err)
 			return Error500(c)
 		}
+		logrus.WithField("transaction", transaction.Id.String()).WithField("account", account.Name()).Info("Transaction canceled")
 	} else if oldState == autogen.TransactionCanceled && params.State != autogen.TransactionCanceled {
 		logrus.Error("Cannot validate a canceled transaction")
 		return Error400(c)
@@ -127,6 +128,7 @@ func (s *Server) PatchTransactionId(c echo.Context, accountId autogen.UUID, tran
 			logrus.Error(err)
 			return Error500(c)
 		}
+		logrus.WithField("transaction", transaction.Id.String()).WithField("account", account.Name()).Info("Transaction updated")
 	}
 
 	return nil
@@ -314,5 +316,6 @@ func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, 
 		logrus.Error(err)
 		return Error500(c)
 	}
+	logrus.WithField("transaction", transaction.Id.String()).WithField("account", account.Name()).Info("Transaction updated")
 	return nil
 }

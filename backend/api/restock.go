@@ -122,7 +122,7 @@ func (s *Server) CreateRestock(c echo.Context) error {
 		logrus.Error(err)
 		return nil
 	}
-
+	logrus.WithField("restock", restock.Id.String()).WithField("by", usr.Name()).Info("Created restock")
 	if c.Response().Committed {
 		return nil
 	}
@@ -188,7 +188,7 @@ func (s *Server) DeleteRestock(c echo.Context, restockId autogen.UUID) error {
 		return nil
 	}
 
-	logrus.Infof("Restock %s marked as deleted by %s", restockId.String(), account.Id)
+	logrus.WithField("restock", restockId.String()).WithField("by", account.Name()).Info("Restock marked for deletion")
 	autogen.DeleteRestock204Response{}.VisitDeleteRestockResponse(c.Response())
 	return nil
 }

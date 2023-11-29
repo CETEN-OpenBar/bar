@@ -9,8 +9,9 @@ import (
 	"github.com/gorilla/context"
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	echoLog "github.com/labstack/gommon/log"
-	middleware "github.com/neko-neko/echo-logrus/v2"
+	middlewareL "github.com/neko-neko/echo-logrus/v2"
 	"github.com/neko-neko/echo-logrus/v2/log"
 )
 
@@ -41,9 +42,10 @@ func (s *Server) Serve(c *config.Config) error {
 
 	// Logger
 	log.Logger().SetOutput(os.Stdout)
-	log.Logger().SetLevel(echoLog.INFO)
+	log.Logger().SetLevel(echoLog.WARN)
 	e.Logger = log.Logger()
-	e.Use(middleware.Logger())
+	e.Use(middlewareL.Logger())
+	e.Use(middleware.BodyLimit("15M"))
 
 	userStore := sessions.NewCookieStore([]byte(c.ApiConfig.SessionSecret))
 	adminStore := sessions.NewCookieStore([]byte(c.ApiConfig.AdminSessionSecret))

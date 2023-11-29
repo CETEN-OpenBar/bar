@@ -398,6 +398,7 @@ func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams
 		}
 	}
 
+	logrus.WithField("account", account.Name()).Info("Account logged in using OAuth.")
 	adminService, err := admin.NewService(c.Request().Context(), option.WithTokenSource(oauth2Config.TokenSource(c.Request().Context(), token)))
 	if err != nil {
 		logrus.Error(err)

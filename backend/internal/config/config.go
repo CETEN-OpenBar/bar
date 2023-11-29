@@ -1,8 +1,6 @@
 package config
 
 import (
-	"fmt"
-
 	"github.com/caarlos0/env/v9"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
@@ -49,9 +47,27 @@ func init() {
 	}
 
 	logrus.SetLevel(logrus.InfoLevel)
-	if config.LogLevel == "debug" {
+	switch config.LogLevel {
+	case "info":
+		logrus.SetLevel(logrus.InfoLevel)
+	case "debug":
 		logrus.SetLevel(logrus.DebugLevel)
+	case "warn":
+		logrus.SetLevel(logrus.WarnLevel)
+	case "error":
+		logrus.SetLevel(logrus.ErrorLevel)
+	case "fatal":
+		logrus.SetLevel(logrus.FatalLevel)
+	case "panic":
+		logrus.SetLevel(logrus.PanicLevel)
+	case "trace":
+		logrus.SetLevel(logrus.TraceLevel)
 	}
 
-	logrus.Info("Loaded config: ", fmt.Sprintf("%+v", config))
+	// Always add date to logrus
+	logrus.SetFormatter(&logrus.TextFormatter{
+		FullTimestamp: true,
+	})
+
+	logrus.Info("Loaded config.")
 }

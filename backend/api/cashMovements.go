@@ -90,6 +90,7 @@ func (s *Server) CreateCashMovement(c echo.Context) error {
 		return Error400(c)
 	}
 
+	logrus.WithField("amount", params.Amount).WithField("reason", params.Reason).WithField("by", admin.Name()).Info("Cash movement created")
 	_, err = s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {
 		if err := s.createCashMovement(ctx, admin.Id, admin.Name(), params.Amount, params.Reason); err != nil {
 			return nil, err

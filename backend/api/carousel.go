@@ -85,7 +85,7 @@ func (s *Server) AddCarouselImage(c echo.Context) error {
 		return Error500(c)
 	}
 
-	logrus.Infof("Carousel image %s added by admin %s", uid.String(), admin.Id.String())
+	logrus.WithField("image", carouselImage.Id.String()).WithField("by", admin.Name()).Info("Carousel image added")
 	autogen.AddCarouselImage201JSONResponse(carouselImage.CarouselImage).VisitAddCarouselImageResponse(c.Response())
 	return nil
 }
@@ -140,7 +140,7 @@ func (s *Server) MarkDeleteCarouselImage(c echo.Context, imageId autogen.UUID) e
 		return Error500(c)
 	}
 
-	logrus.Infof("Carousel image %s marked for deletion by admin %s", imageId.String(), admin.Id.String())
+	logrus.WithField("image", imageId.String()).WithField("by", admin.Name()).Info("Carousel image marked for deletion")
 	autogen.MarkDeleteAccountId204Response{}.VisitMarkDeleteAccountIdResponse(c.Response())
 	return nil
 }
@@ -197,7 +197,7 @@ func (s *Server) AddCarouselText(c echo.Context) error {
 		return Error500(c)
 	}
 
-	logrus.Infof("Carousel text %s added by admin %s", t.Id.String(), admin.Id.String())
+	logrus.WithField("text", t.Id.String()).WithField("by", admin.Name()).Info("Carousel text added")
 	autogen.AddCarouselText201JSONResponse(t.CarouselText).VisitAddCarouselTextResponse(c.Response())
 	return nil
 }
@@ -220,6 +220,6 @@ func (s *Server) MarkDeleteCarouselText(c echo.Context, textId autogen.UUID) err
 		return Error500(c)
 	}
 
-	logrus.Infof("Carousel text %s marked for deletion by admin %s", textId.String(), admin.Id.String())
+	logrus.WithField("text", textId.String()).WithField("by", admin.Name()).Info("Carousel text marked for deletion")
 	return nil
 }

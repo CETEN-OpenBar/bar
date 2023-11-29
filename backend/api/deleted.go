@@ -77,7 +77,7 @@ func (s *Server) DeleteAccount(c echo.Context, accountId autogen.UUID) error {
 		return Error500(c)
 	}
 
-	logrus.Infof("Admin %s deleted account %s", account.Id, accountId)
+	logrus.WithField("account", accountId.String()).WithField("by", account.Name()).Info("Account deleted")
 	return nil
 }
 
@@ -101,6 +101,7 @@ func (s *Server) RestoreDeletedAccount(c echo.Context, accountId autogen.UUID) e
 		logrus.Error(err)
 		return Error500(c)
 	}
+	logrus.WithField("account", accountId.String()).WithField("by", account.Name()).Info("Account restored")
 	return nil
 }
 
@@ -173,7 +174,7 @@ func (s *Server) DeleteCarouselImage(c echo.Context, imageId autogen.UUID) error
 		return Error500(c)
 	}
 
-	logrus.Infof("Admin %s deleted carousel image %s", account.Id, imageId)
+	logrus.WithField("image", imageId.String()).WithField("by", account.Name()).Info("Carousel image deleted")
 	return nil
 }
 
@@ -197,6 +198,7 @@ func (s *Server) RestoreDeletedCarouselImage(c echo.Context, imageId autogen.UUI
 		logrus.Error(err)
 		return Error500(c)
 	}
+	logrus.WithField("image", imageId.String()).WithField("by", account.Name()).Info("Carousel image restored")
 	return nil
 }
 
@@ -263,7 +265,7 @@ func (s *Server) DeleteCarouselText(c echo.Context, textId autogen.UUID) error {
 		return Error500(c)
 	}
 
-	logrus.Infof("Admin %s deleted carousel text %s", account.Id, textId)
+	logrus.WithField("text", textId.String()).WithField("by", account.Name()).Info("Carousel text deleted")
 	return nil
 }
 
@@ -359,7 +361,7 @@ func (s *Server) DeleteCategory(c echo.Context, categoryId autogen.UUID) error {
 		return Error500(c)
 	}
 
-	logrus.Infof("Admin %s deleted category %s", account.Id, categoryId)
+	logrus.WithField("category", categoryId.String()).WithField("by", account.Name()).Info("Category deleted")
 	return nil
 }
 
@@ -383,6 +385,7 @@ func (s *Server) RestoreDeletedCategory(c echo.Context, categoryId autogen.UUID)
 		logrus.Error(err)
 		return Error500(c)
 	}
+	logrus.WithField("category", categoryId.String()).WithField("by", account.Name()).Info("Category restored")
 	return nil
 }
 
@@ -455,7 +458,7 @@ func (s *Server) DeleteItem(c echo.Context, itemId autogen.UUID) error {
 		return Error500(c)
 	}
 
-	logrus.Infof("Admin %s deleted item %s", account.Id, itemId)
+	logrus.WithField("item", itemId.String()).WithField("by", account.Name()).Info("Item deleted")
 	return nil
 }
 
@@ -479,6 +482,7 @@ func (s *Server) RestoreDeletedItem(c echo.Context, itemId autogen.UUID) error {
 		logrus.Error(err)
 		return Error500(c)
 	}
+	logrus.WithField("item", itemId.String()).WithField("by", account.Name()).Info("Item restored")
 	return nil
 }
 
@@ -545,7 +549,7 @@ func (s *Server) DeleteRefill(c echo.Context, refillId autogen.UUID) error {
 		return Error500(c)
 	}
 
-	logrus.Infof("Admin %s deleted refill %s", account.Id, refillId)
+	logrus.WithField("refill", refillId.String()).WithField("by", account.Name()).Info("Refill deleted")
 	return nil
 }
 
@@ -569,6 +573,7 @@ func (s *Server) RestoreDeletedRefill(c echo.Context, refillId autogen.UUID) err
 		logrus.Error(err)
 		return Error500(c)
 	}
+	logrus.WithField("refill", refillId.String()).WithField("by", account.Name()).Info("Refill restored")
 	return nil
 }
 
@@ -635,7 +640,7 @@ func (s *Server) DeleteTransaction(c echo.Context, transactionId autogen.UUID) e
 		return Error500(c)
 	}
 
-	logrus.Infof("Admin %s deleted transaction %s", account.Id, transactionId)
+	logrus.WithField("transaction", transactionId.String()).WithField("by", account.Name()).Info("Transaction deleted")
 	return nil
 }
 
@@ -659,5 +664,6 @@ func (s *Server) RestoreDeletedTransaction(c echo.Context, transactionId autogen
 		logrus.Error(err)
 		return Error500(c)
 	}
+	logrus.WithField("transaction", transactionId.String()).WithField("by", account.Name()).Info("Transaction restored")
 	return nil
 }
