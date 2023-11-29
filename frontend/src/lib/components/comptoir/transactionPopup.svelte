@@ -27,6 +27,58 @@
 	};
 	let menuPopup: MenuPopup | undefined;
 
+	async function cancelTransaction() {
+		let res = await transactionsApi().patchTransactionId(
+			newTransaction.account_id,
+			newTransaction.id,
+			'canceled',
+			{
+				withCredentials: true
+			}
+		);
+
+		if (res.status != 200) {
+			error = "Une erreur s'est produite";
+			setTimeout(() => {
+				error = '';
+			}, 1500);
+			return;
+		}
+
+		transaction = newTransaction;
+		success = 'Commande annulée';
+		setTimeout(() => {
+			success = '';
+			close();
+		}, 1500);
+	}
+
+	async function finishTransaction() {
+		let res = await transactionsApi().patchTransactionId(
+			newTransaction.account_id,
+			newTransaction.id,
+			'finished',
+			{
+				withCredentials: true
+			}
+		);
+
+		if (res.status != 200) {
+			error = "Une erreur s'est produite";
+			setTimeout(() => {
+				error = '';
+			}, 1500);
+			return;
+		}
+
+		transaction = newTransaction;
+		success = 'Commande terminée';
+		setTimeout(() => {
+			success = '';
+			close();
+		}, 1500);
+	}
+
 	async function saveTransaction() {
 		for (let i = 0; i < newTransaction.items.length; i++) {
 			let item = newTransaction.items[i];
@@ -281,20 +333,8 @@
 			<div class="flex flex-col gap-4 p-8">
 				<button
 					class="bg-green-500 rounded-xl text-white text-md font-bold p-2 h-20 w-full"
-					on:click={async () => {
-						await saveTransaction();
-						transactionsApi()
-							.patchTransactionId(newTransaction.account_id, newTransaction.id, 'finished', {
-								withCredentials: true
-							})
-							.then(() => {
-								transaction = newTransaction;
-								success = 'Commande terminée';
-								setTimeout(() => {
-									success = '';
-									close();
-								}, 1500);
-							});
+					on:click={() => {
+						finishTransaction();
 					}}
 				>
 					Terminer la commande (paiement)
@@ -302,18 +342,7 @@
 				<button
 					class="bg-gray-500 rounded-xl text-white text-md font-bold p-2 h-20 w-full"
 					on:click={() => {
-						transactionsApi()
-							.patchTransactionId(newTransaction.account_id, newTransaction.id, 'canceled', {
-								withCredentials: true
-							})
-							.then(() => {
-								transaction = newTransaction;
-								success = 'Commande annulée';
-								setTimeout(() => {
-									success = '';
-									close();
-								}, 1500);
-							});
+						cancelTransaction();
 					}}
 				>
 					Annuler la commande (remboursement)
