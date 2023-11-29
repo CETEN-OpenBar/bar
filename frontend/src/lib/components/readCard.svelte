@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { dev } from '$app/environment';
+	import { onDestroy } from 'svelte';
 	export let callback: (card: string) => void = () => {};
 
 	let socket = new WebSocket('ws://localhost:3737/');
@@ -22,6 +23,12 @@
 			}, 1000);
 		};
 	}
+
+	onDestroy(() => {
+		socket.close();
+		// remove the event listener
+		window.removeEventListener('keydown', handleInput);
+	});
 
 	let buffer = '';
 	function handleInput(event: KeyboardEvent) {
