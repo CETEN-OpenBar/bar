@@ -4424,21 +4424,19 @@ components:
       description: Role of the account
       example: student
       enum:
-        - membre_bureau
-        - membre_privilegie
-        - staff
-        - vip
+        - coutant
+        - privilegies
+        - staff_bar
+        - menu
         - ceten
-        - exte
-        - interne
+        - externe
       x-enum-varnames:
-        - AccountPriceMembreBureau
-        - AccountPriceMembrePrivilegie
-        - AccountPriceStaff
-        - AccountPriceVIP
+        - AccountPriceCoutant
+        - AccountPriceStaffBar
+        - AccountPricePrivilegies
+        - AccountPriceMenu
         - AccountPriceCeten
-        - AccountPriceExte
-        - AccountPriceInterne
+        - AccountPriceExterne
     Account:
       type: object
       properties:
@@ -4561,19 +4559,19 @@ components:
     ItemPrices:
       type: object
       properties:
-        membre_bureau:
+        coutant:
           type: integer
           format: uint64
           example: 1000
-        membre_privilegie:
+        staff_bar:
           type: integer
           format: uint64
           example: 1000
-        staff:
+        privilegies:
           type: integer
           format: uint64
           example: 1000
-        vip:
+        menu:
           type: integer
           format: uint64
           example: 1000
@@ -4581,22 +4579,17 @@ components:
           type: integer
           format: uint64
           example: 1000
-        exte:
-          type: integer
-          format: uint64
-          example: 1000
-        interne:
+        externe:
           type: integer
           format: uint64
           example: 1000
       required:
-        - membre_bureau
-        - membre_privilegie
-        - staff
-        - vip
+        - coutant
+        - staff_bar
+        - privilegies
+        - menu
         - ceten
-        - exte
-        - interne
+        - externe
     NewItem:
       type: object
       properties:

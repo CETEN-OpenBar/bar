@@ -141,13 +141,12 @@ export interface Account {
  */
 
 export const AccountPriceRole = {
-    AccountPriceMembreBureau: 'membre_bureau',
-    AccountPriceMembrePrivilegie: 'membre_privilegie',
-    AccountPriceStaff: 'staff',
-    AccountPriceVIP: 'vip',
+    AccountPriceCoutant: 'coutant',
+    AccountPriceStaffBar: 'privilegies',
+    AccountPricePrivilegies: 'staff_bar',
+    AccountPriceMenu: 'menu',
     AccountPriceCeten: 'ceten',
-    AccountPriceExte: 'exte',
-    AccountPriceInterne: 'interne'
+    AccountPriceExterne: 'externe'
 } as const;
 
 export type AccountPriceRole = typeof AccountPriceRole[keyof typeof AccountPriceRole];
@@ -1012,25 +1011,25 @@ export interface ItemPrices {
      * @type {number}
      * @memberof ItemPrices
      */
-    'membre_bureau': number;
+    'coutant': number;
     /**
      * 
      * @type {number}
      * @memberof ItemPrices
      */
-    'membre_privilegie': number;
+    'staff_bar': number;
     /**
      * 
      * @type {number}
      * @memberof ItemPrices
      */
-    'staff': number;
+    'privilegies': number;
     /**
      * 
      * @type {number}
      * @memberof ItemPrices
      */
-    'vip': number;
+    'menu': number;
     /**
      * 
      * @type {number}
@@ -1042,13 +1041,7 @@ export interface ItemPrices {
      * @type {number}
      * @memberof ItemPrices
      */
-    'exte': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ItemPrices
-     */
-    'interne': number;
+    'externe': number;
 }
 /**
  * State of the item
