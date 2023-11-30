@@ -134,7 +134,7 @@
 				<tbody>
 					<tr>
 						{#if selectedItem}
-							<td class="px-4">{formatPrice(selectedItem?.prices['membre_bureau'] ?? -1)}</td>
+							<td class="px-4">{formatPrice(selectedItem?.prices['coutant'] ?? -1)}</td>
 						{:else}
 							<td class="px-4" />
 						{/if}

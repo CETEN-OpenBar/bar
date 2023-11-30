@@ -242,11 +242,11 @@
 									class="p-2"
 									on:click={() => {
 										displayedValues.name = item.name;
-										displayedValues.item_price = formatPrice(item.prices.membre_bureau);
+										displayedValues.item_price = formatPrice(item.prices.coutant);
 										displayedValues.item_price_ht = formatPrice(
-											item.prices.membre_bureau / (1 + (item.last_tva ?? 0) / 10000)
+											item.prices.coutant / (1 + (item.last_tva ?? 0) / 10000)
 										);
-										displayedValues.item_price_calc = item.prices.membre_bureau;
+										displayedValues.item_price_calc = item.prices.coutant;
 										displayedValues.tva = item.last_tva ?? 0;
 										newItem.tva = item.last_tva ?? 0;
 										newItem.item_id = item.id;
@@ -358,8 +358,7 @@
 							placeholder={displayedValues.bundle_cost_ttc}
 							on:change={(e) => {
 								// @ts-ignore
-								newItem.bundle_cost_ht =
-									parsePrice(e.target?.value) / (1 + (newItem.tva ?? 0) / 10000);
+								newItem.bundle_cost_ht = parsePrice(e.target?.value) / (1 + (newItem.tva ?? 0) / 10000);
 								let r = formatPrice(newItem.bundle_cost_ht);
 								displayedValues.bundle_cost_ht = r;
 								displayedValues.bundle_cost_ttc = formatPrice(
