@@ -53,6 +53,32 @@
 		}, 1500);
 	}
 
+	async function putBackTransaction() {
+		let res = await transactionsApi().patchTransactionId(
+			newTransaction.account_id,
+			newTransaction.id,
+			'started',
+			{
+				withCredentials: true
+			}
+		);
+
+		if (res.status != 200) {
+			error = "Une erreur s'est produite";
+			setTimeout(() => {
+				error = '';
+			}, 1500);
+			return;
+		}
+
+		transaction = newTransaction;
+		success = 'Commande remise en attente';
+		setTimeout(() => {
+			success = '';
+			close();
+		}, 1500);
+	}
+
 	async function finishTransaction() {
 		let res = await transactionsApi().patchTransactionId(
 			newTransaction.account_id,
@@ -346,6 +372,14 @@
 					}}
 				>
 					Annuler la commande (remboursement)
+				</button>
+				<button
+					class="bg-red-500 rounded-xl text-white text-md font-bold p-2 h-20 w-full"
+					on:click={() => {
+						putBackTransaction();
+					}}
+				>
+					Remettre la commande
 				</button>
 			</div>
 		</div>
