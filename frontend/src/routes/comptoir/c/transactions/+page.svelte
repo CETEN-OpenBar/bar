@@ -6,6 +6,7 @@
 	import { open_caisse, open_door, open_ventilo } from '$lib/local/local';
 	import NewRefill from '$lib/components/comptoir/newRefill.svelte';
 	import Refills from '$lib/components/comptoir/refills.svelte';
+	import { authApi } from '$lib/requests/requests';
 
 	function reset() {
 		askForCard = false;
@@ -24,6 +25,20 @@
 
 	function close() {
 		newRefill = false;
+	}
+
+
+	function logoutAccount() {
+		authApi()
+			.logout({
+				withCredentials: true
+			})
+			.then(() => {
+				goto('/comptoir');
+			})
+			.catch(() => {
+				goto('/comptoir');
+			});
 	}
 </script>
 
@@ -110,7 +125,7 @@
 		<!-- disconnection button -->
 		<button
 			class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
-			on:click={() => goto('/comptoir')}
+			on:click={() => logoutAccount()}
 		>
 			Deconnexion
 		</button>
