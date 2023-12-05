@@ -2,7 +2,6 @@ package api
 
 import (
 	"bar/autogen"
-	"bar/internal/models"
 	"errors"
 
 	"github.com/labstack/echo/v4"
@@ -17,13 +16,20 @@ func (s *Server) PatchTransactionId(c echo.Context, accountId autogen.UUID, tran
 		return nil
 	}
 
-	account := c.Get("userAccount").(*models.Account)
-
 	// Get transaction from database
 	transaction, err := s.DBackend.GetTransaction(c.Request().Context(), transactionId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorTransactionNotFound(c)
+		}
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	account, err := s.DBackend.GetAccount(c.Request().Context(), transaction.AccountId)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorAccNotFound(c)
 		}
 		logrus.Error(err)
 		return Error500(c)
@@ -141,13 +147,20 @@ func (s *Server) PatchTransactionItemId(c echo.Context, accountId autogen.UUID, 
 		return nil
 	}
 
-	account := c.Get("userAccount").(*models.Account)
-
 	// Get transaction from database
 	transaction, err := s.DBackend.GetTransaction(c.Request().Context(), transactionId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorTransactionNotFound(c)
+		}
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	account, err := s.DBackend.GetAccount(c.Request().Context(), transaction.AccountId)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorAccNotFound(c)
 		}
 		logrus.Error(err)
 		return Error500(c)
