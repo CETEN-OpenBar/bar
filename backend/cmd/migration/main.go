@@ -176,7 +176,7 @@ var Categories = make(map[string]uuid.UUID)
 func part2(mongoDB db.DBackend, mariaDB *sql.DB) {
 	// SELECT product.name, price as exte, cetenPrice as ceten, privilegePrice as vip, barMemberPrice staff, privilegePrice as privilegie, cost as bureau, product.image, stock, type, product_type.name, product_type.image from product join product_type on product.type = product_type.productTypeId;
 
-	rq := `SELECT product.hidden, product.criticalStock, product.name, price as exte, cetenPrice as ceten, privilegePrice as vip, barMemberPrice staff, privilegePrice as privilegie, cost as bureau, product.image, stock, type, product_type.name as categorie, product_type.image as image_categorie, product_type.boolean as categorie_hidden from product join product_type on product.type = product_type.productTypeId;`
+	rq := `SELECT product.hidden, product.criticalStock, product.name, price as exte, cetenPrice as ceten, privilegePrice as vip, barMemberPrice staff, privilegePrice as privilegie, cost as bureau, menuMemberPrice as menu, product.image, stock, type, product_type.name as categorie, product_type.image as image_categorie, product_type.boolean as categorie_hidden from product join product_type on product.type = product_type.productTypeId;`
 
 	rows, err := mariaDB.Query(rq)
 	if err != nil {
@@ -194,6 +194,7 @@ func part2(mongoDB db.DBackend, mariaDB *sql.DB) {
 		var priceStaff string
 		var pricePrivilegie string
 		var priceBureau string
+		var priceMenu string
 		var image []byte
 		var stock int
 		var type_ string
@@ -205,7 +206,7 @@ func part2(mongoDB db.DBackend, mariaDB *sql.DB) {
 			continue
 		}
 
-		var err = rows.Scan(&hidden, &criticalStock, &productName, &priceExte, &priceCeten, &priceVip, &priceStaff, &pricePrivilegie, &priceBureau, &image, &stock, &type_, &categorie, &imageCategorie, &categorieHidden)
+		var err = rows.Scan(&hidden, &criticalStock, &productName, &priceExte, &priceCeten, &priceVip, &priceStaff, &pricePrivilegie, &priceBureau, &priceMenu, &image, &stock, &type_, &categorie, &imageCategorie, &categorieHidden)
 		if err != nil {
 			panic(err)
 		}
@@ -239,6 +240,7 @@ func part2(mongoDB db.DBackend, mariaDB *sql.DB) {
 		privilegiePrice, _ := strconv.Atoi(strings.ReplaceAll(pricePrivilegie, ".", ""))
 		bureauPrice, _ := strconv.Atoi(strings.ReplaceAll(priceBureau, ".", ""))
 		extePrice, _ := strconv.Atoi(strings.ReplaceAll(priceExte, ".", ""))
+		menuPrice, _ := strconv.Atoi(strings.ReplaceAll(priceMenu, ".", ""))
 
 		prices := autogen.ItemPrices{
 			Ceten:       uint64(cetenPrice),
@@ -246,6 +248,7 @@ func part2(mongoDB db.DBackend, mariaDB *sql.DB) {
 			Privilegies: uint64(privilegiePrice),
 			Coutant:     uint64(bureauPrice),
 			Externe:     uint64(extePrice),
+			Menu:        uint64(menuPrice),
 		}
 
 		uid := uuid.New()
