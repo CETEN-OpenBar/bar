@@ -1,7 +1,7 @@
 package api
 
 import (
-	"bar/autogen"https://github.com/CETEN-OpenBar/bar/edit/main/backend/api/restock.go
+	"bar/autogen"
 	"bar/internal/models"
 	"math"
 	"time"
