@@ -510,7 +510,7 @@
 											>
 												<option value="externe">Externe</option>
 												<option value="ceten">CETEN</option>
-												<option value="staff">Staff</option>
+												<option value="staff_bar">Staff</option>
 												<option value="coutant">Coutant</option>
 												<option value="privilegies">Membre privilégié</option>
 											</select>
