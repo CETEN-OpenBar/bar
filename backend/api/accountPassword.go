@@ -21,14 +21,14 @@ func (s *Server) PatchAccountPassword(c echo.Context) error {
 
 	if account.Password == nil {
 		// The user doesn't have a card id yet, so we can set it without checking the pin
-		account.SetPin(param.NewPassword)
+		account.SetPassword(param.NewPassword)
 	} else {
 		// sha256 both pins
 		if !account.VerifyPassword(param.OldPassword) {
 			return Error400(c)
 		}
 
-		account.SetPin(param.NewPassword)
+		account.SetPassword(param.NewPassword)
 	}
 
 	err = s.UpdateAccount(c.Request().Context(), account)
