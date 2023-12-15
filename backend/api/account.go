@@ -183,6 +183,9 @@ func (s *Server) PatchAccountId(c echo.Context, accountId autogen.UUID) error {
 		return Error500(c)
 	}
 
+	if req.Nickname != nil {
+		account.Account.Nickname = req.Nickname
+	}
 	if req.CardId != nil {
 		account.Account.CardId = req.CardId
 		account.SetPin("1234")

@@ -33,6 +33,12 @@
 	});
 
 	modules.push({
+		name: 'Changer un surnom',
+		color: 'bg-red-600',
+		link: '/panel/accounts/nickname'
+	});
+
+	modules.push({
 		name: 'Réappro',
 		color: 'bg-green-600',
 		link: '/panel/products/reappro'
