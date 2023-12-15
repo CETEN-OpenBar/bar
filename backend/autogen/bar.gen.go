@@ -157,6 +157,8 @@ type Account struct {
 	GooglePicture *string `json:"google_picture,omitempty" bson:"google_picture"`
 	Id            UUID    `json:"id" bson:"id"`
 	LastName      string  `json:"last_name" bson:"last_name"`
+	Nickname      *string `json:"nickname,omitempty" bson:"nickname"`
+	Password      *string `json:"-" bson:"password"`
 	Points        int64   `json:"points" bson:"points"`
 
 	// PriceRole Role of the account
@@ -522,11 +524,11 @@ type UUID = openapi_types.UUID
 
 // UpdateAccountAdmin defines model for UpdateAccountAdmin.
 type UpdateAccountAdmin struct {
-	Balance      *int64  `json:"balance,omitempty" bson:"balance"`
 	CardId       *string `json:"card_id,omitempty" bson:"card_id"`
 	EmailAddress *string `json:"email_address,omitempty" bson:"email_address"`
 	FirstName    *string `json:"first_name,omitempty" bson:"first_name"`
 	LastName     *string `json:"last_name,omitempty" bson:"last_name"`
+	Nickname     *string `json:"nickname,omitempty" bson:"nickname"`
 
 	// PriceRole Role of the account
 	PriceRole    *AccountPriceRole      `json:"price_role,omitempty" bson:"price_role"`
@@ -574,8 +576,14 @@ type UpdateItem struct {
 	State *ItemState `json:"state,omitempty" bson:"state"`
 }
 
-// PatchAccountJSONBody defines parameters for PatchAccount.
-type PatchAccountJSONBody struct {
+// PatchAccountPasswordJSONBody defines parameters for PatchAccountPassword.
+type PatchAccountPasswordJSONBody struct {
+	NewPassword string `json:"new_password" bson:"new_password"`
+	OldPassword string `json:"old_password" bson:"old_password"`
+}
+
+// PatchAccountPinJSONBody defines parameters for PatchAccountPin.
+type PatchAccountPinJSONBody struct {
 	CardId     *string `json:"card_id,omitempty" bson:"card_id"`
 	NewCardPin string  `json:"new_card_pin" bson:"new_card_pin"`
 	OldCardPin string  `json:"old_card_pin" bson:"old_card_pin"`
@@ -707,6 +715,12 @@ type CallbackParams struct {
 
 	// State Google OAuth state
 	State string `form:"state" json:"state" bson:"state"`
+}
+
+// ConnectPasswordJSONBody defines parameters for ConnectPassword.
+type ConnectPasswordJSONBody struct {
+	CardId   string `json:"card_id" bson:"card_id"`
+	Password string `json:"password" bson:"password"`
 }
 
 // PostBorneAuthQRJSONBody defines parameters for PostBorneAuthQR.
@@ -875,8 +889,11 @@ type GetTransactionsParams struct {
 	State *TransactionState `form:"state,omitempty" json:"state,omitempty" bson:"state"`
 }
 
-// PatchAccountJSONRequestBody defines body for PatchAccount for application/json ContentType.
-type PatchAccountJSONRequestBody PatchAccountJSONBody
+// PatchAccountPasswordJSONRequestBody defines body for PatchAccountPassword for application/json ContentType.
+type PatchAccountPasswordJSONRequestBody PatchAccountPasswordJSONBody
+
+// PatchAccountPinJSONRequestBody defines body for PatchAccountPin for application/json ContentType.
+type PatchAccountPinJSONRequestBody PatchAccountPinJSONBody
 
 // GetAccountQRJSONRequestBody defines body for GetAccountQR for application/json ContentType.
 type GetAccountQRJSONRequestBody GetAccountQRJSONBody
@@ -892,6 +909,9 @@ type PatchAccountIdJSONRequestBody = UpdateAccountAdmin
 
 // ConnectCardJSONRequestBody defines body for ConnectCard for application/json ContentType.
 type ConnectCardJSONRequestBody ConnectCardJSONBody
+
+// ConnectPasswordJSONRequestBody defines body for ConnectPassword for application/json ContentType.
+type ConnectPasswordJSONRequestBody ConnectPasswordJSONBody
 
 // PostBorneAuthQRJSONRequestBody defines body for PostBorneAuthQR for application/json ContentType.
 type PostBorneAuthQRJSONRequestBody PostBorneAuthQRJSONBody
@@ -929,11 +949,14 @@ type ServerInterface interface {
 	// (GET /account)
 	GetAccount(ctx echo.Context) error
 
-	// (PATCH /account)
-	PatchAccount(ctx echo.Context) error
-
 	// (GET /account/admin)
 	GetAccountAdmin(ctx echo.Context) error
+
+	// (PATCH /account/password)
+	PatchAccountPassword(ctx echo.Context) error
+
+	// (PATCH /account/pin)
+	PatchAccountPin(ctx echo.Context) error
 
 	// (GET /account/qr)
 	GetAccountQRWebsocket(ctx echo.Context) error
@@ -1012,6 +1035,9 @@ type ServerInterface interface {
 
 	// (GET /auth/google/callback)
 	Callback(ctx echo.Context, params CallbackParams) error
+
+	// (POST /auth/password)
+	ConnectPassword(ctx echo.Context) error
 
 	// (GET /auth/qr)
 	GetBorneAuthQRWebsocket(ctx echo.Context) error
@@ -1186,17 +1212,6 @@ func (w *ServerInterfaceWrapper) GetAccount(ctx echo.Context) error {
 	return err
 }
 
-// PatchAccount converts echo context to params.
-func (w *ServerInterfaceWrapper) PatchAccount(ctx echo.Context) error {
-	var err error
-
-	ctx.Set(AuthScopes, []string{})
-
-	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.PatchAccount(ctx)
-	return err
-}
-
 // GetAccountAdmin converts echo context to params.
 func (w *ServerInterfaceWrapper) GetAccountAdmin(ctx echo.Context) error {
 	var err error
@@ -1205,6 +1220,28 @@ func (w *ServerInterfaceWrapper) GetAccountAdmin(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.GetAccountAdmin(ctx)
+	return err
+}
+
+// PatchAccountPassword converts echo context to params.
+func (w *ServerInterfaceWrapper) PatchAccountPassword(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(AuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.PatchAccountPassword(ctx)
+	return err
+}
+
+// PatchAccountPin converts echo context to params.
+func (w *ServerInterfaceWrapper) PatchAccountPin(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(AuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.PatchAccountPin(ctx)
 	return err
 }
 
@@ -1857,6 +1894,17 @@ func (w *ServerInterfaceWrapper) Callback(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.Callback(ctx, params)
+	return err
+}
+
+// ConnectPassword converts echo context to params.
+func (w *ServerInterfaceWrapper) ConnectPassword(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(Local_tokenScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.ConnectPassword(ctx)
 	return err
 }
 
@@ -2965,8 +3013,9 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	}
 
 	router.GET(baseURL+"/account", wrapper.GetAccount)
-	router.PATCH(baseURL+"/account", wrapper.PatchAccount)
 	router.GET(baseURL+"/account/admin", wrapper.GetAccountAdmin)
+	router.PATCH(baseURL+"/account/password", wrapper.PatchAccountPassword)
+	router.PATCH(baseURL+"/account/pin", wrapper.PatchAccountPin)
 	router.GET(baseURL+"/account/qr", wrapper.GetAccountQRWebsocket)
 	router.POST(baseURL+"/account/qr", wrapper.GetAccountQR)
 	router.GET(baseURL+"/account/refills", wrapper.GetSelfRefills)
@@ -2993,6 +3042,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.GET(baseURL+"/auth/google", wrapper.ConnectGoogle)
 	router.GET(baseURL+"/auth/google/begin/:qr_nonce", wrapper.ConnectAccount)
 	router.GET(baseURL+"/auth/google/callback", wrapper.Callback)
+	router.POST(baseURL+"/auth/password", wrapper.ConnectPassword)
 	router.GET(baseURL+"/auth/qr", wrapper.GetBorneAuthQRWebsocket)
 	router.POST(baseURL+"/auth/qr", wrapper.PostBorneAuthQR)
 	router.GET(baseURL+"/carousel/images", wrapper.GetCarouselImages)
@@ -3085,71 +3135,6 @@ func (response GetAccount500JSONResponse) VisitGetAccountResponse(w http.Respons
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PatchAccountRequestObject struct {
-	Body *PatchAccountJSONRequestBody `bson:"body"`
-}
-
-type PatchAccountResponseObject interface {
-	VisitPatchAccountResponse(w http.ResponseWriter) error
-}
-
-type PatchAccount200JSONResponse struct {
-	Account *Account  `json:"account,omitempty" bson:"account"`
-	Message *Messages `json:"message,omitempty" bson:"message"`
-}
-
-func (response PatchAccount200JSONResponse) VisitPatchAccountResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type PatchAccount400JSONResponse HTTPError
-
-func (response PatchAccount400JSONResponse) VisitPatchAccountResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(400)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type PatchAccount401JSONResponse HTTPError
-
-func (response PatchAccount401JSONResponse) VisitPatchAccountResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(401)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type PatchAccount404JSONResponse HTTPError
-
-func (response PatchAccount404JSONResponse) VisitPatchAccountResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(404)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type PatchAccount409JSONResponse HTTPError
-
-func (response PatchAccount409JSONResponse) VisitPatchAccountResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(409)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type PatchAccount500JSONResponse HTTPError
-
-func (response PatchAccount500JSONResponse) VisitPatchAccountResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(500)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
 type GetAccountAdminRequestObject struct {
 }
 
@@ -3200,6 +3185,136 @@ func (response GetAccountAdmin409JSONResponse) VisitGetAccountAdminResponse(w ht
 type GetAccountAdmin500JSONResponse HTTPError
 
 func (response GetAccountAdmin500JSONResponse) VisitGetAccountAdminResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PatchAccountPasswordRequestObject struct {
+	Body *PatchAccountPasswordJSONRequestBody `bson:"body"`
+}
+
+type PatchAccountPasswordResponseObject interface {
+	VisitPatchAccountPasswordResponse(w http.ResponseWriter) error
+}
+
+type PatchAccountPassword200JSONResponse struct {
+	Account *Account  `json:"account,omitempty" bson:"account"`
+	Message *Messages `json:"message,omitempty" bson:"message"`
+}
+
+func (response PatchAccountPassword200JSONResponse) VisitPatchAccountPasswordResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PatchAccountPassword400JSONResponse HTTPError
+
+func (response PatchAccountPassword400JSONResponse) VisitPatchAccountPasswordResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PatchAccountPassword401JSONResponse HTTPError
+
+func (response PatchAccountPassword401JSONResponse) VisitPatchAccountPasswordResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PatchAccountPassword404JSONResponse HTTPError
+
+func (response PatchAccountPassword404JSONResponse) VisitPatchAccountPasswordResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PatchAccountPassword409JSONResponse HTTPError
+
+func (response PatchAccountPassword409JSONResponse) VisitPatchAccountPasswordResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PatchAccountPassword500JSONResponse HTTPError
+
+func (response PatchAccountPassword500JSONResponse) VisitPatchAccountPasswordResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PatchAccountPinRequestObject struct {
+	Body *PatchAccountPinJSONRequestBody `bson:"body"`
+}
+
+type PatchAccountPinResponseObject interface {
+	VisitPatchAccountPinResponse(w http.ResponseWriter) error
+}
+
+type PatchAccountPin200JSONResponse struct {
+	Account *Account  `json:"account,omitempty" bson:"account"`
+	Message *Messages `json:"message,omitempty" bson:"message"`
+}
+
+func (response PatchAccountPin200JSONResponse) VisitPatchAccountPinResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PatchAccountPin400JSONResponse HTTPError
+
+func (response PatchAccountPin400JSONResponse) VisitPatchAccountPinResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PatchAccountPin401JSONResponse HTTPError
+
+func (response PatchAccountPin401JSONResponse) VisitPatchAccountPinResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PatchAccountPin404JSONResponse HTTPError
+
+func (response PatchAccountPin404JSONResponse) VisitPatchAccountPinResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PatchAccountPin409JSONResponse HTTPError
+
+func (response PatchAccountPin409JSONResponse) VisitPatchAccountPinResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PatchAccountPin500JSONResponse HTTPError
+
+func (response PatchAccountPin500JSONResponse) VisitPatchAccountPinResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
@@ -4488,6 +4603,53 @@ func (response Callback301Response) VisitCallbackResponse(w http.ResponseWriter)
 type Callback500JSONResponse HTTPError
 
 func (response Callback500JSONResponse) VisitCallbackResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type ConnectPasswordRequestObject struct {
+	Body *ConnectPasswordJSONRequestBody `bson:"body"`
+}
+
+type ConnectPasswordResponseObject interface {
+	VisitConnectPasswordResponse(w http.ResponseWriter) error
+}
+
+type ConnectPassword200JSONResponse struct {
+	Account *Account  `json:"account,omitempty" bson:"account"`
+	Message *Messages `json:"message,omitempty" bson:"message"`
+}
+
+func (response ConnectPassword200JSONResponse) VisitConnectPasswordResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type ConnectPassword400JSONResponse HTTPError
+
+func (response ConnectPassword400JSONResponse) VisitConnectPasswordResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type ConnectPassword401JSONResponse HTTPError
+
+func (response ConnectPassword401JSONResponse) VisitConnectPasswordResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type ConnectPassword500JSONResponse HTTPError
+
+func (response ConnectPassword500JSONResponse) VisitConnectPasswordResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
@@ -7241,11 +7403,14 @@ type StrictServerInterface interface {
 	// (GET /account)
 	GetAccount(ctx context.Context, request GetAccountRequestObject) (GetAccountResponseObject, error)
 
-	// (PATCH /account)
-	PatchAccount(ctx context.Context, request PatchAccountRequestObject) (PatchAccountResponseObject, error)
-
 	// (GET /account/admin)
 	GetAccountAdmin(ctx context.Context, request GetAccountAdminRequestObject) (GetAccountAdminResponseObject, error)
+
+	// (PATCH /account/password)
+	PatchAccountPassword(ctx context.Context, request PatchAccountPasswordRequestObject) (PatchAccountPasswordResponseObject, error)
+
+	// (PATCH /account/pin)
+	PatchAccountPin(ctx context.Context, request PatchAccountPinRequestObject) (PatchAccountPinResponseObject, error)
 
 	// (GET /account/qr)
 	GetAccountQRWebsocket(ctx context.Context, request GetAccountQRWebsocketRequestObject) (GetAccountQRWebsocketResponseObject, error)
@@ -7324,6 +7489,9 @@ type StrictServerInterface interface {
 
 	// (GET /auth/google/callback)
 	Callback(ctx context.Context, request CallbackRequestObject) (CallbackResponseObject, error)
+
+	// (POST /auth/password)
+	ConnectPassword(ctx context.Context, request ConnectPasswordRequestObject) (ConnectPasswordResponseObject, error)
 
 	// (GET /auth/qr)
 	GetBorneAuthQRWebsocket(ctx context.Context, request GetBorneAuthQRWebsocketRequestObject) (GetBorneAuthQRWebsocketResponseObject, error)
@@ -7517,35 +7685,6 @@ func (sh *strictHandler) GetAccount(ctx echo.Context) error {
 	return nil
 }
 
-// PatchAccount operation middleware
-func (sh *strictHandler) PatchAccount(ctx echo.Context) error {
-	var request PatchAccountRequestObject
-
-	var body PatchAccountJSONRequestBody
-	if err := ctx.Bind(&body); err != nil {
-		return err
-	}
-	request.Body = &body
-
-	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.PatchAccount(ctx.Request().Context(), request.(PatchAccountRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "PatchAccount")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return err
-	} else if validResponse, ok := response.(PatchAccountResponseObject); ok {
-		return validResponse.VisitPatchAccountResponse(ctx.Response())
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
 // GetAccountAdmin operation middleware
 func (sh *strictHandler) GetAccountAdmin(ctx echo.Context) error {
 	var request GetAccountAdminRequestObject
@@ -7563,6 +7702,64 @@ func (sh *strictHandler) GetAccountAdmin(ctx echo.Context) error {
 		return err
 	} else if validResponse, ok := response.(GetAccountAdminResponseObject); ok {
 		return validResponse.VisitGetAccountAdminResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// PatchAccountPassword operation middleware
+func (sh *strictHandler) PatchAccountPassword(ctx echo.Context) error {
+	var request PatchAccountPasswordRequestObject
+
+	var body PatchAccountPasswordJSONRequestBody
+	if err := ctx.Bind(&body); err != nil {
+		return err
+	}
+	request.Body = &body
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.PatchAccountPassword(ctx.Request().Context(), request.(PatchAccountPasswordRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PatchAccountPassword")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(PatchAccountPasswordResponseObject); ok {
+		return validResponse.VisitPatchAccountPasswordResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// PatchAccountPin operation middleware
+func (sh *strictHandler) PatchAccountPin(ctx echo.Context) error {
+	var request PatchAccountPinRequestObject
+
+	var body PatchAccountPinJSONRequestBody
+	if err := ctx.Bind(&body); err != nil {
+		return err
+	}
+	request.Body = &body
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.PatchAccountPin(ctx.Request().Context(), request.(PatchAccountPinRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PatchAccountPin")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(PatchAccountPinResponseObject); ok {
+		return validResponse.VisitPatchAccountPinResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("unexpected response type: %T", response)
 	}
@@ -8242,6 +8439,35 @@ func (sh *strictHandler) Callback(ctx echo.Context, params CallbackParams) error
 		return err
 	} else if validResponse, ok := response.(CallbackResponseObject); ok {
 		return validResponse.VisitCallbackResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// ConnectPassword operation middleware
+func (sh *strictHandler) ConnectPassword(ctx echo.Context) error {
+	var request ConnectPasswordRequestObject
+
+	var body ConnectPasswordJSONRequestBody
+	if err := ctx.Bind(&body); err != nil {
+		return err
+	}
+	request.Body = &body
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.ConnectPassword(ctx.Request().Context(), request.(ConnectPasswordRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ConnectPassword")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(ConnectPasswordResponseObject); ok {
+		return validResponse.VisitConnectPasswordResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("unexpected response type: %T", response)
 	}
@@ -9593,127 +9819,129 @@ func (sh *strictHandler) GetTransactions(ctx echo.Context, params GetTransaction
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
-	"oiP52pOFQxctZHFRT1+e/i8AAP//vyf8dIeIAQA=",
+	"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",
+	"wqGLFrK4qOevz/8XAAD//5QMpge8kQEA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

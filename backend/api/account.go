@@ -29,43 +29,6 @@ func (s *Server) GetAccount(c echo.Context) error {
 	return nil
 }
 
-// (PATCH /account)
-func (s *Server) PatchAccount(c echo.Context) error {
-	account, err := MustGetUser(c)
-	if err != nil {
-		return nil
-	}
-
-	var param autogen.PatchAccountJSONBody
-	err = c.Bind(&param)
-	if err != nil {
-		return Error400(c)
-	}
-
-	if param.CardId != nil && *param.CardId != "" && account.CardId != nil && *account.CardId == "" {
-		// The user doesn't have a card id yet, so we can set it without checking the pin
-		account.CardId = param.CardId
-		account.SetPin(param.NewCardPin)
-	} else {
-		// sha256 both pins
-		if !account.VerifyPin(param.OldCardPin) {
-			return Error400(c)
-		}
-
-		account.SetPin(param.NewCardPin)
-	}
-
-	err = s.UpdateAccount(c.Request().Context(), account)
-	if err != nil {
-		return Error500(c)
-	}
-
-	autogen.PatchAccount200JSONResponse{
-		Account: &account.Account,
-	}.VisitPatchAccountResponse(c.Response())
-	return nil
-}
-
 // (GET /accounts)
 func (s *Server) GetAccounts(c echo.Context, params autogen.GetAccountsParams) error {
 	_, err := MustGetUser(c)
@@ -220,9 +183,6 @@ func (s *Server) PatchAccountId(c echo.Context, accountId autogen.UUID) error {
 		return Error500(c)
 	}
 
-	if req.Balance != nil {
-		account.Account.Balance = *req.Balance
-	}
 	if req.CardId != nil {
 		account.Account.CardId = req.CardId
 		account.SetPin("1234")

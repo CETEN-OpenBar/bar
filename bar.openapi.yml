@@ -192,6 +192,60 @@ paths:
         - local_token: []
       tags:
         - auth
+  /auth/password:
+    description: Connect to account with password
+    post:
+      summary: ""
+      description: Connect account with password
+      operationId: connectPassword
+      requestBody:
+        description: Password
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                card_id:
+                  type: string
+                password:
+                  type: string
+              required:
+                - card_id
+                - password
+      responses:
+        "200":
+          description: "Successfully connected"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    $ref: "#/components/schemas/Messages"
+                  account:
+                    $ref: "#/components/schemas/Account"
+        "400":
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not connected"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - local_token: []
+      tags:
+        - auth
   /auth/qr:
     description: Get the QR code to connect account to Google
     get:
@@ -391,9 +445,10 @@ paths:
         - auth: []
       tags:
         - accounts
+  /account/pin:
     patch:
       description: Update's account card pin / id
-      operationId: patchAccount
+      operationId: patchAccountPin
       requestBody:
         description: Card pin / id
         content:
@@ -410,6 +465,70 @@ paths:
               required:
                 - old_card_pin
                 - new_card_pin
+      responses:
+        "200":
+          description: Successfully updated account's card pin
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    $ref: "#/components/schemas/Messages"
+                  account:
+                    $ref: "#/components/schemas/Account"
+        "400":
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not connected"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Account not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Conflict"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - auth: []
+      tags:
+        - accounts
+  /account/password:
+    patch:
+      description: Update account's password
+      operationId: patchAccountPassword
+      requestBody:
+        description: Passwords
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                old_password:
+                  type: string
+                new_password:
+                  type: string
+              required:
+                - old_password
+                - new_password
       responses:
         "200":
           description: Successfully updated account's card pin
@@ -4391,14 +4510,16 @@ components:
           type: string
         last_name:
           type: string
+        nickname:
+          type: string
         email_address:
           type: string
         card_id:
           type: string
-        balance:
-          type: integer
-          format: int64
-          example: 1000
+        # balance:
+        #   type: integer
+        #   format: int64
+        #   example: 1000
         role:
           $ref: "#/components/schemas/AccountRole"
         price_role:
@@ -4474,6 +4595,8 @@ components:
           type: string
         last_name:
           type: string
+        nickname:
+          type: string
         google_id:
           type: string
         google_picture:
@@ -4491,6 +4614,10 @@ components:
         card_id:
           type: string
         card_pin:
+          type: string
+          x-oapi-codegen-extra-tags:
+            json: "-" # ignore this field in json
+        password:
           type: string
           x-oapi-codegen-extra-tags:
             json: "-" # ignore this field in json

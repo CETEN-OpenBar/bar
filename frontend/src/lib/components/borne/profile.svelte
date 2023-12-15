@@ -33,7 +33,7 @@
 		card.new_pin = pin;
 
 		accountsApi()
-			.patchAccount(
+			.patchAccountPin(
 				{
 					old_card_pin: card.old_pin,
 					new_card_pin: card.new_pin

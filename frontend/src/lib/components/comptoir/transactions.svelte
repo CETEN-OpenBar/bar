@@ -109,7 +109,8 @@
 			</div>
 			<div class="text-lg font-semibold">Montant</div>
 		</div>
-		<div class="flex flex-col max-h-[80vh] overflow-auto" use:dragscroll>
+		<!-- show clearly if there's a scrollbar -->
+		<div use:dragscroll class="flex flex-col max-h-[80vh] overflow-auto">
 			{#each transactions as transaction}
 				<button
 					on:click={() => (displayTransaction = transaction)}
@@ -123,8 +124,9 @@
 					<div class="text-black">
 						Commande de : <b>{transaction.account_name}</b>
 					</div>
-					<div class="flex flex-row justify-between">
-						<div class="p-5 h-full pr-4 w-full">
+					<!-- first col is 90% second is 1% third is 9% -->
+					<div class="grid grid-cols-11 grid-flow-row-dense gap-2">
+						<div class="p-1 h-full pr-1 w-full col-span-10 border-r border-gray-400">
 							<div class="grid grid-cols-3 gap-2">
 								{#each transaction.items as item}
 									<!-- One for each item.amount -->
@@ -132,16 +134,15 @@
 										<img
 											src={api() + item.picture_uri}
 											alt="ca charge"
-											class="w-10 h-10 rounded-2xl self-center"
+											class="w-6 h-6 rounded-2xl self-center"
 										/>
-										<div class="text-center text-black">{item.item_name}</div>
-										<div class="text-center text-black">x {item.item_amount}</div>
+										<div class="text-xs text-center text-black">{item.item_name}</div>
+										<div class="text-xs text-center text-black">x {item.item_amount}</div>
 									</div>
 								{/each}
 							</div>
 						</div>
-						<div class="border-r border-l border-gray-400" />
-						<div class="p-5 pl-4 w-full text-lg self-center text-center text-black">
+						<div class="p-1 pl-1 w-full text-lg self-center text-center text-black col-span-1">
 							{formatPrice(transaction.total_cost)}
 						</div>
 					</div>
