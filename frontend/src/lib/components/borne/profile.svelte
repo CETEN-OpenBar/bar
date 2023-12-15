@@ -101,7 +101,7 @@
 			}}
 			class="ml-2 self-center flex flex-col justify-start"
 		>
-			<h1 class="text-lg text-white font-bold">{account.first_name} {account.last_name}</h1>
+			<h1 class="text-lg text-white font-bold">{account.nickname || account.first_name +" "+ account.last_name}</h1>
 			<div class="flex flex-col justify-center">
 				<Price amount={account.balance} class="text-md text-white self-center" />
 				<Stars stars={account.points} class="text-md text-white self-center" />

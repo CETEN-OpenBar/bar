@@ -122,7 +122,7 @@
 						: ''}"
 				>
 					<div class="text-black">
-						Commande de : <b>{transaction.account_name}</b>
+						Commande de : <b>{transaction.account_nick_name || transaction.account_name}</b>
 					</div>
 					<!-- first col is 90% second is 1% third is 9% -->
 					<div class="grid grid-cols-11 grid-flow-row-dense gap-2">

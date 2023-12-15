@@ -1865,6 +1865,12 @@ export interface Transaction {
      */
     'account_name': string;
     /**
+     * Nickname of the account
+     * @type {string}
+     * @memberof Transaction
+     */
+    'account_nick_name'?: string;
+    /**
      * 
      * @type {number}
      * @memberof Transaction

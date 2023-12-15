@@ -5066,6 +5066,9 @@ components:
         account_name:
           type: string
           description: Name of the account
+        account_nick_name:
+          type: string
+          description: Nickname of the account
         total_cost:
           type: integer
           format: uint64
