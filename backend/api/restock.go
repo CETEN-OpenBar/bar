@@ -12,6 +12,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+func arrondiAuMutilple(x uint64, a uint64) uint64 {
+	return ((x + a/2) / a) * a
+}
+
 // (GET /restocks)
 func (s *Server) GetRestocks(c echo.Context, params autogen.GetRestocksParams) error {
 	_, err := MustGetAdmin(c)
@@ -100,8 +104,32 @@ func (s *Server) CreateRestock(c echo.Context) error {
 
 			item.AmountLeft += restockItem.AmountOfBundle * restockItem.AmountPerBundle
 			item.LastTva = &restockItem.Tva
-			item.Prices.Coutant = uint64(math.Ceil((10000.0+float64(restockItem.Tva)) * float64(restockItem.BundleCostHt) / (10000.0 * float64(restockItem.AmountPerBundle))))
-
+			item.Prices.Coutant = uint64(math.Ceil((10000.0 + float64(restockItem.Tva)) * float64(restockItem.BundleCostHt) / (10000.0 * float64(restockItem.AmountPerBundle))))
+			if item.Prices.Coutant < 30 {
+				item.Prices.Externe = arrondiAuMutilple(item.Prices.Coutant+30, 5)
+				item.Prices.Ceten = arrondiAuMutilple(item.Prices.Coutant+15, 5)
+				item.Prices.StaffBar = arrondiAuMutilple(item.Prices.Coutant+5, 5)
+				item.Prices.Privilegies = arrondiAuMutilple(item.Prices.Coutant+5, 5)
+				item.Prices.Menu =      arrondiAuMutilple(item.Prices.Coutant+10, 5)
+			} else if item.Prices.Coutant >= 30 && item.Prices.Coutant < 130 {
+				item.Prices.Externe = arrondiAuMutilple(item.Prices.Coutant*2, 5)
+				item.Prices.Ceten =     arrondiAuMutilple(item.Prices.Coutant*14/10, 5)
+				item.Prices.StaffBar =     arrondiAuMutilple(item.Prices.Coutant*125/100, 5)
+				item.Prices.Privilegies = arrondiAuMutilple(item.Prices.Coutant*12/10, 5)
+				item.Prices.Menu =      arrondiAuMutilple(item.Prices.Coutant*13/10, 5)
+			} else if item.Prices.Coutant >= 130 && item.Prices.Coutant <= 300 {
+				item.Prices.Externe = arrondiAuMutilple(item.Prices.Coutant*15/10, 5)
+				item.Prices.Ceten =     arrondiAuMutilple(item.Prices.Coutant*125/100, 5)
+				item.Prices.StaffBar =     arrondiAuMutilple(item.Prices.Coutant*115/100, 5)
+				item.Prices.Privilegies = arrondiAuMutilple(item.Prices.Coutant*11/10, 5)
+				item.Prices.Menu =      arrondiAuMutilple(item.Prices.Coutant*12/10, 5)
+			} else if item.Prices.Coutant >= 300 {
+				item.Prices.Externe = arrondiAuMutilple(item.Prices.Coutant*13/10, 5)
+				item.Prices.Ceten =     arrondiAuMutilple(item.Prices.Coutant*115/100, 5)
+				item.Prices.StaffBar =     arrondiAuMutilple(item.Prices.Coutant*11/10, 5)
+				item.Prices.Privilegies = arrondiAuMutilple(item.Prices.Coutant*11/10, 5)
+				item.Prices.Menu =      arrondiAuMutilple(item.Prices.Coutant*125/1000, 5)
+			}
 			err = s.DBackend.UpdateItem(c.Request().Context(), item)
 			if err != nil {
 				logrus.Error(err)
