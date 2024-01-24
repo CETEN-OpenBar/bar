@@ -99,6 +99,7 @@
 			.then((res) => {
 				restoks = [...restoks, res.data];
 			});
+		location.reload();
 	}
 
 	function updatePrices() {
