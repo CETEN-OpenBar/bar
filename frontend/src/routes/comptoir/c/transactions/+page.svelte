@@ -18,7 +18,7 @@
 	let to_call = open_door;
 	let infos = {
 		card_id: '',
-		password: ''
+		card_pin: ''
 	};
 	let askForCard = false;
 	let askForPassword = false;
@@ -81,8 +81,8 @@
 {#if askForPassword}
 	<Password
 		callback={(password) => {
-			infos.password = password;
-			to_call(infos.card_id, infos.password);
+			infos.card_pin = password;
+			to_call(infos.card_id, infos.card_pin);
 			reset();
 		}}
 	/>

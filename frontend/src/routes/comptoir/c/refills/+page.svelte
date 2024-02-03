@@ -5,6 +5,8 @@
 	import Pin from '$lib/components/borne/pin.svelte';
 	import ReadCard from '$lib/components/readCard.svelte';
 	import { open_caisse, open_door, open_ventilo } from '$lib/local/local';
+	import ChangePassword from '$lib/components/comptoir/changePassword.svelte';
+	import Password from '$lib/components/password.svelte';
 
 	let newRefill = false;
 
@@ -14,7 +16,7 @@
 
 	function reset(){
 		askForCard = false;
-		askForPin = false;
+		askForPassword = false;
 		to_call = () => {};
 	}
 
@@ -24,7 +26,7 @@
 		card_pin: ''
 	};
 	let askForCard = false;
-	let askForPin = false;
+	let askForPassword = false;
 </script>
 
 {#if askForCard}
@@ -56,16 +58,16 @@
 	<ReadCard
 		callback={(id) => {
 			infos.card_id = id;
-			askForPin = true;
+			askForPassword = true;
 			askForCard = false;
 		}}
 	/>
 {/if}
 
-{#if askForPin}
-	<Pin
-		callback={(pin) => {
-			infos.card_pin = pin;
+{#if askForPassword}
+	<Password
+		callback={(password) => {
+			infos.card_pin = password;
 			to_call(infos.card_id, infos.card_pin);
 			reset();
 		}}
