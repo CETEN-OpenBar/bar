@@ -21,9 +21,15 @@ layout {
 		}
 	}
 
+	tab name="lazygit" {
+		pane cwd="./" command="lazygit"
+	}
+
 	tab name="editor" {
-		pane cwd="./" command="nvim" {
+		pane cwd="./" command="hx" {
 			args "./"
 		}
 	}
+
+	tab name="console" 
 }
