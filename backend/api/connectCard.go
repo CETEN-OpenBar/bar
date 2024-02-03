@@ -49,7 +49,8 @@ func (s *Server) ConnectCard(c echo.Context) error {
 		onBoardCache.Set(account.Account.Id.String(), account, cache.DefaultExpiration)
 	}
 
-	if !account.VerifyPin(param.CardPin) {
+	// TODO: Remove the verify password once "porte" is updated
+	if !account.VerifyPin(param.CardPin) && !account.VerifyPassword(param.CardPin) {
 		return ErrorAccNotFound(c)
 	}
 
