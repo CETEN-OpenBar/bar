@@ -19,7 +19,7 @@ func (s *Server) PatchAccountPassword(c echo.Context) error {
 		return Error400(c)
 	}
 
-	if account.Password == nil {
+	if account.Password == nil || *account.Password == "" {
 		// The user doesn't have a card id yet, so we can set it without checking the pin
 		account.SetPassword(param.NewPassword)
 	} else {
