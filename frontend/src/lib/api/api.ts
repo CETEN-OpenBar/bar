@@ -52,6 +52,12 @@ export interface Account {
      * @type {string}
      * @memberof Account
      */
+    'nickname'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Account
+     */
     'google_id'?: string;
     /**
      * 
@@ -89,6 +95,12 @@ export interface Account {
      * @memberof Account
      */
     'card_pin': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Account
+     */
+    'password'?: string;
     /**
      * 
      * @type {AccountRole}
@@ -440,6 +452,25 @@ export interface ConnectCardRequest {
      * @memberof ConnectCardRequest
      */
     'card_pin': string;
+}
+/**
+ * 
+ * @export
+ * @interface ConnectPasswordRequest
+ */
+export interface ConnectPasswordRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof ConnectPasswordRequest
+     */
+    'card_id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConnectPasswordRequest
+     */
+    'password': string;
 }
 /**
  * 
@@ -1464,25 +1495,44 @@ export interface NewTransactionItem {
 /**
  * 
  * @export
- * @interface PatchAccountRequest
+ * @interface PatchAccountPasswordRequest
  */
-export interface PatchAccountRequest {
+export interface PatchAccountPasswordRequest {
     /**
      * 
      * @type {string}
-     * @memberof PatchAccountRequest
+     * @memberof PatchAccountPasswordRequest
+     */
+    'old_password': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchAccountPasswordRequest
+     */
+    'new_password': string;
+}
+/**
+ * 
+ * @export
+ * @interface PatchAccountPinRequest
+ */
+export interface PatchAccountPinRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchAccountPinRequest
      */
     'card_id'?: string;
     /**
      * 
      * @type {string}
-     * @memberof PatchAccountRequest
+     * @memberof PatchAccountPinRequest
      */
     'old_card_pin': string;
     /**
      * 
      * @type {string}
-     * @memberof PatchAccountRequest
+     * @memberof PatchAccountPinRequest
      */
     'new_card_pin': string;
 }
@@ -1815,6 +1865,12 @@ export interface Transaction {
      */
     'account_name': string;
     /**
+     * Nickname of the account
+     * @type {string}
+     * @memberof Transaction
+     */
+    'account_nick_name'?: string;
+    /**
      * 
      * @type {number}
      * @memberof Transaction
@@ -1983,6 +2039,12 @@ export interface UpdateAccountAdmin {
      * @type {string}
      * @memberof UpdateAccountAdmin
      */
+    'nickname'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateAccountAdmin
+     */
     'email_address'?: string;
     /**
      * 
@@ -1990,12 +2052,6 @@ export interface UpdateAccountAdmin {
      * @memberof UpdateAccountAdmin
      */
     'card_id'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof UpdateAccountAdmin
-     */
-    'balance'?: number;
     /**
      * 
      * @type {AccountRole}
@@ -2421,41 +2477,6 @@ export const AccountsApiAxiosParamCreator = function (configuration?: Configurat
             };
         },
         /**
-         * Update\'s account card pin / id
-         * @param {PatchAccountRequest} [patchAccountRequest] Card pin / id
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        patchAccount: async (patchAccountRequest?: PatchAccountRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/account`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication auth required
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(patchAccountRequest, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
          * Update account
          * @summary 
          * @param {string} accountId ID of the account
@@ -2489,6 +2510,76 @@ export const AccountsApiAxiosParamCreator = function (configuration?: Configurat
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(updateAccountAdmin, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Update account\'s password
+         * @param {PatchAccountPasswordRequest} [patchAccountPasswordRequest] Passwords
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        patchAccountPassword: async (patchAccountPasswordRequest?: PatchAccountPasswordRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/account/password`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication auth required
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(patchAccountPasswordRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Update\'s account card pin / id
+         * @param {PatchAccountPinRequest} [patchAccountPinRequest] Card pin / id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        patchAccountPin: async (patchAccountPinRequest?: PatchAccountPinRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/account/pin`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication auth required
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(patchAccountPinRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -2683,16 +2774,6 @@ export const AccountsApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Update\'s account card pin / id
-         * @param {PatchAccountRequest} [patchAccountRequest] Card pin / id
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async patchAccount(patchAccountRequest?: PatchAccountRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConnectCard200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.patchAccount(patchAccountRequest, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
          * Update account
          * @summary 
          * @param {string} accountId ID of the account
@@ -2702,6 +2783,26 @@ export const AccountsApiFp = function(configuration?: Configuration) {
          */
         async patchAccountId(accountId: string, updateAccountAdmin?: UpdateAccountAdmin, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Account>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.patchAccountId(accountId, updateAccountAdmin, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Update account\'s password
+         * @param {PatchAccountPasswordRequest} [patchAccountPasswordRequest] Passwords
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async patchAccountPassword(patchAccountPasswordRequest?: PatchAccountPasswordRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConnectCard200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.patchAccountPassword(patchAccountPasswordRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Update\'s account card pin / id
+         * @param {PatchAccountPinRequest} [patchAccountPinRequest] Card pin / id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async patchAccountPin(patchAccountPinRequest?: PatchAccountPinRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConnectCard200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.patchAccountPin(patchAccountPinRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -2816,15 +2917,6 @@ export const AccountsApiFactory = function (configuration?: Configuration, baseP
             return localVarFp.markDeleteAccountId(accountId, options).then((request) => request(axios, basePath));
         },
         /**
-         * Update\'s account card pin / id
-         * @param {PatchAccountRequest} [patchAccountRequest] Card pin / id
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        patchAccount(patchAccountRequest?: PatchAccountRequest, options?: any): AxiosPromise<ConnectCard200Response> {
-            return localVarFp.patchAccount(patchAccountRequest, options).then((request) => request(axios, basePath));
-        },
-        /**
          * Update account
          * @summary 
          * @param {string} accountId ID of the account
@@ -2834,6 +2926,24 @@ export const AccountsApiFactory = function (configuration?: Configuration, baseP
          */
         patchAccountId(accountId: string, updateAccountAdmin?: UpdateAccountAdmin, options?: any): AxiosPromise<Account> {
             return localVarFp.patchAccountId(accountId, updateAccountAdmin, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Update account\'s password
+         * @param {PatchAccountPasswordRequest} [patchAccountPasswordRequest] Passwords
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        patchAccountPassword(patchAccountPasswordRequest?: PatchAccountPasswordRequest, options?: any): AxiosPromise<ConnectCard200Response> {
+            return localVarFp.patchAccountPassword(patchAccountPasswordRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Update\'s account card pin / id
+         * @param {PatchAccountPinRequest} [patchAccountPinRequest] Card pin / id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        patchAccountPin(patchAccountPinRequest?: PatchAccountPinRequest, options?: any): AxiosPromise<ConnectCard200Response> {
+            return localVarFp.patchAccountPin(patchAccountPinRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Add an account to the database
@@ -2958,17 +3068,6 @@ export class AccountsApi extends BaseAPI {
     }
 
     /**
-     * Update\'s account card pin / id
-     * @param {PatchAccountRequest} [patchAccountRequest] Card pin / id
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof AccountsApi
-     */
-    public patchAccount(patchAccountRequest?: PatchAccountRequest, options?: AxiosRequestConfig) {
-        return AccountsApiFp(this.configuration).patchAccount(patchAccountRequest, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
      * Update account
      * @summary 
      * @param {string} accountId ID of the account
@@ -2979,6 +3078,28 @@ export class AccountsApi extends BaseAPI {
      */
     public patchAccountId(accountId: string, updateAccountAdmin?: UpdateAccountAdmin, options?: AxiosRequestConfig) {
         return AccountsApiFp(this.configuration).patchAccountId(accountId, updateAccountAdmin, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Update account\'s password
+     * @param {PatchAccountPasswordRequest} [patchAccountPasswordRequest] Passwords
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AccountsApi
+     */
+    public patchAccountPassword(patchAccountPasswordRequest?: PatchAccountPasswordRequest, options?: AxiosRequestConfig) {
+        return AccountsApiFp(this.configuration).patchAccountPassword(patchAccountPasswordRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Update\'s account card pin / id
+     * @param {PatchAccountPinRequest} [patchAccountPinRequest] Card pin / id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AccountsApi
+     */
+    public patchAccountPin(patchAccountPinRequest?: PatchAccountPinRequest, options?: AxiosRequestConfig) {
+        return AccountsApiFp(this.configuration).patchAccountPin(patchAccountPinRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3176,6 +3297,43 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
             };
         },
         /**
+         * Connect account with password
+         * @summary 
+         * @param {ConnectPasswordRequest} [connectPasswordRequest] Password
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        connectPassword: async (connectPasswordRequest?: ConnectPasswordRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/auth/password`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication local_token required
+            await setApiKeyToObject(localVarHeaderParameter, "X-Local-Token", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(connectPasswordRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Get the QR code to connect account to Google
          * @summary 
          * @param {GetAccountQRRequest} [getAccountQRRequest] Card pin
@@ -3303,6 +3461,17 @@ export const AuthApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
+         * Connect account with password
+         * @summary 
+         * @param {ConnectPasswordRequest} [connectPasswordRequest] Password
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async connectPassword(connectPasswordRequest?: ConnectPasswordRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConnectCard200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.connectPassword(connectPasswordRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * Get the QR code to connect account to Google
          * @summary 
          * @param {GetAccountQRRequest} [getAccountQRRequest] Card pin
@@ -3373,6 +3542,16 @@ export const AuthApiFactory = function (configuration?: Configuration, basePath?
          */
         connectGoogle(r: string, options?: any): AxiosPromise<void> {
             return localVarFp.connectGoogle(r, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Connect account with password
+         * @summary 
+         * @param {ConnectPasswordRequest} [connectPasswordRequest] Password
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        connectPassword(connectPasswordRequest?: ConnectPasswordRequest, options?: any): AxiosPromise<ConnectCard200Response> {
+            return localVarFp.connectPassword(connectPasswordRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Get the QR code to connect account to Google
@@ -3450,6 +3629,18 @@ export class AuthApi extends BaseAPI {
      */
     public connectGoogle(r: string, options?: AxiosRequestConfig) {
         return AuthApiFp(this.configuration).connectGoogle(r, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Connect account with password
+     * @summary 
+     * @param {ConnectPasswordRequest} [connectPasswordRequest] Password
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthApi
+     */
+    public connectPassword(connectPasswordRequest?: ConnectPasswordRequest, options?: AxiosRequestConfig) {
+        return AuthApiFp(this.configuration).connectPassword(connectPasswordRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

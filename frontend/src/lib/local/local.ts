@@ -1,10 +1,10 @@
 import { local_api } from '$lib/config/config';
 
 
-export const open_door = (card_id: string, card_pin: string) => {
+export const open_door = (card_id: string, password: string) => {
     const data = {
         card_id: card_id,
-        card_pin: card_pin
+        password: password
     };
     fetch(local_api() + '/porte', {
         method: 'POST',
@@ -15,10 +15,10 @@ export const open_door = (card_id: string, card_pin: string) => {
     })
 }
 
-export const open_caisse = (card_id: string, card_pin: string) => {
+export const open_caisse = (card_id: string, password: string) => {
     const data = {
         card_id: card_id,
-        card_pin: card_pin
+        password: password
     };
     fetch(local_api() + '/caisse', {
         method: 'POST',
@@ -29,10 +29,10 @@ export const open_caisse = (card_id: string, card_pin: string) => {
     })
 }
 
-export const open_ventilo = (card_id: string, card_pin: string) => {
+export const open_ventilo = (card_id: string, password: string) => {
     const data = {
         card_id: card_id,
-        card_pin: card_pin
+        password: password
     };
     fetch(local_api() + '/ventilo', {
         method: 'POST',

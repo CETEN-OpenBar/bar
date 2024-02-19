@@ -5,12 +5,13 @@
 	import ReadCard from '$lib/components/readCard.svelte';
 	import { open_caisse, open_door, open_ventilo } from '$lib/local/local';
 	import NewRefill from '$lib/components/comptoir/newRefill.svelte';
-	import Refills from '$lib/components/comptoir/refills.svelte';
 	import { authApi } from '$lib/requests/requests';
+	import ChangePassword from '$lib/components/comptoir/changePassword.svelte';
+	import Password from '$lib/components/password.svelte';
 
 	function reset() {
 		askForCard = false;
-		askForPin = false;
+		askForPassword = false;
 		to_call = () => {};
 	}
 
@@ -20,13 +21,13 @@
 		card_pin: ''
 	};
 	let askForCard = false;
-	let askForPin = false;
+	let askForPassword = false;
 	let newRefill = false;
+	let changePassword = false;
 
 	function close() {
 		newRefill = false;
 	}
-
 
 	function logoutAccount() {
 		authApi()
@@ -71,42 +72,51 @@
 	<ReadCard
 		callback={(id) => {
 			infos.card_id = id;
-			askForPin = true;
+			askForPassword = true;
 			askForCard = false;
 		}}
 	/>
 {/if}
 
-{#if askForPin}
-	<Pin
-		callback={(pin) => {
-			infos.card_pin = pin;
+{#if askForPassword}
+	<Password
+		callback={(password) => {
+			infos.card_pin = password;
 			to_call(infos.card_id, infos.card_pin);
 			reset();
 		}}
 	/>
 {/if}
 
+{#if changePassword}
+	<ChangePassword onEnd={() => (changePassword = false)} />
+{/if}
+
 <div class="gap-16 p-5 w-full h-full text-white">
 	<div class="flex flex-row justify-between gap-16 p-2 w-full text-white">
 		<div class="flex flex-row">
-			<h1 class="text-3xl">Panneau de contrôle</h1>
 			<button
-				class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all ml-2"
+				class="text-xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all ml-2"
+				on:click={() => {
+					changePassword = true;
+				}}>changer mdp</button
+			>
+			<button
+				class="text-xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all ml-2"
 				on:click={() => {
 					to_call = open_door;
 					askForCard = true;
 				}}>porte</button
 			>
 			<button
-				class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all ml-2"
+				class="text-xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all ml-2"
 				on:click={() => {
 					to_call = open_ventilo;
 					askForCard = true;
 				}}>ventilo</button
 			>
 			<button
-				class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all ml-2"
+				class="text-xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all ml-2"
 				on:click={() => {
 					to_call = open_caisse;
 					askForCard = true;

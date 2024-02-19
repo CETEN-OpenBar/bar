@@ -21,8 +21,18 @@ func (o *Account) SetPin(pwd string) {
 	o.Account.CardPin = hash.MustHash(pwd)
 }
 
+func (o *Account) SetPassword(pwd string) {
+	h := hash.MustHash(pwd)
+	o.Account.Password = &h
+}
+
 func (o *Account) VerifyPin(pwd string) bool {
 	ok, _ := hash.Verify(o.Account.CardPin, pwd)
+	return ok
+}
+
+func (o *Account) VerifyPassword(pwd string) bool {
+	ok, _ := hash.Verify(*o.Account.Password, pwd)
 	return ok
 }
 
