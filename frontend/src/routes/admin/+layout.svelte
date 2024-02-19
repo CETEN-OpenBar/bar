@@ -149,6 +149,11 @@
 						href="/admin/produits"
 						aria-current="page">Produits</a
 					>
+					<a
+						class="font-medium text-white/[.8] hover:text-white sm:py-6"
+						href="/panel"
+						aria-current="page">Panel</a
+					>
 
 					<div
 						class="hs-dropdown [--strategy:static] sm:[--strategy:fixed] [--adaptive:none] sm:[--trigger:hover] sm:py-4"

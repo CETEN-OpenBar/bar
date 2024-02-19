@@ -30,7 +30,7 @@
 </div>
 
 <div class="bg-slate-900">
-	<Carousel autoplay autoplayDuration={3000} arrows={false} dots={false}>
+	<Carousel autoplay autoplayDuration={6000} arrows={false} dots={false}>
 		{#each images as image, i}
 			<img
 				src={api() + image.image_url}

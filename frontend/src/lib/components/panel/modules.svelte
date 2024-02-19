@@ -55,6 +55,11 @@
 		color: 'bg-blue-600',
 		link: '/panel/treso'
 	});
+	modules.push({
+		name: 'Incohérances',
+		color: 'bg-green-600',
+		link: '/panel/products/incoherants'
+	});
 
 	// Sort the modules by name
 	modules.sort((a, b) => a.name.localeCompare(b.name));
