@@ -90,61 +90,61 @@
 
 {#if changePassword}
 	<ChangePassword onEnd={() => (changePassword = false)} />
-{/if}
+{:else}
+	<div class="gap-16 p-5 w-full h-full text-white">
+		<div class="flex flex-row justify-between gap-16 p-2 w-full text-white">
+			<div class="flex flex-row">
+				<button
+					class="text-xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all ml-2"
+					on:click={() => {
+						changePassword = true;
+					}}>changer mdp</button
+				>
+				<button
+					class="text-xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all ml-2"
+					on:click={() => {
+						to_call = open_door;
+						askForCard = true;
+					}}>porte</button
+				>
+				<button
+					class="text-xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all ml-2"
+					on:click={() => {
+						to_call = open_ventilo;
+						askForCard = true;
+					}}>ventilo</button
+				>
+				<button
+					class="text-xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all ml-2"
+					on:click={() => {
+						to_call = open_caisse;
+						askForCard = true;
+					}}>caisse</button
+				>
+			</div>
 
-<div class="gap-16 p-5 w-full h-full text-white">
-	<div class="flex flex-row justify-between gap-16 p-2 w-full text-white">
-		<div class="flex flex-row">
 			<button
-				class="text-xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all ml-2"
-				on:click={() => {
-					changePassword = true;
-				}}>changer mdp</button
+				class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
+				on:click={() => goto('/comptoir/c/refills')}>Historique rechargements</button
 			>
 			<button
-				class="text-xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all ml-2"
-				on:click={() => {
-					to_call = open_door;
-					askForCard = true;
-				}}>porte</button
+				class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all mr-2"
+				on:click={() => (newRefill = true)}>Nouvelle Recharge</button
 			>
+			<!-- disconnection button -->
 			<button
-				class="text-xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all ml-2"
-				on:click={() => {
-					to_call = open_ventilo;
-					askForCard = true;
-				}}>ventilo</button
+				class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
+				on:click={() => logoutAccount()}
 			>
-			<button
-				class="text-xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all ml-2"
-				on:click={() => {
-					to_call = open_caisse;
-					askForCard = true;
-				}}>caisse</button
-			>
+				Deconnexion
+			</button>
 		</div>
+		<hr class="col-span-3" />
 
-		<button
-			class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
-			on:click={() => goto('/comptoir/c/refills')}>Historique rechargements</button
-		>
-		<button
-			class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all mr-2"
-			on:click={() => (newRefill = true)}>Nouvelle Recharge</button
-		>
-		<!-- disconnection button -->
-		<button
-			class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
-			on:click={() => logoutAccount()}
-		>
-			Deconnexion
-		</button>
+		<Transactions amount={6} />
+
+		{#if newRefill}
+			<NewRefill {close} />
+		{/if}
 	</div>
-	<hr class="col-span-3" />
-
-	<Transactions amount={6} />
-
-	{#if newRefill}
-		<NewRefill {close} />
-	{/if}
-</div>
+{/if}
