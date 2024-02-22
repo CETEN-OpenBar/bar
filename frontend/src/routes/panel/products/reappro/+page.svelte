@@ -91,7 +91,7 @@
 		});
 	}
 
-	function applyRestock() {
+	async function applyRestock() {
 		if (!sure) return;
 		newRestock.driver_id = undefined;
 		restocksApi()
@@ -99,7 +99,12 @@
 			.then((res) => {
 				restoks = [...restoks, res.data];
 			});
+		await wait(1000);
 		location.reload();
+	}
+
+	function wait(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
 	}
 
 	function updatePrices() {
