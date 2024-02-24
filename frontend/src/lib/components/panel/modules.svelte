@@ -45,6 +45,12 @@
 	});
 
 	modules.push({
+		name: 'Réinitialiser un code pin',
+		color: 'bg-red-600',
+		link: '/panel/accounts/reset_pin'
+	});
+
+	modules.push({
 		name: 'Repositioner les catégories',
 		color: 'bg-blue-600',
 		link: '/panel/categories/reposition'
