@@ -32,11 +32,13 @@
 		<h1 class="text-2xl font-bold mb-4 text-white">{custom_text}</h1>
 		<div class="flex flex-col items-center">
 			<!-- Display the numpad -->
+			<!-- svelte-ignore a11y-autofocus -->
 			<input
 				name="password"
 				bind:value={password}
 				type="password"
 				class="w-full h-20 m-3 bg-neutral-800 rounded-xl text-white text-4xl text-center"
+				autofocus
 			/>
 
 			<button
