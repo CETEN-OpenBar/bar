@@ -12,6 +12,7 @@
 	let transactions: Array<Transaction> = [];
 	let maxItemPerTransaction: number = 6;
 	let interval: number;
+	let searchName: string | undefined;
 
 	let page: number = 0;
 	let maxPage: number = 0;
@@ -45,7 +46,7 @@
 
 	function reloadTransactions() {
 		transactionsApi()
-			.getTransactions(page, amount, st, { withCredentials: true })
+			.getTransactions(page, amount, st, searchName, { withCredentials: true })
 			.then((res) => {
 				page = res.data.page ?? 0;
 				maxPage = res.data.max_page ?? 0;
@@ -85,9 +86,20 @@
 <!-- Good looking dropdown for transaction -->
 <div class="w-full">
 	<div class="flex flex-col">
-		<div class="flex flex-row justify-between">
-			<div class="text-lg font-semibold">Transactions</div>
-			<div class="text-lg font-semibold">
+		<div class="flex flex-row items-center mt-2">
+			<div class="flex flex-row items-center space-x-10 grow">
+				<div class="text-lg font-semibold">Transactions</div>
+				<input 
+					class="rounded-lg p-2 text-black"
+					placeholder="Rechercher une personne"
+					on:input={(e) => {
+						// @ts-ignore
+						searchName = e.target.value.toLowerCase();
+						reloadTransactions();
+					}}
+				/>
+			</div>
+			<div class="text-lg font-semibold grow">
 				Filtre :
 				<button
 					class="bg-gray-700 p-2 rounded-lg"
@@ -107,7 +119,7 @@
 					{/if}
 				</button>
 			</div>
-			<div class="text-lg font-semibold">Montant</div>
+			<div class="text-lg font-semibold grow text-end">Montant</div>
 		</div>
 		<!-- show clearly if there's a scrollbar -->
 		<div use:dragscroll class="flex flex-col max-h-[80vh] overflow-auto">
