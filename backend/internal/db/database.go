@@ -114,8 +114,8 @@ type DBackend interface {
 	GetTransactions(ctx context.Context, account string, page uint64, size uint64, state string) ([]*models.Transaction, error)
 	CountTransactions(ctx context.Context, account string, state string) (uint64, error)
 
-	GetAllTransactions(ctx context.Context, page uint64, size uint64, state string) ([]*models.Transaction, error)
-	CountAllTransactions(ctx context.Context, state string) (uint64, error)
+	GetAllTransactions(ctx context.Context, page uint64, size uint64, state string, name string) ([]*models.Transaction, error)
+	CountAllTransactions(ctx context.Context, state string, name string) (uint64, error)
 
 	// Restock's CRUD
 	CreateRestock(ctx context.Context, t *models.Restock) error

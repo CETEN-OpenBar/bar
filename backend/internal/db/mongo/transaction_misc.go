@@ -55,7 +55,7 @@ func (b *Backend) CountTransactions(ctx context.Context, accountID string, state
 	return uint64(count), nil
 }
 
-func (b *Backend) GetAllTransactions(ctx context.Context, page uint64, size uint64, state string) ([]*models.Transaction, error) {
+func (b *Backend) GetAllTransactions(ctx context.Context, page uint64, size uint64, state string, name string) ([]*models.Transaction, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
@@ -63,6 +63,23 @@ func (b *Backend) GetAllTransactions(ctx context.Context, page uint64, size uint
 
 	if state != "" {
 		filter["state"] = state
+	}
+
+	if name != "" {
+		filter["$or"] = []bson.M{
+			{
+				"account_name": bson.M{
+					"$regex": name,
+					"$options": "i",	
+				},
+			},
+			{
+				"account_nick_name": bson.M{
+					"$regex": name,
+					"$options": "i",
+				},
+			},
+		}
 	}
 
 	// Get "size" transactions from "page" using aggregation
@@ -80,7 +97,7 @@ func (b *Backend) GetAllTransactions(ctx context.Context, page uint64, size uint
 	return transactions, nil
 }
 
-func (b *Backend) CountAllTransactions(ctx context.Context, state string) (uint64, error) {
+func (b *Backend) CountAllTransactions(ctx context.Context, state string, name string) (uint64, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
@@ -88,6 +105,23 @@ func (b *Backend) CountAllTransactions(ctx context.Context, state string) (uint6
 
 	if state != "" {
 		filter["state"] = state
+	}
+
+	if name != "" {
+		filter["$or"] = []bson.M{
+			{
+				"account_name": bson.M{
+					"$regex": name,
+					"$options": "i",	
+				},
+			},
+			{
+				"account_nick_name": bson.M{
+					"$regex": name,
+					"$options": "i",
+				},
+			},
+		}
 	}
 
 	count, err := b.db.Collection(TransactionsCollection).CountDocuments(ctx, filter)
