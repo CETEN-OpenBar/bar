@@ -892,6 +892,12 @@ type GetTransactionsParams struct {
 	State *TransactionState `form:"state,omitempty" json:"state,omitempty" bson:"state"`
 }
 
+// GetTransactionsItemsParams defines parameters for GetTransactionsItems.
+type GetTransactionsItemsParams struct {
+	// Name Filter by item name
+	Name *string `form:"name,omitempty" json:"name,omitempty" bson:"name"`
+}
+
 // PatchAccountPasswordJSONRequestBody defines body for PatchAccountPassword for application/json ContentType.
 type PatchAccountPasswordJSONRequestBody PatchAccountPasswordJSONBody
 
@@ -1197,6 +1203,9 @@ type ServerInterface interface {
 
 	// (GET /transactions)
 	GetTransactions(ctx echo.Context, params GetTransactionsParams) error
+
+	// (GET /transactions/items)
+	GetTransactionsItems(ctx echo.Context, params GetTransactionsItemsParams) error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -2987,6 +2996,26 @@ func (w *ServerInterfaceWrapper) GetTransactions(ctx echo.Context) error {
 	return err
 }
 
+// GetTransactionsItems converts echo context to params.
+func (w *ServerInterfaceWrapper) GetTransactionsItems(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(Admin_authScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetTransactionsItemsParams
+	// ------------- Optional query parameter "name" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "name", ctx.QueryParams(), &params.Name)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter name: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetTransactionsItems(ctx, params)
+	return err
+}
+
 // This is a simple interface which specifies echo.Route addition functions which
 // are present on both echo.Echo and echo.Group, since we want to allow using
 // either of them for path registration
@@ -3098,6 +3127,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.POST(baseURL+"/restocks", wrapper.CreateRestock)
 	router.DELETE(baseURL+"/restocks/:restock_id", wrapper.DeleteRestock)
 	router.GET(baseURL+"/transactions", wrapper.GetTransactions)
+	router.GET(baseURL+"/transactions/items", wrapper.GetTransactionsItems)
 
 }
 
@@ -7400,6 +7430,50 @@ func (response GetTransactions500JSONResponse) VisitGetTransactionsResponse(w ht
 	return json.NewEncoder(w).Encode(response)
 }
 
+type GetTransactionsItemsRequestObject struct {
+	Params GetTransactionsItemsParams `bson:"params"`
+}
+
+type GetTransactionsItemsResponseObject interface {
+	VisitGetTransactionsItemsResponse(w http.ResponseWriter) error
+}
+
+type GetTransactionsItems200JSONResponse []TransactionItem
+
+func (response GetTransactionsItems200JSONResponse) VisitGetTransactionsItemsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetTransactionsItems401JSONResponse HTTPError
+
+func (response GetTransactionsItems401JSONResponse) VisitGetTransactionsItemsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetTransactionsItems403JSONResponse HTTPError
+
+func (response GetTransactionsItems403JSONResponse) VisitGetTransactionsItemsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetTransactionsItems500JSONResponse HTTPError
+
+func (response GetTransactionsItems500JSONResponse) VisitGetTransactionsItemsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
 
@@ -7651,6 +7725,9 @@ type StrictServerInterface interface {
 
 	// (GET /transactions)
 	GetTransactions(ctx context.Context, request GetTransactionsRequestObject) (GetTransactionsResponseObject, error)
+
+	// (GET /transactions/items)
+	GetTransactionsItems(ctx context.Context, request GetTransactionsItemsRequestObject) (GetTransactionsItemsResponseObject, error)
 }
 
 type StrictHandlerFunc = strictecho.StrictEchoHandlerFunc
@@ -9819,6 +9896,31 @@ func (sh *strictHandler) GetTransactions(ctx echo.Context, params GetTransaction
 	return nil
 }
 
+// GetTransactionsItems operation middleware
+func (sh *strictHandler) GetTransactionsItems(ctx echo.Context, params GetTransactionsItemsParams) error {
+	var request GetTransactionsItemsRequestObject
+
+	request.Params = params
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetTransactionsItems(ctx.Request().Context(), request.(GetTransactionsItemsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetTransactionsItems")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(GetTransactionsItemsResponseObject); ok {
+		return validResponse.VisitGetTransactionsItemsResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
@@ -9940,11 +10042,12 @@ var swaggerSpec = []string{
 	"rroFp+jQ75zs/aqXT6VSk5Th8K5ZT+aFrEoyf7dbWjIjeq8ufKq2iwlraRUTdpg6sOBcRyUoKjiEt2oc",
 	"vSwCPxDvEESMt+41sJsGVgwmNqyszuQzAsU10pkWq2heWeA6f7uO25M/wYdcZmzhTOJVwHAQCmIc7lBe",
 	"HVc2ECaHJvLy90IdtBnj7eQek0XGdZjVf1J/tQWkyL3nBgWQBchnb50DbbMK1kjbjLaN7Eer/fXDFZj3",
-	"mxWYXbu1tkZWnMNJQZIEvNw9NF0irzCJIKGvbebKTseUbt6xs44NDG2Is30MH8/q41m9TdBkExgz/fVZ",
-	"1uRNScU0J0nvpDdlLD3p9xMcgmSKKTv5cfDjoMelunhPeQF4PALkDYMJDPEMARQ+vkGQ9UEa9+/fWirw",
-	"0o/wASfjN2PCi/U02qqxdAkQEXQ4mFNIvqP6gio3i7MrMfmHVpWOpYEiCsa8TZM6VS+JSTXCzq0Z5RkL",
-	"XhEIkmCGEXx8XT6GZGupyBtbbD/HSMAtOsVpZVM2hrZWxGZ6gFFAQQJrGpAKxkaBfm2H2LzPbyvM+5ZF",
-	"rCMhgyMxUdGRfO3JwqGLFrK4qOevz/8XAAD///Bw0dIKkgEA",
+	"mxWYXbu1tkZWnMNJQZIEvNw9NF0irzCJIKGvbebKTseUbt6xs44NDG2Is30MH8/q41m9TdBkExgzXdWD",
+	"DumDio3cGDWoxSzBUKt2dNrcLfSHyB6yzf3BrsJn3xP0grPngiNq8qYku85J0jvpTRlLT/r9BIcgmWLK",
+	"Tn4c/Djo8eWweE95AXg8AuQNgwkM8QwBFD6+QZD1QRr3799aKvDSj/ABJ+M3Y8KL9TTaqkGoCRChpziY",
+	"U0i+ozoSlVEW2V2y/EOrq7WlgSJ8zLyGljpVL60v1dBUt2aUSzl4RSBIghlG8PF1+fyeraUi4XIRtxEj",
+	"YafQKU4r0QwxtLUiFFWAUUBBAmsakMrBRoF+342Iesmv+cz7lkWsIyGjijFRYcUctGXnCIoWsoDC56/P",
+	"/xcAAP//EFpb10OVAQA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
