@@ -9,6 +9,11 @@
 	import ChangePassword from '$lib/components/comptoir/changePassword.svelte';
 	import Password from '$lib/components/password.svelte';
 
+
+	import { transactionsApi } from '$lib/requests/requests';
+	import type { TransactionItem } from '$lib/api';
+	import TransactionsItems from '$lib/components/comptoir/transactionsItems.svelte';
+
 	function reset() {
 		askForCard = false;
 		askForPassword = false;
@@ -41,6 +46,9 @@
 				goto('/comptoir');
 			});
 	}
+
+	let showTransactionItems = false;
+
 </script>
 
 {#if askForCard}
@@ -127,6 +135,18 @@
 				class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
 				on:click={() => goto('/comptoir/c/refills')}>Historique rechargements</button
 			>
+			{#if showTransactionItems}
+				<button
+					class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
+					on:click={() => showTransactionItems = false}>Liste des commandes</button
+				>
+			{:else}
+				<button
+					class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
+					on:click={() => showTransactionItems = true}>Résumé des commandes</button
+				>
+			{/if}
+			
 			<button
 				class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all mr-2"
 				on:click={() => (newRefill = true)}>Nouvelle Recharge</button
@@ -141,7 +161,11 @@
 		</div>
 		<hr class="col-span-3" />
 
-		<Transactions amount={6} />
+		{#if showTransactionItems}
+			<TransactionsItems />
+		{:else}
+			<Transactions amount={6} />
+		{/if}
 
 		{#if newRefill}
 			<NewRefill {close} />
