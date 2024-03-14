@@ -8153,6 +8153,43 @@ export const TransactionsApiAxiosParamCreator = function (configuration?: Config
             };
         },
         /**
+         * Get all items in active transactions (ordered items)
+         * @summary 
+         * @param {string} [name] Filter by item name
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTransactionsItems: async (name?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/transactions/items`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
+
+            if (name !== undefined) {
+                localVarQueryParameter['name'] = name;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Delete transaction
          * @summary 
          * @param {string} accountId ID of the account
@@ -8395,6 +8432,17 @@ export const TransactionsApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
+         * Get all items in active transactions (ordered items)
+         * @summary 
+         * @param {string} [name] Filter by item name
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getTransactionsItems(name?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TransactionItem>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getTransactionsItems(name, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * Delete transaction
          * @summary 
          * @param {string} accountId ID of the account
@@ -8501,6 +8549,16 @@ export const TransactionsApiFactory = function (configuration?: Configuration, b
          */
         getTransactions(page?: number, limit?: number, state?: TransactionState, options?: any): AxiosPromise<GetTransactions200Response> {
             return localVarFp.getTransactions(page, limit, state, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get all items in active transactions (ordered items)
+         * @summary 
+         * @param {string} [name] Filter by item name
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTransactionsItems(name?: string, options?: any): AxiosPromise<Array<TransactionItem>> {
+            return localVarFp.getTransactionsItems(name, options).then((request) => request(axios, basePath));
         },
         /**
          * Delete transaction
@@ -8612,6 +8670,18 @@ export class TransactionsApi extends BaseAPI {
      */
     public getTransactions(page?: number, limit?: number, state?: TransactionState, options?: AxiosRequestConfig) {
         return TransactionsApiFp(this.configuration).getTransactions(page, limit, state, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get all items in active transactions (ordered items)
+     * @summary 
+     * @param {string} [name] Filter by item name
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TransactionsApi
+     */
+    public getTransactionsItems(name?: string, options?: AxiosRequestConfig) {
+        return TransactionsApiFp(this.configuration).getTransactionsItems(name, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

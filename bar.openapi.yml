@@ -1198,6 +1198,49 @@ paths:
         - admin_auth: []
       tags:
         - transactions
+  /transactions/items:
+    get:
+      description: Get all items in active transactions (ordered items)
+      summary: ""
+      operationId: getTransactionsItems
+      parameters:
+        - name: name
+          in: query
+          description: Filter by item name
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TransactionItem"
+        "401":
+          description: "Not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - admin_auth: []
+      tags:
+        - transactions
   /account/transactions:
     get:
       summary: ""
