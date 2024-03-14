@@ -32,3 +32,5 @@ data
 *.code-workspace
 
 rename
+
+.direnv/
