@@ -68,9 +68,6 @@ func (s *Server) ResetAccountPin(c echo.Context, accountId autogen.UUID) error {
 		if account.Role == autogen.AccountSuperAdmin || account.Role == autogen.AccountAdmin {
 			return Error400(c)
 		}
-	case autogen.AccountGhost:
-		// Can't reset pins
-		return Error400(c)
 	case autogen.AccountMember:
 		if account.Role == autogen.AccountSuperAdmin || account.Role == autogen.AccountAdmin || account.Role == autogen.AccountMember {
 			return Error400(c)
