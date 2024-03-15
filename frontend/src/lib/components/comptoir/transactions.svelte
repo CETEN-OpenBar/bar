@@ -95,6 +95,7 @@
 					on:input={(e) => {
 						// @ts-ignore
 						searchName = e.target.value.toLowerCase();
+						page = 1;
 						reloadTransactions();
 					}}
 				/>
