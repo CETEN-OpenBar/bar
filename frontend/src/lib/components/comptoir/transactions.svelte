@@ -84,8 +84,8 @@
 {/if}
 
 <!-- Good looking dropdown for transaction -->
-<div class="w-full">
-	<div class="flex flex-col">
+<div class="w-full h-full flex flex-col">
+	<div class="flex flex-col flex-grow flex-1">
 		<div class="flex flex-row items-center mt-2">
 			<div class="flex flex-row items-center space-x-10 grow">
 				<div class="text-lg font-semibold">Transactions</div>
@@ -122,7 +122,7 @@
 			<div class="text-lg font-semibold grow text-end">Montant</div>
 		</div>
 		<!-- show clearly if there's a scrollbar -->
-		<div use:dragscroll class="flex flex-col max-h-[80vh] overflow-auto">
+		<div use:dragscroll class="flex flex-col overflow-auto">
 			{#each transactions as transaction}
 				<button
 					on:click={() => (displayTransaction = transaction)}
@@ -165,11 +165,11 @@
 
 	<!-- Pagination -->
 	<div class="flex flex-row justify-center mt-5">
-		<button class="bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all" on:click={prevPage}
+		<button class="bg-blue-700 p-4 rounded-xl hover:bg-blue-900 transition-all text-2xl" on:click={prevPage}
 			>&lt;</button
 		>
-		<div class="text-lg font-semibold self-center mx-2">{page}/{maxPage}</div>
-		<button class="bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all" on:click={nextPage}
+		<div class="text-2xl font-semibold self-center mx-2">{page}/{maxPage}</div>
+		<button class="bg-blue-700 p-4 rounded-xl hover:bg-blue-900 transition-all text-2xl" on:click={nextPage}
 			>&gt;</button
 		>
 	</div>
