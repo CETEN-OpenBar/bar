@@ -1,6 +1,7 @@
 package mongo
 
 import (
+	"bar/autogen"
 	"bar/internal/models"
 	"context"
 
@@ -130,4 +131,58 @@ func (b *Backend) CountAllTransactions(ctx context.Context, state string, name s
 	}
 
 	return uint64(count), nil
+}
+
+func (b *Backend) GetAllActiveTransactionsItems(ctx context.Context, name string) ([]autogen.TransactionItem, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
+	defer cancel()
+
+	filter := bson.M{"state": autogen.TransactionStarted, "items.state": autogen.TransactionItemStarted}
+
+	if name != "" {
+		filter["name"] = bson.M{"$regex": name, "$options": "i"}
+	}
+
+	cursor, err := b.db.Collection(TransactionsCollection).Aggregate(ctx, []bson.M{
+		{"$match": filter},
+		{
+			"$project": bson.M{
+				"_id":   0,
+				"items": 1,
+			},
+		},
+		{"$unwind": "$items"},
+		{
+			"$group": bson.M{
+				"_id":  "$items.item_id",
+				"item": bson.M{"$first": "$items"},
+				"total_amount": bson.M{
+					"$sum": "$items.item_amount",
+				},
+				"already_done": bson.M{
+					"$sum": "$items.item_already_done",
+				},
+			},
+		},
+		{
+			"$set": bson.M{
+				"item.item_amount": "$total_amount",
+				"item.item_already_done": "$already_done",
+			},
+		},
+		{"$replaceRoot": bson.M{"newRoot": "$item"}},
+		{"$sort": bson.M{"item_amount": -1}},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	var items []autogen.TransactionItem
+
+	// Decode each item
+	if err := cursor.All(ctx, &items); err != nil {
+		return nil, err
+	}
+
+	return items, nil
 }

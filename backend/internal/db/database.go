@@ -1,6 +1,7 @@
 package db
 
 import (
+	"bar/autogen"
 	"bar/internal/models"
 	"context"
 	"time"
@@ -116,6 +117,7 @@ type DBackend interface {
 
 	GetAllTransactions(ctx context.Context, page uint64, size uint64, state string, name string) ([]*models.Transaction, error)
 	CountAllTransactions(ctx context.Context, state string, name string) (uint64, error)
+	GetAllActiveTransactionsItems(ctx context.Context, name string) ([]autogen.TransactionItem, error)
 
 	// Restock's CRUD
 	CreateRestock(ctx context.Context, t *models.Restock) error

@@ -180,3 +180,26 @@ func (s *Server) GetTransactions(c echo.Context, params autogen.GetTransactionsP
 	}.VisitGetTransactionsResponse(c.Response())
 	return nil
 }
+
+
+// (GET /transactions/items)
+func (s *Server) GetTransactionsItems(c echo.Context, params autogen.GetTransactionsItemsParams) error {
+	_, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
+
+	var name string
+	if params.Name != nil {
+		name = string(*params.Name)
+	}
+
+	data, err := s.DBackend.GetAllActiveTransactionsItems(c.Request().Context(), name)
+	if err != nil {
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	autogen.GetTransactionsItems200JSONResponse(data).VisitGetTransactionsItemsResponse(c.Response())
+	return nil
+}
