@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Account, NewAccount, NewCategory } from '$lib/api';
 	import Refills from '$lib/components/admin/refills.svelte';
+	import ConfirmationPopup from '$lib/components/confirmationPopup.svelte';
 	import { accountsApi } from '$lib/requests/requests';
 	import { formatPrice } from '$lib/utils';
 	import { onMount } from 'svelte';
@@ -33,6 +34,10 @@
 	};
 	let accounts_per_page = 10;
 	let shown_refill: Account | undefined = undefined;
+
+	let deletingAccount: boolean = false;
+	let confirmationMessage: string | undefined = undefined;
+	let deleteAccountCallback: VoidFunction = () => {};
 
 	onMount(() => {
 		reloadAccounts();
@@ -193,6 +198,18 @@
 		</div>
 	</div>
 </div>
+
+
+{#if deletingAccount}
+	<ConfirmationPopup
+		message={confirmationMessage}
+		confirm_text="Supprimer"
+		cancel_callback={() => {
+			deletingAccount = false;
+		}} 
+		confirm_callback={deleteAccountCallback}
+	/>
+{/if}
 
 <!-- Table Section -->
 <div class="max-w-[95%] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
@@ -526,7 +543,14 @@
 											</button>
 											<button
 												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
-												on:click={() => deleteAccount(account.id)}
+												on:click={() => {
+													deleteAccountCallback = () => {
+														deletingAccount = false;
+														deleteAccount(account.id);
+													}
+													confirmationMessage = "Supprimer le compte de " + account.first_name + " " + account.last_name + " ?";
+													deletingAccount = true;
+												}}
 											>
 												Supprimer
 											</button>
