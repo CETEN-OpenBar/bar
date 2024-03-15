@@ -8,6 +8,7 @@
 		AccountPriceRole,
 		ItemState
 	} from '$lib/api';
+	import ConfirmationPopup from '$lib/components/confirmationPopup.svelte';
 	import { api } from '$lib/config/config';
 	import { categoriesApi, itemsApi } from '$lib/requests/requests';
 	import { formatPrice, parsePrice } from '$lib/utils';
@@ -63,6 +64,10 @@
 	let searchState: ItemState | undefined = undefined;
 	let searchCategory: string | undefined = undefined;
 	let searchName: string | undefined = undefined;
+
+	let deletingItem: boolean = false;
+	let confirmationMessage: string | undefined = undefined;
+	let deleteItemCallback: VoidFunction = () => {};
 
 	onMount(() => {
 		categoriesApi()
@@ -458,6 +463,17 @@
 	</div>
 </div>
 
+{#if deletingItem}
+	<ConfirmationPopup 
+		message={confirmationMessage}
+		confirm_text="Supprimer"
+		cancel_callback={() => {
+			deletingItem = false;
+		}} 
+		confirm_callback={deleteItemCallback}
+	/>
+{/if}
+
 <!-- Table Section -->
 <div class="max-w-[95%] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
 	<!-- Card -->
@@ -839,7 +855,14 @@
 											</button>
 											<button
 												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
-												on:click={() => deleteItem(item.id, item.category_id)}
+												on:click={() => {
+													deleteItemCallback = () => {
+														deletingItem = false;
+														deleteItem(item.id, item.category_id);
+													}
+													confirmationMessage = "Supprimer '" + item.name + "' ?";
+													deletingItem = true;
+												}}
 											>
 												Supprimer
 											</button>
