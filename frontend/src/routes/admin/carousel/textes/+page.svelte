@@ -2,6 +2,7 @@
 	import type { CarouselText, CarouselTextCreate } from '$lib/api';
 	import { carouselApi } from '$lib/requests/requests';
 	import { onMount } from 'svelte';
+	import ConfirmationPopup from '$lib/components/confirmationPopup.svelte';
 
 	let allCarouselTexts: CarouselText[] = [];
 	let carouselTexts: CarouselText[] = [];
@@ -13,6 +14,9 @@
 	let searchQuery = '';
 	let page = 0;
 	let textsPerPage = 10;
+
+	let showConfirmation: boolean = false;
+	let confirmationCallback: VoidFunction = () => {}
 
 	onMount(() => {
 		carouselApi()
@@ -116,6 +120,17 @@
 		</div>
 	</div>
 </div>
+
+{#if showConfirmation}
+	<ConfirmationPopup
+		message="Supprimer ce texte ?"
+		confirm_text="Supprimer"
+		cancel_callback={() => {
+			showConfirmation = false;
+		}} 
+		confirm_callback={confirmationCallback}
+	/>
+{/if}
 
 <!-- Table Section -->
 <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
@@ -255,7 +270,13 @@
 										<div class="px-6 py-1.5">
 											<button
 												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
-												on:click={() => deleteCarouselText(carouselText.id)}
+												on:click={() => {
+													confirmationCallback = () => {
+														showConfirmation = false;
+														deleteCarouselText(carouselText.id);
+													}
+													showConfirmation = true;
+												}}
 											>
 												Supprimer
 											</button>
