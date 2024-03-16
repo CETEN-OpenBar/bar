@@ -2623,6 +2623,42 @@ export const AccountsApiAxiosParamCreator = function (configuration?: Configurat
             };
         },
         /**
+         * Reset the account\'s pin
+         * @summary 
+         * @param {string} accountId ID of the account
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        resetAccountPin: async (accountId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'accountId' is not null or undefined
+            assertParamExists('resetAccountPin', 'accountId', accountId)
+            const localVarPath = `/account/{account_id}/reset_pin`
+                .replace(`{${"account_id"}}`, encodeURIComponent(String(accountId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Toggles the wants_to_staff flag
          * @summary 
          * @param {*} [options] Override http request option.
@@ -2817,6 +2853,17 @@ export const AccountsApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
+         * Reset the account\'s pin
+         * @summary 
+         * @param {string} accountId ID of the account
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async resetAccountPin(accountId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.resetAccountPin(accountId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * Toggles the wants_to_staff flag
          * @summary 
          * @param {*} [options] Override http request option.
@@ -2954,6 +3001,16 @@ export const AccountsApiFactory = function (configuration?: Configuration, baseP
          */
         postAccounts(newAccount?: NewAccount, options?: any): AxiosPromise<Account> {
             return localVarFp.postAccounts(newAccount, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Reset the account\'s pin
+         * @summary 
+         * @param {string} accountId ID of the account
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        resetAccountPin(accountId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.resetAccountPin(accountId, options).then((request) => request(axios, basePath));
         },
         /**
          * Toggles the wants_to_staff flag
@@ -3112,6 +3169,18 @@ export class AccountsApi extends BaseAPI {
      */
     public postAccounts(newAccount?: NewAccount, options?: AxiosRequestConfig) {
         return AccountsApiFp(this.configuration).postAccounts(newAccount, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Reset the account\'s pin
+     * @summary 
+     * @param {string} accountId ID of the account
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AccountsApi
+     */
+    public resetAccountPin(accountId: string, options?: AxiosRequestConfig) {
+        return AccountsApiFp(this.configuration).resetAccountPin(accountId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
