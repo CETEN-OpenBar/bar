@@ -2,6 +2,7 @@
 	import type { Category, NewCategory } from '$lib/api';
 	import { api } from '$lib/config/config';
 	import { categoriesApi } from '$lib/requests/requests';
+	import ConfirmationPopup from '$lib/components/confirmationPopup.svelte';
 	import { onMount } from 'svelte';
 
 	let categories: Category[] = [];
@@ -14,6 +15,10 @@
 
 	let page = 0;
 	let categoriesPerPage = 10;
+
+	let deletingCategory: boolean = false;
+	let confirmationMessage: string | undefined = undefined;
+	let deleteCategoryCallback: VoidFunction = () => {};
 
 	onMount(() => {
 		categoriesApi()
@@ -169,6 +174,17 @@
 	</div>
 </div>
 
+{#if deletingCategory}
+	<ConfirmationPopup
+		message={confirmationMessage}
+		confirm_text="Supprimer"
+		cancel_callback={() => {
+			deletingCategory = false;
+		}} 
+		confirm_callback={deleteCategoryCallback}
+	/>
+{/if}
+
 <!-- Table Section -->
 <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
 	<!-- Card -->
@@ -314,7 +330,14 @@
 										<div class="px-6 py-1.5">
 											<button
 												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
-												on:click={() => deleteCategory(category.id)}
+												on:click={() => {
+													deleteCategoryCallback = () => {
+														deletingCategory = false;
+														deleteCategory(category.id)
+													}
+													confirmationMessage = "Supprimer '" + category.name + "' ?";
+													deletingCategory = true;
+												}}
 											>
 												Supprimer
 											</button>

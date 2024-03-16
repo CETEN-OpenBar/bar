@@ -511,6 +511,50 @@ paths:
         - auth: []
       tags:
         - accounts
+  /account/{account_id}/reset_pin:
+    description: Reset the account's pin
+    post:
+      summary: ""
+      description: Reset the account's pin
+      operationId: resetAccountPin
+      parameters:
+        - name: account_id
+          in: path
+          description: ID of the account
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Successfully reset account's pin
+        "401":
+          description: "Not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Account not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - admin_auth: []
+      tags:
+        - accounts
   /account/password:
     patch:
       description: Update account's password

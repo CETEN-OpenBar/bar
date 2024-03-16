@@ -3,12 +3,16 @@
 	import { api } from '$lib/config/config';
 	import { carouselApi } from '$lib/requests/requests';
 	import { onMount } from 'svelte';
+	import ConfirmationPopup from '$lib/components/confirmationPopup.svelte';
 
 	let carouselImages: CarouselImage[] = [];
 	let newImage: File | null = null;
 
 	let page = 0;
 	let imagesPerPage = 10;
+
+	let showConfirmation: boolean = false;
+	let confirmationCallback: VoidFunction = () => {}
 
 	onMount(() => {
 		carouselApi()
@@ -123,6 +127,17 @@
 	</div>
 </div>
 
+{#if showConfirmation}
+	<ConfirmationPopup
+		message="Supprimer cette image ?"
+		confirm_text="Supprimer"
+		cancel_callback={() => {
+			showConfirmation = false;
+		}} 
+		confirm_callback={confirmationCallback}
+	/>
+{/if}
+
 <!-- Table Section -->
 <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
 	<!-- Card -->
@@ -204,7 +219,13 @@
 										<div class="px-6 py-1.5">
 											<button
 												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
-												on:click={() => deleteCarouselImage(carouselImage.id)}
+												on:click={() => {
+													confirmationCallback = () => {
+														showConfirmation = false;
+														deleteCarouselImage(carouselImage.id)
+													}
+													showConfirmation = true;
+												}}
 											>
 												Supprimer
 											</button>
