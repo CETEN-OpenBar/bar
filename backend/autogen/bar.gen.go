@@ -890,6 +890,9 @@ type GetTransactionsParams struct {
 
 	// State Filter by state
 	State *TransactionState `form:"state,omitempty" json:"state,omitempty" bson:"state"`
+
+	// Name Filter by account name
+	Name *string `form:"name,omitempty" json:"name,omitempty" bson:"name"`
 }
 
 // GetTransactionsItemsParams defines parameters for GetTransactionsItems.
@@ -3010,6 +3013,13 @@ func (w *ServerInterfaceWrapper) GetTransactions(ctx echo.Context) error {
 	err = runtime.BindQueryParameter("form", true, false, "state", ctx.QueryParams(), &params.State)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter state: %s", err))
+	}
+
+	// ------------- Optional query parameter "name" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "name", ctx.QueryParams(), &params.Name)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter name: %s", err))
 	}
 
 	// Invoke the callback with all the unmarshaled arguments
@@ -10145,12 +10155,12 @@ var swaggerSpec = []string{
 	"UolJynB41ywn80pWIZmX7ZaUzIDeqwefqv1iwlp6xYQdpgwsKNdRCIoGDuGtGkUvq4EfiHcIIsZ79xLY",
 	"TQIrAhMHVlZn8hmB4hnpTIpVJK+scJ2XruP15E/wIecZWziTKAoYDkIBjMMbyqujygbAJGoiz38v1EGb",
 	"Ed5OnjFZeFxXs/pP6q+2gBR59twgALIA+azUOdA2a2CNtM1g28h5tDpfP1yGeb9Zhtm1V2treMU5nBQk",
-	"ScDr3UPTJfIKkwgS+tpmrux0TOnmHTvrOMDQUJydY/h4Vh/P6m2CJpvAWOmqHHRIH1Qc5MaoQSxmCYZa",
-	"paPT4W4hP0T2kG2eD3ZlPvuZoGecPWcc0ZJ3Jcl1TpLeSW/KWHrS7yc4BMkUU3by4+DHQY9vh0U55RXg",
-	"8QiQNwwmMMQzBFD4+AZB1gdp3L9/a2nAaz/CB5yM34wJr9bTYKsGoSZAhJ7iYE4h+Y7qmqiMssjekuUT",
-	"re7Wlg6K8DHzGVrq1Ly0v1RDU926US7l4BWBIAlmGMHH1+X7e7aeioTLRdxGjISdQqc4rUQzxNDWixBU",
-	"AUYBBQms6UAKBxsE+ns3Iuolf+YzH1tWsWJCRhVjosKKudKW3SMoesgCCp+/Pv9fAAAA//8VzZI33JgB",
-	"AA==",
+	"ScDr3UPTJfIKkwgS+tpmrux0TOnmHTvrOMDQUOxwjpE9t7k7Rws+XNaHy740k8NY6aqYdchOVJwTx6hB",
+	"6mb5i1qFr9PZcSEmRHKSbcqIrsxnP3L0jLPnjCNa8q4kuc5J0jvpTRlLT/r9BIcgmWLKTn4c/Djo8V2v",
+	"KKe8AjweAfKGwQSGeIYACh/fIMj6II37928tDXjtR/iAk/GbMeHVehps1RjXBIjIVhzMKSTfUV3RlUEc",
+	"2VO1fKLVTdnSQRGdZr5yS52al/aXauSrWzfKYx28IhAkwQwj+Pi6fD3Q1lORz7kIC4mRMIPoFKeVYIkY",
+	"2noRgirAKKAggTUdSOFgg0B/TkcE1eSviOZjyypWTMigZUxU1DLXCbNrCkUPWbzi89fn/wsAAP//v4hf",
+	"zjuZAQA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

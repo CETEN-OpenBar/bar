@@ -147,7 +147,12 @@ func (s *Server) GetTransactions(c echo.Context, params autogen.GetTransactionsP
 		state = string(*params.State)
 	}
 
-	count, err := s.DBackend.CountAllTransactions(c.Request().Context(), state)
+	var name string
+	if params.Name != nil {
+		name = string(*params.Name)
+	}
+
+	count, err := s.DBackend.CountAllTransactions(c.Request().Context(), state, name)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -156,7 +161,7 @@ func (s *Server) GetTransactions(c echo.Context, params autogen.GetTransactionsP
 	// Make sure the last page is not empty
 	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	data, err := s.DBackend.GetAllTransactions(c.Request().Context(), dbpage, limit, state)
+	data, err := s.DBackend.GetAllTransactions(c.Request().Context(), dbpage, limit, state, name)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)

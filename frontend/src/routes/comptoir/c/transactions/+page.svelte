@@ -99,7 +99,7 @@
 {#if changePassword}
 	<ChangePassword onEnd={() => (changePassword = false)} />
 {:else}
-	<div class="gap-16 p-5 w-full h-full text-white">
+	<div class="p-5 w-full h-full text-white flex flex-col">
 		<div class="flex flex-row justify-between gap-16 p-2 w-full text-white">
 			<div class="flex flex-row">
 				<button
@@ -164,7 +164,9 @@
 		{#if showTransactionItems}
 			<TransactionsItems />
 		{:else}
-			<Transactions amount={6} />
+			<div class="flex-1">
+				<Transactions amount={6} />
+			</div>
 		{/if}
 
 		{#if newRefill}
