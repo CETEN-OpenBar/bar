@@ -101,7 +101,7 @@ func (s *Server) CreateRestock(c echo.Context) error {
 
 			restockItem.ItemName = item.Name
 			restockItem.ItemPictureUri = item.PictureUri
-
+			item.State = autogen.ItemBuyable
 			item.AmountLeft += restockItem.AmountOfBundle * restockItem.AmountPerBundle
 			item.LastTva = &restockItem.Tva
 			item.Prices.Coutant = uint64(math.Ceil((10000.0 + float64(restockItem.Tva)) * float64(restockItem.BundleCostHt) / (10000.0 * float64(restockItem.AmountPerBundle))))
