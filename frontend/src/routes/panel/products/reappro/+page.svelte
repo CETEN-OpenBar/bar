@@ -26,6 +26,7 @@
 		amount_of_bundle: 0,
 		amount_per_bundle: 0,
 		bundle_cost_ht: 0,
+		bundle_cost_ttc: 0,
 		tva: 0
 	};
 	let searchName: string = '';
@@ -85,9 +86,7 @@
 		});
 		newRestock.total_cost_ttc = 0.0;
 		newRestock.items.forEach((item) => {
-			newRestock.total_cost_ttc += Math.floor(
-				item.amount_of_bundle * item.bundle_cost_ht * (1 + item.tva / 10000)
-			);
+			Math.floor((newRestock.total_cost_ttc += item.amount_of_bundle * item.bundle_cost_ttc));
 		});
 	}
 
@@ -104,7 +103,7 @@
 	}
 
 	function wait(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+		return new Promise((resolve) => setTimeout(resolve, ms));
 	}
 
 	function updatePrices() {
@@ -364,12 +363,12 @@
 							placeholder={displayedValues.bundle_cost_ttc}
 							on:change={(e) => {
 								// @ts-ignore
-								newItem.bundle_cost_ht = parsePrice(e.target?.value) / (1 + (newItem.tva ?? 0) / 10000);
-								let r = formatPrice(newItem.bundle_cost_ht);
-								displayedValues.bundle_cost_ht = r;
-								displayedValues.bundle_cost_ttc = formatPrice(
-									Number((newItem.bundle_cost_ht * (1 + newItem.tva / 10000)).toFixed(0))
-								);
+								newItem.bundle_cost_ht = Math.ceil(parsePrice(e.target?.value) / (1 + (newItem.tva ?? 0) / 10000));
+								// @ts-ignore
+								newItem.bundle_cost_ttc = parsePrice(e.target?.value);
+								let r = formatPrice(newItem.bundle_cost_ttc);
+								displayedValues.bundle_cost_ttc = r;
+								displayedValues.bundle_cost_ht = formatPrice(newItem.bundle_cost_ht);
 								// @ts-ignore
 								e.target.value = r;
 							}}
@@ -403,6 +402,7 @@
 									amount_of_bundle: 0,
 									amount_per_bundle: 0,
 									bundle_cost_ht: 0,
+									bundle_cost_ttc: 0,
 									tva: 0
 								};
 								updateTotalHTandTTC();
@@ -439,9 +439,7 @@
 								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							>
 								<p>
-									{formatPrice(
-										item.bundle_cost_ht * item.amount_of_bundle * (1 + item.tva / 10000)
-									)}
+									{formatPrice(item.bundle_cost_ttc * item.amount_of_bundle)}
 								</p>
 							</div>
 						</div>
@@ -487,7 +485,7 @@
 							<div
 								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							>
-								<p>{formatPrice(item.bundle_cost_ht * (1 + item.tva / 10000))}</p>
+								<p>{formatPrice(item.bundle_cost_ttc)}</p>
 							</div>
 						</div>
 					</td>

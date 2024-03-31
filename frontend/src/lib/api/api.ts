@@ -1446,6 +1446,12 @@ export interface NewRestockItem {
      * @type {number}
      * @memberof NewRestockItem
      */
+    'bundle_cost_ttc': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof NewRestockItem
+     */
     'tva': number;
 }
 /**
