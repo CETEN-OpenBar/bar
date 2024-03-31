@@ -96,30 +96,39 @@
 		restocksApi()
 			.createRestock(newRestock, { withCredentials: true })
 			.then((res) => {
-				restoks = [...restoks, res.data];
+				restoks = [res.data, ...restoks];
+				newRestock = {
+					total_cost_ht: 0,
+					total_cost_ttc: 0,
+					driver_id: '',
+					type: newRestock.type,
+					items: []
+				};
+				// @ts-ignore
+				document.getElementById('CHECKBOX').checked = false;
 			});
-		await wait(1000);
-		location.reload();
-	}
-
-	function wait(ms: number): Promise<void> {
-		return new Promise((resolve) => setTimeout(resolve, ms));
 	}
 
 	function updatePrices() {
 		// Calculate from displayedValues.item_price_calc, displayedValues.amount_of_bundle and TVA
-		newItem.bundle_cost_ht = Math.ceil(
-			(displayedValues.item_price_calc * newItem.amount_per_bundle) / (1 + newItem.tva / 10000)
-		);
+		if (newItem.amount_of_bundle === 0 || newItem.amount_per_bundle === 0) return;
 
 		displayedValues.item_price_ht = formatPrice(
 			displayedValues.item_price_calc / (1 + (newItem.tva ?? 0) / 10000)
 		);
 
+		if (displayedValues.bundle_cost_ht === "Prix d'un lot HT") {
+			newItem.bundle_cost_ht = Math.ceil(
+				(displayedValues.item_price_calc * newItem.amount_per_bundle) / (1 + newItem.tva / 10000)
+			);
+		}
 		displayedValues.bundle_cost_ht = formatPrice(newItem.bundle_cost_ht);
-		displayedValues.bundle_cost_ttc = formatPrice(
-			displayedValues.item_price_calc * newItem.amount_per_bundle
-		);
+		if (displayedValues.bundle_cost_ttc === "Prix d'un lot TTC") {
+			newItem.bundle_cost_ttc = Math.ceil(
+				displayedValues.item_price_calc * newItem.amount_per_bundle
+			);
+		}
+		displayedValues.bundle_cost_ttc = formatPrice(newItem.bundle_cost_ttc);
 	}
 </script>
 
@@ -328,6 +337,9 @@
 								displayedValues.bundle_cost_ht = r;
 								// @ts-ignore
 								e.target.value = r;
+								newItem.bundle_cost_ttc = Math.ceil(
+									newItem.bundle_cost_ht * (1 + newItem.tva / 10000)
+								);
 								displayedValues.bundle_cost_ttc = formatPrice(
 									Number((newItem.bundle_cost_ht * (1 + newItem.tva / 10000)).toFixed(0))
 								);
@@ -362,8 +374,10 @@
 							class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							placeholder={displayedValues.bundle_cost_ttc}
 							on:change={(e) => {
-								// @ts-ignore
-								newItem.bundle_cost_ht = Math.ceil(parsePrice(e.target?.value) / (1 + (newItem.tva ?? 0) / 10000));
+								newItem.bundle_cost_ht = Math.ceil(
+									// @ts-ignore
+									parsePrice(e.target?.value) / (1 + (newItem.tva ?? 0) / 10000)
+								);
 								// @ts-ignore
 								newItem.bundle_cost_ttc = parsePrice(e.target?.value);
 								let r = formatPrice(newItem.bundle_cost_ttc);
@@ -511,7 +525,12 @@
 			<p class="font-bold text-white text-2xl">
 				Ma réappro est irréprochable, et j'en suis responsable :
 			</p>
-			<input class="m-2 mr-auto max-w-lg w-6 h-6" type="checkbox" bind:checked={sure} />
+			<input
+				id="CHECKBOX"
+				class="m-2 mr-auto max-w-lg w-6 h-6"
+				type="checkbox"
+				bind:checked={sure}
+			/>
 
 			{#if sure}
 				<button
