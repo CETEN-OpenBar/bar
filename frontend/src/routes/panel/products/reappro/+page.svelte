@@ -104,6 +104,25 @@
 					type: newRestock.type,
 					items: []
 				};
+				displayedValues = {
+					name: 'Nom du produit',
+					item_price_calc: 0,
+					item_price: 'Prix coûtant TTC',
+					item_price_ht: 'Prix coûtant HT',
+					amount_of_bundle: 'Nombre de lots',
+					amount_per_bundle: 'Nombre de produits par lots',
+					bundle_cost_ht: "Prix d'un lot HT",
+					tva: 0,
+					bundle_cost_ttc: "Prix d'un lot TTC"
+				};
+				newItem = {
+					item_id: '',
+					amount_of_bundle: 0,
+					amount_per_bundle: 0,
+					bundle_cost_ht: 0,
+					bundle_cost_ttc: 0,
+					tva: 0
+				};
 				// @ts-ignore
 				document.getElementById('CHECKBOX').checked = false;
 			});
