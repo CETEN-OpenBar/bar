@@ -1801,6 +1801,12 @@ export interface RestockItem {
      * @type {number}
      * @memberof RestockItem
      */
+    'bundle_cost_ttc': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof RestockItem
+     */
     'tva': number;
 }
 /**

@@ -85,6 +85,7 @@ func (s *Server) CreateRestock(c echo.Context) error {
 				AmountOfBundle:  item.AmountOfBundle,
 				AmountPerBundle: item.AmountPerBundle,
 				BundleCostHt:    item.BundleCostHt,
+				BundleCostTtc:   item.BundleCostTtc,
 				ItemId:          item.ItemId,
 				Tva:             item.Tva,
 			}
@@ -104,7 +105,7 @@ func (s *Server) CreateRestock(c echo.Context) error {
 			item.State = autogen.ItemBuyable
 			item.AmountLeft += restockItem.AmountOfBundle * restockItem.AmountPerBundle
 			item.LastTva = &restockItem.Tva
-			item.Prices.Coutant = uint64(math.Ceil((10000.0 + float64(restockItem.Tva)) * float64(restockItem.BundleCostHt) / (10000.0 * float64(restockItem.AmountPerBundle))))
+			item.Prices.Coutant = uint64(math.Ceil(float64(restockItem.BundleCostHt) / (100 * float64(restockItem.AmountPerBundle))))
 			if item.Prices.Coutant < 30 {
 				item.Prices.Externe = arrondiAuMutilple(item.Prices.Coutant, 5) + 20
 				item.Prices.Ceten = arrondiAuMutilple(item.Prices.Coutant, 5) + 10
