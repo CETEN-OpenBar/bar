@@ -106,7 +106,6 @@ func (s *Server) CreateRestock(c echo.Context) error {
 			item.AmountLeft += restockItem.AmountOfBundle * restockItem.AmountPerBundle
 			item.LastTva = &restockItem.Tva
 			item.Prices.Coutant = uint64(math.Ceil(float64(restockItem.BundleCostTtc) / (float64(restockItem.AmountPerBundle))))
-			logrus.Debug(item.Prices.Coutant)
 			if item.Prices.Coutant < 30 {
 				item.Prices.Externe = arrondiAuMutilple(item.Prices.Coutant, 5) + 20
 				item.Prices.Ceten = arrondiAuMutilple(item.Prices.Coutant, 5) + 10
