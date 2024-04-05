@@ -6,7 +6,7 @@
 	// onEnter
 	function onEnter(e: KeyboardEvent) {
 		if (e.key === 'Enter') {
-			console.log('a' + password);
+			// console.log('a' + password);
 			callback(password);
 			password = '';
 		}
