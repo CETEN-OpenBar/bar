@@ -1446,6 +1446,12 @@ export interface NewRestockItem {
      * @type {number}
      * @memberof NewRestockItem
      */
+    'bundle_cost_ttc': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof NewRestockItem
+     */
     'tva': number;
 }
 /**
@@ -1790,6 +1796,12 @@ export interface RestockItem {
      * @memberof RestockItem
      */
     'bundle_cost_ht': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof RestockItem
+     */
+    'bundle_cost_ttc': number;
     /**
      * 
      * @type {number}
