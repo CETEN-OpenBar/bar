@@ -140,22 +140,24 @@
 		// Calculate from displayedValues.item_price_calc, displayedValues.amount_of_bundle and TVA
 		if (newItem.amount_of_bundle === 0 || newItem.amount_per_bundle === 0) return;
 
-		displayedValues.item_price_ht = formatPrice(
-			displayedValues.item_price_calc / (1 + (newItem.tva ?? 0) / 10000)
-		);
-
 		if (displayedValues.bundle_cost_ht === "Prix d'un lot HT") {
 			newItem.bundle_cost_ht = Math.round(
 				(displayedValues.item_price_calc * newItem.amount_per_bundle) / (1 + newItem.tva / 10000)
 			);
+			displayedValues.bundle_cost_ht = formatPrice(newItem.bundle_cost_ht);
 		}
-		displayedValues.bundle_cost_ht = formatPrice(newItem.bundle_cost_ht);
 		if (displayedValues.bundle_cost_ttc === "Prix d'un lot TTC") {
 			newItem.bundle_cost_ttc = Math.round(
-			displayedValues.item_price_calc * newItem.amount_per_bundle
-		);
-	}
-		displayedValues.bundle_cost_ttc = formatPrice(newItem.bundle_cost_ttc);
+				displayedValues.item_price_calc * newItem.amount_per_bundle
+			);
+			displayedValues.bundle_cost_ttc = formatPrice(newItem.bundle_cost_ttc);
+		} else {
+			newItem.bundle_cost_ttc = Math.round(newItem.bundle_cost_ht * (1 + newItem.tva / 10000));
+			newItem.bundle_cost_float_ttc = newItem.bundle_cost_ht * (1 + newItem.tva / 10000);
+			displayedValues.bundle_cost_ttc = formatPrice(newItem.bundle_cost_ttc);
+		}
+		displayedValues.item_price_ht = formatPrice(newItem.bundle_cost_ht * newItem.amount_of_bundle);
+		displayedValues.item_price = formatPrice(newItem.bundle_cost_ttc * newItem.amount_of_bundle);
 	}
 </script>
 
@@ -292,7 +294,6 @@
 										newItem.tva = item.last_tva ?? 0;
 										newItem.item_id = item.id;
 										searchName = '';
-										updatePrices();
 									}}
 								>
 									{item.name}
@@ -379,6 +380,7 @@
 					<div class="flex flex-col">
 						<select
 							class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+							id="tva"
 							on:change={(e) => {
 								// @ts-ignore
 								newItem.tva = parseInt(e.target?.value);
@@ -403,7 +405,7 @@
 							placeholder={displayedValues.bundle_cost_ttc}
 							on:change={(e) => {
 								newItem.bundle_cost_ht = Math.round(
-								// @ts-ignore
+									// @ts-ignore
 									parsePrice(e.target?.value) / (1 + (newItem.tva ?? 0) / 10000)
 								);
 								// @ts-ignore
@@ -427,7 +429,7 @@
 								t.unshift(newItem);
 								n.unshift(displayedValues.name);
 								newRestock.items = t;
-								nameList = nameList;
+								nameList = n;
 								displayedValues = {
 									name: 'Nom du produit',
 									item_price_calc: 0,
