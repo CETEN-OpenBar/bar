@@ -5349,6 +5349,9 @@ components:
         bundle_cost_ttc:
           type: integer
           format: uint64
+        bundle_cost_float_ttc:
+          type: number
+          format: float
         tva:
           type: integer
           format: uint64
@@ -5358,6 +5361,7 @@ components:
         - amount_per_bundle
         - bundle_cost_ht
         - bundle_cost_ttc
+        - bundle_cost_float_ttc
         - tva
     NewRestock:
       type: object

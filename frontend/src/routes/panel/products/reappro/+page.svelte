@@ -27,6 +27,7 @@
 		amount_per_bundle: 0,
 		bundle_cost_ht: 0,
 		bundle_cost_ttc: 0,
+		bundle_cost_float_ttc: 0,
 		tva: 0
 	};
 	let searchName: string = '';
@@ -80,19 +81,25 @@
 	}
 
 	function updateTotalHTandTTC() {
-		newRestock.total_cost_ht = 0.0;
+		newRestock.total_cost_ht = 0;
 		newRestock.items.forEach((item) => {
 			newRestock.total_cost_ht += item.amount_of_bundle * item.bundle_cost_ht;
 		});
 		newRestock.total_cost_ttc = 0.0;
 		newRestock.items.forEach((item) => {
-			Math.floor((newRestock.total_cost_ttc += item.amount_of_bundle * item.bundle_cost_ttc));
+			if (item.bundle_cost_float_ttc === 0.0) {
+				newRestock.total_cost_ttc += item.amount_of_bundle * item.bundle_cost_ttc;
+			} else {
+				newRestock.total_cost_ttc += item.amount_of_bundle * item.bundle_cost_float_ttc;
+			}
 		});
 	}
 
 	async function applyRestock() {
 		if (!sure) return;
 		newRestock.driver_id = undefined;
+		newRestock.total_cost_ttc = Math.round(newRestock.total_cost_ttc);
+		newRestock.total_cost_ht = Math.round(newRestock.total_cost_ht);
 		restocksApi()
 			.createRestock(newRestock, { withCredentials: true })
 			.then((res) => {
@@ -121,6 +128,7 @@
 					amount_per_bundle: 0,
 					bundle_cost_ht: 0,
 					bundle_cost_ttc: 0,
+					bundle_cost_float_ttc: 0.0,
 					tva: 0
 				};
 				// @ts-ignore
@@ -137,16 +145,16 @@
 		);
 
 		if (displayedValues.bundle_cost_ht === "Prix d'un lot HT") {
-			newItem.bundle_cost_ht = Math.ceil(
+			newItem.bundle_cost_ht = Math.round(
 				(displayedValues.item_price_calc * newItem.amount_per_bundle) / (1 + newItem.tva / 10000)
 			);
 		}
 		displayedValues.bundle_cost_ht = formatPrice(newItem.bundle_cost_ht);
 		if (displayedValues.bundle_cost_ttc === "Prix d'un lot TTC") {
-			newItem.bundle_cost_ttc = Math.ceil(
-				displayedValues.item_price_calc * newItem.amount_per_bundle
-			);
-		}
+			newItem.bundle_cost_ttc = Math.round(
+			displayedValues.item_price_calc * newItem.amount_per_bundle
+		);
+	}
 		displayedValues.bundle_cost_ttc = formatPrice(newItem.bundle_cost_ttc);
 	}
 </script>
@@ -356,9 +364,10 @@
 								displayedValues.bundle_cost_ht = r;
 								// @ts-ignore
 								e.target.value = r;
-								newItem.bundle_cost_ttc = Math.ceil(
+								newItem.bundle_cost_ttc = Math.round(
 									newItem.bundle_cost_ht * (1 + newItem.tva / 10000)
 								);
+								newItem.bundle_cost_float_ttc = newItem.bundle_cost_ht * (1 + newItem.tva / 10000);
 								displayedValues.bundle_cost_ttc = formatPrice(
 									Number((newItem.bundle_cost_ht * (1 + newItem.tva / 10000)).toFixed(0))
 								);
@@ -393,8 +402,8 @@
 							class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							placeholder={displayedValues.bundle_cost_ttc}
 							on:change={(e) => {
-								newItem.bundle_cost_ht = Math.ceil(
-									// @ts-ignore
+								newItem.bundle_cost_ht = Math.round(
+								// @ts-ignore
 									parsePrice(e.target?.value) / (1 + (newItem.tva ?? 0) / 10000)
 								);
 								// @ts-ignore
@@ -436,6 +445,7 @@
 									amount_per_bundle: 0,
 									bundle_cost_ht: 0,
 									bundle_cost_ttc: 0,
+									bundle_cost_float_ttc: 0.0,
 									tva: 0
 								};
 								updateTotalHTandTTC();
