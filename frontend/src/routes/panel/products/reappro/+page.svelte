@@ -40,7 +40,7 @@
 		amount_of_bundle: string;
 		amount_per_bundle: string;
 		bundle_cost_ht: string;
-		tva: number;
+		tva: string;
 		bundle_cost_ttc: string;
 	};
 
@@ -52,7 +52,7 @@
 		amount_of_bundle: 'Nombre de lots',
 		amount_per_bundle: 'Nombre de produits par lots',
 		bundle_cost_ht: "Prix d'un lot HT",
-		tva: 0,
+		tva: "0",
 		bundle_cost_ttc: "Prix d'un lot TTC"
 	};
 
@@ -119,7 +119,7 @@
 					amount_of_bundle: 'Nombre de lots',
 					amount_per_bundle: 'Nombre de produits par lots',
 					bundle_cost_ht: "Prix d'un lot HT",
-					tva: 0,
+					tva: "0",
 					bundle_cost_ttc: "Prix d'un lot TTC"
 				};
 				newItem = {
@@ -290,7 +290,7 @@
 											item.prices.coutant / (1 + (item.last_tva ?? 0) / 10000)
 										);
 										displayedValues.item_price_calc = item.prices.coutant;
-										displayedValues.tva = item.last_tva ?? 0;
+										displayedValues.tva = (item.last_tva ?? 0).toString();
 										newItem.tva = item.last_tva ?? 0;
 										newItem.item_id = item.id;
 										searchName = '';
@@ -438,9 +438,9 @@
 									amount_of_bundle: 'Nombre de lots',
 									amount_per_bundle: 'Nombre de produits par lots',
 									bundle_cost_ht: "Prix d'un lot HT",
-									tva: 0,
+									tva: "0",
 									bundle_cost_ttc: "Prix d'un lot TTC"
-								};
+								};	
 								newItem = {
 									item_id: '',
 									amount_of_bundle: 0,
