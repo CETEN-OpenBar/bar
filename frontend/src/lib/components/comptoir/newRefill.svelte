@@ -61,6 +61,7 @@
 		{:else}
 			<h1 class="text-3xl">Veuillez entrer le montant de la recharge.</h1>
 
+			<!-- svelte-ignore a11y-no-static-element-interactions -->
 			<div 
 				class="flex flex-col gap-8"
 				on:keypress={(e) => {
@@ -114,13 +115,13 @@
 						name="refill-type"
 						class="text-sm bg-gray-200 rounded-md p-2 text-center"
 						on:change={(e) => {
-							// @ts-ignore
+							// @ts-ignore	
 							card.type = e.target?.value;
 						}}
 					>
-						<option value={RefillType.RefillOther}>Autre</option>
-						<option value={RefillType.RefillCash}>Liquide</option>
 						<option value={RefillType.RefillCard}>Carte</option>
+						<option value={RefillType.RefillCash}>Liquide</option>
+						<option value={RefillType.RefillOther}>Autre</option>
 					</select>
 				</div>
 			</div>

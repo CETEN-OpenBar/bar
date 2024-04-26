@@ -450,6 +450,8 @@ func (s *Server) ConnectGoogle(c echo.Context, p autogen.ConnectGoogleParams) er
 	switch rel {
 	case "admin":
 		rel = conf.ApiConfig.FrontendBasePath + "/admin"
+	case "client/commande":
+		rel = conf.ApiConfig.FrontendBasePath + "/client/commande"
 	}
 	// Init OAuth2 flow with Google
 	oauth2Config := oauth2.Config{
