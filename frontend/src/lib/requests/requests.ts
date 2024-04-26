@@ -8,7 +8,8 @@ import {
 	RefillsApiFactory,
 	CarouselApiFactory,
 	CategoriesApiFactory,
-	TransactionsApiFactory
+	TransactionsApiFactory,
+	CourseApiFactory,
 } from '$lib/api';
 import { api, local_token } from '$lib/config/config';
 
@@ -161,3 +162,18 @@ export const cashMovementsApi = () => {
         })
     );
 };
+
+export const CourseApi = () => {
+	return CourseApiFactory(
+		new Configuration({
+			basePath: api(),
+			apiKey: (name: string) => {
+				if (name == 'X-Local-Token') {
+					return local_token();
+				} else {
+					return '';
+				}
+			}
+		})
+	);
+}

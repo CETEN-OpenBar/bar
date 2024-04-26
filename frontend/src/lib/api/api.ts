@@ -5005,13 +5005,11 @@ export const CourseApiAxiosParamCreator = function (configuration?: Configuratio
     return {
         /**
          * Get generated course
-         * @param {string} fournisseur Fournisseur name
+         * @param {string} [fournisseur] Fournisseur name
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getCourse: async (fournisseur: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'fournisseur' is not null or undefined
-            assertParamExists('getCourse', 'fournisseur', fournisseur)
+        getCourse: async (fournisseur?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/course`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -5023,6 +5021,8 @@ export const CourseApiAxiosParamCreator = function (configuration?: Configuratio
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
 
             if (fournisseur !== undefined) {
                 localVarQueryParameter['fournisseur'] = fournisseur;
@@ -5051,11 +5051,11 @@ export const CourseApiFp = function(configuration?: Configuration) {
     return {
         /**
          * Get generated course
-         * @param {string} fournisseur Fournisseur name
+         * @param {string} [fournisseur] Fournisseur name
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getCourse(fournisseur: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetCourse200Response>> {
+        async getCourse(fournisseur?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetCourse200Response>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getCourse(fournisseur, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -5071,11 +5071,11 @@ export const CourseApiFactory = function (configuration?: Configuration, basePat
     return {
         /**
          * Get generated course
-         * @param {string} fournisseur Fournisseur name
+         * @param {string} [fournisseur] Fournisseur name
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getCourse(fournisseur: string, options?: any): AxiosPromise<GetCourse200Response> {
+        getCourse(fournisseur?: string, options?: any): AxiosPromise<GetCourse200Response> {
             return localVarFp.getCourse(fournisseur, options).then((request) => request(axios, basePath));
         },
     };
@@ -5090,12 +5090,12 @@ export const CourseApiFactory = function (configuration?: Configuration, basePat
 export class CourseApi extends BaseAPI {
     /**
      * Get generated course
-     * @param {string} fournisseur Fournisseur name
+     * @param {string} [fournisseur] Fournisseur name
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof CourseApi
      */
-    public getCourse(fournisseur: string, options?: AxiosRequestConfig) {
+    public getCourse(fournisseur?: string, options?: AxiosRequestConfig) {
         return CourseApiFp(this.configuration).getCourse(fournisseur, options).then((request) => request(this.axios, this.basePath));
     }
 }
