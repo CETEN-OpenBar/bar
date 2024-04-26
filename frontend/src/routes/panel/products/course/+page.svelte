@@ -17,7 +17,6 @@
                     items = [];
                 }
             });
-        console.log(items);
     }
     reloadCourse()
 </script>
