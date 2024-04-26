@@ -76,7 +76,7 @@
 
 	function reloadItems() {
 		itemsApi()
-			.getAllItems(page, itemsPerPage, searchState, searchCategory, searchName, {
+			.getAllItems(page, itemsPerPage, searchState, searchCategory, searchName, undefined, {
 				withCredentials: true
 			})
 			.then((res) => {

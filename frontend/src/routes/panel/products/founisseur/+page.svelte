@@ -6,7 +6,7 @@
 		ItemPrices,
 		UpdateItem,
 		AccountPriceRole,
-		ItemState
+		RestockType,
 	} from '$lib/api';
 	import ConfirmationPopup from '$lib/components/confirmationPopup.svelte';
 	import { api } from '$lib/config/config';
@@ -61,7 +61,7 @@
 
 	let rebounceTimeout: number | null = null;
 
-	let searchState: ItemState | undefined = undefined;
+	let searchFournisseur: RestockType | undefined = undefined;
 	let searchCategory: string | undefined = undefined;
 	let searchName: string | undefined = undefined;
 
@@ -81,7 +81,7 @@
 
 	function reloadItems() {
 		itemsApi()
-			.getAllItems(page, itemsPerPage, searchState, searchCategory, searchName, undefined, {
+			.getAllItems(page, itemsPerPage, undefined, searchCategory, searchName, searchFournisseur, {
 				withCredentials: true
 			})
 			.then((res) => {
@@ -521,22 +521,24 @@
 							<div class="relative mt-4 w-96 md:mt-0">
 								<!-- filter by state -->
 								<select
-									id="state"
-									name="state"
+									id="fournisseur"
+									name="fournisseur"
 									class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
 									required
 									aria-describedby="text-error"
 									on:change={(e) => {
 										// @ts-ignore
 										let val = e.target?.value;
-										if (val == '') searchState = undefined;
-										else searchState = val;
+										if (val == '') searchFournisseur = undefined;
+										else searchFournisseur = val;
 										reloadItems();
 									}}
 								>
 									<option value="">Pas de filtre</option>
-									<option value="buyable">Achetable</option>
-									<option value="not_buyable">Non achetable</option>
+									<option value="promocash">Promocash</option>
+									<option value="auchan_drive">Auchan drive</option>
+									<option value="auchan">Auchan</option>
+									<option value="viennoiserie">Boulangerie Benoist</option>
 								</select>
 							</div>
 							<div class="relative mt-4 w-96 md:mt-0">
@@ -634,21 +636,21 @@
 									<p
 										class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 									>
-										Etat
+										Fournisseur
 									</p>
 								</th>
 								<th scope="col" class="px-2 py-3 w-2">
 									<span
 										class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 									>
-										En stock
+										Nombre de produit par lot
 									</span>
 								</th>
 								<th scope="col" class="px-2 py-3">
 									<span
 										class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 									>
-										Limite d'achat
+										Code de reference du produit
 									</span>
 								</th>
 								<th scope="col" class="px-2 py-3">
@@ -753,15 +755,17 @@
 										<div class="px-2 py-3 grid justify-center">
 											<select
 												class="block text-sm dark:text-white/[.8] dark:bg-slate-900 break-words p-2 bg-transparent"
-												value={item.state}
+												value={item.fournisseur}
 												on:change={(e) => {
 													// @ts-ignore
-													let state = e.target?.value;
-													editItem(item.id, { state: state }, item.category_id);
+													let fournisseur = e.target?.value;
+													editItem(item.id, { fournisseur: fournisseur }, item.category_id);
 												}}
 											>
-												<option value="buyable">Achetable</option>
-												<option value="not_buyable">Pas achetable</option>
+												<option value="promocash">Promocash</option>
+												<option value="auchan_drive">Auchan drive</option>
+												<option value="auchan">Auchan</option>
+												<option value="viennoiserie">Boulangerie Benoist</option>
 											</select>
 										</div>
 									</td>
@@ -770,11 +774,11 @@
 											<input
 												type="number"
 												class="py-3 px-2 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-												value={item.amount_left}
+												value={item.amount_per_bundle}
 												on:input={(e) => {
 													// @ts-ignore
-													let stock = parseInt(e.target?.value);
-													editItem(item.id, { amount_left: stock }, item.category_id);
+													let amount_per_bundle = parseInt(e.target?.value);
+													editItem(item.id, { amount_per_bundle: amount_per_bundle }, item.category_id);
 												}}
 											/>
 										</div>
@@ -782,18 +786,14 @@
 									<td class="h-px w-52">
 										<div class="px-6 py-3 grid justify-center">
 											<input
-												type="number"
+												type="text"
 												class="py-3 px-2 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-												value={item.buy_limit}
+												value={item.ref_bundle}
 												on:input={(e) => {
 													// @ts-ignore
-													let buy_limit = parseInt(e.target?.value);
+													let ref_bundle = e.target?.value;
 													// @ts-ignore
-													if (e.target?.value === '') {
-														editItem(item.id, { buy_limit: -1 }, item.category_id);
-														return;
-													}
-													editItem(item.id, { buy_limit: buy_limit }, item.category_id);
+													editItem(item.id, { ref_bundle: ref_bundle }, item.category_id);
 												}}
 											/>
 										</div>

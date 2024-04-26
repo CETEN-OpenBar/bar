@@ -2394,6 +2394,12 @@ paths:
           required: false
           schema:
             type: string
+        - name: fournisseur
+          in: query
+          description: Filter by fournisseur
+          required: false
+          schema:
+            $ref: "#/components/schemas/RestockType"
       responses:
         "200":
           description: ""
@@ -4804,6 +4810,13 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/MenuCategory"
+        amount_per_bundle:
+          type: integer
+          format: uint64
+        ref_bundle:
+          type: string
+        fournisseur:
+          $ref: "#/components/schemas/RestockType"        
     ItemPrices:
       type: object
       properties:
@@ -4960,6 +4973,14 @@ components:
           format: uint64
         deleted_by:
           $ref: "#/components/schemas/UUID"
+        amount_per_bundle:
+          type: integer
+          format: uint64
+        ref_bundle:
+          type: string
+          description: Referal code of the product in the Drive
+        fournisseur:
+          $ref: "#/components/schemas/RestockType"
       required:
         - id
         - prices

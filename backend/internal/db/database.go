@@ -162,8 +162,8 @@ type DBackend interface {
 	CountAccounts(ctx context.Context, query string) (uint64, error)
 	GetRefills(ctx context.Context, account string, page uint64, size uint64, startAt, endAt uint64) ([]*models.Refill, error)
 	CountRefills(ctx context.Context, account string, startAt, endAt uint64) (uint64, error)
-	GetItems(ctx context.Context, categoryID string, page, size uint64, state string, name string) ([]*models.Item, error)
-	CountItems(ctx context.Context, categoryID string, state string, name string) (uint64, error)
+	GetItems(ctx context.Context, categoryID string, page, size uint64, state string, name string, fournisseur string) ([]*models.Item, error)
+	CountItems(ctx context.Context, categoryID string, state string, name string, fournisseur string) (uint64, error)
 
 	GetAllRefills(ctx context.Context, page uint64, size uint64, startAt, endAt uint64) ([]*models.Refill, error)
 	CountAllRefills(ctx context.Context, startAt, endAt uint64) (uint64, error)

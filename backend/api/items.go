@@ -35,7 +35,7 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 		return Error500(c)
 	}
 
-	count, err := s.DBackend.CountItems(c.Request().Context(), categoryId.String(), state, "")
+	count, err := s.DBackend.CountItems(c.Request().Context(), categoryId.String(), state, "", "")
 	if err != nil {
 		return Error500(c)
 	}
@@ -43,7 +43,7 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 	// Make sure the last page is not empty
 	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	data, err := s.DBackend.GetItems(c.Request().Context(), categoryId.String(), dbpage, limit, state, "")
+	data, err := s.DBackend.GetItems(c.Request().Context(), categoryId.String(), dbpage, limit, state, "", "")
 	if err != nil {
 		return Error500(c)
 	}
@@ -174,6 +174,15 @@ func (s *Server) PatchItem(c echo.Context, categoryId autogen.UUID, itemId autog
 			item.BuyLimit = &buyLimit
 		}
 	}
+	if p.AmountPerBundle != nil {
+		item.AmountPerBundle = p.AmountPerBundle
+	}
+	if p.RefBundle != nil {
+		item.RefBundle = p.RefBundle
+	}
+	if p.Fournisseur != nil {
+		item.Fournisseur = p.Fournisseur
+	}
 
 	rp := item.RealPrices()
 	item.DisplayPrices = &rp
@@ -238,6 +247,7 @@ func (s *Server) GetAllItems(c echo.Context, params autogen.GetAllItemsParams) e
 	state := ""
 	categoryId := ""
 	name := ""
+	fournisseur := ""
 	if params.State != nil {
 		state = string(*params.State)
 	}
@@ -247,8 +257,11 @@ func (s *Server) GetAllItems(c echo.Context, params autogen.GetAllItemsParams) e
 	if params.Name != nil {
 		name = string(*params.Name)
 	}
+	if params.Fournisseur != nil {
+		fournisseur = string(*params.Fournisseur)
+	}
 
-	count, err := s.DBackend.CountItems(c.Request().Context(), categoryId, state, name)
+	count, err := s.DBackend.CountItems(c.Request().Context(), categoryId, state, name, fournisseur)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -257,7 +270,7 @@ func (s *Server) GetAllItems(c echo.Context, params autogen.GetAllItemsParams) e
 	// Make sure the last page is not empty
 	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	data, err := s.DBackend.GetItems(c.Request().Context(), categoryId, dbpage, limit, state, name)
+	data, err := s.DBackend.GetItems(c.Request().Context(), categoryId, dbpage, limit, state, name, fournisseur)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
