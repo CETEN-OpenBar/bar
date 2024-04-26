@@ -495,7 +495,7 @@
 						<div class="px-4 mx-4 grid grid-cols-3 gap-4">
 							<!-- Titles -->
 							<div class="text-lg dark:text-white">Par catégorie</div>
-							<div class="text-lg dark:text-white">Par état</div>
+							<div class="text-lg dark:text-white">Par fournisseur</div>
 							<div class="text-lg dark:text-white">Par nom</div>
 							<div class="relative mt-4 w-96 md:mt-0">
 								<!-- filter by category -->

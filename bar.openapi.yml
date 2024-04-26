@@ -4497,6 +4497,53 @@ paths:
         - admin_auth: []
       tags:
         - deleted
+  /course:
+    get:
+      description: "Get generated course"
+      operationId: getCourse
+      parameters:
+        - name: fournisseur
+          in: query
+          description: Fournisseur name
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CourseItem"
+                required:
+                  - items
+        "401":
+          description: "Not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - admin_auth: []
+      tags:
+        - course
 components:
   schemas:
     UUID:
@@ -5015,6 +5062,17 @@ components:
         - amount
         - name
         - picture_uri
+    CourseItem:
+      type: object
+      properties:
+        amountToBuy:
+          type: integer
+          format: uint64
+        item:
+          $ref: "#/components/schemas/Item"
+      required:
+        - amountToBuy
+        - item
     MenuCategory:
       type: object
       properties:
