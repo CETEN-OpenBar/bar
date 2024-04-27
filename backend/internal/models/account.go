@@ -32,8 +32,11 @@ func (o *Account) VerifyPin(pwd string) bool {
 }
 
 func (o *Account) VerifyPassword(pwd string) bool {
-	ok, _ := hash.Verify(*o.Account.Password, pwd)
+	if (o.Account.Password != nil) {
+		ok, _ := hash.Verify(*o.Account.Password, pwd)
 	return ok
+	}
+	return false
 }
 
 func (o *Account) IsAdmin() bool {
