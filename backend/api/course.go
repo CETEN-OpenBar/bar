@@ -27,12 +27,15 @@ func (s *Server) GetCourse(c echo.Context, params autogen.GetCourseParams) error
 	}
 
 	for _, item := range data {
-		var amount_needed uint64 = item.OptimalAmount - item.AmountLeft
-		if amount_needed > 0 && item.AmountPerBundle != nil {
-			course = append(course, autogen.CourseItem{
-				AmountToBuy: amount_needed / *item.AmountPerBundle + (amount_needed % *item.AmountPerBundle) * 2 / *item.AmountPerBundle,
-				Item:        item.Item,
-			})
+		var amount_needed = item.OptimalAmount - item.AmountLeft
+		if item.OptimalAmount > item.AmountLeft && item.AmountPerBundle != nil {
+			amountToBuy := amount_needed / *item.AmountPerBundle + (amount_needed%*item.AmountPerBundle)*2 / *item.AmountPerBundle
+			if amountToBuy > 0 {
+				course = append(course, autogen.CourseItem{
+					AmountToBuy: amountToBuy,
+					Item:        item.Item,
+				})
+			}
 		}
 	}
 
