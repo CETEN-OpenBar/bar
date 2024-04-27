@@ -145,7 +145,7 @@
 								on:click={async () => {
 									steps.category = c;
 									currentStep = 2;
-									const res = await itemsApi().getAllItems(0, 16, undefined, undefined, '', {
+									const res = await itemsApi().getAllItems(0, 16, undefined, undefined, '', undefined, {
 										withCredentials: true
 									});
 									if (!Array.isArray(res.data.items)) {
@@ -182,7 +182,7 @@
 						on:keyup={async (e) => {
 							// @ts-ignore
 							let val = e.target?.value;
-							const res = await itemsApi().getAllItems(0, 16, undefined, undefined, val, {
+							const res = await itemsApi().getAllItems(0, 16, undefined, undefined, val, undefined, {
 								withCredentials: true
 							});
 							if (!Array.isArray(res.data.items)) {

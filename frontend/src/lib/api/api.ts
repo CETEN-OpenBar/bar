@@ -475,6 +475,25 @@ export interface ConnectPasswordRequest {
 /**
  * 
  * @export
+ * @interface CourseItem
+ */
+export interface CourseItem {
+    /**
+     * 
+     * @type {number}
+     * @memberof CourseItem
+     */
+    'amountToBuy': number;
+    /**
+     * 
+     * @type {Item}
+     * @memberof CourseItem
+     */
+    'item': Item;
+}
+/**
+ * 
+ * @export
  * @enum {string}
  */
 
@@ -494,6 +513,22 @@ export const ErrorCodes = {
 } as const;
 
 export type ErrorCodes = typeof ErrorCodes[keyof typeof ErrorCodes];
+
+
+/**
+ * 
+ * @export
+ * @enum {string}
+ */
+
+export const Fournisseur = {
+    Auchan: 'auchan',
+    Auchan_Drive: 'auchan_drive',
+    Viennoiserie: 'viennoiserie',
+    Promocash: 'promocash'
+} as const;
+
+export type Fournisseur = typeof Fournisseur[keyof typeof Fournisseur];
 
 
 /**
@@ -636,6 +671,19 @@ export interface GetCashMovements200Response {
      * @memberof GetCashMovements200Response
      */
     'max_page': number;
+}
+/**
+ * 
+ * @export
+ * @interface GetCourse200Response
+ */
+export interface GetCourse200Response {
+    /**
+     * 
+     * @type {Array<CourseItem>}
+     * @memberof GetCourse200Response
+     */
+    'items': Array<CourseItem>;
 }
 /**
  * 
@@ -1028,6 +1076,24 @@ export interface Item {
      * @memberof Item
      */
     'deleted_by'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Item
+     */
+    'amount_per_bundle'?: number;
+    /**
+     * Referal code of the product in the Drive
+     * @type {string}
+     * @memberof Item
+     */
+    'ref_bundle'?: string;
+    /**
+     * 
+     * @type {Fournisseur}
+     * @memberof Item
+     */
+    'fournisseur'?: Fournisseur;
 }
 
 
@@ -1452,7 +1518,7 @@ export interface NewRestockItem {
      * @type {number}
      * @memberof NewRestockItem
      */
-    'bundle_cost_float_ttc': number;
+    'bundle_cost_float_ttc'?: number;
     /**
      * 
      * @type {number}
@@ -2224,6 +2290,24 @@ export interface UpdateItem {
      * @memberof UpdateItem
      */
     'menu_categories'?: Array<MenuCategory>;
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateItem
+     */
+    'amount_per_bundle'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateItem
+     */
+    'ref_bundle'?: string;
+    /**
+     * 
+     * @type {Fournisseur}
+     * @memberof UpdateItem
+     */
+    'fournisseur'?: Fournisseur;
 }
 
 
@@ -4930,6 +5014,110 @@ export class CategoriesApi extends BaseAPI {
 
 
 /**
+ * CourseApi - axios parameter creator
+ * @export
+ */
+export const CourseApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * Get generated course
+         * @param {string} [fournisseur] Fournisseur name
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getCourse: async (fournisseur?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/course`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
+
+            if (fournisseur !== undefined) {
+                localVarQueryParameter['fournisseur'] = fournisseur;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * CourseApi - functional programming interface
+ * @export
+ */
+export const CourseApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = CourseApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * Get generated course
+         * @param {string} [fournisseur] Fournisseur name
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getCourse(fournisseur?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetCourse200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getCourse(fournisseur, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+    }
+};
+
+/**
+ * CourseApi - factory interface
+ * @export
+ */
+export const CourseApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = CourseApiFp(configuration)
+    return {
+        /**
+         * Get generated course
+         * @param {string} [fournisseur] Fournisseur name
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getCourse(fournisseur?: string, options?: any): AxiosPromise<GetCourse200Response> {
+            return localVarFp.getCourse(fournisseur, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * CourseApi - object-oriented interface
+ * @export
+ * @class CourseApi
+ * @extends {BaseAPI}
+ */
+export class CourseApi extends BaseAPI {
+    /**
+     * Get generated course
+     * @param {string} [fournisseur] Fournisseur name
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof CourseApi
+     */
+    public getCourse(fournisseur?: string, options?: AxiosRequestConfig) {
+        return CourseApiFp(this.configuration).getCourse(fournisseur, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+/**
  * DefaultApi - axios parameter creator
  * @export
  */
@@ -6644,10 +6832,11 @@ export const ItemsApiAxiosParamCreator = function (configuration?: Configuration
          * @param {ItemState} [state] Filter by state
          * @param {string} [categoryId] Filter by category
          * @param {string} [name] Filter by name
+         * @param {Fournisseur} [fournisseur] Filter by fournisseur
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllItems: async (page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getAllItems: async (page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: Fournisseur, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/items`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -6680,6 +6869,10 @@ export const ItemsApiAxiosParamCreator = function (configuration?: Configuration
 
             if (name !== undefined) {
                 localVarQueryParameter['name'] = name;
+            }
+
+            if (fournisseur !== undefined) {
+                localVarQueryParameter['fournisseur'] = fournisseur;
             }
 
 
@@ -6924,11 +7117,12 @@ export const ItemsApiFp = function(configuration?: Configuration) {
          * @param {ItemState} [state] Filter by state
          * @param {string} [categoryId] Filter by category
          * @param {string} [name] Filter by name
+         * @param {Fournisseur} [fournisseur] Filter by fournisseur
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getAllItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAllItems200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllItems(page, limit, state, categoryId, name, options);
+        async getAllItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: Fournisseur, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAllItems200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllItems(page, limit, state, categoryId, name, fournisseur, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -7006,11 +7200,12 @@ export const ItemsApiFactory = function (configuration?: Configuration, basePath
          * @param {ItemState} [state] Filter by state
          * @param {string} [categoryId] Filter by category
          * @param {string} [name] Filter by name
+         * @param {Fournisseur} [fournisseur] Filter by fournisseur
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, options?: any): AxiosPromise<GetAllItems200Response> {
-            return localVarFp.getAllItems(page, limit, state, categoryId, name, options).then((request) => request(axios, basePath));
+        getAllItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: Fournisseur, options?: any): AxiosPromise<GetAllItems200Response> {
+            return localVarFp.getAllItems(page, limit, state, categoryId, name, fournisseur, options).then((request) => request(axios, basePath));
         },
         /**
          * Get all items of a category
@@ -7082,12 +7277,13 @@ export class ItemsApi extends BaseAPI {
      * @param {ItemState} [state] Filter by state
      * @param {string} [categoryId] Filter by category
      * @param {string} [name] Filter by name
+     * @param {Fournisseur} [fournisseur] Filter by fournisseur
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ItemsApi
      */
-    public getAllItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, options?: AxiosRequestConfig) {
-        return ItemsApiFp(this.configuration).getAllItems(page, limit, state, categoryId, name, options).then((request) => request(this.axios, this.basePath));
+    public getAllItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: Fournisseur, options?: AxiosRequestConfig) {
+        return ItemsApiFp(this.configuration).getAllItems(page, limit, state, categoryId, name, fournisseur, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

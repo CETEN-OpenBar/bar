@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (b *Backend) GetItems(ctx context.Context, categoryID string, page, size uint64, state string, name string) ([]*models.Item, error) {
+func (b *Backend) GetItems(ctx context.Context, categoryID string, page, size uint64, state string, name string, fournisseur string) ([]*models.Item, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
@@ -72,6 +72,9 @@ func (b *Backend) GetItems(ctx context.Context, categoryID string, page, size ui
 			"$options": "i",
 		}
 	}
+	if fournisseur != "" {
+		filter["fournisseur"] = fournisseur
+	}
 
 	cursor, err := b.db.Collection(ItemsCollection).Find(ctx, filter, options.Find().SetSkip(int64(page*size)).SetLimit(int64(size)))
 	if err != nil {
@@ -85,7 +88,7 @@ func (b *Backend) GetItems(ctx context.Context, categoryID string, page, size ui
 	return items, nil
 }
 
-func (b *Backend) CountItems(ctx context.Context, categoryID string, state string, name string) (uint64, error) {
+func (b *Backend) CountItems(ctx context.Context, categoryID string, state string, name string, fournisseur string) (uint64, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
@@ -141,6 +144,9 @@ func (b *Backend) CountItems(ctx context.Context, categoryID string, state strin
 			"$regex":   name,
 			"$options": "i",
 		}
+	}
+	if fournisseur != "" {
+		filter["fournisseur"] = fournisseur
 	}
 
 	count, err := b.db.Collection(ItemsCollection).CountDocuments(ctx, filter)

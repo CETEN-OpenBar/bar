@@ -11,7 +11,7 @@
 	let selectedItem: Item | undefined = undefined;
 
 	async function reloadItems() {
-		let resp = await itemsApi().getAllItems(1, itemsPerPage, undefined, undefined, searchItem, {
+		let resp = await itemsApi().getAllItems(1, itemsPerPage, undefined, undefined, searchItem, undefined, {
 			withCredentials: true
 		});
 		items = resp.data.items ?? [];
@@ -25,13 +25,13 @@
 		if (reloading) return;
 		reloading = true;
 		try {
-			let resp = await transactionsApi().getTransactions(1, transactionPerPage, 'finished', {
+			let resp = await transactionsApi().getTransactions(1, transactionPerPage, 'finished', undefined, {
 				withCredentials: true
 			});
 			let temp = resp.data.transactions ?? [];
 
 			for (let p = 2; p <= resp.data.max_page; p++) {
-				let resp = await transactionsApi().getTransactions(p, transactionPerPage, 'finished', {
+				let resp = await transactionsApi().getTransactions(p, transactionPerPage, 'finished', undefined, {
 					withCredentials: true
 				});
 				temp.push(...(resp.data.transactions ?? []));
