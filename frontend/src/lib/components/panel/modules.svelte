@@ -70,12 +70,12 @@
 		name: 'Fournisseur',
 		color: 'bg-green-600',
 		link: '/panel/products/fournisseur'
-	})
+	});
 	modules.push({
-		name: "Course",
-		color: "bg-green-600",
+		name: 'Course',
+		color: 'bg-green-600',
 		link: '/panel/products/course'
-	})
+	});
 
 	// Sort the modules by name
 	modules.sort((a, b) => a.name.localeCompare(b.name));

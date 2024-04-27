@@ -6,7 +6,7 @@
 		ItemPrices,
 		UpdateItem,
 		AccountPriceRole,
-		RestockType,
+		RestockType
 	} from '$lib/api';
 	import ConfirmationPopup from '$lib/components/confirmationPopup.svelte';
 	import { api } from '$lib/config/config';
@@ -31,7 +31,7 @@
 			staff_bar: 0,
 			coutant: 0,
 			privilegies: 0,
-			menu: 0,
+			menu: 0
 		} as ItemPrices,
 		amount_left: 0,
 		buy_limit: undefined,
@@ -464,12 +464,12 @@
 </div>
 
 {#if deletingItem}
-	<ConfirmationPopup 
+	<ConfirmationPopup
 		message={confirmationMessage}
 		confirm_text="Supprimer"
 		cancel_callback={() => {
 			deletingItem = false;
-		}} 
+		}}
 		confirm_callback={deleteItemCallback}
 	/>
 {/if}
@@ -778,7 +778,11 @@
 												on:input={(e) => {
 													// @ts-ignore
 													let amount_per_bundle = parseInt(e.target?.value);
-													editItem(item.id, { amount_per_bundle: amount_per_bundle }, item.category_id);
+													editItem(
+														item.id,
+														{ amount_per_bundle: amount_per_bundle },
+														item.category_id
+													);
 												}}
 											/>
 										</div>
@@ -859,7 +863,7 @@
 													deleteItemCallback = () => {
 														deletingItem = false;
 														deleteItem(item.id, item.category_id);
-													}
+													};
 													confirmationMessage = "Supprimer '" + item.name + "' ?";
 													deletingItem = true;
 												}}

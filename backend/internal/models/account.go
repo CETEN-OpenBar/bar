@@ -32,9 +32,9 @@ func (o *Account) VerifyPin(pwd string) bool {
 }
 
 func (o *Account) VerifyPassword(pwd string) bool {
-	if (o.Account.Password != nil) {
+	if o.Account.Password != nil {
 		ok, _ := hash.Verify(*o.Account.Password, pwd)
-	return ok
+		return ok
 	}
 	return false
 }

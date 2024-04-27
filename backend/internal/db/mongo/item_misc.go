@@ -75,7 +75,7 @@ func (b *Backend) GetItems(ctx context.Context, categoryID string, page, size ui
 	if fournisseur != "" {
 		filter["fournisseur"] = fournisseur
 	}
-	
+
 	cursor, err := b.db.Collection(ItemsCollection).Find(ctx, filter, options.Find().SetSkip(int64(page*size)).SetLimit(int64(size)))
 	if err != nil {
 		return nil, err
