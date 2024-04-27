@@ -518,6 +518,22 @@ export type ErrorCodes = typeof ErrorCodes[keyof typeof ErrorCodes];
 /**
  * 
  * @export
+ * @enum {string}
+ */
+
+export const Fournisseur = {
+    Auchan: 'auchan',
+    Auchan_Drive: 'auchan_drive',
+    Viennoiserie: 'viennoiserie',
+    Promocash: 'promocash'
+} as const;
+
+export type Fournisseur = typeof Fournisseur[keyof typeof Fournisseur];
+
+
+/**
+ * 
+ * @export
  * @interface GetAccountAdmin200Response
  */
 export interface GetAccountAdmin200Response {
@@ -1074,10 +1090,10 @@ export interface Item {
     'ref_bundle'?: string;
     /**
      * 
-     * @type {RestockType}
+     * @type {Fournisseur}
      * @memberof Item
      */
-    'fournisseur'?: RestockType;
+    'fournisseur'?: Fournisseur;
 }
 
 
@@ -2288,10 +2304,10 @@ export interface UpdateItem {
     'ref_bundle'?: string;
     /**
      * 
-     * @type {RestockType}
+     * @type {Fournisseur}
      * @memberof UpdateItem
      */
-    'fournisseur'?: RestockType;
+    'fournisseur'?: Fournisseur;
 }
 
 
@@ -6816,11 +6832,11 @@ export const ItemsApiAxiosParamCreator = function (configuration?: Configuration
          * @param {ItemState} [state] Filter by state
          * @param {string} [categoryId] Filter by category
          * @param {string} [name] Filter by name
-         * @param {RestockType} [fournisseur] Filter by fournisseur
+         * @param {Fournisseur} [fournisseur] Filter by fournisseur
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllItems: async (page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: RestockType, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getAllItems: async (page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: Fournisseur, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/items`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -7101,11 +7117,11 @@ export const ItemsApiFp = function(configuration?: Configuration) {
          * @param {ItemState} [state] Filter by state
          * @param {string} [categoryId] Filter by category
          * @param {string} [name] Filter by name
-         * @param {RestockType} [fournisseur] Filter by fournisseur
+         * @param {Fournisseur} [fournisseur] Filter by fournisseur
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getAllItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: RestockType, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAllItems200Response>> {
+        async getAllItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: Fournisseur, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAllItems200Response>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getAllItems(page, limit, state, categoryId, name, fournisseur, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -7184,11 +7200,11 @@ export const ItemsApiFactory = function (configuration?: Configuration, basePath
          * @param {ItemState} [state] Filter by state
          * @param {string} [categoryId] Filter by category
          * @param {string} [name] Filter by name
-         * @param {RestockType} [fournisseur] Filter by fournisseur
+         * @param {Fournisseur} [fournisseur] Filter by fournisseur
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: RestockType, options?: any): AxiosPromise<GetAllItems200Response> {
+        getAllItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: Fournisseur, options?: any): AxiosPromise<GetAllItems200Response> {
             return localVarFp.getAllItems(page, limit, state, categoryId, name, fournisseur, options).then((request) => request(axios, basePath));
         },
         /**
@@ -7261,12 +7277,12 @@ export class ItemsApi extends BaseAPI {
      * @param {ItemState} [state] Filter by state
      * @param {string} [categoryId] Filter by category
      * @param {string} [name] Filter by name
-     * @param {RestockType} [fournisseur] Filter by fournisseur
+     * @param {Fournisseur} [fournisseur] Filter by fournisseur
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ItemsApi
      */
-    public getAllItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: RestockType, options?: AxiosRequestConfig) {
+    public getAllItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: Fournisseur, options?: AxiosRequestConfig) {
         return ItemsApiFp(this.configuration).getAllItems(page, limit, state, categoryId, name, fournisseur, options).then((request) => request(this.axios, this.basePath));
     }
 

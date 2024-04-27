@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { api } from '$lib/config/config';
 	import { CourseApi } from '$lib/requests/requests';
-	import type { CourseItem, Item, RestockType } from '$lib/api';
+	import type { CourseItem } from '$lib/api';
 
 	let items: CourseItem[] = [];
 	let fournisseur = 'promocash';

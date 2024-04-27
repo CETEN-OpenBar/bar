@@ -2399,7 +2399,7 @@ paths:
           description: Filter by fournisseur
           required: false
           schema:
-            $ref: "#/components/schemas/RestockType"
+            $ref: "#/components/schemas/Fournisseur"
       responses:
         "200":
           description: ""
@@ -4863,7 +4863,7 @@ components:
         ref_bundle:
           type: string
         fournisseur:
-          $ref: "#/components/schemas/RestockType"        
+          $ref: "#/components/schemas/Fournisseur"        
     ItemPrices:
       type: object
       properties:
@@ -5027,7 +5027,7 @@ components:
           type: string
           description: Referal code of the product in the Drive
         fournisseur:
-          $ref: "#/components/schemas/RestockType"
+          $ref: "#/components/schemas/Fournisseur"
       required:
         - id
         - prices
@@ -5510,6 +5510,18 @@ components:
         - RestockAuchanDrive
         - RestockViennoiserie
         - RestockPromocash
+    Fournisseur:
+      type: string
+      enum:
+        - auchan
+        - auchan_drive
+        - viennoiserie
+        - promocash
+      x-enum-varnames:
+        - Auchan
+        - Auchan_Drive
+        - Viennoiserie
+        - Promocash
     Restock:
       type: object
       properties:
