@@ -52,7 +52,7 @@
 		amount_of_bundle: 'Nombre de lots',
 		amount_per_bundle: 'Nombre de produits par lots',
 		bundle_cost_ht: "Prix d'un lot HT",
-		tva: "0",
+		tva: '0',
 		bundle_cost_ttc: "Prix d'un lot TTC"
 	};
 
@@ -90,7 +90,7 @@
 			if (item.bundle_cost_float_ttc === 0.0) {
 				newRestock.total_cost_ttc += item.amount_of_bundle * item.bundle_cost_ttc;
 			} else {
-				newRestock.total_cost_ttc += item.amount_of_bundle * item.bundle_cost_float_ttc;
+				newRestock.total_cost_ttc += item.amount_of_bundle * (item.bundle_cost_float_ttc ?? item.bundle_cost_ttc);
 			}
 		});
 	}
@@ -119,7 +119,7 @@
 					amount_of_bundle: 'Nombre de lots',
 					amount_per_bundle: 'Nombre de produits par lots',
 					bundle_cost_ht: "Prix d'un lot HT",
-					tva: "0",
+					tva: '0',
 					bundle_cost_ttc: "Prix d'un lot TTC"
 				};
 				newItem = {
@@ -438,9 +438,9 @@
 									amount_of_bundle: 'Nombre de lots',
 									amount_per_bundle: 'Nombre de produits par lots',
 									bundle_cost_ht: "Prix d'un lot HT",
-									tva: "0",
+									tva: '0',
 									bundle_cost_ttc: "Prix d'un lot TTC"
-								};	
+								};
 								newItem = {
 									item_id: '',
 									amount_of_bundle: 0,
