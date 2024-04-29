@@ -6826,13 +6826,16 @@ export class DeletedApi extends BaseAPI {
 export const ItemsApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * (admin) Get all incoherent items with pagination
+         * (admin) Get all incoherent items with filters and pagination
          * @param {number} [page] Page number
          * @param {number} [limit] Number of items per page
+         * @param {ItemState} [state] Filter by state
+         * @param {string} [categoryId] Filter by category
+         * @param {string} [name] Filter by name
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllIncoherentItems: async (page?: number, limit?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getAllIncoherentItems: async (page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/items/incoherent`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -6853,6 +6856,18 @@ export const ItemsApiAxiosParamCreator = function (configuration?: Configuration
 
             if (limit !== undefined) {
                 localVarQueryParameter['limit'] = limit;
+            }
+
+            if (state !== undefined) {
+                localVarQueryParameter['state'] = state;
+            }
+
+            if (categoryId !== undefined) {
+                localVarQueryParameter['category_id'] = categoryId;
+            }
+
+            if (name !== undefined) {
+                localVarQueryParameter['name'] = name;
             }
 
 
@@ -7152,14 +7167,17 @@ export const ItemsApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = ItemsApiAxiosParamCreator(configuration)
     return {
         /**
-         * (admin) Get all incoherent items with pagination
+         * (admin) Get all incoherent items with filters and pagination
          * @param {number} [page] Page number
          * @param {number} [limit] Number of items per page
+         * @param {ItemState} [state] Filter by state
+         * @param {string} [categoryId] Filter by category
+         * @param {string} [name] Filter by name
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getAllIncoherentItems(page?: number, limit?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAllItems200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllIncoherentItems(page, limit, options);
+        async getAllIncoherentItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAllItems200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllIncoherentItems(page, limit, state, categoryId, name, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -7246,14 +7264,17 @@ export const ItemsApiFactory = function (configuration?: Configuration, basePath
     const localVarFp = ItemsApiFp(configuration)
     return {
         /**
-         * (admin) Get all incoherent items with pagination
+         * (admin) Get all incoherent items with filters and pagination
          * @param {number} [page] Page number
          * @param {number} [limit] Number of items per page
+         * @param {ItemState} [state] Filter by state
+         * @param {string} [categoryId] Filter by category
+         * @param {string} [name] Filter by name
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllIncoherentItems(page?: number, limit?: number, options?: any): AxiosPromise<GetAllItems200Response> {
-            return localVarFp.getAllIncoherentItems(page, limit, options).then((request) => request(axios, basePath));
+        getAllIncoherentItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, options?: any): AxiosPromise<GetAllItems200Response> {
+            return localVarFp.getAllIncoherentItems(page, limit, state, categoryId, name, options).then((request) => request(axios, basePath));
         },
         /**
          * (admin) Get all items with filters and pagination
@@ -7333,15 +7354,18 @@ export const ItemsApiFactory = function (configuration?: Configuration, basePath
  */
 export class ItemsApi extends BaseAPI {
     /**
-     * (admin) Get all incoherent items with pagination
+     * (admin) Get all incoherent items with filters and pagination
      * @param {number} [page] Page number
      * @param {number} [limit] Number of items per page
+     * @param {ItemState} [state] Filter by state
+     * @param {string} [categoryId] Filter by category
+     * @param {string} [name] Filter by name
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ItemsApi
      */
-    public getAllIncoherentItems(page?: number, limit?: number, options?: AxiosRequestConfig) {
-        return ItemsApiFp(this.configuration).getAllIncoherentItems(page, limit, options).then((request) => request(this.axios, this.basePath));
+    public getAllIncoherentItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, options?: AxiosRequestConfig) {
+        return ItemsApiFp(this.configuration).getAllIncoherentItems(page, limit, state, categoryId, name, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

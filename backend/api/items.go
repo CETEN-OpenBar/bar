@@ -308,7 +308,20 @@ func (s *Server) GetAllIncoherentItems(c echo.Context, params autogen.GetAllInco
 		return nil
 	}
 
-	count, err := s.DBackend.CountIncoherentItems(c.Request().Context())
+	state := ""
+	categoryId := ""
+	name := ""
+	if params.State != nil {
+		state = string(*params.State)
+	}
+	if params.CategoryId != nil {
+		categoryId = params.CategoryId.String()
+	}
+	if params.Name != nil {
+		name = string(*params.Name)
+	}
+
+	count, err := s.DBackend.CountIncoherentItems(c.Request().Context(), categoryId, state, name)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -317,7 +330,7 @@ func (s *Server) GetAllIncoherentItems(c echo.Context, params autogen.GetAllInco
 	// Make sure the last page is not empty
 	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	data, err := s.DBackend.GetIncoherentItems(c.Request().Context(), dbpage, limit)
+	data, err := s.DBackend.GetIncoherentItems(c.Request().Context(), dbpage, limit, categoryId, state, name)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)

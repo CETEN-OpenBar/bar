@@ -88,7 +88,7 @@ func (b *Backend) GetItems(ctx context.Context, categoryID string, page, size ui
 	return items, nil
 }
 
-func (b *Backend) GetIncoherentItems(ctx context.Context, page, size uint64) ([]*models.Item, error) {
+func (b *Backend) GetIncoherentItems(ctx context.Context, page, size uint64, categoryID string, state string, name string) ([]*models.Item, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
@@ -154,6 +154,50 @@ func (b *Backend) GetIncoherentItems(ctx context.Context, page, size uint64) ([]
 				},
 			},
 		},
+	}
+
+	if state != "" {
+		filter["state"] = state
+		if state == string(autogen.ItemBuyable) {
+			// Get seconds since day start
+			t := time.Since(time.Now().Truncate(24 * time.Hour)).Seconds()
+			// available_from <= t <= available_until or (available_from == nil && available_until == nil)
+			filter["$and"] = []bson.M{
+				{
+					"$or": []bson.M{
+						{
+							"available_from": bson.M{
+								"$lte": t,
+							},
+						},
+						{
+							"available_from": nil,
+						},
+					},
+				},
+				{
+					"$or": []bson.M{
+						{
+							"available_until": bson.M{
+								"$gte": t,
+							},
+						},
+						{
+							"available_until": nil,
+						},
+					},
+				},
+			}
+		}
+	}
+	if categoryID != "" {
+		filter["category_id"] = uuid.MustParse(categoryID)
+	}
+	if name != "" {
+		filter["name"] = bson.M{
+			"$regex":   name,
+			"$options": "i",
+		}
 	}
 
 	cursor, err := b.db.Collection(ItemsCollection).Find(ctx, filter, options.Find().SetSkip(int64(page*size)).SetLimit(int64(size)))
@@ -237,7 +281,7 @@ func (b *Backend) CountItems(ctx context.Context, categoryID string, state strin
 	return uint64(count), nil
 }
 
-func (b *Backend) CountIncoherentItems(ctx context.Context) (uint64, error) {
+func (b *Backend) CountIncoherentItems(ctx context.Context, categoryID string, state string, name string) (uint64, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
@@ -301,6 +345,48 @@ func (b *Backend) CountIncoherentItems(ctx context.Context) (uint64, error) {
 				},
 			},
 		},
+	}
+
+	if state != "" {
+		filter["state"] = state
+		if state == string(autogen.ItemBuyable) {
+			t := time.Since(time.Now().Truncate(24 * time.Hour)).Seconds()
+			filter["$and"] = []bson.M{
+				{
+					"$or": []bson.M{
+						{
+							"available_from": bson.M{
+								"$lte": t,
+							},
+						},
+						{
+							"available_from": nil,
+						},
+					},
+				},
+				{
+					"$or": []bson.M{
+						{
+							"available_until": bson.M{
+								"$gte": t,
+							},
+						},
+						{
+							"available_until": nil,
+						},
+					},
+				},
+			}
+		}
+	}
+	if categoryID != "" {
+		filter["category_id"] = uuid.MustParse(categoryID)
+	}
+	if name != "" {
+		filter["name"] = bson.M{
+			"$regex":   name,
+			"$options": "i",
+		}
 	}
 
 	count, err := b.db.Collection(ItemsCollection).CountDocuments(ctx, filter)
