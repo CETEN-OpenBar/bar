@@ -88,6 +88,86 @@ func (b *Backend) GetItems(ctx context.Context, categoryID string, page, size ui
 	return items, nil
 }
 
+func (b *Backend) GetIncoherentItems(ctx context.Context, page, size uint64) ([]*models.Item, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
+	defer cancel()
+
+	var items []*models.Item
+
+	filter := bson.M{
+		"$or": []bson.M{
+			{
+				"$and": []bson.M{
+					{
+						"deleted_at": bson.M{
+							"$exists": false,
+						},
+					},
+					{
+						"amount_left": bson.M{
+							"$gt": 0,
+						},
+					},
+					{
+						"state": bson.M{
+							"$ne": "buyable",
+						},
+					},
+					{
+						"$or": []bson.M{
+							{"display_prices.ceten": 0},
+							{"display_prices.coutant": 0},
+							{"display_prices.externe": 0},
+							{"display_prices.menu": 0},
+							{"display_prices.privilegies": 0},
+							{"display_prices.staff_bar": 0},
+							{"prices.ceten": 0},
+							{"prices.coutant": 0},
+							{"prices.externe": 0},
+							{"prices.menu": 0},
+							{"prices.privilegies": 0},
+							{"prices.staff_bar": 0},
+						},
+					},
+				},
+			},
+			{
+				"amount_left": bson.M{
+					"$gt": 0,
+				},
+				"state": bson.M{
+					"$ne": "buyable",
+				},
+				"$or": []bson.M{
+					{"display_prices.ceten": 0},
+					{"display_prices.coutant": 0},
+					{"display_prices.externe": 0},
+					{"display_prices.menu": 0},
+					{"display_prices.privilegies": 0},
+					{"display_prices.staff_bar": 0},
+					{"prices.ceten": 0},
+					{"prices.coutant": 0},
+					{"prices.externe": 0},
+					{"prices.menu": 0},
+					{"prices.privilegies": 0},
+					{"prices.staff_bar": 0},
+				},
+			},
+		},
+	}
+
+	cursor, err := b.db.Collection(ItemsCollection).Find(ctx, filter, options.Find().SetSkip(int64(page*size)).SetLimit(int64(size)))
+	if err != nil {
+		return nil, err
+	}
+
+	if err := cursor.All(ctx, &items); err != nil {
+		return nil, err
+	}
+
+	return items, nil
+}
+
 func (b *Backend) CountItems(ctx context.Context, categoryID string, state string, name string, fournisseur string) (uint64, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
@@ -147,6 +227,80 @@ func (b *Backend) CountItems(ctx context.Context, categoryID string, state strin
 	}
 	if fournisseur != "" {
 		filter["fournisseur"] = fournisseur
+	}
+
+	count, err := b.db.Collection(ItemsCollection).CountDocuments(ctx, filter)
+	if err != nil {
+		return 0, err
+	}
+
+	return uint64(count), nil
+}
+
+func (b *Backend) CountIncoherentItems(ctx context.Context) (uint64, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
+	defer cancel()
+
+	filter := bson.M{
+		"$or": []bson.M{
+			{
+				"$and": []bson.M{
+					{
+						"deleted_at": bson.M{
+							"$exists": false,
+						},
+					},
+					{
+						"amount_left": bson.M{
+							"$gt": 0,
+						},
+					},
+					{
+						"state": bson.M{
+							"$ne": "buyable",
+						},
+					},
+					{
+						"$or": []bson.M{
+							{"display_prices.ceten": 0},
+							{"display_prices.coutant": 0},
+							{"display_prices.externe": 0},
+							{"display_prices.menu": 0},
+							{"display_prices.privilegies": 0},
+							{"display_prices.staff_bar": 0},
+							{"prices.ceten": 0},
+							{"prices.coutant": 0},
+							{"prices.externe": 0},
+							{"prices.menu": 0},
+							{"prices.privilegies": 0},
+							{"prices.staff_bar": 0},
+						},
+					},
+				},
+			},
+			{
+				"amount_left": bson.M{
+					"$gt": 0,
+				},
+				"state": bson.M{
+					"$ne": "buyable",
+				},
+				"$or": []bson.M{
+					{"display_prices.ceten": 0},
+					{"display_prices.coutant": 0},
+					{"display_prices.externe": 0},
+					{"display_prices.menu": 0},
+					{"display_prices.privilegies": 0},
+					{"display_prices.staff_bar": 0},
+					{"prices.ceten": 0},
+					{"prices.coutant": 0},
+					{"prices.externe": 0},
+					{"prices.menu": 0},
+					{"prices.privilegies": 0},
+					{"prices.staff_bar": 0},
+				},
+			},
+		},
 	}
 
 	count, err := b.db.Collection(ItemsCollection).CountDocuments(ctx, filter)

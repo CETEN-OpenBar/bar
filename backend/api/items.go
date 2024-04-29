@@ -299,3 +299,52 @@ func (s *Server) GetAllItems(c echo.Context, params autogen.GetAllItemsParams) e
 
 	return nil
 }
+
+// (GET /items/incoherent)
+func (s *Server) GetAllIncoherentItems(c echo.Context, params autogen.GetAllIncoherentItemsParams) error {
+	// Get account from cookie
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
+
+	count, err := s.DBackend.CountIncoherentItems(c.Request().Context())
+	if err != nil {
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	// Make sure the last page is not empty
+	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
+
+	data, err := s.DBackend.GetIncoherentItems(c.Request().Context(), dbpage, limit)
+	if err != nil {
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	
+
+	var items []autogen.Item
+
+	for _, item := range data {
+		rp := item.RealPrice(account.PriceRole)
+		item.DisplayPrice = &rp
+
+		if account.HasPrivileges() {
+			rp := item.RealPrices()
+			item.DisplayPrices = &rp
+		}
+
+		items = append(items, item.Item)
+	}
+
+	autogen.GetAllIncoherentItems200JSONResponse{
+		Items:   items,
+		Page:    page,
+		Limit:   limit,
+		MaxPage: maxPage,
+	}.VisitGetAllIncoherentItemsResponse(c.Response())
+
+	return nil
+}
