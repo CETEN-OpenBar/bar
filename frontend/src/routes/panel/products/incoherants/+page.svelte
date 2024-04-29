@@ -76,7 +76,7 @@
 
 	function reloadItems() {
 		itemsApi()
-			.getAllIncoherentItems(page, itemsPerPage, {
+			.getAllIncoherentItems(page, itemsPerPage, searchState, searchCategory, searchName, {
 				withCredentials: true
 			})
 			.then((res) => {
