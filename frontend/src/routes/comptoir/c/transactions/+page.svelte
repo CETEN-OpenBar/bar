@@ -9,7 +9,6 @@
 	import ChangePassword from '$lib/components/comptoir/changePassword.svelte';
 	import Password from '$lib/components/password.svelte';
 
-
 	import { transactionsApi } from '$lib/requests/requests';
 	import type { TransactionItem } from '$lib/api';
 	import TransactionsItems from '$lib/components/comptoir/transactionsItems.svelte';
@@ -47,8 +46,11 @@
 			});
 	}
 
-	let showTransactionItems = false;
+	const go_admin_panel = (card_id: string, password: string) => {
+		goto('/panel');
+	};
 
+	let showTransactionItems = false;
 </script>
 
 {#if askForCard}
@@ -129,6 +131,13 @@
 						askForCard = true;
 					}}>caisse</button
 				>
+				<button
+					class="text-xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all ml-2"
+					on:click={() => {
+						to_call = go_admin_panel;
+						askForCard = true;
+					}}>Admin panel</button
+				>
 			</div>
 
 			<button
@@ -138,15 +147,15 @@
 			{#if showTransactionItems}
 				<button
 					class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
-					on:click={() => showTransactionItems = false}>Liste des commandes</button
+					on:click={() => (showTransactionItems = false)}>Liste des commandes</button
 				>
 			{:else}
 				<button
 					class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
-					on:click={() => showTransactionItems = true}>Résumé des commandes</button
+					on:click={() => (showTransactionItems = true)}>Résumé des commandes</button
 				>
 			{/if}
-			
+
 			<button
 				class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all mr-2"
 				on:click={() => (newRefill = true)}>Nouvelle Recharge</button
