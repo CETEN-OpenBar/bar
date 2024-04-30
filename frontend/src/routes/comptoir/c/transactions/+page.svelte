@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import Pin from '$lib/components/borne/pin.svelte';
 	import Transactions from '$lib/components/comptoir/transactions.svelte';
 	import ReadCard from '$lib/components/readCard.svelte';
 	import { open_caisse, open_door, open_ventilo } from '$lib/local/local';
@@ -8,9 +7,8 @@
 	import { authApi } from '$lib/requests/requests';
 	import ChangePassword from '$lib/components/comptoir/changePassword.svelte';
 	import Password from '$lib/components/password.svelte';
+	import type { ConnectPasswordRequest } from '$lib/api';
 
-	import { transactionsApi } from '$lib/requests/requests';
-	import type { TransactionItem } from '$lib/api';
 	import TransactionsItems from '$lib/components/comptoir/transactionsItems.svelte';
 
 	function reset() {
@@ -28,7 +26,7 @@
 	let askForPassword = false;
 	let newRefill = false;
 	let changePassword = false;
-
+	let info: ConnectPasswordRequest;
 	function close() {
 		newRefill = false;
 	}
@@ -47,7 +45,15 @@
 	}
 
 	const go_admin_panel = (card_id: string, password: string) => {
-		goto('/panel');
+		info = {
+			card_id: card_id,
+			password: password,
+		}
+		authApi()
+			.connectPassword(info, { withCredentials: true })
+			.then(() => {
+				goto('/panel');
+			});
 	};
 
 	let showTransactionItems = false;
