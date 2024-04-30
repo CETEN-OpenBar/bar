@@ -599,7 +599,6 @@
 											<button
 												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
 												on:click={() => {
-													console.log("test")
 													selectedAccount = account;
 													askForCard = true;
 												}}
