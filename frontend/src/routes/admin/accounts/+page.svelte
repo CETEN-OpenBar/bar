@@ -110,8 +110,6 @@
 						account.card_id = account.card_id ?? '';
 					}
 				});
-		} else {
-			console.log('test');
 		}
 	}
 
