@@ -425,6 +425,7 @@
 								);
 								// @ts-ignore
 								newItem.bundle_cost_ttc = parsePrice(e.target?.value);
+								newItem.bundle_cost_float_ttc = 0.0;
 								let r = formatPrice(newItem.bundle_cost_ttc);
 								displayedValues.bundle_cost_ttc = r;
 								displayedValues.bundle_cost_ht = formatPrice(newItem.bundle_cost_ht);
