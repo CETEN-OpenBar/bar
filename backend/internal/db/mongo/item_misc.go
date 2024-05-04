@@ -95,50 +95,26 @@ func (b *Backend) GetIncoherentItems(ctx context.Context, page, size uint64, cat
 	var items []*models.Item
 
 	filter := bson.M{
-		"$or": []bson.M{
+		"$and": []bson.M{
 			{
-				"$and": []bson.M{
-					{
-						"deleted_at": bson.M{
-							"$exists": false,
-						},
-					},
-					{
-						"amount_left": bson.M{
-							"$gt": 0,
-						},
-					},
-					{
-						"state": bson.M{
-							"$ne": "buyable",
-						},
-					},
-					{
-						"$or": []bson.M{
-							{"display_prices.ceten": 0},
-							{"display_prices.coutant": 0},
-							{"display_prices.externe": 0},
-							{"display_prices.menu": 0},
-							{"display_prices.privilegies": 0},
-							{"display_prices.staff_bar": 0},
-							{"prices.ceten": 0},
-							{"prices.coutant": 0},
-							{"prices.externe": 0},
-							{"prices.menu": 0},
-							{"prices.privilegies": 0},
-							{"prices.staff_bar": 0},
-						},
-					},
-				},
+				"deleted_at": nil,
 			},
 			{
-				"amount_left": bson.M{
-					"$gt": 0,
-				},
-				"state": bson.M{
-					"$ne": "buyable",
-				},
 				"$or": []bson.M{
+					{
+						"$and": []bson.M{
+							{
+								"amount_left": bson.M{
+									"$gt": 0,
+								},
+							},
+							{
+								"state": bson.M{
+									"$ne": "buyable",
+								},
+							},
+						},
+					},
 					{"display_prices.ceten": 0},
 					{"display_prices.coutant": 0},
 					{"display_prices.externe": 0},
@@ -155,7 +131,6 @@ func (b *Backend) GetIncoherentItems(ctx context.Context, page, size uint64, cat
 			},
 		},
 	}
-
 	if state != "" {
 		filter["state"] = state
 		if state == string(autogen.ItemBuyable) {
@@ -286,50 +261,26 @@ func (b *Backend) CountIncoherentItems(ctx context.Context, categoryID string, s
 	defer cancel()
 
 	filter := bson.M{
-		"$or": []bson.M{
+		"$and": []bson.M{
 			{
-				"$and": []bson.M{
-					{
-						"deleted_at": bson.M{
-							"$exists": false,
-						},
-					},
-					{
-						"amount_left": bson.M{
-							"$gt": 0,
-						},
-					},
-					{
-						"state": bson.M{
-							"$ne": "buyable",
-						},
-					},
-					{
-						"$or": []bson.M{
-							{"display_prices.ceten": 0},
-							{"display_prices.coutant": 0},
-							{"display_prices.externe": 0},
-							{"display_prices.menu": 0},
-							{"display_prices.privilegies": 0},
-							{"display_prices.staff_bar": 0},
-							{"prices.ceten": 0},
-							{"prices.coutant": 0},
-							{"prices.externe": 0},
-							{"prices.menu": 0},
-							{"prices.privilegies": 0},
-							{"prices.staff_bar": 0},
-						},
-					},
-				},
+				"deleted_at": nil,
 			},
 			{
-				"amount_left": bson.M{
-					"$gt": 0,
-				},
-				"state": bson.M{
-					"$ne": "buyable",
-				},
 				"$or": []bson.M{
+					{
+						"$and": []bson.M{
+							{
+								"amount_left": bson.M{
+									"$gt": 0,
+								},
+							},
+							{
+								"state": bson.M{
+									"$ne": "buyable",
+								},
+							},
+						},
+					},
 					{"display_prices.ceten": 0},
 					{"display_prices.coutant": 0},
 					{"display_prices.externe": 0},
