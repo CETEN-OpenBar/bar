@@ -3,7 +3,6 @@ package autogen
 import (
 	"math"
 	"time"
-	"github.com/sirupsen/logrus"
 )
 
 func OptionalString(s string) *string {
