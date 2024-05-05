@@ -268,7 +268,11 @@
 	style="background-color:#393E46"
 >
 	{#if !menuPicks}
-		<div class="{sidebar ? 'w-4/5' : 'w-full'} h-full relative transition-all ease-in-out overflow-y-auto">
+		<div
+			class="{sidebar
+				? 'w-full'
+				: 'w-full'} h-full relative transition-all ease-in-out overflow-y-auto"
+		>
 			<div class="p-4 flex justify-between" style="background-color:#222831">
 				<button
 					class="flex items-center h-1/2 space-x-2 px-4 py-2 mr-2 rounded-lg bg-green-500 hover:bg-green-600 transition-colors duration-300"
@@ -300,7 +304,7 @@
 			{/if}
 		</div>
 	{:else}
-		<div class="{sidebar ? 'w-4/5' : 'w-full'} h-full relative transition-all ease-in-out">
+		<div class="w-full h-full relative transition-all ease-in-out">
 			<div class="p-4 flex justify-between" style="background-color:#222831">
 				<button
 					class="flex items-center h-1/2 space-x-2 px-4 py-2 mr-2 rounded-lg bg-green-500 hover:bg-green-600 transition-colors duration-300"
@@ -338,7 +342,7 @@
 	{/if}
 	{#if sidebar}
 		<div
-			class="absolute top-0 right-0 w-1/5 h-screen"
+			class="absolute top-0 right-0 w-1/5 h-screen translate-x-full transition-transform sm:translate-x-0"
 			style="background-color:#222831"
 			in:fly={{ x: 300, duration: 200 }}
 			out:fly={{ x: 300, duration: 200 }}

@@ -130,12 +130,12 @@
 
 <!-- horizontal & overflows -->
 {#if items.length === 0}
-	<div class="col-span-7 flex flex-col items-center justify-center">
+	<div class="col-span-7 flex flex-col justify-items-center">
 		<span class="text-3xl text-white" in:fade={{ duration: 200, delay: 100 }}>Aucun article</span>
 	</div>
 {:else}
 	<div
-		class="w-full p-16"
+		class="w-full md:p-12 p-4"
 		in:fly={{ x: -direction * 300, duration: 500 }}
 		out:fly={{ x: direction * 300, duration: 500 }}
 		use:dragscroll
@@ -143,7 +143,7 @@
 		{#each items as item}
 			<!-- image wil be in a button box -->
 			<div
-				class="relative min-w-48 w-40 max-w-40 h-50 inline-flex item-justify rounded-lg text-white transition-colors duration-300"
+				class="relative min-w-40 max-w-40 min-h-50 h-50 max-h-50 inline-flex item-justify rounded-lg text-white transition-colors duration-300"
 			>
 				<!-- add info svg on the top right -->
 				{#if item.is_menu}
@@ -172,7 +172,7 @@
 						alt={item.name}
 					/>
 					<div class="flex flex-col">
-						<span class="text-lg font-bold">{item.name}</span>
+						<span class="text-lg font-bold w-40">{item.name}</span>
 						<span class="text-sm">Prix: {formatPrice(item.display_price ?? 999)}</span>
 					</div>
 				</button>
