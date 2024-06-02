@@ -173,7 +173,7 @@
 			class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-gray-800 dark:border-gray-700"
 		>
 			<div class="p-4 sm:p-7">
-				<div class="text-cen ter">
+				<div class="text-center">
 					<h2 class="block text-2xl font-bold text-gray-800 dark:text-gray-200">
 						Ajouter un compte
 					</h2>
