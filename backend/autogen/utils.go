@@ -101,7 +101,7 @@ func Pager(page *uint64, limit *uint64, count *uint64) (dbPage uint64, pageOut u
 	// We calculate the max page (0 if count is nil)
 	if count != nil {
 		maxPageFloat := float64(*count) / float64(limitOut)
-		maxPage = uint64(math.Floor(maxPageFloat))
+		maxPage = uint64(math.Ceil(maxPageFloat))
 	}
 
 	if pageOut > maxPage+1 {
