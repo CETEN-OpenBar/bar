@@ -48,7 +48,7 @@
 {#if account !== undefined}
 	<div
 		id="main"
-		class="absolute top-0 left-0 w-screen h-screen"
+		class="top-0 left-0 w-screen h-screen"
 		style="background-color:#393E46"
 		out:fly={{ y: window.innerHeight, delay: 500 }}
 	>

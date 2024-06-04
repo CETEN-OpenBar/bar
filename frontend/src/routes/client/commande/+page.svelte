@@ -264,13 +264,13 @@
 
 <div
 	id="main"
-	class="absolute w-screen h-screen top-0 left-0 overflow-y-hidden"
+	class="w-screen h-screen top-0 left-0 overflow-y-hidden"
 	style="background-color:#393E46"
 >
 	{#if !menuPicks}
 		<div
 			class="{sidebar
-				? 'w-full'
+				? 'w-4/5'
 				: 'w-full'} h-full relative transition-all ease-in-out overflow-y-auto"
 		>
 			<div class="p-4 flex justify-between" style="background-color:#222831">
