@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Account, Callback200Response, ConnectCardRequest } from '$lib/api';
+	import type { Account, ConnectCard200Response, ConnectCardRequest } from '$lib/api';
 	import { accountsApi, authApi } from '$lib/requests/requests';
 	import Button from '$lib/components/button.svelte';
 	import { goto } from '$app/navigation';
@@ -22,7 +22,7 @@
 						withCredentials: true
 					})
 					.then((res: any) => {
-						let data: Callback200Response = res.data;
+						let data: ConnectCard200Response = res.data;
 						account = data.account;
 					});
 			});

@@ -51,7 +51,18 @@ func (b *Backend) GetAllRestocks(ctx context.Context, page uint64, size uint64) 
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
-	filter := bson.M{}
+	filter := bson.M{
+		"$or": []bson.M{
+			{
+				"deleted_at": bson.M{
+					"$exists": false,
+				},
+			},
+			{
+				"deleted_at": nil,
+			},
+		},
+	}
 
 	// Get "size" restocks from "page" using aggregation
 	var restocks []*models.Restock
@@ -72,7 +83,18 @@ func (b *Backend) CountAllRestocks(ctx context.Context) (uint64, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
-	filter := bson.M{}
+	filter := bson.M{
+		"$or": []bson.M{
+			{
+				"deleted_at": bson.M{
+					"$exists": false,
+				},
+			},
+			{
+				"deleted_at": nil,
+			},
+		},
+	}
 
 	count, err := b.db.Collection(RestocksCollection).CountDocuments(ctx, filter)
 	if err != nil {

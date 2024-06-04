@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import Pin from '$lib/components/borne/pin.svelte';
 	import Transactions from '$lib/components/comptoir/transactions.svelte';
 	import ReadCard from '$lib/components/readCard.svelte';
 	import { open_caisse, open_door, open_ventilo } from '$lib/local/local';
@@ -8,10 +7,8 @@
 	import { authApi } from '$lib/requests/requests';
 	import ChangePassword from '$lib/components/comptoir/changePassword.svelte';
 	import Password from '$lib/components/password.svelte';
+	import type { ConnectPasswordRequest } from '$lib/api';
 
-
-	import { transactionsApi } from '$lib/requests/requests';
-	import type { TransactionItem } from '$lib/api';
 	import TransactionsItems from '$lib/components/comptoir/transactionsItems.svelte';
 
 	function reset() {
@@ -29,7 +26,7 @@
 	let askForPassword = false;
 	let newRefill = false;
 	let changePassword = false;
-
+	let info: ConnectPasswordRequest;
 	function close() {
 		newRefill = false;
 	}
@@ -47,8 +44,19 @@
 			});
 	}
 
-	let showTransactionItems = false;
+	const go_admin_panel = (card_id: string, password: string) => {
+		info = {
+			card_id: card_id,
+			password: password,
+		}
+		authApi()
+			.connectPassword(info, { withCredentials: true })
+			.then(() => {
+				goto('/panel');
+			});
+	};
 
+	let showTransactionItems = false;
 </script>
 
 {#if askForCard}
@@ -129,6 +137,13 @@
 						askForCard = true;
 					}}>caisse</button
 				>
+				<button
+					class="text-xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all ml-2"
+					on:click={() => {
+						to_call = go_admin_panel;
+						askForCard = true;
+					}}>Admin panel</button
+				>
 			</div>
 
 			<button
@@ -138,15 +153,15 @@
 			{#if showTransactionItems}
 				<button
 					class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
-					on:click={() => showTransactionItems = false}>Liste des commandes</button
+					on:click={() => (showTransactionItems = false)}>Liste des commandes</button
 				>
 			{:else}
 				<button
 					class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
-					on:click={() => showTransactionItems = true}>Résumé des commandes</button
+					on:click={() => (showTransactionItems = true)}>Résumé des commandes</button
 				>
 			{/if}
-			
+
 			<button
 				class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all mr-2"
 				on:click={() => (newRefill = true)}>Nouvelle Recharge</button

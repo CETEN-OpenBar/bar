@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Item, NewRestock, NewRestockItem, Restock } from '$lib/api';
+	import ConfirmationPopup from '$lib/components/confirmationPopup.svelte';
 	import { itemsApi, restocksApi } from '$lib/requests/requests';
 	import { formatPrice, parsePrice } from '$lib/utils';
 	import { onMount } from 'svelte';
@@ -7,7 +8,7 @@
 	let sure: boolean = false;
 	let items: Item[] = [];
 
-	let restoks: Restock[] = [];
+	let restocks: Restock[] = [];
 	let newRestock: NewRestock = {
 		total_cost_ht: 0,
 		total_cost_ttc: 0,
@@ -52,9 +53,15 @@
 		amount_of_bundle: 'Nombre de lots',
 		amount_per_bundle: 'Nombre de produits par lots',
 		bundle_cost_ht: "Prix d'un lot HT",
-		tva: "0",
+		tva: '0',
 		bundle_cost_ttc: "Prix d'un lot TTC"
 	};
+
+	let deletingRestock = false;
+	let deleteRestockCallback: VoidFunction = () => {};
+	let confirmationMessage: string | undefined = undefined;
+
+	let selectedRestock: Restock | undefined = undefined;
 
 	onMount(() => {
 		reloadItems();
@@ -63,13 +70,13 @@
 				withCredentials: true
 			})
 			.then((res) => {
-				restoks = res.data.restocks ?? [];
+				restocks = res.data.restocks ?? [];
 			});
 	});
 
 	function reloadItems() {
 		itemsApi()
-			.getAllItems(page, itemsPerPage, undefined, undefined, searchName, {
+			.getAllItems(page, itemsPerPage, undefined, undefined, searchName, undefined, {
 				withCredentials: true
 			})
 			.then((res) => {
@@ -90,7 +97,8 @@
 			if (item.bundle_cost_float_ttc === 0.0) {
 				newRestock.total_cost_ttc += item.amount_of_bundle * item.bundle_cost_ttc;
 			} else {
-				newRestock.total_cost_ttc += item.amount_of_bundle * item.bundle_cost_float_ttc;
+				newRestock.total_cost_ttc +=
+					item.amount_of_bundle * (item.bundle_cost_float_ttc ?? item.bundle_cost_ttc);
 			}
 		});
 	}
@@ -103,7 +111,7 @@
 		restocksApi()
 			.createRestock(newRestock, { withCredentials: true })
 			.then((res) => {
-				restoks = [res.data, ...restoks];
+				restocks = [res.data, ...restocks];
 				newRestock = {
 					total_cost_ht: 0,
 					total_cost_ttc: 0,
@@ -119,7 +127,7 @@
 					amount_of_bundle: 'Nombre de lots',
 					amount_per_bundle: 'Nombre de produits par lots',
 					bundle_cost_ht: "Prix d'un lot HT",
-					tva: "0",
+					tva: '0',
 					bundle_cost_ttc: "Prix d'un lot TTC"
 				};
 				newItem = {
@@ -131,8 +139,7 @@
 					bundle_cost_float_ttc: 0.0,
 					tva: 0
 				};
-				// @ts-ignore
-				document.getElementById('CHECKBOX').checked = false;
+				sure = false;
 			});
 	}
 
@@ -158,6 +165,14 @@
 		}
 		displayedValues.item_price_ht = formatPrice(newItem.bundle_cost_ht * newItem.amount_of_bundle);
 		displayedValues.item_price = formatPrice(newItem.bundle_cost_ttc * newItem.amount_of_bundle);
+	}
+
+	function deleteRestock(restockId: string) {
+		restocksApi()
+			.deleteRestock(restockId, { withCredentials: true })
+			.then(() => {
+				restocks = restocks.filter((ct) => ct.id !== restockId);
+			});
 	}
 </script>
 
@@ -410,6 +425,7 @@
 								);
 								// @ts-ignore
 								newItem.bundle_cost_ttc = parsePrice(e.target?.value);
+								newItem.bundle_cost_float_ttc = 0.0;
 								let r = formatPrice(newItem.bundle_cost_ttc);
 								displayedValues.bundle_cost_ttc = r;
 								displayedValues.bundle_cost_ht = formatPrice(newItem.bundle_cost_ht);
@@ -438,9 +454,9 @@
 									amount_of_bundle: 'Nombre de lots',
 									amount_per_bundle: 'Nombre de produits par lots',
 									bundle_cost_ht: "Prix d'un lot HT",
-									tva: "0",
+									tva: '0',
 									bundle_cost_ttc: "Prix d'un lot TTC"
-								};	
+								};
 								newItem = {
 									item_id: '',
 									amount_of_bundle: 0,
@@ -605,15 +621,33 @@
 						Prix total TTC
 					</p>
 				</th>
+				<th scope="col" class="px-2 py-3">
+					<p
+						class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+					>
+						Actions
+					</p>
+				</th>
 			</tr>
-			{#each restoks as restok}
+
+			{#if deletingRestock}
+				<ConfirmationPopup
+					message={confirmationMessage}
+					confirm_text="Supprimer"
+					cancel_callback={() => {
+						deletingRestock = false;
+					}}
+					confirm_callback={deleteRestockCallback}
+				/>
+			{/if}
+			{#each restocks as restock}
 				<tr>
 					<td class="px-6 py-3">
 						<div class="flex flex-col">
 							<div
 								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							>
-								<p>{restok.created_at}</p>
+								<p>{restock.created_at}</p>
 							</div>
 						</div>
 					</td>
@@ -622,7 +656,7 @@
 							<div
 								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							>
-								<p>{restok.type}</p>
+								<p>{restock.type}</p>
 							</div>
 						</div>
 					</td>
@@ -631,7 +665,7 @@
 							<div
 								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							>
-								<p>{restok.created_by_name}</p>
+								<p>{restock.created_by_name}</p>
 							</div>
 						</div>
 					</td>
@@ -639,11 +673,189 @@
 						<p
 							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 						>
-							{formatPrice(restok.total_cost_ttc)}
+							{formatPrice(restock.total_cost_ttc)}
 						</p>
+					</td>
+					<td class="px-2 py-3">
+						<div
+							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+						>
+							<button
+								class="px-2 inline-flex items-center text-sm text-blue-600 decoration-2 hover:underline font-medium"
+								on:click={() => {
+									deleteRestockCallback = () => {
+										deletingRestock = false;
+										deleteRestock(restock.id);
+									};
+									confirmationMessage =
+										'Supprimer la réappro de ' +
+										restock.created_by_name +
+										' à ' +
+										restock.type +
+										' ?';
+									deletingRestock = true;
+								}}
+							>
+								Supprimer
+							</button>
+							<button
+								class="px-2 inline-flex items-center text-sm text-blue-600 decoration-2 hover:underline font-medium"
+								on:click={() => {
+									if (selectedRestock == restock) {
+										selectedRestock = undefined;
+									} else {
+										selectedRestock = restock;
+									}
+								}}
+							>
+								Voir
+							</button>
+						</div>
 					</td>
 				</tr>
 			{/each}
 		</thead>
 	</table>
+	{#if selectedRestock != undefined}
+		<table class="mb-10 min-w-full divide-y divide-gray-200 dark:divide-gray-700 bg-blue-950">
+			<thead class="bg-gray-50 dark:bg-blue-600">
+				<tr>
+					<th scope="col" class="px-12 py-3">
+						<span
+							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+						>
+							Nom
+						</span>
+					</th>
+					<th scope="col" class="px-3 py-3 w-48">
+						<span
+							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+						>
+							Prix coûtant HT
+						</span>
+					</th>
+					<th scope="col" class="px-3 py-3 w-48">
+						<span
+							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+						>
+							Prix coûtant TTC
+						</span>
+					</th>
+					<th scope="col" class="px-3 py-3">
+						<span
+							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+						>
+							Nombre de lots
+						</span>
+					</th>
+					<th scope="col" class="px-3 py-3">
+						<span
+							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+						>
+							Nbr produits par lots
+						</span>
+					</th>
+					<th scope="col" class="px-6 py-3 w-48">
+						<span
+							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+						>
+							Prix d'un lot HT
+						</span>
+					</th>
+					<th scope="col" class="px-6 py-3">
+						<span
+							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+						>
+							TVA
+						</span>
+					</th>
+					<th scope="col" class="px-6 py-3 w-48">
+						<span
+							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+						>
+							Prix d'un lot TTC
+						</span>
+					</th>
+				</tr>
+			</thead>
+			{#each selectedRestock.items as item}
+				<tr>
+					<td class="px-12 py-3">
+						<div class="flex flex-col">
+							<div
+								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+							>
+								<p>{item.item_name}</p>
+							</div>
+						</div>
+					</td>
+					<td class="px-3 py-3">
+						<div class="flex flex-col">
+							<div
+								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+							>
+								<p>{formatPrice(item.bundle_cost_ht * item.amount_of_bundle)}</p>
+							</div>
+						</div>
+					</td>
+					<td class="px-3 py-3">
+						<div class="flex flex-col">
+							<div
+								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+							>
+								<p>
+									{formatPrice(item.bundle_cost_ttc * item.amount_of_bundle)}
+								</p>
+							</div>
+						</div>
+					</td>
+					<td class="px-3 py-3">
+						<div class="flex flex-col">
+							<div
+								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+							>
+								<p>{item.amount_of_bundle}</p>
+							</div>
+						</div>
+					</td>
+					<td class="px-3 py-3">
+						<div class="flex flex-col">
+							<div
+								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+							>
+								<p>{item.amount_per_bundle}</p>
+							</div>
+						</div>
+					</td>
+					<td class="px-6 py-3">
+						<div class="flex flex-col">
+							<div
+								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+							>
+								<p>{formatPrice(item.bundle_cost_ht)}</p>
+							</div>
+						</div>
+					</td>
+					<td class="px-6 py-3">
+						<div class="flex flex-col">
+							<div
+								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+							>
+								<p>{item.tva / 100}%</p>
+							</div>
+						</div>
+					</td>
+					<td class="px-6 py-3">
+						<div class="flex flex-col">
+							<div
+								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+							>
+								<p>{formatPrice(item.bundle_cost_ttc)}</p>
+							</div>
+						</div>
+					</td>
+				</tr>
+			{/each}
+		</table>
+	{/if}
 </div>

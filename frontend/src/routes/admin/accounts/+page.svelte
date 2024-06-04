@@ -5,6 +5,7 @@
 	import { accountsApi } from '$lib/requests/requests';
 	import { formatPrice } from '$lib/utils';
 	import { onMount } from 'svelte';
+	import ReadCard from '$lib/components/readCard.svelte';
 
 	let accounts: Account[] = [];
 	let newAccount: NewAccount = {
@@ -38,7 +39,8 @@
 	let deletingAccount: boolean = false;
 	let confirmationMessage: string | undefined = undefined;
 	let deleteAccountCallback: VoidFunction = () => {};
-
+	let selectedAccount: Account | undefined = undefined;
+	let askForCard = false;
 	onMount(() => {
 		reloadAccounts();
 	});
@@ -89,6 +91,32 @@
 				reloadAccounts();
 			});
 	}
+
+	function changeCardId(account: Account | undefined, card_id: string) {
+		if (account != undefined) {
+			accountsApi()
+				.patchAccountId(
+					account.id,
+					{
+						card_id: card_id
+					},
+					{ withCredentials: true }
+				)
+				.then((res) => {
+					account = res.data ?? account;
+				})
+				.catch((err) => {
+					if (account != undefined) {
+						account.card_id = account.card_id ?? '';
+					}
+				});
+		}
+	}
+
+	function reset() {
+		askForCard = false;
+		selectedAccount = undefined;
+	}
 </script>
 
 {#if shown_refill}
@@ -100,6 +128,39 @@
 	/>
 {/if}
 
+{#if askForCard}
+	<!-- Popup overlay -->
+	<button
+		id="overlay"
+		class="absolute w-full h-full top-0 left-0 bg-black bg-opacity-50 flex justify-center items-center z-10 hover:cursor-default"
+		on:click={() => {
+			reset();
+		}}
+	/>
+
+	<div id="popup" class="absolute w-full h-full top-0 left-0 flex justify-center items-center">
+		<div
+			class="relative text-black flex flex-col justify-center items-center gap-4 p-10 h-96 bg-white rounded-xl shadow-xl z-20"
+		>
+			<button
+				class="absolute top-0 right-0 p-2 text-xl font-bold m-2 rounded-full transition-all text-black"
+				on:click={() => {
+					reset();
+				}}
+			>
+				<iconify-icon icon="mdi:close" />
+			</button>
+			<h1 class="text-3xl">Veuillez scanner la carte.</h1>
+		</div>
+	</div>
+
+	<ReadCard
+		callback={(id) => {
+			changeCardId(selectedAccount, id);
+			reset();
+		}}
+	/>
+{/if}
 <!-- Popup -->
 <div
 	id="hs-modal-new-account"
@@ -199,14 +260,13 @@
 	</div>
 </div>
 
-
 {#if deletingAccount}
 	<ConfirmationPopup
 		message={confirmationMessage}
 		confirm_text="Supprimer"
 		cancel_callback={() => {
 			deletingAccount = false;
-		}} 
+		}}
 		confirm_callback={deleteAccountCallback}
 	/>
 {/if}
@@ -535,6 +595,17 @@
 									</td>
 									<td class="h-px w-px whitespace-nowrap">
 										<div class="px-6 py-1.5">
+											{#if askForCard == false}
+											<button
+												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
+												on:click={() => {
+													selectedAccount = account;
+													askForCard = true;
+												}}
+											>
+												Nouvelle Carte
+											</button>
+											{/if}
 											<button
 												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
 												on:click={() => (shown_refill = account)}
@@ -546,9 +617,14 @@
 												on:click={() => {
 													deleteAccountCallback = () => {
 														deletingAccount = false;
-														deleteAccount(account.id);
-													}
-													confirmationMessage = "Supprimer le compte de " + account.first_name + " " + account.last_name + " ?";
+														deleteAccount(account.id)
+													};
+													confirmationMessage =
+														'Supprimer le compte de ' +
+														account.first_name +
+														' ' +
+														account.last_name +
+														' ?';
 													deletingAccount = true;
 												}}
 											>

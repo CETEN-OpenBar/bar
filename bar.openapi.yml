@@ -2394,6 +2394,92 @@ paths:
           required: false
           schema:
             type: string
+        - name: fournisseur
+          in: query
+          description: Filter by fournisseur
+          required: false
+          schema:
+            $ref: "#/components/schemas/Fournisseur"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Item"
+                  page:
+                    type: integer
+                    format: uint64
+                  limit:
+                    type: integer
+                    format: uint64
+                  max_page:
+                    type: integer
+                    format: uint64
+                required:
+                  - items
+                  - page
+                  - limit
+                  - max_page
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - admin_auth: []
+      tags:
+        - items
+  /items/incoherent:
+    get:
+      description: (admin) Get all incoherent items with filters and pagination
+      operationId: getAllIncoherentItems
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            format: uint64
+        - name: limit
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            format: uint64
+        - name: state
+          in: query
+          description: Filter by state
+          required: false
+          schema:
+            type: string
+            $ref: "#/components/schemas/ItemState"
+        - name: category_id
+          in: query
+          description: Filter by category
+          required: false
+          schema:
+            $ref: "#/components/schemas/UUID"
+        - name: name
+          in: query
+          description: Filter by name
+          required: false
+          schema:
+            type: string
       responses:
         "200":
           description: ""
@@ -4491,6 +4577,53 @@ paths:
         - admin_auth: []
       tags:
         - deleted
+  /course:
+    get:
+      description: "Get generated course"
+      operationId: getCourse
+      parameters:
+        - name: fournisseur
+          in: query
+          description: Fournisseur name
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CourseItem"
+                required:
+                  - items
+        "401":
+          description: "Not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - admin_auth: []
+      tags:
+        - course
 components:
   schemas:
     UUID:
@@ -4804,6 +4937,13 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/MenuCategory"
+        amount_per_bundle:
+          type: integer
+          format: uint64
+        ref_bundle:
+          type: string
+        fournisseur:
+          $ref: "#/components/schemas/Fournisseur"        
     ItemPrices:
       type: object
       properties:
@@ -4960,6 +5100,14 @@ components:
           format: uint64
         deleted_by:
           $ref: "#/components/schemas/UUID"
+        amount_per_bundle:
+          type: integer
+          format: uint64
+        ref_bundle:
+          type: string
+          description: Referal code of the product in the Drive
+        fournisseur:
+          $ref: "#/components/schemas/Fournisseur"
       required:
         - id
         - prices
@@ -4994,6 +5142,17 @@ components:
         - amount
         - name
         - picture_uri
+    CourseItem:
+      type: object
+      properties:
+        amountToBuy:
+          type: integer
+          format: uint64
+        item:
+          $ref: "#/components/schemas/Item"
+      required:
+        - amountToBuy
+        - item
     MenuCategory:
       type: object
       properties:
@@ -5361,7 +5520,6 @@ components:
         - amount_per_bundle
         - bundle_cost_ht
         - bundle_cost_ttc
-        - bundle_cost_float_ttc
         - tva
     NewRestock:
       type: object
@@ -5405,7 +5563,7 @@ components:
         bundle_cost_ht:
           type: integer
           format: uint64
-        bundle_cost_ttc:
+        bundle_cost_ttc:  
           type: integer
           format: uint64
         tva:
@@ -5432,6 +5590,18 @@ components:
         - RestockAuchanDrive
         - RestockViennoiserie
         - RestockPromocash
+    Fournisseur:
+      type: string
+      enum:
+        - auchan
+        - auchan_drive
+        - viennoiserie
+        - promocash
+      x-enum-varnames:
+        - Auchan
+        - Auchan_Drive
+        - Viennoiserie
+        - Promocash
     Restock:
       type: object
       properties:

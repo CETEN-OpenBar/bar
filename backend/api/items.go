@@ -35,7 +35,7 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 		return Error500(c)
 	}
 
-	count, err := s.DBackend.CountItems(c.Request().Context(), categoryId.String(), state, "")
+	count, err := s.DBackend.CountItems(c.Request().Context(), categoryId.String(), state, "", "")
 	if err != nil {
 		return Error500(c)
 	}
@@ -43,7 +43,7 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 	// Make sure the last page is not empty
 	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	data, err := s.DBackend.GetItems(c.Request().Context(), categoryId.String(), dbpage, limit, state, "")
+	data, err := s.DBackend.GetItems(c.Request().Context(), categoryId.String(), dbpage, limit, state, "", "")
 	if err != nil {
 		return Error500(c)
 	}
@@ -174,6 +174,15 @@ func (s *Server) PatchItem(c echo.Context, categoryId autogen.UUID, itemId autog
 			item.BuyLimit = &buyLimit
 		}
 	}
+	if p.AmountPerBundle != nil {
+		item.AmountPerBundle = p.AmountPerBundle
+	}
+	if p.RefBundle != nil {
+		item.RefBundle = p.RefBundle
+	}
+	if p.Fournisseur != nil {
+		item.Fournisseur = p.Fournisseur
+	}
 
 	rp := item.RealPrices()
 	item.DisplayPrices = &rp
@@ -238,6 +247,7 @@ func (s *Server) GetAllItems(c echo.Context, params autogen.GetAllItemsParams) e
 	state := ""
 	categoryId := ""
 	name := ""
+	fournisseur := ""
 	if params.State != nil {
 		state = string(*params.State)
 	}
@@ -247,8 +257,11 @@ func (s *Server) GetAllItems(c echo.Context, params autogen.GetAllItemsParams) e
 	if params.Name != nil {
 		name = string(*params.Name)
 	}
+	if params.Fournisseur != nil {
+		fournisseur = string(*params.Fournisseur)
+	}
 
-	count, err := s.DBackend.CountItems(c.Request().Context(), categoryId, state, name)
+	count, err := s.DBackend.CountItems(c.Request().Context(), categoryId, state, name, fournisseur)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -257,7 +270,7 @@ func (s *Server) GetAllItems(c echo.Context, params autogen.GetAllItemsParams) e
 	// Make sure the last page is not empty
 	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	data, err := s.DBackend.GetItems(c.Request().Context(), categoryId, dbpage, limit, state, name)
+	data, err := s.DBackend.GetItems(c.Request().Context(), categoryId, dbpage, limit, state, name, fournisseur)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -283,6 +296,68 @@ func (s *Server) GetAllItems(c echo.Context, params autogen.GetAllItemsParams) e
 		Limit:   limit,
 		MaxPage: maxPage,
 	}.VisitGetAllItemsResponse(c.Response())
+
+	return nil
+}
+
+// (GET /items/incoherent)
+func (s *Server) GetAllIncoherentItems(c echo.Context, params autogen.GetAllIncoherentItemsParams) error {
+	// Get account from cookie
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
+
+	state := ""
+	categoryId := ""
+	name := ""
+	if params.State != nil {
+		state = string(*params.State)
+	}
+	if params.CategoryId != nil {
+		categoryId = params.CategoryId.String()
+	}
+	if params.Name != nil {
+		name = string(*params.Name)
+	}
+
+	count, err := s.DBackend.CountIncoherentItems(c.Request().Context(), categoryId, state, name)
+	if err != nil {
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	// Make sure the last page is not empty
+	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
+
+	data, err := s.DBackend.GetIncoherentItems(c.Request().Context(), dbpage, limit, categoryId, state, name)
+	if err != nil {
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	
+
+	var items []autogen.Item
+
+	for _, item := range data {
+		rp := item.RealPrice(account.PriceRole)
+		item.DisplayPrice = &rp
+
+		if account.HasPrivileges() {
+			rp := item.RealPrices()
+			item.DisplayPrices = &rp
+		}
+
+		items = append(items, item.Item)
+	}
+
+	autogen.GetAllIncoherentItems200JSONResponse{
+		Items:   items,
+		Page:    page,
+		Limit:   limit,
+		MaxPage: maxPage,
+	}.VisitGetAllIncoherentItemsResponse(c.Response())
 
 	return nil
 }
