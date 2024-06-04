@@ -76,7 +76,7 @@
 
 	function reloadItems() {
 		itemsApi()
-			.getAllItems(page, itemsPerPage, searchState, searchCategory, searchName, undefined, {
+			.getAllIncoherentItems(page, itemsPerPage, searchState, searchCategory, searchName, {
 				withCredentials: true
 			})
 			.then((res) => {
@@ -84,7 +84,6 @@
 				page = res.data.page ?? 0;
 				itemsPerPage = res.data.limit ?? 0;
 				items = res.data.items ?? [];
-				items = items.filter(item => item.amount_left > 0 && item.state !== 'buyable');
 			});
 	}
 

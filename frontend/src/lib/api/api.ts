@@ -6826,6 +6826,62 @@ export class DeletedApi extends BaseAPI {
 export const ItemsApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
+         * (admin) Get all incoherent items with filters and pagination
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of items per page
+         * @param {ItemState} [state] Filter by state
+         * @param {string} [categoryId] Filter by category
+         * @param {string} [name] Filter by name
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAllIncoherentItems: async (page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/items/incoherent`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+            if (state !== undefined) {
+                localVarQueryParameter['state'] = state;
+            }
+
+            if (categoryId !== undefined) {
+                localVarQueryParameter['category_id'] = categoryId;
+            }
+
+            if (name !== undefined) {
+                localVarQueryParameter['name'] = name;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * (admin) Get all items with filters and pagination
          * @param {number} [page] Page number
          * @param {number} [limit] Number of items per page
@@ -7111,6 +7167,20 @@ export const ItemsApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = ItemsApiAxiosParamCreator(configuration)
     return {
         /**
+         * (admin) Get all incoherent items with filters and pagination
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of items per page
+         * @param {ItemState} [state] Filter by state
+         * @param {string} [categoryId] Filter by category
+         * @param {string} [name] Filter by name
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getAllIncoherentItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAllItems200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllIncoherentItems(page, limit, state, categoryId, name, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * (admin) Get all items with filters and pagination
          * @param {number} [page] Page number
          * @param {number} [limit] Number of items per page
@@ -7194,6 +7264,19 @@ export const ItemsApiFactory = function (configuration?: Configuration, basePath
     const localVarFp = ItemsApiFp(configuration)
     return {
         /**
+         * (admin) Get all incoherent items with filters and pagination
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of items per page
+         * @param {ItemState} [state] Filter by state
+         * @param {string} [categoryId] Filter by category
+         * @param {string} [name] Filter by name
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAllIncoherentItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, options?: any): AxiosPromise<GetAllItems200Response> {
+            return localVarFp.getAllIncoherentItems(page, limit, state, categoryId, name, options).then((request) => request(axios, basePath));
+        },
+        /**
          * (admin) Get all items with filters and pagination
          * @param {number} [page] Page number
          * @param {number} [limit] Number of items per page
@@ -7270,6 +7353,21 @@ export const ItemsApiFactory = function (configuration?: Configuration, basePath
  * @extends {BaseAPI}
  */
 export class ItemsApi extends BaseAPI {
+    /**
+     * (admin) Get all incoherent items with filters and pagination
+     * @param {number} [page] Page number
+     * @param {number} [limit] Number of items per page
+     * @param {ItemState} [state] Filter by state
+     * @param {string} [categoryId] Filter by category
+     * @param {string} [name] Filter by name
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ItemsApi
+     */
+    public getAllIncoherentItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, options?: AxiosRequestConfig) {
+        return ItemsApiFp(this.configuration).getAllIncoherentItems(page, limit, state, categoryId, name, options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * (admin) Get all items with filters and pagination
      * @param {number} [page] Page number

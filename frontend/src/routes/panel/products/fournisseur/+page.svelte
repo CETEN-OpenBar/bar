@@ -6,7 +6,7 @@
 		ItemPrices,
 		UpdateItem,
 		AccountPriceRole,
-		RestockType
+		Fournisseur
 	} from '$lib/api';
 	import ConfirmationPopup from '$lib/components/confirmationPopup.svelte';
 	import { api } from '$lib/config/config';
@@ -61,7 +61,7 @@
 
 	let rebounceTimeout: number | null = null;
 
-	let searchFournisseur: RestockType | undefined = undefined;
+	let searchFournisseur: Fournisseur | undefined = undefined;
 	let searchCategory: string | undefined = undefined;
 	let searchName: string | undefined = undefined;
 
