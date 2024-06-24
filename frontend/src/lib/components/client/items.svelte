@@ -41,7 +41,7 @@
 			reloadItems();
 		}
 	};
-	let limit: number = 12;
+	export let limit: number = 12;
 
 	type MenuPopup = {
 		items: MenuItem[] | undefined;
@@ -130,12 +130,12 @@
 
 <!-- horizontal & overflows -->
 {#if items.length === 0}
-	<div class="col-span-7 flex flex-col justify-items-center">
+	<div class="flex flex-col flex-grow justify-items-center">
 		<span class="text-3xl text-white" in:fade={{ duration: 200, delay: 100 }}>Aucun article</span>
 	</div>
 {:else}
 	<div
-		class="w-full md:p-12 p-4"
+		class="flex flex-wrap flex-grow max-w-full md:p-12 p-4"
 		in:fly={{ x: -direction * 300, duration: 500 }}
 		out:fly={{ x: direction * 300, duration: 500 }}
 		use:dragscroll
@@ -143,7 +143,7 @@
 		{#each items as item}
 			<!-- image wil be in a button box -->
 			<div
-				class="relative min-w-40 max-w-40 min-h-50 h-50 max-h-50 inline-flex item-justify rounded-lg text-white transition-colors duration-300"
+				class="flex-1 flex flex-col my-1 min-w-40 max-w-40 min-h-50 h-50 max-h-50 items-center rounded-lg text-white transition-colors duration-300 overflow-x-clip"
 			>
 				<!-- add info svg on the top right -->
 				{#if item.is_menu}
@@ -167,7 +167,7 @@
 				>
 					<img
 						draggable="false"
-						class="w-full h-32 object-contain"
+						class="w-full h-28 md:h-32 object-contain"
 						src={api() + item.picture_uri}
 						alt={item.name}
 					/>
@@ -190,7 +190,7 @@
 {/if}
 
 <!-- Navigation -->
-<div class="absolute bottom-5 left-[50%] -translate-x-[50%] flex flex-col justify-center">
+<div class="flex flex-col justify-center">
 	<div class="text-3xl text-white text-center">
 		{page}/{maxPage}
 	</div>
