@@ -1,28 +1,27 @@
 <script lang="ts">
-	import Categories from '$lib/components/client/categories.svelte';
 	import Items from '$lib/components/client/items.svelte';
 	import { onMount, onDestroy } from 'svelte';
 	import { formatPrice } from '$lib/utils';
 	import { store } from '$lib/store/store';
-	import { fly } from 'svelte/transition';
+	import { slide } from 'svelte/transition';
 	import type {
 		Account,
 		Item,
 		MenuCategory,
 		NewTransaction,
 		NewTransactionItem,
-		TransactionItem
+		Category
 	} from '$lib/api';
-	import Transactions from '$lib/components/client/transactions.svelte';
 	import { api } from '$lib/config/config';
 	import Confirm from '$lib/components/client/confirm.svelte';
-	import { accountsApi, authApi, transactionsApi } from '$lib/requests/requests';
+	import { transactionsApi, categoriesApi } from '$lib/requests/requests';
 	import Pin from '$lib/components/client/pin.svelte';
 	import Error from '$lib/components/error.svelte';
 	import Success from '$lib/components/success.svelte';
 	import { goto } from '$app/navigation';
 	import Stars from '$lib/components/random/stars.svelte';
 	import Price from '$lib/components/random/price.svelte';
+	import Hamburger from '$lib/components/client/hamburger.svelte';
 
 	let account: Account | undefined = undefined;
 	let unsub: () => void;
@@ -35,23 +34,37 @@
 
 	let order: NewTransactionItemWithItem[] = [];
 	let orderPrice: number = 0;
+	let orderForLater: boolean = true;
 
 	onMount(() => {
 		unsub = store.subscribe((state) => {
 			account = state.account;
 		});
+
+		/* Load categories */
+		categoriesApi()
+			.getCategories(undefined, { withCredentials: true })
+			.then((res) => {
+				categories = res.data??[];
+				changeCategory(categories[0].id, categories[0].name);
+			});
+
 	});
 
 	onDestroy(() => {
 		unsub();
 	});
 
-	let currentCatgory: string = '';
+	let categories: Category[] = [];
+	let currentCatgoryId: string = '';
+	let currentCategoryName: string = '';
 
-	let changeCategory: (category: string) => void = (category: string) => {
-		currentCatgory = '';
+	let changeCategory: (categoryId: string, categoryName: string) => void = (categoryId: string, categoryName: string) => {
+		currentCatgoryId = ''
+		currentCategoryName = '';
 		setTimeout(() => {
-			currentCatgory = category;
+			currentCategoryName = categoryName;
+			currentCatgoryId = categoryId;
 		}, 10);
 	};
 
@@ -81,7 +94,7 @@
 			found.amount++;
 		} else {
 			let newTItem: NewTransactionItemWithItem = {
-				category: currentCatgory,
+				category: currentCatgoryId,
 				item_id: item.id,
 				amount: 1,
 				item: item,
@@ -94,7 +107,7 @@
 		if (menuPicks) {
 			let amt = 0;
 			for (let i = 0; i < menuPicks.pickedItems.length; i++) {
-				if (menuPicks.pickedItems[i].category == currentCatgory) {
+				if (menuPicks.pickedItems[i].category == currentCatgoryId) {
 					amt += menuPicks.pickedItems[i].amount;
 				}
 			}
@@ -115,7 +128,7 @@
 					menuPicks = undefined;
 					return;
 				}
-				changeCategory((menuPicks.tItem.item.menu_categories ?? [])[menuPicks.step].id);
+				changeCategory((menuPicks.tItem.item.menu_categories ?? [])[menuPicks.step].id, (menuPicks.tItem.item.menu_categories ?? [])[menuPicks.step].name);
 			}
 		}
 	};
@@ -153,7 +166,7 @@
 				tItem: newTItem,
 				step: 0
 			};
-			changeCategory(item.menu_categories[0].id);
+			changeCategory(item.menu_categories[0].id, item.menu_categories[0].name);
 		} else {
 			newOrder.push(newTItem);
 			order = newOrder;
@@ -223,11 +236,12 @@
 				success = 'Transaction effectuée avec succès';
 				setTimeout(() => {
 					success = '';
-					authApi().logout({ withCredentials: true });
-					goto('/client');
 				}, 3000);
 				order = [];
 				orderPrice = 0;
+				pin = false;
+				order_menu = false;
+				categories_menu = false;
 			})
 			.catch((err) => {
 				error = 'Erreur lors de la transaction';
@@ -243,11 +257,29 @@
 	let success = '';
 	let pin = false;
 	let confirm = false;
-	let sidebar = true;
+
+	let categories_menu = false;
+	let order_menu = false;
+
+	function toggleCategoriesMenu() {
+		categories_menu = !categories_menu;
+	}
+
+	function toggleOrderMenu() {
+		order_menu = !order_menu;
+	}
+
 </script>
 
+<style>
+	/* Prevents reload when scrolling down on mobile */
+	:global(body) {
+		overflow-y: hidden;
+	}
+</style>
+
 {#if confirm}
-	<Confirm custom_text="Envoyer la commande ?" callback={confirmOrder} />
+	<Confirm custom_text="Envoyer la commande ?" callback={confirmOrder}/>
 {/if}
 
 {#if pin}
@@ -262,199 +294,192 @@
 	<Success message={success} />
 {/if}
 
+<!-- Categories menu -->
+
+<aside class="flex flex-col w-4/5 fixed h-full text-white transition-transform ease-in-out duration-150 bg-[#393E46] {categories_menu ? 'z-20' : '-translate-x-full shadow-2xl'}">
+	<button class="w-full flex flex-row items-center bg-[#222831] p-3" on:click={() => {categories_menu = false;}}>
+		<h1 class="flex-grow font-bold text-lg text-center h-fit">Catégories</h1>
+		<Hamburger activated={categories_menu} toggle={() => {categories_menu = false}} />
+	</button>
+	<menu class="flex-grow w-full overflow-y-scroll">
+		{#each categories as category}
+			<button
+				class="flex flex-row w-full items-center space-x-5 p-1 {category.id == currentCatgoryId ? 'bg-gray-600' : ''}"
+				on:click={() => {changeCategory(category.id, category.name); categories_menu = false}}
+			>
+				<img
+					draggable="false"
+					class="h-20 w-20 object-contain"
+					src={api() + category.picture_uri}
+					alt={category.name}
+				/>
+				<span class="text-lg">{category.name}</span>
+			</button>
+		{/each}
+	</menu>
+</aside>
+
+<!-- Order menu -->
+<div 
+	class="bg-[#222831] fixed bottom-0 w-full text-white flex flex-col items-center p-2 pb-4 max-h-[90vh] {order_menu ? 'z-20 space-y-5' : 'space-y-3'}"
+>
+	<!-- Handle -->
+	<button class="w-[30px] h-[6px] rounded-md bg-slate-500" on:click={toggleOrderMenu}></button>
+	
+	<!-- Overlay to open -->
+	{#if !order_menu}
+		<button class="absolute w-full h-full" on:click={toggleOrderMenu}></button>
+	{/if}
+
+	{#if order_menu}
+	<div transition:slide class="flex flex-col items-center space-y-5 w-full">
+		<!-- Current order-->
+		<h1 class="font-semibold text-xl">Commande actuelle</h1>
+		<!-- Items -->
+		{#if order.length == 0}
+			<div class="h-16 flex items-center">Aucun articles</div>
+		{:else}
+			<ul class="overflow-y-scroll flex flex-col w-full max-w-full max-h-[50vh]">
+				{#each order as item}
+					<li class="max-h-16 flex flex-row items-center w-full max-w-full">
+						<img
+							draggable="false"
+							class="w-16 h-16 object-contain mr-3"
+							src={api() + item.item.picture_uri}
+							alt={item.item.name}
+						/>
+						<div class="flex-grow">{item.item.name}</div>
+						<div class="min-w-fit ml-2">
+							{formatPrice((item.item.display_price ?? 999) * item.amount)}</div
+						>
+						<div class="min-w-fit flex flex-row items-center">
+							<button
+								class="w-7 h-7 ml-2 border-2 border-gray-300 rounded-full flex flex-row items-center justify-center"
+								on:click={removeItem(item)}
+							>
+								<iconify-icon class="text-white" icon="akar-icons:minus" />
+							</button>
+							<span class=" text-white mx-2">{item.amount}</span>
+							<button
+								class="w-7 h-7 border-2 border-gray-300 rounded-full flex flex-row items-center justify-center"
+								on:click={() => clickItem(item.item)}
+							>
+								<iconify-icon class="text-white" icon="akar-icons:plus" />
+							</button>
+						</div>
+					</li>
+				{/each}
+			</ul>
+		{/if}
+		<div class="bg-gray-500 h-[1px] w-11/12"></div>
+		<label class="text-lg flex flew-row space-x-3 items-center">
+			<input 
+				type="checkbox"
+				bind:checked={orderForLater}
+				class="h-5 w-5"
+			/>
+			<span>Je commande pour plus tard</span>
+		</label>
+	</div>
+	{/if}
+
+	<div class="flex flex-col items-center space-y-3">
+		<div class="justify-self-start grow font-semibold">
+			Total : 
+			<Price amount={orderPrice} class="inline-block"/>
+		</div>
+		<div>
+			Reste :
+			<Price 
+				amount={(account?.balance ?? 0) - orderPrice + (account?.points ?? 0)}
+				class="inline-block px-2"
+			/> 
+			{#if (account?.points ?? 0) > 0}
+				<Stars 
+					stars={(account?.points ?? 0) - orderPrice}
+					icon_size={5}
+					class="inline-block"
+				/>
+			{/if}
+		</div>
+	</div>
+
+	{#if order_menu}
+		<button
+			class="bg-green-500 rounded-md font-semibold w-11/12 p-3 block disabled:bg-gray-400"
+			transition:slide
+			on:click={() => {confirm = true}}
+			disabled={order.length == 0}
+		>
+			Valider la commande
+		</button>
+	{/if}
+
+</div>
+
 <div
 	id="main"
-	class="w-screen h-screen top-0 left-0 overflow-y-hidden"
-	style="background-color:#393E46"
+	class="w-screen h-screen top-0 left-0 overflow-y-hidden bg-[#393E46] text-white flex flex-col {categories_menu || order_menu ? 'blur-sm' : ''}"
 >
-	{#if !menuPicks}
-		<div
-			class="{sidebar
-				? 'w-4/5'
-				: 'w-full'} h-full relative transition-all ease-in-out overflow-y-auto"
-		>
-			<div class="p-4 flex justify-between" style="background-color:#222831">
-				<button
-					class="flex items-center h-1/2 space-x-2 px-4 py-2 mr-2 rounded-lg bg-green-500 hover:bg-green-600 transition-colors duration-300"
-					on:click={() => {
-						goto('/client/index');
-					}}
-				>
-					<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:chevron-left" />
-				</button>
-				<Categories {changeCategory} />
-				<button
-					class="flex items-center space-x-2 px-4 py-2 ml-2 rounded-lg bg-green-500 hover:bg-green-600 transition-colors duration-300 animate-pulse"
-					on:click={() => {
-						sidebar = !sidebar;
-					}}
-				>
-					{#if sidebar}
-						<iconify-icon
-							class="text-white align-middle text-2xl"
-							icon="akar-icons:chevron-right"
-						/>
-					{:else}
-						<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:chevron-left" />
-					{/if}
-				</button>
-			</div>
-			{#if currentCatgory != ''}
-				<Items category={currentCatgory} click={clickItem} />
+
+	<!-- Menu close overlay -->
+	{#if categories_menu || order_menu}
+		<button
+			class="fixed h-full w-full bg-black bg-opacity-60 z-10"
+			on:click={() => {categories_menu = false; order_menu = false}}
+		></button>
+	{/if}
+
+	<!-- Header -->
+	<div class="bg-[#222831] flex flex-row w-full p-3 items-center">
+		<Hamburger activated={categories_menu} toggle={toggleCategoriesMenu} />
+		<button class="flex-grow font-semibold ml-3 text-left" on:click={toggleCategoriesMenu}>{currentCategoryName}</button>
+
+		<div class="flex flex-col items-end mr-3 text-xs space-y-2">
+			<Price amount={account?.balance ?? 0} />
+			{#if (account?.points ?? 0) > 0}
+				<Stars stars={account?.points ?? 0} icon_size={5}/>
 			{/if}
 		</div>
-	{:else}
-		<div class="w-full h-full relative transition-all ease-in-out">
-			<div class="p-4 flex justify-between" style="background-color:#222831">
-				<button
-					class="flex items-center h-1/2 space-x-2 px-4 py-2 mr-2 rounded-lg bg-green-500 hover:bg-green-600 transition-colors duration-300"
-					on:click={() => {
-						goto('/client/index');
-					}}
-				>
-					<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:chevron-left" />
-				</button>
-				<!-- Title -->
-				<h1 class="text-white text-md md:text-md lg:text-2xl">
-					Choix de {(menuPicks.categories ?? [])[menuPicks.step].amount}
-					{(menuPicks.categories ?? [])[menuPicks.step].name}
-				</h1>
-				<button
-					class="flex items-center space-x-2 px-4 py-2 ml-2 rounded-lg bg-green-500 hover:bg-green-600 transition-colors duration-300 animate-pulse"
-					on:click={() => {
-						sidebar = !sidebar;
-					}}
-				>
-					{#if sidebar}
-						<iconify-icon
-							class="text-white align-middle text-2xl"
-							icon="akar-icons:chevron-right"
-						/>
-					{:else}
-						<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:chevron-left" />
-					{/if}
-				</button>
-			</div>
-			{#if currentCatgory != ''}
-				<Items category={currentCatgory} click={clickItemMenu} />
+
+		<button 
+		  on:click={() => {
+		    goto('/client/index');
+		  }}
+		>
+			<img src={account?.google_picture} alt="Profile" class="w-12 h-12 rounded-full border-2 border-gray-200"/>
+		</button>
+	</div>
+
+	<!-- Items -->
+	<div class="flex flex-col flex-grow items-center overflow-y-scroll">
+		{#if currentCatgoryId != ''}
+			<Items category={currentCatgoryId} click={clickItem} limit={24} />
+		{/if}
+	</div>
+
+
+	<!-- Order menu duplicate to put the correct margin below the items-->
+	<div class="bg-[#222831] flex flex-col items-center p-2 pb-4 space-y-3">
+		<!-- Handle -->
+		<div class="w-[30px] h-[6px] rounded-md bg-slate-500"></div>
+		<div class="justify-self-start grow font-semibold">
+			Total : 
+			<Price amount={orderPrice} class="inline-block"/>
+		</div>
+		<div>
+			Reste :
+			<Price 
+				amount={(account?.balance ?? 0) - orderPrice + (account?.points ?? 0)}
+				class="inline-block px-2"
+			/> 
+			{#if (account?.points ?? 0) > 0}
+				<Stars 
+					stars={(account?.points ?? 0) - orderPrice}
+					icon_size={5}
+					class="inline-block"
+				/>
 			{/if}
 		</div>
-	{/if}
-	{#if sidebar}
-		<div
-			class="absolute top-0 right-0 w-1/5 h-screen translate-x-full transition-transform sm:translate-x-0"
-			style="background-color:#222831"
-			in:fly={{ x: 300, duration: 200 }}
-			out:fly={{ x: 300, duration: 200 }}
-		>
-			<div class="px-4 py-1 flex justify-between h-[12%]">
-				<div
-					class="flex flex-col gap-5 justify-center items-center w-full h-full overflow-x-auto overflow-y-hidden"
-				>
-					<!-- Commande en cours title -->
-					<h1 class="text-white text-2xl font-semibold">Commande actuelle</h1>
-					<!-- Subtitle with current balance -->
-					<h2 class="text-white text-md flex flex-row gap-2">
-						Disponible:
-						<div class="flex flex-col">
-							<Price amount={account?.balance ?? 0} />
-							{#if (account?.points ?? 0) > 0}
-								<Stars stars={account?.points ?? 0} />
-							{/if}
-						</div>
-					</h2>
-
-					<!-- Spacer -->
-				</div>
-			</div>
-			<hr class="w-full border-white" />
-
-			<!-- Items in current commande with buttons for + and - with how much there is and the cost -->
-			<div class="relative flex flex-col gap-5 justify-center items-center h-[70%] p-4">
-				{#if order.length == 0}
-					<h1 class="text-white text-md md:text-md lg:text-2xl">Aucun article</h1>
-				{:else}
-					<button
-						class="w-10 h-10 rounded-full absolute top-2 bg-red-500"
-						on:click={() => {
-							order = [];
-							orderPrice = 0;
-						}}
-					>
-						<iconify-icon class="text-white align-middle text-2xl" icon="icomoon-free:bin" />
-					</button>
-				{/if}
-				<div class="grid grid-cols-2 gap-10 overflow-x-auto overflow-y-scroll">
-					{#each order as item}
-						<div class="flex flex-col justify-center gap-5 items-center w-full">
-							<button
-								class="-mr-20 -my-6 w-6 h-6 rounded-full z-10"
-								on:click={removeItem(item, item.amount)}
-							>
-								<iconify-icon class="text-white align-middle text-2xl" icon="ic:outline-cancel" />
-							</button>
-							<img
-								draggable="false"
-								class="w-16 h-16 object-contain"
-								src={api() + item.item.picture_uri}
-								alt={item.item.name}
-							/>
-							<div class="flex flex-row justify-center items-center">
-								<button
-									class="w-10 h-10 border-2 border-gray-300 rounded-full"
-									on:click={removeItem(item)}
-								>
-									<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:minus" />
-								</button>
-								<span class="text-lg text-white mx-4">{item.amount}</span>
-								<button
-									class="w-10 h-10 border-2 border-gray-300 rounded-full"
-									on:click={() => clickItem(item.item)}
-								>
-									<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:plus" />
-								</button>
-							</div>
-							<span class="text-lg text-white"
-								>{formatPrice((item.item.display_price ?? 999) * item.amount)}</span
-							>
-						</div>
-					{/each}
-				</div>
-			</div>
-			<hr class="w-full border-white" />
-			<div class="p-1 flex justify-between bottom-0 h-[20%]">
-				<div
-					class="flex flex-col gap-2 justify-center items-center w-full h-full overflow-x-auto overflow-y-hidden"
-				>
-					<h1 class="text-md md:text-md lg:text-2xl text-white">Total</h1>
-					<h2 class="w-full text-md text-white flex flex-row gap-10 justify-center">
-						<div class="flex flex-col text-center">
-							<h3 class="font-semibold">Coût:</h3>
-							<Price amount={orderPrice} />
-						</div>
-						<div class="flex flex-col text-center">
-							<h3 class="font-semibold">Reste:</h3>
-							<div class="flex flex-col">
-								{#if orderPrice < (account?.points ?? 0)}
-									<Price amount={account?.balance ?? 0} />
-									{#if (account?.points ?? 0) > 0}
-										<Stars stars={(account?.points ?? 0) - orderPrice} />
-									{/if}
-								{:else}
-									<Price amount={(account?.balance ?? 0) - orderPrice + (account?.points ?? 0)} />
-								{/if}
-							</div>
-						</div>
-					</h2>
-
-					<button
-						class="w-full h-16 bg-green-500 rounded-lg text-white text-lg font-bold"
-						on:click={() => (confirm = true)}
-					>
-						Valider la commande
-					</button>
-				</div>
-			</div>
-		</div>
-	{/if}
+	</div>
 </div>
