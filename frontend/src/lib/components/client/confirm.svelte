@@ -26,7 +26,7 @@
 						callback(false);
 					}}
 				>
-					<iconify-icon class="text-red align-middle text-2xl" icon="maki:cross" />
+					<iconify-icon class="text-red-600 align-middle text-2xl" icon="maki:cross" />
 				</button>
 				<div></div>
 				<button
@@ -35,7 +35,7 @@
 						callback(true);
 					}}
 				>
-					<iconify-icon class="text-green align-middle text-2xl" icon="el:ok" />
+					<iconify-icon class="text-green-600 align-middle text-2xl" icon="el:ok" />
 				</button>
 			</div>
 		</div>
