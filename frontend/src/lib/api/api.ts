@@ -8435,11 +8435,12 @@ export const TransactionsApiAxiosParamCreator = function (configuration?: Config
          * @param {number} [page] Page number
          * @param {number} [limit] Number of transactions per page
          * @param {TransactionState} [state] Filter by state
+         * @param {boolean} [hideRemote] Hide remote transactions
          * @param {string} [name] Filter by account name
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getTransactions: async (page?: number, limit?: number, state?: TransactionState, name?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getTransactions: async (page?: number, limit?: number, state?: TransactionState, hideRemote?: boolean, name?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/transactions`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -8464,6 +8465,10 @@ export const TransactionsApiAxiosParamCreator = function (configuration?: Config
 
             if (state !== undefined) {
                 localVarQueryParameter['state'] = state;
+            }
+
+            if (hideRemote !== undefined) {
+                localVarQueryParameter['hide_remote'] = hideRemote;
             }
 
             if (name !== undefined) {
@@ -8753,12 +8758,13 @@ export const TransactionsApiFp = function(configuration?: Configuration) {
          * @param {number} [page] Page number
          * @param {number} [limit] Number of transactions per page
          * @param {TransactionState} [state] Filter by state
+         * @param {boolean} [hideRemote] Hide remote transactions
          * @param {string} [name] Filter by account name
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getTransactions(page?: number, limit?: number, state?: TransactionState, name?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetTransactions200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getTransactions(page, limit, state, name, options);
+        async getTransactions(page?: number, limit?: number, state?: TransactionState, hideRemote?: boolean, name?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetTransactions200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getTransactions(page, limit, state, hideRemote, name, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -8874,12 +8880,13 @@ export const TransactionsApiFactory = function (configuration?: Configuration, b
          * @param {number} [page] Page number
          * @param {number} [limit] Number of transactions per page
          * @param {TransactionState} [state] Filter by state
+         * @param {boolean} [hideRemote] Hide remote transactions
          * @param {string} [name] Filter by account name
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getTransactions(page?: number, limit?: number, state?: TransactionState, name?: string, options?: any): AxiosPromise<GetTransactions200Response> {
-            return localVarFp.getTransactions(page, limit, state, name, options).then((request) => request(axios, basePath));
+        getTransactions(page?: number, limit?: number, state?: TransactionState, hideRemote?: boolean, name?: string, options?: any): AxiosPromise<GetTransactions200Response> {
+            return localVarFp.getTransactions(page, limit, state, hideRemote, name, options).then((request) => request(axios, basePath));
         },
         /**
          * Get all items in active transactions (ordered items)
@@ -8995,13 +9002,14 @@ export class TransactionsApi extends BaseAPI {
      * @param {number} [page] Page number
      * @param {number} [limit] Number of transactions per page
      * @param {TransactionState} [state] Filter by state
+     * @param {boolean} [hideRemote] Hide remote transactions
      * @param {string} [name] Filter by account name
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TransactionsApi
      */
-    public getTransactions(page?: number, limit?: number, state?: TransactionState, name?: string, options?: AxiosRequestConfig) {
-        return TransactionsApiFp(this.configuration).getTransactions(page, limit, state, name, options).then((request) => request(this.axios, this.basePath));
+    public getTransactions(page?: number, limit?: number, state?: TransactionState, hideRemote?: boolean, name?: string, options?: AxiosRequestConfig) {
+        return TransactionsApiFp(this.configuration).getTransactions(page, limit, state, hideRemote, name, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

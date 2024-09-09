@@ -41,12 +41,13 @@
 	});
 
 	let st: TransactionState | undefined = 'started';
+	let showRemoteTransactions: boolean = true;
 
 	type TransactionItemWithFakeAmount = TransactionItem & { item_fake_amount?: number };
 
 	function reloadTransactions() {
 		transactionsApi()
-			.getTransactions(page, amount, st, searchName, { withCredentials: true })
+			.getTransactions(page, amount, st, !showRemoteTransactions, searchName, { withCredentials: true })
 			.then((res) => {
 				page = res.data.page ?? 0;
 				maxPage = res.data.max_page ?? 0;
@@ -100,25 +101,38 @@
 					}}
 				/>
 			</div>
-			<div class="text-lg font-semibold grow">
-				Filtre :
-				<button
-					class="bg-gray-700 p-2 rounded-lg"
-					on:click={() => {
-						if (st == 'started') {
-							st = undefined;
-						} else {
-							st = 'started';
-						}
-						reloadTransactions();
-					}}
-				>
-					{#if st == 'started'}
-						En cours
-					{:else}
-						Tout
-					{/if}
-				</button>
+			<div class="text-lg font-semibold grow flex flex-row items-center space-x-5">
+				<div>
+					Filtre :
+					<button
+						class="bg-gray-700 p-2 rounded-lg"
+						on:click={() => {
+							if (st == 'started') {
+								st = undefined;
+							} else {
+								st = 'started';
+							}
+							reloadTransactions();
+						}}
+					>
+						{#if st == 'started'}
+							En cours
+						{:else}
+							Tout
+						{/if}
+					</button>
+				</div>
+				<div>
+					<label>
+						Commandes en ligne
+						<input 
+							type="checkbox" 
+							class="h-6 w-6 align-middle ml-1"
+							bind:checked={showRemoteTransactions}
+							on:change={reloadTransactions}
+						/>
+					</label>
+				</div>
 			</div>
 			<div class="text-lg font-semibold grow text-end">Montant</div>
 		</div>

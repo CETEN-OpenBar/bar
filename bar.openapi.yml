@@ -1150,6 +1150,12 @@ paths:
           schema:
             type: string
             $ref: "#/components/schemas/TransactionState"
+        - name: hide_remote
+          in: query
+          description: Hide remote transactions
+          required: false
+          schema:
+            type: boolean
         - name: name
           in: query
           description: Filter by account name

@@ -25,13 +25,13 @@
 		if (reloading) return;
 		reloading = true;
 		try {
-			let resp = await transactionsApi().getTransactions(1, transactionPerPage, 'finished', undefined, {
+			let resp = await transactionsApi().getTransactions(1, transactionPerPage, 'finished', false, undefined, {
 				withCredentials: true
 			});
 			let temp = resp.data.transactions ?? [];
 
 			for (let p = 2; p <= resp.data.max_page; p++) {
-				let resp = await transactionsApi().getTransactions(p, transactionPerPage, 'finished', undefined, {
+				let resp = await transactionsApi().getTransactions(p, transactionPerPage, 'finished', false, undefined, {
 					withCredentials: true
 				});
 				temp.push(...(resp.data.transactions ?? []));
