@@ -5334,6 +5334,9 @@ components:
         created_at:
           type: integer
           format: uint64
+        is_remote:
+          type: boolean
+          description: True if the transaction was not created from a kiosk
       required:
         - id
         - items
@@ -5367,6 +5370,9 @@ components:
         card_pin:
           type: string
           description: Pin of the card
+        is_remote:
+          type: boolean
+          description: True if the transaction was not created from a kiosk
       required:
         - items
         - card_pin

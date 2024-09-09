@@ -1544,6 +1544,12 @@ export interface NewTransaction {
      * @memberof NewTransaction
      */
     'card_pin': string;
+    /**
+     * True if the transaction was not created from a kiosk
+     * @type {boolean}
+     * @memberof NewTransaction
+     */
+    'is_remote'?: boolean;
 }
 /**
  * 
@@ -1984,6 +1990,12 @@ export interface Transaction {
      * @memberof Transaction
      */
     'created_at': number;
+    /**
+     * True if the transaction was not created from a kiosk
+     * @type {boolean}
+     * @memberof Transaction
+     */
+    'is_remote'?: boolean;
 }
 
 
