@@ -34,7 +34,6 @@
 
 	let order: NewTransactionItemWithItem[] = [];
 	let orderPrice: number = 0;
-	let orderForLater: boolean = true;
 
 	onMount(() => {
 		unsub = store.subscribe((state) => {
@@ -386,14 +385,6 @@
 			</ul>
 		{/if}
 		<div class="bg-gray-500 h-[1px] w-11/12"></div>
-		<label class="text-lg flex flew-row space-x-3 items-center">
-			<input 
-				type="checkbox"
-				bind:checked={orderForLater}
-				class="h-5 w-5"
-			/>
-			<span>Je commande pour plus tard</span>
-		</label>
 	</div>
 	{/if}
 
