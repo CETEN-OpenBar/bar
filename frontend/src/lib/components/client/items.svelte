@@ -181,7 +181,7 @@
 				{#if item.amount_left <= 0}
 					<!-- Stock épuisé icon -->
 					<img
-						class="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[70%] w-24 h-24 drop-shadow-2xl"
+						class="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[70%] w-24 h-24 md:h-20 md:w-20 drop-shadow-2xl"
 						alt="oof"
 						src="/epuise.webp"
 					/>
