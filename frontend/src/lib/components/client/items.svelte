@@ -143,7 +143,9 @@
 		{#each items as item}
 			<!-- image wil be in a button box -->
 			<div
-				class="flex-1 flex flex-col my-1 min-w-40 max-w-40 min-h-50 h-50 max-h-50 items-center rounded-lg text-white transition-colors duration-300 overflow-x-clip"
+				class="flex-1 flex flex-col my-1 min-w-40 max-w-40 min-h-50 h-50 max-h-50
+				items-center rounded-lg text-white transition-colors duration-300 overflow-x-clip
+				relative"
 			>
 				<!-- add info svg on the top right -->
 				{#if item.is_menu}
@@ -179,7 +181,7 @@
 				{#if item.amount_left <= 0}
 					<!-- Stock épuisé icon -->
 					<img
-						class="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[70%] w-28 h-28 drop-shadow-2xl"
+						class="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[70%] w-24 h-24 drop-shadow-2xl"
 						alt="oof"
 						src="/epuise.webp"
 					/>
