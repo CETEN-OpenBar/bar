@@ -48,11 +48,11 @@
 			<Profile
 				{account}
 				logout={() => {
-					goto('/client');
+					goto('/auth');
 				}}
 			/>
 			<!-- Good looking "wants to staff" toggle -->
-			<label for="toggle" class="flex flex-col items-center cursor-pointer gap-3">
+			<label for="toggle" class="hidden sm:flex flex-col items-center cursor-pointer gap-3">
 				<span class="text-white text-lg font-bold">Tu veux staffer ?</span>
 				<div class="relative">
 					<input type="checkbox" id="toggle" class="sr-only" on:click={changeWantsToStaff} />

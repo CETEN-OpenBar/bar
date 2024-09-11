@@ -22,7 +22,7 @@
 	let errorTimeout: number;
 
 	if (account.google_picture == '') {
-		account.google_picture = `https://www.gravatar.com/avatar/${account.email_address}?d=retro`;
+		account.google_picture = `https://www.gravatar.com/avatar/${account.email_address}?d=mp`;
 	}
 
 	function setNewPin(pin: string) {
@@ -87,12 +87,11 @@
 			on:click={() => {
 				popup = !popup;
 			}}
-			class="{popup ? 'border-gray-200' : 'border-transparent'} rounded-full border-4"
 		>
 			<img
-				src={account.google_picture}
-				alt="Y'a pas"
-				class={`w-14 h-14 rounded-full cursor-pointer text-white`}
+				src={account?.google_picture ?? 'https://www.gravatar.com/avatar/' + account?.email_address + '?d=mp'}
+				alt="Profil"
+				class="w-14 h-14 rounded-full cursor-pointer text-white {popup ? 'border-gray-200' : 'border-transparent'} border-4"
 			/>
 		</button>
 		<button
@@ -144,9 +143,9 @@
 						}}>Changer de PIN</button
 					>
 					<hr class="my-2" />
-					<button class="w-full bg-red-500 text-white rounded-lg p-2 mb-2" on:click={logoutAccount}
-						>Déconnexion</button
-					>
+					<button class="w-full bg-red-500 text-white rounded-lg p-2 mb-2" on:click={logoutAccount}>
+						Déconnexion
+					</button>
 				</div>
 			</div>
 		</div>
