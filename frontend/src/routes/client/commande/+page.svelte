@@ -321,10 +321,24 @@
 
 <!-- Order menu -->
 <div 
-	class="bg-[#222831] fixed bottom-0 w-full text-white flex flex-col items-center p-2 pb-4 max-h-[90vh] {order_menu ? 'z-20 space-y-5' : 'space-y-3'}"
+	class="bg-[#222831] fixed bottom-0 w-full text-white flex flex-col items-center p-2 pb-4 max-h-[90vh] 
+	{order_menu ? 'z-20 space-y-5' : 'space-y-3'}
+	{categories_menu ? 'blur-sm' : 'z-[1]'}"
 >
 	<!-- Handle -->
-	<button class="w-[30px] h-[6px] rounded-md bg-slate-500" on:click={toggleOrderMenu}></button>
+	<button 
+		class="{order_menu ? 'w-[60px] h-6 p-1' : 'w-[30px] h-[6px]'} rounded-md bg-slate-500 flex flex-col items-center transition-[width,height] duration-200" 
+		on:click={toggleOrderMenu}>
+		{#if order_menu}
+			<svg xmlns="http://www.w3.org/2000/svg"
+				class="h-5 w-5"
+				viewBox="0 0 512 512"
+			>
+				<!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+				<path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"/>
+			</svg>
+		{/if}
+	</button>
 	
 	<!-- Overlay to open -->
 	{#if !order_menu}
@@ -383,24 +397,39 @@
 	</div>
 	{/if}
 
-	<div class="flex flex-col items-center space-y-3">
-		<div class="justify-self-start grow font-semibold">
-			Total : 
-			<Price amount={orderPrice} class="inline-block"/>
-		</div>
-		<div>
-			Reste :
-			<Price 
-				amount={(account?.balance ?? 0) - orderPrice + (account?.points ?? 0)}
-				class="inline-block px-2"
-			/> 
-			{#if (account?.points ?? 0) > 0}
-				<Stars 
-					stars={(account?.points ?? 0) - orderPrice}
-					icon_size={5}
-					class="inline-block"
-				/>
-			{/if}
+	<div class="flex flex-row px-5 w-full items-center">
+		<div class="flex flex-col items-center space-y-3 grow">
+			<div class="justify-self-start grow font-semibold">
+				Total : 
+				<Price amount={orderPrice} class="inline-block"/>
+			</div>
+			<div class="grid grid-cols-3 w-full">
+				<div class="{order_menu ? 'col-span-3' : 'col-span-2'} flex flex-col items-center transition-[width] duration-1000 ease-in-out">
+					<div class="flex flex-row items-center space-x-2 {order_menu ? 'col-span-3' : 'col-span-2'}">
+						<div>
+							Reste :
+						</div>
+						<div class="inline-flex flex-col items-center">
+							{#if orderPrice < (account?.points ?? 0)}
+								<Price amount={account?.balance ?? 0} class="inline-block px-2"/>
+								{#if (account?.points ?? 0) > 0}
+									<Stars stars={(account?.points ?? 0) - orderPrice} icon_size={5} class="inline-block"/>
+								{/if}
+							{:else}
+								<Price amount={(account?.balance ?? 0) - orderPrice + (account?.points ?? 0)} class="inline-block px-2" />
+							{/if}
+						</div>
+					</div>
+				</div>
+				{#if !order_menu}
+				<div class="flex flex-col items-center col-span-1">
+					<button class="rounded-md bg-green-500 p-3 flex flex-row items-center space-x-2 h-fit">
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M233.4 105.4c12.5-12.5 32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L256 173.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l192-192z"/></svg>
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 576 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M0 24C0 10.7 10.7 0 24 0L69.5 0c22 0 41.5 12.8 50.6 32l411 0c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3l-288.5 0 5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5L488 336c13.3 0 24 10.7 24 24s-10.7 24-24 24l-288.3 0c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5L24 48C10.7 48 0 37.3 0 24zM128 464a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
+					</button>
+				</div>
+				{/if}
+			</div>
 		</div>
 	</div>
 
@@ -463,23 +492,35 @@
 	<div class="bg-[#222831] flex flex-col items-center p-2 pb-4 space-y-3">
 		<!-- Handle -->
 		<div class="w-[30px] h-[6px] rounded-md bg-slate-500"></div>
-		<div class="justify-self-start grow font-semibold">
-			Total : 
-			<Price amount={orderPrice} class="inline-block"/>
-		</div>
-		<div>
-			Reste :
-			<Price 
-				amount={(account?.balance ?? 0) - orderPrice + (account?.points ?? 0)}
-				class="inline-block px-2"
-			/> 
-			{#if (account?.points ?? 0) > 0}
-				<Stars 
-					stars={(account?.points ?? 0) - orderPrice}
-					icon_size={5}
-					class="inline-block"
-				/>
-			{/if}
+		<div class="flex flex-row px-5 w-full items-center">
+			<div class="flex flex-col items-center space-y-3 grow">
+				<div class="justify-self-start grow font-semibold">
+					Total : XXXX €
+				</div>
+				<div class="grid grid-cols-3 w-full">
+					<div class="flex flex-row items-center space-x-2 grow col-span-2">
+						<div>
+							Reste :
+						</div>
+						<div class="inline-flex flex-col items-center">
+							{#if orderPrice < (account?.points ?? 0)}
+								<div>XXXXX €</div>
+								{#if (account?.points ?? 0) > 0}
+									<div>XXXXX stars</div>
+								{/if}
+							{:else}
+							<div>XXXXX €</div>
+							{/if}
+						</div>
+					</div>
+					<div class="flex flex-col items-center col-span-1">
+						<button class="rounded-md bg-green-500 p-3 flex flex-row items-center space-x-2 h-fit">
+							<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M233.4 105.4c12.5-12.5 32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L256 173.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l192-192z"/></svg>
+							<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 576 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M0 24C0 10.7 10.7 0 24 0L69.5 0c22 0 41.5 12.8 50.6 32l411 0c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3l-288.5 0 5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5L488 336c13.3 0 24 10.7 24 24s-10.7 24-24 24l-288.3 0c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5L24 48C10.7 48 0 37.3 0 24zM128 464a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
+						</button>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
