@@ -39,6 +39,11 @@
 	}
 </script>
 
+<svelte:head>
+    <title>OpenBar - Mon compte</title>
+</svelte:head>
+
+
 {#if account !== undefined}
 	<div class="grid lg:grid-cols-3 grid-cols-1 gap-16 p-16 w-full">
 		<!-- Previous orders column -->

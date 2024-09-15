@@ -282,6 +282,11 @@
 	}
 </style>
 
+<svelte:head>
+    <title>OpenBar - Commander</title>
+</svelte:head>
+
+
 {#if confirm}
 	<Confirm custom_text="Envoyer la commande ?" callback={confirmOrder}/>
 {/if}

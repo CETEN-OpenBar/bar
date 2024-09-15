@@ -18,6 +18,10 @@
     }
 </style>
 
+<svelte:head>
+    <title>OpenBar - Connexion</title>
+</svelte:head>
+
 <!-- Connect with Google at the middle of the screen -->
 <div class="flex flex-col items-center justify-center h-screen">
     <h1 class="font-semibold text-3xl m-3">OpenBar</h1>
