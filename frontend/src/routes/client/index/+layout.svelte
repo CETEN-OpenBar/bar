@@ -35,8 +35,6 @@
 	}
 </script>
 
-<!-- <Autodisconnect delay={60000} location="/client" /> -->
-
 {#if account !== undefined}
 	<div
 		id="main"
