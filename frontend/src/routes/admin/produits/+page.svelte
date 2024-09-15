@@ -777,8 +777,8 @@
 														editItem(item.id, { state: state }, item.category_id);
 													}}
 											>
-												<option value="buyable">🟢</option>
-												<option value="not_buyable">🔴</option>
+												<option value="buyable">✅</option>
+												<option value="not_buyable">❌</option>
 											</select>
 										</div>
 
