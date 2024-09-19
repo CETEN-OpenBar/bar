@@ -40,7 +40,6 @@
 		category_id: ''
 	};
 	let newItemPriceRole: AccountPriceRole = 'ceten';
-	let editItemPriceRole: AccountPriceRole = 'ceten';
 	let promoItemPriceRole: AccountPriceRole = 'ceten';
 
 	let page: number = 0;
@@ -266,7 +265,7 @@
 										id="price-new"
 										name="price"
 										placeholder="Prix du produit"
-										class="py-3 px-4 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+										class="py-3 px-4 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
 										required
 										aria-describedby="text-error"
 										on:input={(e) => {
@@ -497,7 +496,7 @@
 							<div class="text-lg dark:text-white">Par catégorie</div>
 							<div class="text-lg dark:text-white">Par état</div>
 							<div class="text-lg dark:text-white">Par nom</div>
-							<div class="relative mt-4 w-96 md:mt-0">
+							<div class="relative mt-4 w-75 md:mt-0">
 								<!-- filter by category -->
 								<select
 									id="category"
@@ -518,7 +517,7 @@
 									{/each}
 								</select>
 							</div>
-							<div class="relative mt-4 w-96 md:mt-0">
+							<div class="relative mt-4 w-70 md:mt-0">
 								<!-- filter by state -->
 								<select
 									id="state"
@@ -539,7 +538,7 @@
 									<option value="not_buyable">Non achetable</option>
 								</select>
 							</div>
-							<div class="relative mt-4 w-96 md:mt-0">
+							<div class="relative mt-4 w-70 md:mt-0">
 								<input
 									type="text"
 									class="py-3 px-4 w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
@@ -609,35 +608,35 @@
 					<table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
 						<thead class="bg-gray-50 dark:bg-slate-800">
 							<tr>
-								<th scope="col" class="px-6 py-3">
+								<th scope="col" class="px-12 py-3 ">
 									<span
 										class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 									>
 										Nom
 									</span>
 								</th>
-								<th scope="col" class="px-6 py-3">
+								<th scope="col" class="px-2 py-3">
 									<span
 										class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 									>
 										Catégorie
 									</span>
 								</th>
-								<th scope="col" class="px-6 py-3">
+								<th scope="col" class=" py-3">
 									<span
 										class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 									>
 										Image
 									</span>
 								</th>
-								<th scope="col" class="px-2 py-3">
+								<th scope="col" class="px-0 py-3">
 									<p
 										class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 									>
-										Etat
+										Achetable
 									</p>
 								</th>
-								<th scope="col" class="px-2 py-3 w-2">
+								<th scope="col" class="px-4 py-3 w-2">
 									<span
 										class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 									>
@@ -651,37 +650,54 @@
 										Limite d'achat
 									</span>
 								</th>
-								<th scope="col" class="px-2 py-3">
+								<th scope="col" class="px-0 py-3">
 									<span
 										class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 									>
 										Montant optimal en stock
 									</span>
 								</th>
-								<th scope="col" class="px-6 py-3">
-									<select
-										id="role"
-										name="role"
-										class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-										required
-										aria-describedby="text-error"
-										bind:value={editItemPriceRole}
-										on:change={() => {
-											// Remove the value of elems with id "price"
-											let elems = document.querySelectorAll('[id=price]');
-											elems.forEach((elem) => {
-												// @ts-ignore
-												elem.value = '';
-											});
-										}}
+								<th scope="col" class="px-4 py-3">
+									<span
+											class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 									>
-										<option value="coutant">Prix réel coutant</option>
-										<option value="externe">Prix réel externe</option>
-										<option value="ceten">Prix réel ceten</option>
-										<option value="staff_bar">Prix réel staff</option>
-										<option value="privilegies">Prix réel privilégiés</option>
-										<option value="menu">Prix réel menu</option>
-									</select>
+										Prix coutant
+									</span>
+								</th>
+								<th scope="col" class="px-6 py-3">
+									<span
+											class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+									>
+										Prix Ceten
+									</span>
+								</th>
+								<th scope="col" class="px-4 py-3">
+									<span
+											class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+									>
+										Prix externe
+									</span>
+								</th>
+								<th scope="col" class="px-6 py-3">
+									<span
+											class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+									>
+										Prix staff
+									</span>
+								</th>
+								<th scope="col" class="px-2 py-3 ">
+									<span
+											class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+									>
+										Prix privilégiés
+									</span>
+								</th>
+								<th scope="col" class="px-6 py-3">
+									<span
+											class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+									>
+										Prix menu
+									</span>
 								</th>
 								<th scope="col" class="px-6 py-3 text-right" />
 							</tr>
@@ -691,10 +707,10 @@
 							{#each items as item}
 								<tr>
 									<td class="h-px w-72">
-										<div class="px-6 py-3 grid justify-center">
+										<div class="px-2 py-3 grid justify-center">
 											<input
 												type="text"
-												class="py-3 px-2 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+												class="py-3 px-2 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
 												value={item.name}
 												on:input={(e) => {
 													// @ts-ignore
@@ -705,7 +721,7 @@
 										</div>
 									</td>
 									<td class="h-px w-52">
-										<div class="px-6 py-3 grid justify-center">
+										<div class="px-2 py-3 grid justify-center">
 											<select
 												class="block text-sm dark:text-white/[.8] dark:bg-slate-900 break-words p-2 bg-transparent"
 												value={item.category_id}
@@ -723,7 +739,7 @@
 									</td>
 									<td class="h-px w-36 grid justify-center">
 										<!-- Display a miniature of the image -->
-										<div class="px-6 py-3 relative">
+										<div class="px-2 py-3 relative">
 											<!-- <img
 												src={api() + category.picture_uri}
 												alt="indisponible"
@@ -752,24 +768,25 @@
 									<td class="h-px w-52">
 										<div class="px-2 py-3 grid justify-center">
 											<select
-												class="block text-sm dark:text-white/[.8] dark:bg-slate-900 break-words p-2 bg-transparent"
-												value={item.state}
-												on:change={(e) => {
-													// @ts-ignore
-													let state = e.target?.value;
-													editItem(item.id, { state: state }, item.category_id);
-												}}
+													class="block text-sm dark:text-white/[.8] dark:bg-slate-900 break-words p-2 bg-transparent"
+													value={item.state}
+													on:change={(e) => {
+														// @ts-ignore
+														let state = e.target?.value;
+														editItem(item.id, { state: state }, item.category_id);
+													}}
 											>
-												<option value="buyable">Achetable</option>
-												<option value="not_buyable">Pas achetable</option>
+												<option value="buyable">✅</option>
+												<option value="not_buyable">❌</option>
 											</select>
 										</div>
+
 									</td>
 									<td class="h-px w-52">
 										<div class="px-2 py-3 grid justify-center">
 											<input
 												type="number"
-												class="py-3 px-2 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+												class="py-3 px-2 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
 												value={item.amount_left}
 												on:input={(e) => {
 													// @ts-ignore
@@ -780,10 +797,10 @@
 										</div>
 									</td>
 									<td class="h-px w-52">
-										<div class="px-6 py-3 grid justify-center">
+										<div class="px-2 py-3 grid justify-center">
 											<input
 												type="number"
-												class="py-3 px-2 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+												class="py-3 px-2 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
 												value={item.buy_limit}
 												on:input={(e) => {
 													// @ts-ignore
@@ -799,10 +816,10 @@
 										</div>
 									</td>
 									<td class="h-px w-52">
-										<div class="px-6 py-3 grid justify-center">
+										<div class="px-2 py-3 grid justify-center">
 											<input
 												type="number"
-												class="py-3 px-2 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+												class="py-3 px-2 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
 												value={item.optimal_amount}
 												on:input={(e) => {
 													// @ts-ignore
@@ -813,19 +830,169 @@
 										</div>
 									</td>
 									<td class="h-px w-52">
-										<div class="px-6 py-3 grid justify-center">
+										<div class="px-2 py-3 grid justify-center">
 											<input
-												type="number"
-												id="price"
-												name="price"
-												placeholder={formatPrice(item.prices[editItemPriceRole])}
-												class="py-3 px-2 block w-[90%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-												required
-												aria-describedby="text-error"
-												on:input={(e) => {
+													type="number"
+													id="price"
+													name="price"
+													placeholder={formatPrice(item.prices['coutant'])}
+													class="py-3 px-2 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+													required
+													aria-describedby="text-error"
+													on:input={(e) => {
 													let prices = item.prices;
 													// @ts-ignore
-													prices[editItemPriceRole] = parsePrice(e.target?.value);
+													prices['coutant'] = parsePrice(e.target?.value);
+
+													editItem(item.id, { prices: prices }, item.category_id);
+
+													// Remove the value of elems with id "price" with rebounce timeout
+													if (rebounceTimeout) clearTimeout(rebounceTimeout);
+													rebounceTimeout = setTimeout(() => {
+														let elems = document.querySelectorAll('[id=price]');
+														elems.forEach((elem) => {
+															// @ts-ignore
+															elem.value = '';
+														});
+													}, 1000);
+												}}
+											/>
+										</div>
+									</td>
+									<td class="h-px w-52">
+										<div class="px-2 py-3 grid justify-center">
+											<input
+													type="number"
+													id="price"
+													name="price"
+													placeholder={formatPrice(item.prices['ceten'])}
+													class="py-3 px-2 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+													required
+													aria-describedby="text-error"
+													on:input={(e) => {
+													let prices = item.prices;
+													// @ts-ignore
+													prices['ceten'] = parsePrice(e.target?.value);
+
+													editItem(item.id, { prices: prices }, item.category_id);
+
+													// Remove the value of elems with id "price" with rebounce timeout
+													if (rebounceTimeout) clearTimeout(rebounceTimeout);
+													rebounceTimeout = setTimeout(() => {
+														let elems = document.querySelectorAll('[id=price]');
+														elems.forEach((elem) => {
+															// @ts-ignore
+															elem.value = '';
+														});
+													}, 1000);
+												}}
+											/>
+										</div>
+									</td>
+									<td class="h-px w-52">
+										<div class="px-2 py-3 grid justify-center">
+											<input
+													type="number"
+													id="price"
+													name="price"
+													placeholder={formatPrice(item.prices['externe'])}
+													class="py-3 px-2 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+													required
+													aria-describedby="text-error"
+													on:input={(e) => {
+													let prices = item.prices;
+													// @ts-ignore
+													prices['externe'] = parsePrice(e.target?.value);
+
+													editItem(item.id, { prices: prices }, item.category_id);
+
+													// Remove the value of elems with id "price" with rebounce timeout
+													if (rebounceTimeout) clearTimeout(rebounceTimeout);
+													rebounceTimeout = setTimeout(() => {
+														let elems = document.querySelectorAll('[id=price]');
+														elems.forEach((elem) => {
+															// @ts-ignore
+															elem.value = '';
+														});
+													}, 1000);
+												}}
+											/>
+										</div>
+									</td>
+									<td class="h-px w-52">
+										<div class="px-2 py-3 grid justify-center">
+											<input
+													type="number"
+													id="price"
+													name="price"
+													placeholder={formatPrice(item.prices['staff_bar'])}
+													class="py-3 px-2 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+													required
+													aria-describedby="text-error"
+													on:input={(e) => {
+													let prices = item.prices;
+													// @ts-ignore
+													prices['staff_bar'] = parsePrice(e.target?.value);
+
+													editItem(item.id, { prices: prices }, item.category_id);
+
+													// Remove the value of elems with id "price" with rebounce timeout
+													if (rebounceTimeout) clearTimeout(rebounceTimeout);
+													rebounceTimeout = setTimeout(() => {
+														let elems = document.querySelectorAll('[id=price]');
+														elems.forEach((elem) => {
+															// @ts-ignore
+															elem.value = '';
+														});
+													}, 1000);
+												}}
+											/>
+										</div>
+									</td>
+									<td class="h-px w-52">
+										<div class="px-2 py-3 grid justify-center">
+											<input
+													type="number"
+													id="price"
+													name="price"
+													placeholder={formatPrice(item.prices['privilegies'])}
+													class="py-3 px-2 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+													required
+													aria-describedby="text-error"
+													on:input={(e) => {
+													let prices = item.prices;
+													// @ts-ignore
+													prices['privilegies'] = parsePrice(e.target?.value);
+
+													editItem(item.id, { prices: prices }, item.category_id);
+
+													// Remove the value of elems with id "price" with rebounce timeout
+													if (rebounceTimeout) clearTimeout(rebounceTimeout);
+													rebounceTimeout = setTimeout(() => {
+														let elems = document.querySelectorAll('[id=price]');
+														elems.forEach((elem) => {
+															// @ts-ignore
+															elem.value = '';
+														});
+													}, 1000);
+												}}
+											/>
+										</div>
+									</td>
+									<td class="h-px w-52">
+										<div class="px-2 py-3 grid justify-center">
+											<input
+													type="number"
+													id="price"
+													name="price"
+													placeholder={formatPrice(item.prices['menu'])}
+													class="py-3 px-2 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+													required
+													aria-describedby="text-error"
+													on:input={(e) => {
+													let prices = item.prices;
+													// @ts-ignore
+													prices['menu'] = parsePrice(e.target?.value);
 
 													editItem(item.id, { prices: prices }, item.category_id);
 
@@ -843,7 +1010,7 @@
 										</div>
 									</td>
 									<td class="h-px w-px whitespace-nowrap">
-										<div class="px-6 py-1.5 grid justify-center">
+										<div class="px-2 py-1.5 grid justify-center">
 											<button
 												class="{item.promotion_ends_at ?? 0 > new Date().getTime() / 1000
 													? 'animate-pulse'
@@ -876,7 +1043,7 @@
 
 					<!-- Footer -->
 					<div
-						class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-t border-gray-200 dark:border-gray-700"
+						class="px-2 py-4 grid gap-3 md:flex md:justify-between md:items-center border-t border-gray-200 dark:border-gray-700"
 					>
 						<div>
 							<p class="text-sm text-gray-600 dark:text-gray-400">
