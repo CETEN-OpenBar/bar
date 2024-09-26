@@ -391,7 +391,9 @@ func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams
 		account, err = s.DBackend.GetAccountByEmail(c.Request().Context(), usr.Email)
 		if err != nil {
 			if err == mongo.ErrNoDocuments {
-				return ErrorAccNotFound(c)
+				// Redirect to the auth page with an error message
+				conf := config.GetConfig()
+				return c.Redirect(http.StatusPermanentRedirect, conf.ApiConfig.FrontendBasePath+"/auth?noaccount")
 			}
 			logrus.Error(err)
 			return ErrorRedirect(c, "#017")
