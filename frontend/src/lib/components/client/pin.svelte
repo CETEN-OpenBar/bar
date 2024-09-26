@@ -53,7 +53,6 @@
 					on:click={() => {
 						temp_pin += 0;
 						if (temp_pin.length === 20) {
-							console.log('f' + temp_pin)
 							callback(temp_pin);
 							temp_pin = '';
 						}
@@ -64,7 +63,6 @@
 				<button
 					class="w-24 h-20 md:w-36 md:h-32 text-xl rounded-xl text-white bg-green-600 active:bg-green-800"
 					on:click={() => {
-						console.log('g' + temp_pin)
 						callback(temp_pin);
 						temp_pin = '';
 					}}
