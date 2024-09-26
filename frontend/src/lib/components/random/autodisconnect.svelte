@@ -44,9 +44,9 @@
 
 	async function logout() {
 		// TODO: don't forget to uncomment this
-		// let _ = await authApi().logout({ withCredentials: true });
-		// clearInterval(disconnectInterval);
-		// goto(location);
+		let _ = await authApi().logout({ withCredentials: true });
+		clearInterval(disconnectInterval);
+		goto(location);
 	}
 
 	function onAction() {
