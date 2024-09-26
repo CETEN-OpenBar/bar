@@ -149,8 +149,7 @@
 			<!-- image wil be in a button box -->
 			<div
 				class="flex-1 flex flex-col my-1 min-w-40 max-w-40 min-h-50 h-50 max-h-50
-				items-center rounded-lg text-white transition-colors duration-300 overflow-x-clip
-				relative"
+				items-center rounded-lg text-white transition-colors duration-300 overflow-x-clip"
 			>
 				<!-- add info svg on the top right -->
 				{#if item.is_menu}
@@ -167,6 +166,7 @@
 					</button>
 				{/if}
 				<button
+					class="relative"
 					on:click={() => {
 						// check we are not clicking on the info button
 						clickWrapper(item);
@@ -182,15 +182,15 @@
 						<span class="text-lg font-bold w-40">{item.name}</span>
 						<span class="text-sm">Prix: {formatPrice(item.display_price ?? 999)}</span>
 					</div>
+					{#if item.amount_left <= 0}
+						<!-- Stock épuisé icon -->
+						<img
+							class="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[70%] w-20 h-20 md:h-24 md:w-24 drop-shadow-2xl"
+							alt="oof"
+							src="/epuise.webp"
+						/>
+					{/if}
 				</button>
-				{#if item.amount_left <= 0}
-					<!-- Stock épuisé icon -->
-					<img
-						class="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[70%] w-24 h-24 md:h-20 md:w-20 drop-shadow-2xl"
-						alt="oof"
-						src="/epuise.webp"
-					/>
-				{/if}
 			</div>
 		{/each}
 	</div>
