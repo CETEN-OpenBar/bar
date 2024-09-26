@@ -280,6 +280,11 @@
 	:global(body) {
 		overflow-y: hidden;
 	}
+
+	/* Prevents double-tap zooming */
+	* {
+		touch-action: manipulation;
+	}
 </style>
 
 <svelte:head>
