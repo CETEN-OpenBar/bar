@@ -19,5 +19,5 @@
 			clip-rule="evenodd"
 		/>
 	</svg>
-	{stars} ({formatPrice(stars)})
+	{stars} <span class="whitespace-nowrap">({formatPrice(stars)})</span>
 </div>

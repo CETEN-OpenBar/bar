@@ -350,7 +350,7 @@
 		<div class="flex flex-col items-end mr-3 text-xs space-y-2">
 			<Price amount={account?.balance ?? 0} />
 			{#if (account?.points ?? 0) > 0}
-				<Stars stars={account?.points ?? 0} icon_size={5}/>
+				<Stars stars={account?.points ?? 0} icon_size={5} class="text-right"/>
 			{/if}
 		</div>
 
