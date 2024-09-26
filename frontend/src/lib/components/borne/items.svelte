@@ -13,6 +13,11 @@
 
 	// Update item when clicking on it
 	function clickWrapper(item: Item) {
+
+		if (item.amount_left == 0) {
+			return;
+		}
+
 		reloadItems(false);
 		// Update current item
 		for (let i = 0; i < items.length; i++) {
