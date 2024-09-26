@@ -473,7 +473,10 @@
 						<!-- Cart logo -->
 						{#if !order_menu}
 						<div class="flex flex-col items-center col-span-1 xl:hidden">
-							<button class="rounded-md bg-green-500 p-3 flex flex-row items-center space-x-2 h-fit relative">
+							<button 
+								class="rounded-md bg-green-500 p-3 flex flex-row items-center space-x-2 h-fit relative"
+								on:click={toggleOrderMenu}
+							>
 								<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M233.4 105.4c12.5-12.5 32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L256 173.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l192-192z"/></svg>
 								<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 576 512">
 									<!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
