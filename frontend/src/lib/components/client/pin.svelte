@@ -27,7 +27,7 @@
 			<div class="grid grid-cols-3 gap-2">
 				{#each Array.from({ length: 9 }, (_, i) => i + 1) as i}
 					<button
-						class="w-36 h-32 text-4xl border-2 text-white border-gray-300 rounded-xl hover:bg-gray-200/[0.5] active:bg-gray-200/[0.5]"
+						class="w-24 h-20 md:w-36 md:h-32 text-4xl border-2 text-white border-gray-300 rounded-xl hover:bg-gray-200/[0.5] active:bg-gray-200/[0.5]"
 						on:click={() => {
 							temp_pin += i;
 							if (temp_pin.length === 20) {
@@ -41,7 +41,7 @@
 					</button>
 				{/each}
 				<button
-					class="w-36 h-32 text-4xl rounded-xl bg-yellow-600 text-white"
+					class="w-24 h-20 md:w-36 md:h-32 text-4xl rounded-xl bg-yellow-600 text-white"
 					on:click={() => {
 						temp_pin = temp_pin.slice(0, -1);
 					}}
@@ -49,7 +49,7 @@
 					←
 				</button>
 				<button
-					class="w-36 h-32 text-4xl border-2 rounded-xl text-white border-gray-300 hover:bg-gray-200 active:bg-gray-200"
+					class="w-24 h-20 md:w-36 md:h-32 text-4xl border-2 rounded-xl text-white border-gray-300 hover:bg-gray-200 active:bg-gray-200"
 					on:click={() => {
 						temp_pin += 0;
 						if (temp_pin.length === 20) {
@@ -61,7 +61,7 @@
 					0
 				</button>
 				<button
-					class="w-36 h-32 text-xl rounded-xl text-white bg-green-600 active:bg-green-800"
+					class="w-24 h-20 md:w-36 md:h-32 text-xl rounded-xl text-white bg-green-600 active:bg-green-800"
 					on:click={() => {
 						callback(temp_pin);
 						temp_pin = '';

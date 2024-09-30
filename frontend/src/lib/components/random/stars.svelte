@@ -2,13 +2,14 @@
 	import { formatPrice } from '$lib/utils';
 
 	export let stars: number = 0;
+	export let icon_size: number = 7;
 </script>
 
 <div class={$$restProps.class || ''}>
 	<!-- filled yellow star svg -->
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
-		class="h-7 w-7 inline-block text-yellow-500"
+		class="h-{icon_size} w-{icon_size} inline-block text-yellow-500"
 		viewBox="0 0 20 20"
 		fill="currentColor"
 	>
@@ -18,5 +19,5 @@
 			clip-rule="evenodd"
 		/>
 	</svg>
-	{stars} ({formatPrice(stars)})
+	{stars} <span class="whitespace-nowrap">({formatPrice(stars)})</span>
 </div>

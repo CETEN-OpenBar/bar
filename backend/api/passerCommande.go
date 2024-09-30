@@ -252,6 +252,13 @@ func (s *Server) PostTransactions(c echo.Context) error {
 
 		transaction.TotalCost = transactionCost
 
+		// New transactions are remote by default
+		if potentialTransaction.IsRemote == nil {
+			potentialTransaction.IsRemote = new(bool)
+			*potentialTransaction.IsRemote = true
+		}
+		transaction.IsRemote = potentialTransaction.IsRemote
+
 		// update account balance
 		if int64(transactionCost) > account.Points {
 			account.Balance -= int64(transactionCost) - account.Points

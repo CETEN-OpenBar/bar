@@ -214,7 +214,8 @@
 					})
 				};
 			}),
-			card_pin: card_pin
+			card_pin: card_pin,
+			is_remote: false,
 		};
 
 		transactionsApi()

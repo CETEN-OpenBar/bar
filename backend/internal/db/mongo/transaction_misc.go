@@ -56,7 +56,7 @@ func (b *Backend) CountTransactions(ctx context.Context, accountID string, state
 	return uint64(count), nil
 }
 
-func (b *Backend) GetAllTransactions(ctx context.Context, page uint64, size uint64, state string, name string) ([]*models.Transaction, error) {
+func (b *Backend) GetAllTransactions(ctx context.Context, page uint64, size uint64, state string, name string, hide_remotes bool) ([]*models.Transaction, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
@@ -66,8 +66,10 @@ func (b *Backend) GetAllTransactions(ctx context.Context, page uint64, size uint
 		filter["state"] = state
 	}
 
+	var namesFilter []bson.M
+
 	if name != "" {
-		filter["$or"] = []bson.M{
+		namesFilter = []bson.M{
 			{
 				"account_name": bson.M{
 					"$regex": name,
@@ -81,6 +83,37 @@ func (b *Backend) GetAllTransactions(ctx context.Context, page uint64, size uint
 				},
 			},
 		}
+	}
+
+	if hide_remotes {
+		remotesFilter := []bson.M{
+			{
+				"is_remote": bson.M{
+					"$exists": false,
+				},
+			},
+			{
+				"is_remote": false,
+			},
+			{
+				"is_remote": nil,
+			},
+		}
+		if namesFilter != nil {
+			filter["$and"] = []bson.M{
+				{
+					"$or": namesFilter,
+				},
+				{
+					"$or": remotesFilter,
+				},
+			}
+		} else {
+			filter["$or"] = remotesFilter
+		}
+
+	} else if namesFilter != nil {
+		filter["$or"] = namesFilter
 	}
 
 	// Get "size" transactions from "page" using aggregation
@@ -98,7 +131,7 @@ func (b *Backend) GetAllTransactions(ctx context.Context, page uint64, size uint
 	return transactions, nil
 }
 
-func (b *Backend) CountAllTransactions(ctx context.Context, state string, name string) (uint64, error) {
+func (b *Backend) CountAllTransactions(ctx context.Context, state string, name string, hide_remotes bool) (uint64, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
@@ -108,8 +141,10 @@ func (b *Backend) CountAllTransactions(ctx context.Context, state string, name s
 		filter["state"] = state
 	}
 
+	var namesFilter []bson.M
+
 	if name != "" {
-		filter["$or"] = []bson.M{
+		namesFilter = []bson.M{
 			{
 				"account_name": bson.M{
 					"$regex": name,
@@ -123,6 +158,37 @@ func (b *Backend) CountAllTransactions(ctx context.Context, state string, name s
 				},
 			},
 		}
+	}
+
+	if hide_remotes {
+		remotesFilter := []bson.M{
+			{
+				"is_remote": bson.M{
+					"$exists": false,
+				},
+			},
+			{
+				"is_remote": false,
+			},
+			{
+				"is_remote": nil,
+			},
+		}
+		if namesFilter != nil {
+			filter["$and"] = []bson.M{
+				{
+					"$or": namesFilter,
+				},
+				{
+					"$or": remotesFilter,
+				},
+			}
+		} else {
+			filter["$or"] = remotesFilter
+		}
+
+	} else if namesFilter != nil {
+		filter["$or"] = namesFilter
 	}
 
 	count, err := b.db.Collection(TransactionsCollection).CountDocuments(ctx, filter)
