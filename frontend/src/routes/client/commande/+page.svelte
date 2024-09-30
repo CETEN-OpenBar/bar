@@ -336,7 +336,7 @@
 <!-- Main content -->
 <div
 	id="main"
-	class="w-screen h-screen top-0 left-0 overflow-y-hidden bg-[#393E46] text-white flex flex-col"
+	class="h-[100dvh] w-screen top-0 left-0 overflow-y-hidden bg-[#393E46] text-white flex flex-col"
 >
 
 	<!-- Menu close overlay -->
