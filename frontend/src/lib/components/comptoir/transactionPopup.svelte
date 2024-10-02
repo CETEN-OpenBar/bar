@@ -10,8 +10,14 @@
 	import { api } from '$lib/config/config';
 	import { transactionsApi } from '$lib/requests/requests';
 	import { formatPrice } from '$lib/utils';
+	import { reset } from '__sveltekit/paths';
 	import Error from '../error.svelte';
 	import Success from '../success.svelte';
+	import Transactions from './transactions.svelte';
+	import { createEventDispatcher } from 'svelte';
+	import {searchName} from './transactions.svelte';
+
+	let searchNameResetValue = null;
 
 	export let transaction: Transaction;
 	export let close: () => void;
@@ -26,6 +32,12 @@
 		pickedItems: TransactionItem[] | undefined;
 	};
 	let menuPopup: MenuPopup | undefined;
+
+	const eventDispatcher = createEventDispatcher();
+
+	async function handleResetInputField(){
+		eventDispatcher('reset')
+	}
 
 	async function cancelTransaction() {
 		let res = await transactionsApi().patchTransactionId(
@@ -101,6 +113,7 @@
 		success = 'Commande terminée';
 		setTimeout(() => {
 			success = '';
+			searchName.set('');
 			close();
 		}, 1500);
 	}
@@ -361,6 +374,7 @@
 				<button
 					class="bg-green-500 rounded-xl text-white text-md font-bold p-2 h-20 w-full"
 					on:click={() => {
+						handleResetInputField();
 						finishTransaction();
 					}}
 				>

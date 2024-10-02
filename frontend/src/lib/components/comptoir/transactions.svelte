@@ -6,13 +6,16 @@
 	import { onDestroy, onMount } from 'svelte';
 	import TransactionPopup from './transactionPopup.svelte';
 	import { dragscroll } from '@svelte-put/dragscroll';
+	import { writable } from 'svelte/store';
 
 	export let amount: number = 4;
 
 	let transactions: Array<Transaction> = [];
 	let maxItemPerTransaction: number = 6;
 	let interval: number;
-	let searchName: string | undefined;
+	export let searchName = writable('')
+	// let searchName: string | undefined;
+	$: $searchName;
 
 	let page: number = 0;
 	let maxPage: number = 0;
@@ -47,7 +50,7 @@
 
 	function reloadTransactions() {
 		transactionsApi()
-			.getTransactions(page, amount, st, !showRemoteTransactions, searchName, { withCredentials: true })
+			.getTransactions(page, amount, st, !showRemoteTransactions, searchName.toString(), { withCredentials: true })
 			.then((res) => {
 				page = res.data.page ?? 0;
 				maxPage = res.data.max_page ?? 0;
@@ -95,7 +98,7 @@
 					placeholder="Rechercher une personne"
 					on:input={(e) => {
 						// @ts-ignore
-						searchName = e.target.value.toLowerCase();
+						searchName.set(e.target.value.toLowerCase());
 						page = 1;
 						reloadTransactions();
 					}}
