@@ -1,6 +1,3 @@
-<script context="module">
-	export let searchName = writable('')
-</script>
 <script lang="ts">
 	import type { Transaction, TransactionItem, TransactionState } from '$lib/api';
 	import { api } from '$lib/config/config';
@@ -9,15 +6,17 @@
 	import { onDestroy, onMount } from 'svelte';
 	import TransactionPopup from './transactionPopup.svelte';
 	import { dragscroll } from '@svelte-put/dragscroll';
-	import { writable } from 'svelte/store';
+	import { searchName } from '$lib/store/store';
 
+	let searchNameValue:string;
+
+	searchName.subscribe((value)=>{searchNameValue = value});	
 	export let amount: number = 4;
 
 	let transactions: Array<Transaction> = [];
 	let maxItemPerTransaction: number = 6;
 	let interval: number;
 	// let searchName: string | undefined;
-	$: $searchName;
 
 	let page: number = 0;
 	let maxPage: number = 0;
@@ -52,7 +51,7 @@
 
 	function reloadTransactions() {
 		transactionsApi()
-			.getTransactions(page, amount, st, !showRemoteTransactions, searchName.toString(), { withCredentials: true })
+			.getTransactions(page, amount, st, !showRemoteTransactions, searchNameValue, { withCredentials: true })
 			.then((res) => {
 				page = res.data.page ?? 0;
 				maxPage = res.data.max_page ?? 0;
@@ -98,9 +97,10 @@
 				<input 
 					class="rounded-lg p-2 text-black"
 					placeholder="Rechercher une personne"
+					bind:value={$searchName}
 					on:input={(e) => {
 						// @ts-ignore
-						searchName.set(e.target.value.toLowerCase());
+						searchNameValue = e.target.value.toLowerCase();
 						page = 1;
 						reloadTransactions();
 					}}
