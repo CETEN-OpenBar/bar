@@ -1,3 +1,6 @@
+<script context="module">
+	export let searchName = writable('')
+</script>
 <script lang="ts">
 	import type { Transaction, TransactionItem, TransactionState } from '$lib/api';
 	import { api } from '$lib/config/config';
@@ -13,7 +16,6 @@
 	let transactions: Array<Transaction> = [];
 	let maxItemPerTransaction: number = 6;
 	let interval: number;
-	export let searchName = writable('')
 	// let searchName: string | undefined;
 	$: $searchName;
 
