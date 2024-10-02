@@ -131,7 +131,7 @@
 						class=" bg-blue-500 text-white rounded-lg p-2 mb-2"
 						on:click={() => {
 							popup = false;
-							goto('/borne/index');
+							goto('/client/index');
 						}}>Mon compte</button
 					>
 					<button
