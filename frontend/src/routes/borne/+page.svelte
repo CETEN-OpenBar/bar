@@ -17,6 +17,14 @@
 	import { api } from '$lib/config/config';
 	import { fly } from 'svelte/transition';
 	import ReadCard from '$lib/components/readCard.svelte';
+	import { pinIsShown } from '$lib/store/store';
+
+	function handleInput(e:string){
+		console.log(e, $pinIsShown, card.pin);
+		
+	}
+	
+	$: $pinIsShown
 
 	let fakeImages: Array<CarouselImage> = [
 		{
@@ -91,11 +99,13 @@
 
 	function cardCallback(id: string) {
 		card.id = id;
+		pinIsShown.set(true)
 	}
 
 	let incorrectPin = '';
 	function pinCallback(pin: string) {
 		card.pin = pin;
+		pinIsShown.set(false);
 
 		authApi()
 			.connectCard(
@@ -108,11 +118,13 @@
 				}
 			)
 			.then((res) => {
+				pinIsShown.set(false);
 				if (res.data.account?.state == AccountState.AccountOK) goto('/borne/commande');
 				if (res.data.account?.state == AccountState.AccountNotOnBoarded) goto('/borne/onboarding');
 			})
 			.catch(() => {
 				incorrectPin = 'Mauvais code pin';
+				pinIsShown.set(false);
 				setTimeout(() => {
 					incorrectPin = '';
 				}, 3000);
@@ -125,7 +137,7 @@
 	}
 </script>
 
-<ReadCard callback={cardCallback} />
+<ReadCard callback={cardCallback}/>
 
 {#if incorrectPin != ''}
 	<Error error={incorrectPin} />
@@ -142,3 +154,5 @@
 {:else}
 	<FsLoading />
 {/if}
+
+<svelte:window on:keydown={(e) => handleInput(e.key)}/>
