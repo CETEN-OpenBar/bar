@@ -20,47 +20,24 @@
 		temp_pin = '';
 	}
 
-	function controlPinWithKbd(k: string) {
-		switch (k) {
-			case '1':
-				enterPin(1);
-				break;
-			case '2':
-				enterPin(2);
-				break;
-			case '3':
-				enterPin(3);
-				break;
-			case '4':
-				enterPin(4);
-				break;
-			case '5':
-				enterPin(5);
-				break;
-			case '6':
-				enterPin(6);
-				break;
-			case '7':
-				enterPin(7);
-			case '8':
-				enterPin(8);
-				break;
-			case '9':
-				enterPin(9);
-				break;
-			case '0':
-				enterPin(0);
-				break;
-			case 'Backspace':
-				deletePinChar();
-				break;
-			case 'Enter':
-				validatePin();
-				break;
-			default:
-				break;
-		}
-	}
+	function isDigit(k: string): boolean {
+    return /^\d$/.test(k)
+}
+
+function controlPinWithKbd(k: string) {
+    if (isDigit(k)) {
+        enterPin(parseInt(k));
+        return
+    }
+    switch (k) {
+        case 'Backspace':
+            deletePinChar();
+            break;
+        case 'Enter':
+            validatePin();
+            break;
+    }
+}
 </script>
 
 <!-- Display a popup that asks for a pin -->

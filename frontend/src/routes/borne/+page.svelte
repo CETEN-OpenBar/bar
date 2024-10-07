@@ -19,10 +19,6 @@
 	import ReadCard from '$lib/components/readCard.svelte';
 	import { pinIsShown } from '$lib/store/store';
 
-	function handleInput(e:string){
-		console.log(e, $pinIsShown, card.pin);
-		
-	}
 	
 	$: $pinIsShown
 
@@ -155,4 +151,3 @@
 	<FsLoading />
 {/if}
 
-<svelte:window on:keydown={(e) => handleInput(e.key)}/>
