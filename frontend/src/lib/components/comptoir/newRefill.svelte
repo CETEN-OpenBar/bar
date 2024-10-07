@@ -18,7 +18,7 @@
 	let card = {
 		id: '',
 		amount: 0,
-		type: RefillType.RefillOther
+		type: RefillType.RefillCard
 	};
 </script>
 
