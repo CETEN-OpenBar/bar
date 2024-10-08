@@ -83,6 +83,7 @@
 	<TransactionPopup
 		transaction={displayTransaction}
 		close={() => {
+			reloadTransactions();
 			displayTransaction = null;
 		}}
 	/>
