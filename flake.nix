@@ -26,6 +26,9 @@
             gofumpt
 
             go-task
+
+            #openapicli
+            openapi-generator-cli
           ];
           shellHook = "";
         };
