@@ -13,6 +13,9 @@ let s: Store = {} as Store;
 // Create writable store
 export const store = writable(s);
 
+// Variable for search name for /comptoir/c/transaction
+export const searchName = writable('');
+
 // Create function to set store
 export const setStore = (store: Store) => {
     s = store;
