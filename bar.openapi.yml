@@ -5193,6 +5193,8 @@ components:
           format: uint64
         hidden:
           type: boolean
+        special_price:
+          type: boolean
     NewCategory:
       type: object
       properties:
@@ -5239,6 +5241,7 @@ components:
         - position
         - items
         - hidden
+        - special_price
     TransactionState:
       type: string
       enum:

@@ -405,7 +405,7 @@ export interface Category {
      * @type {boolean}
      * @memberof Category
      */
-    'special_price'?: boolean;
+    'special_price': boolean;
     /**
      * 
      * @type {number}
@@ -2211,6 +2211,12 @@ export interface UpdateCategory {
      * @memberof UpdateCategory
      */
     'hidden'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof UpdateCategory
+     */
+    'special_price'?: boolean;
 }
 /**
  * 
