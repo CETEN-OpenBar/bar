@@ -5225,6 +5225,8 @@ components:
           format: uint64
         hidden:
           type: boolean
+        special_price:
+          type: boolean
         deleted_at:
           type: integer
           format: uint64
