@@ -102,20 +102,25 @@ func (s *Server) CreateRestock(c echo.Context) error {
 			category, err := s.DBackend.GetCategory(c.Request().Context(), item.CategoryId.String())
 			if err != nil {
 				if err == mongo.ErrNoDocuments {
-					return nil, ErrorItemNotFound(c)
+					// return nil, ErrorItemNotFound(c)
+					// Si l'item n'as pas de catégorie, on met une catégorie par défaut
+					category = &models.Category{
+						Category: autogen.Category{
+							Id:   uuid.Nil,
+							Name: "Autres",
+						},
+					}
+				} else {
+					logrus.Error(err)
+					return nil, Error500(c)
 				}
-				logrus.Error(err)
-				return nil, Error500(c)
 			}
-
 			restockItem.ItemName = item.Name
 			restockItem.ItemPictureUri = item.PictureUri
 			item.State = autogen.ItemBuyable
 			item.AmountLeft += restockItem.AmountOfBundle * restockItem.AmountPerBundle
 			item.LastTva = &restockItem.Tva
-			
-			if category.Name != "Pizzas" {
-
+			if category.Name != "Pizza 🤌" {
 				item.Prices.Coutant = uint64(math.Ceil(float64(restockItem.BundleCostTtc) / (float64(restockItem.AmountPerBundle))))
 				if item.Prices.Coutant < 30 {
 					item.Prices.Externe = arrondiAuMutilple(item.Prices.Coutant, 5) + 20
