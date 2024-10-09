@@ -108,6 +108,7 @@ func (s *Server) CreateRestock(c echo.Context) error {
 						Category: autogen.Category{
 							Id:   uuid.Nil,
 							Name: "Autres",
+							SpecialPrice: false,
 						},
 					}
 				} else {
@@ -120,7 +121,7 @@ func (s *Server) CreateRestock(c echo.Context) error {
 			item.State = autogen.ItemBuyable
 			item.AmountLeft += restockItem.AmountOfBundle * restockItem.AmountPerBundle
 			item.LastTva = &restockItem.Tva
-			if category.Name != "Pizza 🤌" {
+			if category.SpecialPrice == false {
 				item.Prices.Coutant = uint64(math.Ceil(float64(restockItem.BundleCostTtc) / (float64(restockItem.AmountPerBundle))))
 				if item.Prices.Coutant < 30 {
 					item.Prices.Externe = arrondiAuMutilple(item.Prices.Coutant, 5) + 20
