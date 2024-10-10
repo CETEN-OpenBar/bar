@@ -59,26 +59,39 @@
 					Nombre à acheter
 				</span>
 			</th>
+			<th scope="col" class="px-3">
+				<span
+					class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+				>
+					Checkbox
+				</span>
+			</th>
 		</tr>
 	</thead>
 	<tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-		<td>
-			{#each items as item}
-				<p
-					class="py-3 px-2 block border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-				>
-					{item.item.name}
-				</p>
-			{/each}
-		</td>
-		<td>
-			{#each items as item}
-				<p
-					class="py-3 px-2 block border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-				>
-					{item.amountToBuy}
-				</p>
-			{/each}
-		</td>
+		{#each items as item}
+			<tr>
+				<td class="px-6 py-4">
+					<p
+						class="py-3 px-2 block border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+					>
+						{item.item.name}
+					</p>
+				</td>
+				<td class="px-6 py-4">
+					<p
+						class="py-3 px-2 block border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+					>
+						{item.amountToBuy}
+					</p>
+				</td>
+				<td class="text-center px-3">
+					<input
+						class="w-12 h-12 block border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 mx-auto"
+						type="checkbox"
+					/>
+				</td>
+			</tr>
+		{/each}
 	</tbody>
 </table>
