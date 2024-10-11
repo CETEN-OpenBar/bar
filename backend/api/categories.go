@@ -180,6 +180,9 @@ func (s *Server) PatchCategory(c echo.Context, categoryId autogen.UUID) error {
 	if p.Hidden != nil {
 		category.Hidden = *p.Hidden
 	}
+	if p.SpecialPrice != nil {
+		category.SpecialPrice = *p.SpecialPrice
+	}
 
 	if p.Picture != nil {
 		// Get image from p.Picture as base64
