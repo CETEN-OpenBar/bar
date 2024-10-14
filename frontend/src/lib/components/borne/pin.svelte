@@ -5,7 +5,6 @@
 	function enterPin(i: number) {
 		temp_pin += i;
 		if (temp_pin.length === 20) {
-			console.log('e' + temp_pin);
 			callback(temp_pin);
 			temp_pin = '';
 		}
@@ -21,23 +20,23 @@
 	}
 
 	function isDigit(k: string): boolean {
-    return /^\d$/.test(k)
-}
+		return /^\d$/.test(k);
+	}
 
-function controlPinWithKbd(k: string) {
-    if (isDigit(k)) {
-        enterPin(parseInt(k));
-        return
-    }
-    switch (k) {
-        case 'Backspace':
-            deletePinChar();
-            break;
-        case 'Enter':
-            validatePin();
-            break;
-    }
-}
+	function controlPinWithKbd(k: string) {
+		if (isDigit(k)) {
+			enterPin(parseInt(k));
+			return;
+		}
+		switch (k) {
+			case 'Backspace':
+				deletePinChar();
+				break;
+			case 'Enter':
+				validatePin();
+				break;
+		}
+	}
 </script>
 
 <!-- Display a popup that asks for a pin -->
@@ -50,7 +49,6 @@ function controlPinWithKbd(k: string) {
 	on:click={() => {
 		temp_pin = '';
 		callback('');
-		console.log('click');
 	}}
 />
 
