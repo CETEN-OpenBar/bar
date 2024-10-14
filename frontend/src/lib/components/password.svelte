@@ -11,9 +11,15 @@
 			password = '';
 		}
 	}
+	let warnCapsLockOn: boolean = false
+
+    function checkCapsLock(e: KeyboardEvent) {
+		warnCapsLockOn = e.getModifierState("CapsLock")
+    }
 </script>
 
-<svelte:document on:keydown={onEnter} />
+<svelte:document on:keydown={onEnter}/>
+
 <!-- Display a popup that asks for a pin -->
 
 <button
@@ -30,12 +36,16 @@
 	<!-- Put a title and the numpad -->
 	<div class="flex flex-col items-center bg-neutral-700 rounded-lg shadow-lg p-4 z-40">
 		<h1 class="text-2xl font-bold mb-4 text-white">{custom_text}</h1>
+		{#if warnCapsLockOn}
+			<h2 class="text-2xl font-bold mb-4 text-red">Attention, caps lock on!</h2>
+		{/if}
 		<div class="flex flex-col items-center">
 			<!-- Display the numpad -->
 			<!-- svelte-ignore a11y-autofocus -->
 			<input
 				name="password"
 				bind:value={password}
+				on:keyup={checkCapsLock}
 				type="password"
 				class="w-full h-20 m-3 bg-neutral-800 rounded-xl text-white text-4xl text-center"
 				autofocus
