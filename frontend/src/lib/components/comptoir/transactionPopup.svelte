@@ -12,6 +12,9 @@
 	import { formatPrice } from '$lib/utils';
 	import Error from '../error.svelte';
 	import Success from '../success.svelte';
+	import Transactions from './transactions.svelte';
+	import { createEventDispatcher } from 'svelte';
+	import { searchName } from '$lib/store/store';
 
 	export let transaction: Transaction;
 	export let close: () => void;
@@ -26,6 +29,8 @@
 		pickedItems: TransactionItem[] | undefined;
 	};
 	let menuPopup: MenuPopup | undefined;
+
+	const eventDispatcher = createEventDispatcher();
 
 	async function cancelTransaction() {
 		let res = await transactionsApi().patchTransactionId(
@@ -101,6 +106,7 @@
 		success = 'Commande terminée';
 		setTimeout(() => {
 			success = '';
+			searchName.set('');
 			close();
 		}, 1500);
 	}
