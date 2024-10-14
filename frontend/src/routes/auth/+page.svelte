@@ -2,8 +2,26 @@
     import { api } from "$lib/config/config";
     import { page } from '$app/stores';
 	import Error from "$lib/components/error.svelte";
+	import { onMount } from "svelte";
+    import { accountsApi } from '$lib/requests/requests';
+	import { goto } from "$app/navigation";
 
     const noAccountError = $page.url.searchParams.has("noaccount")
+
+    // Skip auth if the user is already connected
+    onMount(() => {
+        accountsApi()
+            .getAccount({
+                withCredentials: true
+            })
+            .then(r => {
+                goto("/client/commande")
+            })
+            .catch(e => {
+                return () => {};
+            }) 
+    });
+
 </script>
 
 <style>
