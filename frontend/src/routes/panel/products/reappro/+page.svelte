@@ -4,6 +4,7 @@
 	import { itemsApi, restocksApi } from '$lib/requests/requests';
 	import { formatPrice, parsePrice } from '$lib/utils';
 	import { onMount } from 'svelte';
+	import Time from 'svelte-time';
 
 	let sure: boolean = false;
 	let items: Item[] = [];
@@ -17,9 +18,24 @@
 		items: []
 	};
 
-	let page = 0;
-	let max_page = 0;
-	let itemsPerPage = 4;
+	let page: number = 0;
+	let max_page: number = 0;
+	let maxPageRestock: number = 0;
+	let pageRestock: number = 0;
+	let itemsPerPage: number = 4;
+
+	let nextPage = () => {
+		if (pageRestock < maxPageRestock) {
+			pageRestock++;
+			reloadRestocks();
+		}
+	};
+	let prevPage = () => {
+		if (pageRestock > 0) {
+			pageRestock--;
+			reloadRestocks();
+		}
+	};
 
 	let nameList: string[] = [];
 	let newItem: NewRestockItem = {
@@ -65,14 +81,20 @@
 
 	onMount(() => {
 		reloadItems();
+		reloadRestocks();
+	});
+
+	function reloadRestocks() {
 		restocksApi()
-			.getRestocks(page, itemsPerPage, undefined, undefined, {
+			.getRestocks(pageRestock, itemsPerPage, undefined, undefined, {
 				withCredentials: true
 			})
 			.then((res) => {
 				restocks = res.data.restocks ?? [];
+				pageRestock = res.data.page ?? 0;
+				maxPageRestock = res.data.max_page ?? 0;
 			});
-	});
+	}
 
 	function reloadItems() {
 		itemsApi()
@@ -643,16 +665,16 @@
 			{#each restocks as restock}
 				<tr>
 					<td class="px-6 py-3">
-						<div class="flex flex-col">
+						<div class="text-center flex flex-col">
 							<div
-								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							>
-								<p>{restock.created_at}</p>
+								<p><Time timestamp={restock.created_at * 1000} format="YYYY/MM/DD h:mm:ss" /></p>
 							</div>
 						</div>
 					</td>
 					<td class="px-6 py-3">
-						<div class="flex flex-col">
+						<div class="text-center flex flex-col">
 							<div
 								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							>
@@ -661,7 +683,7 @@
 						</div>
 					</td>
 					<td class="px-6 py-3">
-						<div class="flex flex-col">
+						<div class="text-center flex flex-col">
 							<div
 								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							>
@@ -716,6 +738,66 @@
 			{/each}
 		</thead>
 	</table>
+	<div
+		class="px-2 py-4 grid gap-3 md:flex md:justify-between md:items-center border-t border-gray-200 dark:border-gray-700"
+	>
+		<div>
+			<p class="text-sm text-gray-600 dark:text-gray-400">
+				<span class="font-semibold text-gray-800 dark:text-gray-200">{items.length}</span>
+				résultats
+			</p>
+		</div>
+
+		<div>
+			<div class="inline-flex gap-x-2">
+				<button
+					type="button"
+					class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
+					on:click={prevPage}
+				>
+					<svg
+						class="w-3 h-3"
+						xmlns="http://www.w3.org/2000/svg"
+						width="16"
+						height="16"
+						fill="currentColor"
+						viewBox="0 0 16 16"
+					>
+						<path
+							fill-rule="evenodd"
+							d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"
+						/>
+					</svg>
+					Précédent
+				</button>
+
+				<p class="text-sm self-center text-gray-600 dark:text-gray-400">
+					Page {pageRestock} / {maxPageRestock}
+				</p>
+
+				<button
+					type="button"
+					class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
+					on:click={nextPage}
+				>
+					Suivant
+					<svg
+						class="w-3 h-3"
+						xmlns="http://www.w3.org/2000/svg"
+						width="16"
+						height="16"
+						fill="currentColor"
+						viewBox="0 0 16 16"
+					>
+						<path
+							fill-rule="evenodd"
+							d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"
+						/>
+					</svg>
+				</button>
+			</div>
+		</div>
+	</div>
 	{#if selectedRestock != undefined}
 		<table class="mb-10 min-w-full divide-y divide-gray-200 dark:divide-gray-700 bg-blue-950">
 			<thead class="bg-gray-50 dark:bg-blue-600">
