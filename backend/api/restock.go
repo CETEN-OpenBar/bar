@@ -76,7 +76,6 @@ func (s *Server) CreateRestock(c echo.Context) error {
 			CreatedBy:     usr.Id,
 			CreatedByName: usr.Name(),
 		},
-		CreatedAt: time.Now().Unix(),
 	}
 
 	_, err = s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {
