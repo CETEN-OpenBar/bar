@@ -157,6 +157,16 @@
 				newTransaction = structuredClone(transaction);
 			});
 	}
+
+	function formatTimestampToReadableDate(timestamp: number): string {
+        return new Date(timestamp).toLocaleTimeString('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit',
+			second: '2-digit'
+        });
+    }
+
+	let readableDate: string = formatTimestampToReadableDate(transaction.created_at*1000);
 </script>
 
 {#if success != ''}
@@ -188,8 +198,11 @@
             - Close the popup
     -->
 	<div class="w-2/3 bg-white rounded-xl z-20 text-black">
-		<h1 class="p-3 w-full text-center text-xl">Commande de : <span class="font-semibold">{transaction.account_name}</span></h1>
-		<div class="p-5 h-full pr-4 w-full">
+			<h1 class="text-xl flex-1 text-center">Commande de : 
+				<span class="font-semibold">{transaction.account_name}</span>
+			</h1>
+			<p class="font-semibold text-xl flex-1 text-right mr-4">{readableDate}</p>
+			<div class="p-5 h-full pr-4 w-full">
 			<div class="grid grid-cols-6 gap-2">
 				{#each newTransaction.items as item, i}
 					<!-- One for each item.amount -->
