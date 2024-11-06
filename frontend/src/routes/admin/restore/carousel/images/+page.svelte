@@ -15,7 +15,7 @@
 		}
 	};
 	let prevPage = () => {
-		if (page > 0) {
+		if (page > 1) {
 			page--;
 			reloadImages();
 		}
@@ -69,7 +69,9 @@
 					>
 						<div>
 							<h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Images</h2>
-							<p class="text-sm text-gray-600 dark:text-gray-400">Restorer des images du carousel</p>
+							<p class="text-sm text-gray-600 dark:text-gray-400">
+								Restorer des images du carousel
+							</p>
 						</div>
 					</div>
 					<!-- End Header -->
@@ -135,9 +137,7 @@
 					>
 						<div>
 							<p class="text-sm text-gray-600 dark:text-gray-400">
-								<span class="font-semibold text-gray-800 dark:text-gray-200"
-									>{images.length}</span
-								> résultats
+								<span class="font-semibold text-gray-800 dark:text-gray-200">{images.length}</span> résultats
 							</p>
 						</div>
 
@@ -165,7 +165,7 @@
 								</button>
 
 								<p class="text-sm self-center text-gray-600 dark:text-gray-400">
-									Page {page} / {maxPage+1}
+									Page {page} / {maxPage}
 								</p>
 
 								<button

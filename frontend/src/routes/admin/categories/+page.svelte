@@ -180,7 +180,7 @@
 		confirm_text="Supprimer"
 		cancel_callback={() => {
 			deletingCategory = false;
-		}} 
+		}}
 		confirm_callback={deleteCategoryCallback}
 	/>
 {/if}
@@ -333,8 +333,8 @@
 												on:click={() => {
 													deleteCategoryCallback = () => {
 														deletingCategory = false;
-														deleteCategory(category.id)
-													}
+														deleteCategory(category.id);
+													};
 													confirmationMessage = "Supprimer '" + category.name + "' ?";
 													deletingCategory = true;
 												}}

@@ -52,7 +52,7 @@
 		}
 	};
 	let prevPage = () => {
-		if (page > 0) {
+		if (page > 1) {
 			page--;
 			reloadItems();
 		}
@@ -913,7 +913,7 @@
 								</button>
 
 								<p class="text-sm self-center text-gray-600 dark:text-gray-400">
-									Page {page} / {maxPage + 1}
+									Page {page} / {maxPage}
 								</p>
 
 								<button

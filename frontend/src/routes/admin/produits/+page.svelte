@@ -31,7 +31,7 @@
 			staff_bar: 0,
 			coutant: 0,
 			privilegies: 0,
-			menu: 0,
+			menu: 0
 		} as ItemPrices,
 		amount_left: 0,
 		buy_limit: undefined,
@@ -51,7 +51,7 @@
 		}
 	};
 	let prevPage = () => {
-		if (page > 0) {
+		if (page > 1) {
 			page--;
 			reloadItems();
 		}
@@ -463,12 +463,12 @@
 </div>
 
 {#if deletingItem}
-	<ConfirmationPopup 
+	<ConfirmationPopup
 		message={confirmationMessage}
 		confirm_text="Supprimer"
 		cancel_callback={() => {
 			deletingItem = false;
-		}} 
+		}}
 		confirm_callback={deleteItemCallback}
 	/>
 {/if}
@@ -608,7 +608,7 @@
 					<table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
 						<thead class="bg-gray-50 dark:bg-slate-800">
 							<tr>
-								<th scope="col" class="px-12 py-3 ">
+								<th scope="col" class="px-12 py-3">
 									<span
 										class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 									>
@@ -659,42 +659,42 @@
 								</th>
 								<th scope="col" class="px-4 py-3">
 									<span
-											class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+										class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 									>
 										Prix coutant
 									</span>
 								</th>
 								<th scope="col" class="px-6 py-3">
 									<span
-											class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+										class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 									>
 										Prix Ceten
 									</span>
 								</th>
 								<th scope="col" class="px-4 py-3">
 									<span
-											class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+										class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 									>
 										Prix externe
 									</span>
 								</th>
 								<th scope="col" class="px-6 py-3">
 									<span
-											class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+										class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 									>
 										Prix staff
 									</span>
 								</th>
-								<th scope="col" class="px-2 py-3 ">
+								<th scope="col" class="px-2 py-3">
 									<span
-											class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+										class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 									>
 										Prix privilégiés
 									</span>
 								</th>
 								<th scope="col" class="px-6 py-3">
 									<span
-											class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+										class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 									>
 										Prix menu
 									</span>
@@ -768,19 +768,18 @@
 									<td class="h-px w-52">
 										<div class="px-2 py-3 grid justify-center">
 											<select
-													class="block text-sm dark:text-white/[.8] dark:bg-slate-900 break-words p-2 bg-transparent"
-													value={item.state}
-													on:change={(e) => {
-														// @ts-ignore
-														let state = e.target?.value;
-														editItem(item.id, { state: state }, item.category_id);
-													}}
+												class="block text-sm dark:text-white/[.8] dark:bg-slate-900 break-words p-2 bg-transparent"
+												value={item.state}
+												on:change={(e) => {
+													// @ts-ignore
+													let state = e.target?.value;
+													editItem(item.id, { state: state }, item.category_id);
+												}}
 											>
 												<option value="buyable">✅</option>
 												<option value="not_buyable">❌</option>
 											</select>
 										</div>
-
 									</td>
 									<td class="h-px w-52">
 										<div class="px-2 py-3 grid justify-center">
@@ -832,14 +831,14 @@
 									<td class="h-px w-52">
 										<div class="px-2 py-3 grid justify-center">
 											<input
-													type="number"
-													id="price"
-													name="price"
-													placeholder={formatPrice(item.prices['coutant'])}
-													class="py-3 px-2 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-													required
-													aria-describedby="text-error"
-													on:input={(e) => {
+												type="number"
+												id="price"
+												name="price"
+												placeholder={formatPrice(item.prices['coutant'])}
+												class="py-3 px-2 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+												required
+												aria-describedby="text-error"
+												on:input={(e) => {
 													let prices = item.prices;
 													// @ts-ignore
 													prices['coutant'] = parsePrice(e.target?.value);
@@ -862,14 +861,14 @@
 									<td class="h-px w-52">
 										<div class="px-2 py-3 grid justify-center">
 											<input
-													type="number"
-													id="price"
-													name="price"
-													placeholder={formatPrice(item.prices['ceten'])}
-													class="py-3 px-2 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-													required
-													aria-describedby="text-error"
-													on:input={(e) => {
+												type="number"
+												id="price"
+												name="price"
+												placeholder={formatPrice(item.prices['ceten'])}
+												class="py-3 px-2 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+												required
+												aria-describedby="text-error"
+												on:input={(e) => {
 													let prices = item.prices;
 													// @ts-ignore
 													prices['ceten'] = parsePrice(e.target?.value);
@@ -892,14 +891,14 @@
 									<td class="h-px w-52">
 										<div class="px-2 py-3 grid justify-center">
 											<input
-													type="number"
-													id="price"
-													name="price"
-													placeholder={formatPrice(item.prices['externe'])}
-													class="py-3 px-2 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-													required
-													aria-describedby="text-error"
-													on:input={(e) => {
+												type="number"
+												id="price"
+												name="price"
+												placeholder={formatPrice(item.prices['externe'])}
+												class="py-3 px-2 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+												required
+												aria-describedby="text-error"
+												on:input={(e) => {
 													let prices = item.prices;
 													// @ts-ignore
 													prices['externe'] = parsePrice(e.target?.value);
@@ -922,14 +921,14 @@
 									<td class="h-px w-52">
 										<div class="px-2 py-3 grid justify-center">
 											<input
-													type="number"
-													id="price"
-													name="price"
-													placeholder={formatPrice(item.prices['staff_bar'])}
-													class="py-3 px-2 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-													required
-													aria-describedby="text-error"
-													on:input={(e) => {
+												type="number"
+												id="price"
+												name="price"
+												placeholder={formatPrice(item.prices['staff_bar'])}
+												class="py-3 px-2 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+												required
+												aria-describedby="text-error"
+												on:input={(e) => {
 													let prices = item.prices;
 													// @ts-ignore
 													prices['staff_bar'] = parsePrice(e.target?.value);
@@ -952,14 +951,14 @@
 									<td class="h-px w-52">
 										<div class="px-2 py-3 grid justify-center">
 											<input
-													type="number"
-													id="price"
-													name="price"
-													placeholder={formatPrice(item.prices['privilegies'])}
-													class="py-3 px-2 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-													required
-													aria-describedby="text-error"
-													on:input={(e) => {
+												type="number"
+												id="price"
+												name="price"
+												placeholder={formatPrice(item.prices['privilegies'])}
+												class="py-3 px-2 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+												required
+												aria-describedby="text-error"
+												on:input={(e) => {
 													let prices = item.prices;
 													// @ts-ignore
 													prices['privilegies'] = parsePrice(e.target?.value);
@@ -982,14 +981,14 @@
 									<td class="h-px w-52">
 										<div class="px-2 py-3 grid justify-center">
 											<input
-													type="number"
-													id="price"
-													name="price"
-													placeholder={formatPrice(item.prices['menu'])}
-													class="py-3 px-2 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-													required
-													aria-describedby="text-error"
-													on:input={(e) => {
+												type="number"
+												id="price"
+												name="price"
+												placeholder={formatPrice(item.prices['menu'])}
+												class="py-3 px-2 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+												required
+												aria-describedby="text-error"
+												on:input={(e) => {
 													let prices = item.prices;
 													// @ts-ignore
 													prices['menu'] = parsePrice(e.target?.value);
@@ -1026,7 +1025,7 @@
 													deleteItemCallback = () => {
 														deletingItem = false;
 														deleteItem(item.id, item.category_id);
-													}
+													};
 													confirmationMessage = "Supprimer '" + item.name + "' ?";
 													deletingItem = true;
 												}}
@@ -1076,7 +1075,7 @@
 								</button>
 
 								<p class="text-sm self-center text-gray-600 dark:text-gray-400">
-									Page {page} / {maxPage + 1}
+									Page {page} / {maxPage}
 								</p>
 
 								<button

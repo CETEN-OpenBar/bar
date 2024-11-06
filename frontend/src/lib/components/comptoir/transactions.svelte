@@ -8,9 +8,11 @@
 	import { dragscroll } from '@svelte-put/dragscroll';
 	import { searchName } from '$lib/store/store';
 
-	let searchNameValue:string;
+	let searchNameValue: string;
 
-	searchName.subscribe((value)=>{searchNameValue = value});	
+	searchName.subscribe((value) => {
+		searchNameValue = value;
+	});
 	export let amount: number = 4;
 
 	let transactions: Array<Transaction> = [];
@@ -27,7 +29,7 @@
 		}
 	};
 	let prevPage = () => {
-		if (page > 0) {
+		if (page > 1) {
 			page--;
 			reloadTransactions();
 		}
@@ -51,7 +53,9 @@
 
 	function reloadTransactions() {
 		transactionsApi()
-			.getTransactions(page, amount, st, !showRemoteTransactions, searchNameValue, { withCredentials: true })
+			.getTransactions(page, amount, st, !showRemoteTransactions, searchNameValue, {
+				withCredentials: true
+			})
 			.then((res) => {
 				page = res.data.page ?? 0;
 				maxPage = res.data.max_page ?? 0;
@@ -95,7 +99,7 @@
 		<div class="flex flex-row items-center mt-2">
 			<div class="flex flex-row items-center space-x-10 grow">
 				<div class="text-lg font-semibold">Transactions</div>
-				<input 
+				<input
 					class="rounded-lg p-2 text-black"
 					placeholder="Rechercher une personne"
 					bind:value={$searchName}
@@ -131,8 +135,8 @@
 				<div>
 					<label>
 						Commandes en ligne
-						<input 
-							type="checkbox" 
+						<input
+							type="checkbox"
 							class="h-6 w-6 align-middle ml-1"
 							bind:checked={showRemoteTransactions}
 							on:change={reloadTransactions}
@@ -156,7 +160,11 @@
 				>
 					<div class="text-black">
 						{#if transaction.is_remote}
-							<svg xmlns="http://www.w3.org/2000/svg" class="h-5 m-1 absolute" viewBox="0 0 640 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M54.2 202.9C123.2 136.7 216.8 96 320 96s196.8 40.7 265.8 106.9c12.8 12.2 33 11.8 45.2-.9s11.8-33-.9-45.2C549.7 79.5 440.4 32 320 32S90.3 79.5 9.8 156.7C-2.9 169-3.3 189.2 8.9 202s32.5 13.2 45.2 .9zM320 256c56.8 0 108.6 21.1 148.2 56c13.3 11.7 33.5 10.4 45.2-2.8s10.4-33.5-2.8-45.2C459.8 219.2 393 192 320 192s-139.8 27.2-190.5 72c-13.3 11.7-14.5 31.9-2.8 45.2s31.9 14.5 45.2 2.8c39.5-34.9 91.3-56 148.2-56zm64 160a64 64 0 1 0 -128 0 64 64 0 1 0 128 0z"/></svg>
+							<svg xmlns="http://www.w3.org/2000/svg" class="h-5 m-1 absolute" viewBox="0 0 640 512"
+								><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path
+									d="M54.2 202.9C123.2 136.7 216.8 96 320 96s196.8 40.7 265.8 106.9c12.8 12.2 33 11.8 45.2-.9s11.8-33-.9-45.2C549.7 79.5 440.4 32 320 32S90.3 79.5 9.8 156.7C-2.9 169-3.3 189.2 8.9 202s32.5 13.2 45.2 .9zM320 256c56.8 0 108.6 21.1 148.2 56c13.3 11.7 33.5 10.4 45.2-2.8s10.4-33.5-2.8-45.2C459.8 219.2 393 192 320 192s-139.8 27.2-190.5 72c-13.3 11.7-14.5 31.9-2.8 45.2s31.9 14.5 45.2 2.8c39.5-34.9 91.3-56 148.2-56zm64 160a64 64 0 1 0 -128 0 64 64 0 1 0 128 0z"
+								/></svg
+							>
 						{/if}
 						Commande de : <b>{transaction.account_nick_name || transaction.account_name}</b>
 					</div>
@@ -189,12 +197,14 @@
 
 	<!-- Pagination -->
 	<div class="flex flex-row justify-center mt-5">
-		<button class="bg-blue-700 p-4 rounded-xl hover:bg-blue-900 transition-all text-2xl" on:click={prevPage}
-			>&lt;</button
+		<button
+			class="bg-blue-700 p-4 rounded-xl hover:bg-blue-900 transition-all text-2xl"
+			on:click={prevPage}>&lt;</button
 		>
 		<div class="text-2xl font-semibold self-center mx-2">{page}/{maxPage}</div>
-		<button class="bg-blue-700 p-4 rounded-xl hover:bg-blue-900 transition-all text-2xl" on:click={nextPage}
-			>&gt;</button
+		<button
+			class="bg-blue-700 p-4 rounded-xl hover:bg-blue-900 transition-all text-2xl"
+			on:click={nextPage}>&gt;</button
 		>
 	</div>
 </div>

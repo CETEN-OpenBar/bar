@@ -16,7 +16,7 @@
 	let textsPerPage = 10;
 
 	let showConfirmation: boolean = false;
-	let confirmationCallback: VoidFunction = () => {}
+	let confirmationCallback: VoidFunction = () => {};
 
 	onMount(() => {
 		carouselApi()
@@ -127,7 +127,7 @@
 		confirm_text="Supprimer"
 		cancel_callback={() => {
 			showConfirmation = false;
-		}} 
+		}}
 		confirm_callback={confirmationCallback}
 	/>
 {/if}
@@ -150,8 +150,6 @@
 							<p class="text-sm text-gray-600 dark:text-gray-400">Ajouter des textes au carousel</p>
 						</div>
 
-
-
 						<!-- search bar -->
 						<div class="relative mt-4 w-96 md:mt-0">
 							<input
@@ -162,7 +160,7 @@
 								on:input={(e) => {
 									// @ts-ignore
 									searchQuery = e.target.value.toLowerCase();
-									
+
 									// filter the carousel texts
 									carouselTexts = allCarouselTexts.filter((text) => {
 										return text.text.toLowerCase().includes(searchQuery);
@@ -274,7 +272,7 @@
 													confirmationCallback = () => {
 														showConfirmation = false;
 														deleteCarouselText(carouselText.id);
-													}
+													};
 													showConfirmation = true;
 												}}
 											>
@@ -306,7 +304,7 @@
 									type="button"
 									class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
 									on:click={() => {
-										if (page > 0) page--;
+										if (page > 1) page--;
 									}}
 								>
 									<svg

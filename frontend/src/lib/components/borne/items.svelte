@@ -13,7 +13,6 @@
 
 	// Update item when clicking on it
 	function clickWrapper(item: Item) {
-
 		if (item.amount_left == 0) {
 			return;
 		}
@@ -40,7 +39,7 @@
 		}
 	};
 	let prevPage = () => {
-		if (page > 0) {
+		if (page > 1) {
 			page--;
 			reloadItems();
 		}

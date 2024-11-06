@@ -20,7 +20,7 @@
 		}
 	};
 	let prevPage = () => {
-		if (page > 0) {
+		if (page > 1) {
 			page--;
 			reloadRefills();
 		}
@@ -41,9 +41,9 @@
 		refillsApi()
 			.getRefills(page, amount, undefined, undefined, { withCredentials: true })
 			.then((res) => {
-				page = res.data.page??0;
-				maxPage = res.data.max_page??0;
-				refills = res.data.refills??[];
+				page = res.data.page ?? 0;
+				maxPage = res.data.max_page ?? 0;
+				refills = res.data.refills ?? [];
 			});
 	}
 </script>
@@ -96,7 +96,9 @@
 								class="text-sm text-white self-center bg-red-500 rounded-xl p-2"
 								on:click={() => {
 									refillsApi()
-										.patchRefillId(refill.account_id, refill.id, 'valid', refill.type, { withCredentials: true })
+										.patchRefillId(refill.account_id, refill.id, 'valid', refill.type, {
+											withCredentials: true
+										})
 										.then(() => {
 											reloadRefills();
 										});
@@ -111,14 +113,12 @@
 
 	<!-- Pagination -->
 	<div class="flex flex-row justify-center mt-5">
-		<button
-			class="bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
-			on:click={prevPage}>&lt;</button
+		<button class="bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all" on:click={prevPage}
+			>&lt;</button
 		>
 		<div class="text-lg font-semibold self-center mx-2">{page}/{maxPage}</div>
-		<button
-			class="bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
-			on:click={nextPage}>&gt;</button
+		<button class="bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all" on:click={nextPage}
+			>&gt;</button
 		>
 	</div>
 </div>

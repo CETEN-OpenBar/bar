@@ -28,7 +28,7 @@
 		}
 	};
 	let prevPage = () => {
-		if (page > 0) {
+		if (page > 1) {
 			page--;
 			reloadAccounts();
 		}
@@ -596,15 +596,15 @@
 									<td class="h-px w-px whitespace-nowrap">
 										<div class="px-6 py-1.5">
 											{#if askForCard == false}
-											<button
-												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
-												on:click={() => {
-													selectedAccount = account;
-													askForCard = true;
-												}}
-											>
-												Nouvelle Carte
-											</button>
+												<button
+													class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
+													on:click={() => {
+														selectedAccount = account;
+														askForCard = true;
+													}}
+												>
+													Nouvelle Carte
+												</button>
 											{/if}
 											<button
 												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
@@ -617,7 +617,7 @@
 												on:click={() => {
 													deleteAccountCallback = () => {
 														deletingAccount = false;
-														deleteAccount(account.id)
+														deleteAccount(account.id);
 													};
 													confirmationMessage =
 														'Supprimer le compte de ' +

@@ -17,7 +17,7 @@
 		}
 	};
 	let prevPage = () => {
-		if (page > 0) {
+		if (page > 1) {
 			page--;
 			reloadAccounts();
 		}
@@ -183,35 +183,36 @@
 									<td class="h-px w-72">
 										<div class="px-6 py-3">
 											<p
-												class="w-72 block text-sm dark:text-white/[.8]  break-words p-2 bg-transparent"
+												class="w-72 block text-sm dark:text-white/[.8] break-words p-2 bg-transparent"
 											>
 												{account.last_name}
-											<p/>
+											</p>
+											<p />
 										</div>
 									</td>
 									<td class="h-px w-72">
 										<div class="px-6 py-3">
 											<p
-												class="w-72 block text-sm dark:text-white/[.8]  break-words p-2 bg-transparent"
+												class="w-72 block text-sm dark:text-white/[.8] break-words p-2 bg-transparent"
 											>
 												{account.first_name}
-											<p/>
+											</p>
+											<p />
 										</div>
 									</td>
 									<td class="h-px w-96">
 										<div class="px-6 py-3">
 											<p
-												class="w-72 block text-sm dark:text-white/[.8]  break-words p-2 bg-transparent"
+												class="w-72 block text-sm dark:text-white/[.8] break-words p-2 bg-transparent"
 											>
 												{account.email_address}
-											<p/>
+											</p>
+											<p />
 										</div>
 									</td>
 									<td class="h-px w-72">
 										<div class="px-6 py-3">
-											<p
-												class="text-sm dark:text-white/[.8]  break-words p-2 bg-transparent"
-											>
+											<p class="text-sm dark:text-white/[.8] break-words p-2 bg-transparent">
 												{formatPrice(account.balance)}
 											</p>
 										</div>

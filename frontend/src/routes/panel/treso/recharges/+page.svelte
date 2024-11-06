@@ -15,7 +15,7 @@
 		}
 	};
 	let prevPage = () => {
-		if (page > 0) {
+		if (page > 1) {
 			page--;
 			reloadItems();
 		}
@@ -100,9 +100,7 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td class="px-4"
-									>{refills.filter((refill) => refill.type == t).length}</td
-								>
+								<td class="px-4">{refills.filter((refill) => refill.type == t).length}</td>
 								<td class="px-4">
 									{formatPrice(
 										refills
