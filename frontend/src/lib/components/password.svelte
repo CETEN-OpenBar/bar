@@ -37,7 +37,7 @@
 	<div class="flex flex-col items-center bg-neutral-700 rounded-lg shadow-lg p-4 z-40">
 		<h1 class="text-2xl font-bold mb-4 text-white">{custom_text}</h1>
 		{#if warnCapsLockOn}
-			<h2 class="text-2xl font-bold mb-4 text-red">Attention, caps lock on!</h2>
+			<h2 class="text-2xl font-bold mb-4 text-red-600">Attention, caps lock on!</h2>
 		{/if}
 		<div class="flex flex-col items-center">
 			<!-- Display the numpad -->
