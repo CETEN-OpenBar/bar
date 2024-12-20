@@ -669,7 +669,7 @@
 							<div
 								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							>
-								<p><Time timestamp={restock.created_at * 1000} format="YYYY/MM/DD h:mm:ss" /></p>
+								<p><Time timestamp={restock.created_at * 1000} format="YYYY/MM/DD HH:mm:ss" /></p>
 							</div>
 						</div>
 					</td>
