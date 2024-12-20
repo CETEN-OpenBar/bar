@@ -14,7 +14,7 @@ func (b *Backend) CreateRestock(ctx context.Context, tx *models.Restock) error {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
-	tx.CreatedAt = time.Now().Unix()
+	tx.CreatedAt = uint64(time.Now().Unix())
 
 	_, err := b.db.Collection(RestocksCollection).InsertOne(ctx, tx)
 	if err != nil {
