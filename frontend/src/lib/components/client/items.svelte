@@ -148,7 +148,7 @@
 		{#each items as item}
 			<!-- image wil be in a button box -->
 			<div
-				class="flex-1 flex flex-col my-1 min-w-40 max-w-40 min-h-50 h-50 max-h-50
+				class="flex-1 flex flex-col basis-[min-content] my-1 min-w-40 max-w-40 min-h-50 h-50 max-h-50
 				items-center rounded-lg text-white transition-colors duration-300 overflow-x-clip"
 			>
 				<!-- add info svg on the top right -->
@@ -179,7 +179,7 @@
 						alt={item.name}
 					/>
 					<div class="flex flex-col">
-						<span class="text-lg font-bold w-40">{item.name}</span>
+						<span class="text-lg font-bold w-40 m-[0_auto]">{item.name}</span>
 						<span class="text-sm">Prix: {formatPrice(item.display_price ?? 999)}</span>
 					</div>
 					{#if item.amount_left <= 0}

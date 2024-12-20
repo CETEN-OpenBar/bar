@@ -4806,8 +4806,8 @@ components:
       example: student
       enum:
         - coutant
-        - privilegies
         - staff_bar
+        - privilegies
         - menu
         - ceten
         - externe
