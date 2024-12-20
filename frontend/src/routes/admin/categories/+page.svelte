@@ -65,6 +65,20 @@
 			});
 	}
 
+	function toggleSpecialPrice(id: string, state: boolean) {
+		if (!newCategory) return;
+		categoriesApi()
+			.patchCategory(id, { special_price: state }, { withCredentials: true })
+			.then((res) => {
+				categories = categories.map((ct) => {
+					if (ct.id === id) {
+						ct.special_price = state;
+					}
+					return ct;
+				});
+			});
+	}
+
 	function reuploadCategoryPicture(id: string, file: File) {
 		if (!newCategory) return;
 		file2Base64(file).then((base64) => {
@@ -262,6 +276,15 @@
 										</span>
 									</div>
 								</th>
+								<th scope="col" class="px-6 py-3 text-left">
+									<div class="flex items-center gap-x-2">
+										<span
+											class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+										>
+											Prix Spécial
+										</span>
+									</div>
+								</th>
 
 								<th scope="col" class="px-6 py-3 text-right" />
 							</tr>
@@ -323,6 +346,16 @@
 												checked={category.hidden}
 												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
 												on:change={() => toggleHidden(category.id, !category.hidden)}
+											/>
+										</div>
+									</td>
+									<td class="h-px w-px whitespace-nowrap">
+										<div class="px-6 py-1.5">
+											<input
+												type="checkbox"
+												checked={category.special_price}
+												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
+												on:change={() => toggleSpecialPrice(category.id, !category.special_price)}
 											/>
 										</div>
 									</td>
