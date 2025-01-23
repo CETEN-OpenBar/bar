@@ -3,6 +3,7 @@ package api
 import (
 	"bar/autogen"
 	"bar/internal/models"
+	"bar/internal/webhook"
 	"math"
 	"time"
 
@@ -105,8 +106,8 @@ func (s *Server) CreateRestock(c echo.Context) error {
 					// Si l'item n'as pas de catégorie, on met une catégorie par défaut
 					category = &models.Category{
 						Category: autogen.Category{
-							Id:   uuid.Nil,
-							Name: "Autres",
+							Id:           uuid.Nil,
+							Name:         "Autres",
 							SpecialPrice: false,
 						},
 					}
@@ -186,6 +187,13 @@ func (s *Server) CreateRestock(c echo.Context) error {
 		}
 
 		err = s.DBackend.CreateRestock(c.Request().Context(), &restock)
+		if restock.Type == autogen.RestockViennoiserie {
+			err := webhook.SendDiscordWebhook(restock)
+			if err != nil {
+				logrus.Errorf("Error sending webhook: %v\n", err)
+			}
+		}
+
 		if err != nil {
 			logrus.Error(err)
 			return nil, Error500(c)
