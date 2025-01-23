@@ -2,6 +2,7 @@ package api
 
 import (
 	"bar/autogen"
+	"bar/internal/webhook"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -78,6 +79,12 @@ func (s *Server) UpdateRestock(c echo.Context, restockId autogen.UUID) error {
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
+	}
+	if oldState != autogen.RestockFinished && body.State == autogen.RestockFinished && restock.Type == autogen.RestockViennoiserie {
+		err := webhook.SendDiscordWebhook(*restock)
+		if err != nil {
+			logrus.Errorf("Error sending webhook: %v\n", err)
+		}
 	}
 
 	if oldState == body.State {
