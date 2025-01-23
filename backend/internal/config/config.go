@@ -30,7 +30,7 @@ type Config struct {
 	StorageConfig struct {
 		StoragePath string `env:"STORAGE_PATH" envDefault:"./storage"`
 	} `envPrefix:"BAR_STORAGE_"`
-
+	DiscordWebhookURL string `env:"BAR_DISCORD_WEBHOOK_URL" envDefault:""`
 	LogLevel string `env:"BAR_LOG_LEVEL" envDefault:"info"`
 }
 

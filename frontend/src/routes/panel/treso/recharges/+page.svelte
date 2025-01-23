@@ -94,15 +94,20 @@
 					<table>
 						<thead>
 							<tr>
-								<th class="px-4">Nombre de recharges pour ce type</th>
+								<th class="px-4">Nombre de recharges total pour ce type</th>
+								<th class="px-4">Nombre de recharges réussies pour ce type</th>
 								<th class="px-4">Total</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr>
-								<td class="px-4"
-									>{refills.filter((refill) => refill.type == t).length}</td
-								>
+								<td class="px-4">
+									{refills.filter((refill) => refill.type == t).length}
+									</td>
+								<td class="px-4">
+									{refills.filter((refill) => refill.type == t)
+									.filter((refill) => refill.canceled_by == undefined).length}
+									</td>
 								<td class="px-4">
 									{formatPrice(
 										refills

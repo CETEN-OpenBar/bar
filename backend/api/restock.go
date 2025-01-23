@@ -3,6 +3,7 @@ package api
 import (
 	"bar/autogen"
 	"bar/internal/models"
+	"bar/internal/webhook"
 	"math"
 	"time"
 
@@ -135,6 +136,12 @@ func (s *Server) CreateRestock(c echo.Context) error {
 		if err != nil {
 			logrus.Error(err)
 			return nil, Error500(c)
+		}
+		if restock.Type == autogen.RestockViennoiserie && restock.State == autogen.RestockFinished {
+			err := webhook.SendDiscordWebhook(restock)
+			if err != nil {
+				logrus.Errorf("Error sending webhook: %v\n", err)
+			}
 		}
 
 		return nil, nil
