@@ -76,6 +76,7 @@ func (s *Server) CreateRestock(c echo.Context) error {
 			CreatedAt:     uint64(time.Now().Unix()),
 			CreatedBy:     usr.Id,
 			CreatedByName: usr.Name(),
+			Items:  []autogen.RestockItem{},
 		},
 	}
 
