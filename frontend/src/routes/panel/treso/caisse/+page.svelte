@@ -197,7 +197,7 @@
 	<!-- modal -->
 	<div class="fixed inset-0 flex items-center justify-center z-10" aria-hidden="true">
 		<div class="max-w-sm w-full bg-white dark:bg-slate-800 shadow-lg rounded-lg p-6 sm:p-8">
-			<p class="text-white text-2xl pb-3" >Êtes-vous sûr de vouloir transferer la caisse ?</p>
+			<p class="text-white text-2xl pb-3" >Êtes-vous sûr de vouloir transférer la caisse ?</p>
 
 			<div class="flex flex-col gap-4">
 				<div class="flex flex-row gap-4">
