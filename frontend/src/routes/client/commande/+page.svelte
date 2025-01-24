@@ -14,7 +14,7 @@
 	} from '$lib/api';
 	import { api } from '$lib/config/config';
 	import Confirm from '$lib/components/client/confirm.svelte';
-	import { transactionsApi, categoriesApi } from '$lib/requests/requests';
+	import { transactionsApi, categoriesApi, accountsApi } from '$lib/requests/requests';
 	import Pin from '$lib/components/client/pin.svelte';
 	import Error from '$lib/components/error.svelte';
 	import Success from '$lib/components/success.svelte';
@@ -74,6 +74,17 @@
 		step: number;
 	};
 	let menuPicks: MenuPopup | undefined = undefined;
+
+	async function updateAccount() {
+		accountsApi()
+			.getAccount({
+				withCredentials: true
+			})
+			.then((res) => {
+				account = res.data.account;
+				store.set({ account });
+			})
+	}
 
 	let clickItemMenu: (item: Item) => void = (item: Item) => {
 		let newPicks = menuPicks?.pickedItems ?? [];
@@ -241,6 +252,7 @@
 				pin = false;
 				order_menu = false;
 				categories_menu = false;
+				updateAccount();
 			})
 			.catch((err) => {
 				error = 'Erreur lors de la transaction';
