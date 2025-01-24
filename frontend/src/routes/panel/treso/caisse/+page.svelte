@@ -61,6 +61,7 @@
 	let amounts: Map<number, number> = new Map();
 	let amountsType: string[] = [
 		'1',
+		'2',
 		'5',
 		'10',
 		'20',
@@ -74,6 +75,7 @@
 	];
 	let amountsNames: string[] = [
 		'Pièces de 1 centime',
+		'Pièces de 2 centimes',
 		'Pièces de 5 centimes',
 		'Pièces de 10 centimes',
 		'Pièces de 20 centimes',
