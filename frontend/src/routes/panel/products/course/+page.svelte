@@ -35,7 +35,7 @@
 			})
 			.then((res) => {
 				if (res.data.items != null) {
-					items = res.data.items;
+					items = res.data.items.sort((a, b) => a.item.name.localeCompare(b.item.name));
 				} else {
 					items = [];
 				}
