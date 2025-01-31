@@ -411,9 +411,13 @@ func (s *Server) AdminToggleAccountWantsToStaff(c echo.Context, accountId autoge
 	}.VisitAdminToggleAccountWantsToStaffResponse(c.Response())
 }
 
-// (POST /accounts/{account_id}/add_point)
+// (PATCH /accounts/{account_id}/add_point)
 func (s *Server) AddPoint(c echo.Context, accountId string, params autogen.AddPointParams) error {
-
+	// Get account from cookie
+	_, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
 
 	// Fetch the account from the database
 	account, err := s.DBackend.GetAccount(c.Request().Context(), accountId)
@@ -424,7 +428,6 @@ func (s *Server) AddPoint(c echo.Context, accountId string, params autogen.AddPo
 		return Error500(c)
 	}
 
-	// Add 100 points
 	account.Points += params.Amount
 
 	// Update the account in the database
@@ -433,7 +436,6 @@ func (s *Server) AddPoint(c echo.Context, accountId string, params autogen.AddPo
 		return Error500(c)
 	}
 
-	logrus.WithField("account", accountId).WithField("points", account.Points).Info("Added 100 points to account")
 
 	return nil
 }

@@ -1629,6 +1629,25 @@ export interface PatchAccountPinRequest {
 /**
  * 
  * @export
+ * @interface Points
+ */
+export interface Points {
+    /**
+     * 
+     * @type {string}
+     * @memberof Points
+     */
+    'account_id': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Points
+     */
+    'amount': number;
+}
+/**
+ * 
+ * @export
  * @interface PostBorneAuthQRRequest
  */
 export interface PostBorneAuthQRRequest {
@@ -2363,7 +2382,7 @@ export const AccountsApiAxiosParamCreator = function (configuration?: Configurat
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -2907,7 +2926,7 @@ export const AccountsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async addPoint(accountId: string, amount: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Refill>> {
+        async addPoint(accountId: string, amount: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Points>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.addPoint(accountId, amount, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -3079,7 +3098,7 @@ export const AccountsApiFactory = function (configuration?: Configuration, baseP
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        addPoint(accountId: string, amount: number, options?: any): AxiosPromise<Refill> {
+        addPoint(accountId: string, amount: number, options?: any): AxiosPromise<Points> {
             return localVarFp.addPoint(accountId, amount, options).then((request) => request(axios, basePath));
         },
         /**

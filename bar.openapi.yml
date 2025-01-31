@@ -1688,6 +1688,65 @@ paths:
         - admin_auth: []
       tags:
         - transactions
+  /accounts/{account_id}/add_point:
+      patch:
+        description: Add points to an account
+        operationId: addPoint
+        parameters:
+          - name: account_id
+            in: path
+            description: ID or CardID of the account
+            required: true
+            schema:
+              type: string
+          - name: amount
+            in: query
+            description: Amount of the points to add
+            required: true
+            schema:
+              type: integer
+              format: int64
+        responses:
+          "201":
+            description: ""
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Points"
+          "400":
+            description: "Bad request"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/HTTPError"
+          "401":
+            description: "Not authorized"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/HTTPError"
+          "403":
+            description: "Forbidden"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/HTTPError"
+          "404":
+            description: "Account not found"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/HTTPError"
+          "500":
+            description: "Internal server error"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/HTTPError"
+        security:
+          - admin_auth: []
+        tags:
+          - accounts
   /refills:
     get:
       description: Get all refills
@@ -4630,65 +4689,6 @@ paths:
         - admin_auth: []
       tags:
         - course
-  /accounts/{account_id}/add_point:
-      post:
-        description: Add points to an account
-        operationId: addPoint
-        parameters:
-          - name: account_id
-            in: path
-            description: ID or CardID of the account
-            required: true
-            schema:
-              type: string
-          - name: amount
-            in: query
-            description: Amount of the points to add
-            required: true
-            schema:
-              type: integer
-              format: int64
-        responses:
-          "201":
-            description: ""
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/Refill"
-          "400":
-            description: "Bad request"
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/HTTPError"
-          "401":
-            description: "Not authorized"
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/HTTPError"
-          "403":
-            description: "Forbidden"
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/HTTPError"
-          "404":
-            description: "Account not found"
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/HTTPError"
-          "500":
-            description: "Internal server error"
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/HTTPError"
-        security:
-          - admin_auth: []
-        tags:
-          - accounts
 components:
   schemas:
     UUID:
@@ -4942,6 +4942,18 @@ components:
         - card_pin
         - points
         - wants_to_staff
+    Points:
+      type: object
+      properties:
+        account_id:
+          $ref: "#/components/schemas/UUID"
+        amount:
+          type: integer
+          format: int64
+          example: 100
+      required:
+        - account_id
+        - amount
     ItemState:
       type: string
       description: State of the item
