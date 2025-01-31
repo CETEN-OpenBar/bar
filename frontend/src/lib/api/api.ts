@@ -1629,6 +1629,25 @@ export interface PatchAccountPinRequest {
 /**
  * 
  * @export
+ * @interface Points
+ */
+export interface Points {
+    /**
+     * 
+     * @type {string}
+     * @memberof Points
+     */
+    'account_id': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Points
+     */
+    'amount': number;
+}
+/**
+ * 
+ * @export
  * @interface PostBorneAuthQRRequest
  */
 export interface PostBorneAuthQRRequest {
@@ -2343,6 +2362,48 @@ export interface UpdateItem {
 export const AccountsApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
+         * Add points to an account
+         * @param {string} accountId ID or CardID of the account
+         * @param {number} amount Amount of the points to add
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        addPoint: async (accountId: string, amount: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'accountId' is not null or undefined
+            assertParamExists('addPoint', 'accountId', accountId)
+            // verify required parameter 'amount' is not null or undefined
+            assertParamExists('addPoint', 'amount', amount)
+            const localVarPath = `/accounts/{account_id}/add_point`
+                .replace(`{${"account_id"}}`, encodeURIComponent(String(accountId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
+
+            if (amount !== undefined) {
+                localVarQueryParameter['amount'] = amount;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Toggles the wants_to_staff flag
          * @summary 
          * @param {string} accountId ID of the account
@@ -2859,6 +2920,17 @@ export const AccountsApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = AccountsApiAxiosParamCreator(configuration)
     return {
         /**
+         * Add points to an account
+         * @param {string} accountId ID or CardID of the account
+         * @param {number} amount Amount of the points to add
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async addPoint(accountId: string, amount: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Points>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.addPoint(accountId, amount, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * Toggles the wants_to_staff flag
          * @summary 
          * @param {string} accountId ID of the account
@@ -3020,6 +3092,16 @@ export const AccountsApiFactory = function (configuration?: Configuration, baseP
     const localVarFp = AccountsApiFp(configuration)
     return {
         /**
+         * Add points to an account
+         * @param {string} accountId ID or CardID of the account
+         * @param {number} amount Amount of the points to add
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        addPoint(accountId: string, amount: number, options?: any): AxiosPromise<Points> {
+            return localVarFp.addPoint(accountId, amount, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Toggles the wants_to_staff flag
          * @summary 
          * @param {string} accountId ID of the account
@@ -3166,6 +3248,18 @@ export const AccountsApiFactory = function (configuration?: Configuration, baseP
  * @extends {BaseAPI}
  */
 export class AccountsApi extends BaseAPI {
+    /**
+     * Add points to an account
+     * @param {string} accountId ID or CardID of the account
+     * @param {number} amount Amount of the points to add
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AccountsApi
+     */
+    public addPoint(accountId: string, amount: number, options?: AxiosRequestConfig) {
+        return AccountsApiFp(this.configuration).addPoint(accountId, amount, options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * Toggles the wants_to_staff flag
      * @summary 

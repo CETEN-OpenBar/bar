@@ -81,6 +81,11 @@
 		color: 'bg-yellow-600',
 		link: '/comptoir/c/transactions'
 	});
+	modules.push({
+		name: 'Etoiles',
+		color: 'bg-red-600',
+		link: '/panel/accounts/points'
+	});
 
 	// Sort the modules by name
 	modules.sort((a, b) => a.name.localeCompare(b.name));

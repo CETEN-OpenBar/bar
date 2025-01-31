@@ -410,3 +410,32 @@ func (s *Server) AdminToggleAccountWantsToStaff(c echo.Context, accountId autoge
 		WantsToStaff: account.WantsToStaff,
 	}.VisitAdminToggleAccountWantsToStaffResponse(c.Response())
 }
+
+// (PATCH /accounts/{account_id}/add_point)
+func (s *Server) AddPoint(c echo.Context, accountId string, params autogen.AddPointParams) error {
+	// Get account from cookie
+	_, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
+
+	// Fetch the account from the database
+	account, err := s.DBackend.GetAccount(c.Request().Context(), accountId)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorAccNotFound(c)
+		}
+		return Error500(c)
+	}
+
+	account.Points += params.Amount
+
+	// Update the account in the database
+	err = s.DBackend.UpdateAccount(c.Request().Context(), account)
+	if err != nil {
+		return Error500(c)
+	}
+
+
+	return nil
+}
