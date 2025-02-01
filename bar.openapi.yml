@@ -1253,6 +1253,94 @@ paths:
         - admin_auth: []
       tags:
         - transactions
+  /transactions/range:
+    get:
+      description: Get transactions between a start and end timestamp
+      summary: Retrieve transactions within a specific time range
+      operationId: getTransactionsByTimestamp
+      parameters:
+        - name: start_time
+          in: query
+          description: Start timestamp (POSIX format)
+          required: true
+          schema:
+            type: integer
+            example: 1735768800
+        - name: end_time
+          in: query
+          description: End timestamp (POSIX format)
+          required: true
+          schema:
+            type: integer
+            example: 1735768800
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            format: uint64
+        - name: limit
+          in: query
+          description: Number of transactions per page
+          required: false
+          schema:
+            type: integer
+            format: uint64
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactions:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Transaction"
+                  page:
+                    type: integer
+                    format: uint64
+                  limit:
+                    type: integer
+                    format: uint64
+                  max_page:
+                    type: integer
+                    format: uint64
+                required:
+                  - transactions
+                  - page
+                  - limit
+                  - max_page
+        "400":
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - admin_auth: []
+      tags:
+        - transactions
   /account/transactions:
     get:
       summary: ""

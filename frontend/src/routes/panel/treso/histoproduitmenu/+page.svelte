@@ -25,13 +25,13 @@
 		if (reloading) return;
 		reloading = true;
 		try {
-			let resp = await transactionsApi().getTransactions(1, transactionPerPage, 'finished', false, undefined, {
+			let resp = await transactionsApi().getTransactionsByTimestamp(parseInt(startDate), parseInt(endDate), 1, transactionPerPage, {
 				withCredentials: true
 			});
 			let temp = resp.data.transactions ?? [];
 
 			for (let p = 2; p <= resp.data.max_page; p++) {
-				let resp = await transactionsApi().getTransactions(p, transactionPerPage, 'finished', false, undefined, {
+				let resp = await transactionsApi().getTransactionsByTimestamp(parseInt(startDate), parseInt(endDate), p, transactionPerPage, {
 					withCredentials: true
 				});
 				temp.push(...(resp.data.transactions ?? []));
@@ -101,7 +101,7 @@
 						todayMorning.toLocaleString('default', { day: '2-digit' })}
 					on:change={(e) => {
 						// @ts-ignore
-						let s = time2Utc(new Date(e.target.value).getTime() / 1000);
+						let s = time2Utc(new Date(e.target.value).getTime() / 1000 + 24 * 60 * 60);
 						endDate = s.toString();
 					}}
 				/>

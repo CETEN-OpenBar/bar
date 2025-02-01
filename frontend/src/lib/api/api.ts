@@ -8499,6 +8499,62 @@ export const TransactionsApiAxiosParamCreator = function (configuration?: Config
             };
         },
         /**
+         * Get transactions between a start and end timestamp
+         * @summary Retrieve transactions within a specific time range
+         * @param {number} startTime Start timestamp (POSIX format)
+         * @param {number} endTime End timestamp (POSIX format)
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of transactions per page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTransactionsByTimestamp: async (startTime: number, endTime: number, page?: number, limit?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'startTime' is not null or undefined
+            assertParamExists('getTransactionsByTimestamp', 'startTime', startTime)
+            // verify required parameter 'endTime' is not null or undefined
+            assertParamExists('getTransactionsByTimestamp', 'endTime', endTime)
+            const localVarPath = `/transactions/range`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
+
+            if (startTime !== undefined) {
+                localVarQueryParameter['start_time'] = startTime;
+            }
+
+            if (endTime !== undefined) {
+                localVarQueryParameter['end_time'] = endTime;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Get all items in active transactions (ordered items)
          * @summary 
          * @param {string} [name] Filter by item name
@@ -8780,6 +8836,20 @@ export const TransactionsApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
+         * Get transactions between a start and end timestamp
+         * @summary Retrieve transactions within a specific time range
+         * @param {number} startTime Start timestamp (POSIX format)
+         * @param {number} endTime End timestamp (POSIX format)
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of transactions per page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getTransactionsByTimestamp(startTime: number, endTime: number, page?: number, limit?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetTransactions200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getTransactionsByTimestamp(startTime, endTime, page, limit, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * Get all items in active transactions (ordered items)
          * @summary 
          * @param {string} [name] Filter by item name
@@ -8899,6 +8969,19 @@ export const TransactionsApiFactory = function (configuration?: Configuration, b
          */
         getTransactions(page?: number, limit?: number, state?: TransactionState, hideRemote?: boolean, name?: string, options?: any): AxiosPromise<GetTransactions200Response> {
             return localVarFp.getTransactions(page, limit, state, hideRemote, name, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get transactions between a start and end timestamp
+         * @summary Retrieve transactions within a specific time range
+         * @param {number} startTime Start timestamp (POSIX format)
+         * @param {number} endTime End timestamp (POSIX format)
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of transactions per page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTransactionsByTimestamp(startTime: number, endTime: number, page?: number, limit?: number, options?: any): AxiosPromise<GetTransactions200Response> {
+            return localVarFp.getTransactionsByTimestamp(startTime, endTime, page, limit, options).then((request) => request(axios, basePath));
         },
         /**
          * Get all items in active transactions (ordered items)
@@ -9022,6 +9105,21 @@ export class TransactionsApi extends BaseAPI {
      */
     public getTransactions(page?: number, limit?: number, state?: TransactionState, hideRemote?: boolean, name?: string, options?: AxiosRequestConfig) {
         return TransactionsApiFp(this.configuration).getTransactions(page, limit, state, hideRemote, name, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get transactions between a start and end timestamp
+     * @summary Retrieve transactions within a specific time range
+     * @param {number} startTime Start timestamp (POSIX format)
+     * @param {number} endTime End timestamp (POSIX format)
+     * @param {number} [page] Page number
+     * @param {number} [limit] Number of transactions per page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TransactionsApi
+     */
+    public getTransactionsByTimestamp(startTime: number, endTime: number, page?: number, limit?: number, options?: AxiosRequestConfig) {
+        return TransactionsApiFp(this.configuration).getTransactionsByTimestamp(startTime, endTime, page, limit, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
