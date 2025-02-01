@@ -202,3 +202,49 @@ func (b *Backend) CountDeletedTransactions(ctx context.Context) (uint64, error) 
 
 	return uint64(count), nil
 }
+
+func (b *Backend) CountTransactionsByTimestamp(ctx context.Context, startTime uint64, endTime uint64) (uint64, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
+	defer cancel()
+	
+	filter := bson.M{
+		"created_at": bson.M{
+			"$gte": startTime,
+			"$lte": endTime,
+		},
+	}
+
+	count, err := b.db.Collection(TransactionsCollection).CountDocuments(ctx, filter)
+	if err != nil {
+		return 0, err
+	}
+
+	return uint64(count), nil
+}
+
+func (b *Backend) GetTransactionsByTimestamp(ctx context.Context, startTime uint64, endTime uint64, page, size uint64) ([]*models.Transaction, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
+	defer cancel()
+
+	filter := bson.M{
+		"created_at": bson.M{
+			"$gte": startTime,
+			"$lte": endTime,
+		},
+	}
+
+	cursor, err := b.db.Collection(TransactionsCollection).Find(ctx, filter, options.Find().
+		SetSkip(int64(page*size)).
+		SetLimit(int64(size)).
+		SetSort(bson.M{"created_at": -1}))
+	if err != nil {
+		return nil, err
+	}
+
+	var transactions []*models.Transaction
+	if err := cursor.All(ctx, &transactions); err != nil {
+		return nil, err
+	}
+
+	return transactions, nil
+}

@@ -119,6 +119,9 @@ type DBackend interface {
 	CountAllTransactions(ctx context.Context, state string, name string, hide_remotes bool) (uint64, error)
 	GetAllActiveTransactionsItems(ctx context.Context, name string) ([]autogen.TransactionItem, error)
 
+	CountTransactionsByTimestamp(ctx context.Context, startTime, endTime uint64) (uint64, error)
+	GetTransactionsByTimestamp(ctx context.Context, startTime, endTime uint64, page, size uint64) ([]*models.Transaction, error)
+
 	// Restock's CRUD
 	CreateRestock(ctx context.Context, t *models.Restock) error
 	GetRestock(ctx context.Context, id string) (*models.Restock, error)

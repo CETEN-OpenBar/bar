@@ -210,3 +210,45 @@ func (s *Server) GetTransactionsItems(c echo.Context, params autogen.GetTransact
 	autogen.GetTransactionsItems200JSONResponse(data).VisitGetTransactionsItemsResponse(c.Response())
 	return nil
 }
+
+
+func (s *Server) GetTransactionsByTimestamp(c echo.Context, params autogen.GetTransactionsByTimestampParams) error {
+	_, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
+	
+	StartTime := uint64(params.StartTime)
+	EndTime := uint64(params.EndTime)
+
+	if StartTime > EndTime {
+		return Error400(c)
+	}
+
+	count, err := s.DBackend.CountTransactionsByTimestamp(c.Request().Context(), StartTime, EndTime)
+	if err != nil {
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
+
+	data, err := s.DBackend.GetTransactionsByTimestamp(c.Request().Context(), StartTime, EndTime, dbpage, limit)
+	if err != nil {
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	transactions := make([]autogen.Transaction, len(data))
+	for i, transaction := range data {
+		transactions[i] = transaction.Transaction
+	}
+
+	autogen.GetTransactionsByTimestamp200JSONResponse{
+		Transactions: transactions,
+		Limit:        limit,
+		Page:         page,
+		MaxPage:      maxPage,
+	}.VisitGetTransactionsByTimestampResponse(c.Response())
+	return nil
+}
