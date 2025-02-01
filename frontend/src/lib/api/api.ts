@@ -531,7 +531,8 @@ export const Fournisseur = {
     Auchan: 'auchan',
     Auchan_Drive: 'auchan_drive',
     Viennoiserie: 'viennoiserie',
-    Promocash: 'promocash'
+    Promocash: 'promocash',
+    Holy: 'holy'
 } as const;
 
 export type Fournisseur = typeof Fournisseur[keyof typeof Fournisseur];
@@ -1480,6 +1481,12 @@ export interface NewRestock {
      * @memberof NewRestock
      */
     'type': RestockType;
+    /**
+     * 
+     * @type {RestockState}
+     * @memberof NewRestock
+     */
+    'state': RestockState;
 }
 
 
@@ -1495,6 +1502,12 @@ export interface NewRestockItem {
      * @memberof NewRestockItem
      */
     'item_id': string;
+    /**
+     * Name of the current item
+     * @type {string}
+     * @memberof NewRestockItem
+     */
+    'item_name': string;
     /**
      * 
      * @type {number}
@@ -1835,6 +1848,12 @@ export interface Restock {
      * @memberof Restock
      */
     'deleted_by'?: string;
+    /**
+     * 
+     * @type {RestockState}
+     * @memberof Restock
+     */
+    'state': RestockState;
 }
 
 
@@ -1899,11 +1918,26 @@ export interface RestockItem {
  * @enum {string}
  */
 
+export const RestockState = {
+    RestockFinished: 'finished',
+    RestockPending: 'pending'
+} as const;
+
+export type RestockState = typeof RestockState[keyof typeof RestockState];
+
+
+/**
+ * 
+ * @export
+ * @enum {string}
+ */
+
 export const RestockType = {
     RestockAuchan: 'auchan',
     RestockAuchanDrive: 'auchan_drive',
     RestockViennoiserie: 'viennoiserie',
-    RestockPromocash: 'promocash'
+    RestockPromocash: 'promocash',
+    RestockHoly: 'holy'
 } as const;
 
 export type RestockType = typeof RestockType[keyof typeof RestockType];
@@ -8068,6 +8102,8 @@ export const RestocksApiAxiosParamCreator = function (configuration?: Configurat
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication admin_auth required
+
 
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
@@ -8104,6 +8140,8 @@ export const RestocksApiAxiosParamCreator = function (configuration?: Configurat
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication admin_auth required
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -8119,12 +8157,11 @@ export const RestocksApiAxiosParamCreator = function (configuration?: Configurat
          * Get restocks
          * @param {number} [page] Page number
          * @param {number} [limit] Number of restocks per page
-         * @param {string} [search] search string
-         * @param {string} [sort] sort string
+         * @param {RestockState} [state] search state
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getRestocks: async (page?: number, limit?: number, search?: string, sort?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getRestocks: async (page?: number, limit?: number, state?: RestockState, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/restocks`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -8147,12 +8184,8 @@ export const RestocksApiAxiosParamCreator = function (configuration?: Configurat
                 localVarQueryParameter['limit'] = limit;
             }
 
-            if (search !== undefined) {
-                localVarQueryParameter['search'] = search;
-            }
-
-            if (sort !== undefined) {
-                localVarQueryParameter['sort'] = sort;
+            if (state !== undefined) {
+                localVarQueryParameter['state'] = state;
             }
 
 
@@ -8160,6 +8193,47 @@ export const RestocksApiAxiosParamCreator = function (configuration?: Configurat
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Update a restock
+         * @param {string} restockId ID of the restock
+         * @param {NewRestock} newRestock Restock to update
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateRestock: async (restockId: string, newRestock: NewRestock, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'restockId' is not null or undefined
+            assertParamExists('updateRestock', 'restockId', restockId)
+            // verify required parameter 'newRestock' is not null or undefined
+            assertParamExists('updateRestock', 'newRestock', newRestock)
+            const localVarPath = `/restocks/{restock_id}`
+                .replace(`{${"restock_id"}}`, encodeURIComponent(String(restockId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(newRestock, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -8200,13 +8274,23 @@ export const RestocksApiFp = function(configuration?: Configuration) {
          * Get restocks
          * @param {number} [page] Page number
          * @param {number} [limit] Number of restocks per page
-         * @param {string} [search] search string
-         * @param {string} [sort] sort string
+         * @param {RestockState} [state] search state
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getRestocks(page?: number, limit?: number, search?: string, sort?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetRestocks200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getRestocks(page, limit, search, sort, options);
+        async getRestocks(page?: number, limit?: number, state?: RestockState, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetRestocks200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getRestocks(page, limit, state, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Update a restock
+         * @param {string} restockId ID of the restock
+         * @param {NewRestock} newRestock Restock to update
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateRestock(restockId: string, newRestock: NewRestock, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateRestock(restockId, newRestock, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
@@ -8241,13 +8325,22 @@ export const RestocksApiFactory = function (configuration?: Configuration, baseP
          * Get restocks
          * @param {number} [page] Page number
          * @param {number} [limit] Number of restocks per page
-         * @param {string} [search] search string
-         * @param {string} [sort] sort string
+         * @param {RestockState} [state] search state
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getRestocks(page?: number, limit?: number, search?: string, sort?: string, options?: any): AxiosPromise<GetRestocks200Response> {
-            return localVarFp.getRestocks(page, limit, search, sort, options).then((request) => request(axios, basePath));
+        getRestocks(page?: number, limit?: number, state?: RestockState, options?: any): AxiosPromise<GetRestocks200Response> {
+            return localVarFp.getRestocks(page, limit, state, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Update a restock
+         * @param {string} restockId ID of the restock
+         * @param {NewRestock} newRestock Restock to update
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateRestock(restockId: string, newRestock: NewRestock, options?: any): AxiosPromise<void> {
+            return localVarFp.updateRestock(restockId, newRestock, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -8285,14 +8378,25 @@ export class RestocksApi extends BaseAPI {
      * Get restocks
      * @param {number} [page] Page number
      * @param {number} [limit] Number of restocks per page
-     * @param {string} [search] search string
-     * @param {string} [sort] sort string
+     * @param {RestockState} [state] search state
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof RestocksApi
      */
-    public getRestocks(page?: number, limit?: number, search?: string, sort?: string, options?: AxiosRequestConfig) {
-        return RestocksApiFp(this.configuration).getRestocks(page, limit, search, sort, options).then((request) => request(this.axios, this.basePath));
+    public getRestocks(page?: number, limit?: number, state?: RestockState, options?: AxiosRequestConfig) {
+        return RestocksApiFp(this.configuration).getRestocks(page, limit, state, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Update a restock
+     * @param {string} restockId ID of the restock
+     * @param {NewRestock} newRestock Restock to update
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof RestocksApi
+     */
+    public updateRestock(restockId: string, newRestock: NewRestock, options?: AxiosRequestConfig) {
+        return RestocksApiFp(this.configuration).updateRestock(restockId, newRestock, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

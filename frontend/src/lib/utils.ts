@@ -1,3 +1,5 @@
+import { Fournisseur, RestockType } from "./api";
+
 export const parsePrice = (price: string) => {
     let splt: Array<string> = [price];
     if (price.includes(',')) {
@@ -52,3 +54,22 @@ export const time2Utc = (time: number): number => {
     const delta = d.getTimezoneOffset() * 60;
     return time + delta;
 }
+
+export const enumIterator = (e: any): Iterable<[value: string, name: string]> => {
+    return Object.entries(Fournisseur).map(([key, value]) => {
+        console.log("Key : " + key + " val : " + value)
+        return [value, formatEnumName(key)]
+    });
+}
+
+export const formatEnumName = (name: string): string => {
+    // Replace '_' with spaces and capitalize every word
+    return name.replaceAll("_", " ")
+        .toLowerCase()
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.substring(1))
+        .join(' ');
+}
+
+export const fournisseurIterator = enumIterator(Fournisseur);
+export const restockTypeIterator = enumIterator(RestockType);

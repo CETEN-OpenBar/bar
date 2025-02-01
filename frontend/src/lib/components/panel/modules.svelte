@@ -41,7 +41,7 @@
 	modules.push({
 		name: 'Réappro',
 		color: 'bg-green-600',
-		link: '/panel/products/reappro'
+		link: '/panel/products/restocks'
 	});
 
 	modules.push({
@@ -62,7 +62,7 @@
 		link: '/panel/treso'
 	});
 	modules.push({
-		name: 'Incohérances',
+		name: 'Incohérences',
 		color: 'bg-green-600',
 		link: '/panel/products/incoherants'
 	});

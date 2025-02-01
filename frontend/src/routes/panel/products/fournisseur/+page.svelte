@@ -6,12 +6,12 @@
 		ItemPrices,
 		UpdateItem,
 		AccountPriceRole,
-		Fournisseur
+		Fournisseur,
 	} from '$lib/api';
 	import ConfirmationPopup from '$lib/components/confirmationPopup.svelte';
 	import { api } from '$lib/config/config';
 	import { categoriesApi, itemsApi } from '$lib/requests/requests';
-	import { formatPrice, parsePrice } from '$lib/utils';
+	import { formatPrice, fournisseurIterator, parsePrice } from '$lib/utils';
 	import { onMount } from 'svelte';
 
 	// Type for NewItem with categoryId
@@ -535,10 +535,9 @@
 									}}
 								>
 									<option value="">Pas de filtre</option>
-									<option value="promocash">Promocash</option>
-									<option value="auchan_drive">Auchan drive</option>
-									<option value="auchan">Auchan</option>
-									<option value="viennoiserie">Boulangerie Benoist</option>
+									{#each fournisseurIterator as [val, name]}
+										<option value="{val}">{name}</option>
+									{/each}
 								</select>
 							</div>
 							<div class="relative mt-4 w-96 md:mt-0">
@@ -762,10 +761,9 @@
 													editItem(item.id, { fournisseur: fournisseur }, item.category_id);
 												}}
 											>
-												<option value="promocash">Promocash</option>
-												<option value="auchan_drive">Auchan drive</option>
-												<option value="auchan">Auchan</option>
-												<option value="viennoiserie">Boulangerie Benoist</option>
+											{#each fournisseurIterator as [val, name]}
+												<option value="{val}">{name}</option>
+											{/each}
 											</select>
 										</div>
 									</td>
