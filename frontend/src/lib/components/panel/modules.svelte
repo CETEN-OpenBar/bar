@@ -62,7 +62,7 @@
 		link: '/panel/treso'
 	});
 	modules.push({
-		name: 'Incohérances',
+		name: 'Incohérences',
 		color: 'bg-green-600',
 		link: '/panel/products/incoherants'
 	});
