@@ -27,6 +27,9 @@ func (s *Server) UpdateRestock(c echo.Context, restockId autogen.UUID) error {
 		logrus.Error(err)
 		return Error500(c)
 	}
+	if restock.State == autogen.RestockFinished {
+		return Error400(c)
+	}
 
 	restock.Items = []autogen.RestockItem{}
 	restock.TotalCostHt = body.TotalCostHt
