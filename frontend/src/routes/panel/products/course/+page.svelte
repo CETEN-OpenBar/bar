@@ -42,7 +42,11 @@
 			});
 	}
 	reloadCourse();
-	function addNewRestockItem(courseItem: CourseItem) {
+	function addNewRestockItem(courseItem: CourseItem) : CourseItem {
+		if (courseItem.amountToBuy <= 0) {
+			courseItem.amountToBuy = 0;
+		}
+
 		newRestockItem = {
 			item_id: courseItem.item.id,
 			item_name: courseItem.item.name,
@@ -61,6 +65,7 @@
 		);
 		newRestock.items.push(newRestockItem);
 		updateHTandTTC();
+		return courseItem
 	}
 
 	function removeNewRestockItem(courseItem: CourseItem) {
@@ -155,7 +160,7 @@
 							if (newRestock.items.some((restockItem) => restockItem.item_id === item.item.id)) {
 								if (item.amountToBuy !== null) {
 									removeNewRestockItem(item);
-									addNewRestockItem(item);
+									item = addNewRestockItem(item);
 								}
 						}}}
 					>
@@ -167,7 +172,7 @@
 						on:change={(event) => {
 							// @ts-ignore
 							if (event.target?.checked) {
-								addNewRestockItem(item);
+								item = addNewRestockItem(item);
 							} else {
 								removeNewRestockItem(item);
 							}
