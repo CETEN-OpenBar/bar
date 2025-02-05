@@ -320,14 +320,14 @@
 						<span
 							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 						>
-							Prix coûtant HT
+							Prix total HT
 						</span>
 					</th>
 					<th scope="col" class="px-3 py-3 w-48">
 						<span
 							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 						>
-							Prix coûtant TTC
+							Prix total TTC
 						</span>
 					</th>
 					<th scope="col" class="bg-blue-800 px-6 py-3">
@@ -401,6 +401,9 @@
 							max="1000"
 							bind:value={newItem.amount_of_bundle}
 							on:change={() => {
+								if (newItem.amount_of_bundle < 0) {
+									newItem.amount_of_bundle = 0;
+								}
 								updatePrices();
 							}}
 						/>
@@ -416,6 +419,9 @@
 							max="1000"
 							bind:value={newItem.amount_per_bundle}
 							on:change={() => {
+								if (newItem.amount_per_bundle < 0) {
+									newItem.amount_per_bundle = 0;
+								}
 								updatePrices();
 							}}
 						/>
@@ -430,6 +436,11 @@
 							class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							placeholder={displayedValues.bundle_cost_ht}
 							on:change={(e) => {
+								// @ts-ignore
+								if (e.target?.value < 0) {
+									// @ts-ignore
+									e.target.value = 0;
+								}
 								// @ts-ignore
 								newItem.bundle_cost_ht = parsePrice(e.target?.value);
 								let r = formatPrice(newItem.bundle_cost_ht);
@@ -849,7 +860,11 @@
 									}
 								}}
 							>
-								Voir
+								{#if selectedViewRestock == restock}
+								 	Fermer
+								{:else}
+									Voir
+								{/if}
 							</button>
 							{#if restock.state == RestockState.RestockPending}
 								<button
@@ -865,7 +880,11 @@
 										}
 									}}
 								>
-									Modifier
+									{#if selectedEditRestock == restock}
+										Fermer sans sauvegarder
+									{:else}
+										Modifier
+									{/if}
 								</button>
 							{/if}
 						</div>
