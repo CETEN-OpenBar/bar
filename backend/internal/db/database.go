@@ -134,8 +134,8 @@ type DBackend interface {
 	GetRestocks(ctx context.Context, account string, page uint64, size uint64) ([]*models.Restock, error)
 	CountRestocks(ctx context.Context, account string) (uint64, error)
 
-	GetAllRestocks(ctx context.Context, page uint64, size uint64) ([]*models.Restock, error)
-	CountAllRestocks(ctx context.Context) (uint64, error)
+	GetAllRestocks(ctx context.Context, page uint64, size uint64, state *autogen.RestockState) ([]*models.Restock, error)
+	CountAllRestocks(ctx context.Context, state *autogen.RestockState) (uint64, error)
 
 	// CashMovement's CRUD
 	CreateCashMovement(ctx context.Context, t *models.CashMovement) error

@@ -1,5 +1,11 @@
 <script lang="ts">
-	import type { Item, NewRestock, NewRestockItem, Restock } from '$lib/api';
+	import {
+		RestockState,
+		type Item,
+		type NewRestock,
+		type NewRestockItem,
+		type Restock
+	} from '$lib/api';
 	import ConfirmationPopup from '$lib/components/confirmationPopup.svelte';
 	import { itemsApi, restocksApi } from '$lib/requests/requests';
 	import { formatPrice, parsePrice } from '$lib/utils';
@@ -15,6 +21,7 @@
 		total_cost_ttc: 0,
 		driver_id: '',
 		type: 'promocash',
+		state: RestockState.RestockPending,
 		items: []
 	};
 
@@ -37,9 +44,9 @@
 		}
 	};
 
-	let nameList: string[] = [];
 	let newItem: NewRestockItem = {
 		item_id: '',
+		item_name: '',
 		amount_of_bundle: 0,
 		amount_per_bundle: 0,
 		bundle_cost_ht: 0,
@@ -77,7 +84,8 @@
 	let deleteRestockCallback: VoidFunction = () => {};
 	let confirmationMessage: string | undefined = undefined;
 
-	let selectedRestock: Restock | undefined = undefined;
+	let selectedViewRestock: Restock | undefined = undefined;
+	let selectedEditRestock: Restock | undefined = undefined;
 
 	onMount(() => {
 		reloadItems();
@@ -86,7 +94,7 @@
 
 	function reloadRestocks() {
 		restocksApi()
-			.getRestocks(pageRestock, itemsPerPage, undefined, undefined, {
+			.getRestocks(pageRestock, itemsPerPage, undefined, {
 				withCredentials: true
 			})
 			.then((res) => {
@@ -125,11 +133,12 @@
 		});
 	}
 
-	async function applyRestock() {
-		if (!sure) return;
+	async function applyRestock(state: RestockState) {
+		//if (!sure) return;
 		newRestock.driver_id = undefined;
 		newRestock.total_cost_ttc = Math.round(newRestock.total_cost_ttc);
 		newRestock.total_cost_ht = Math.round(newRestock.total_cost_ht);
+		newRestock.state = state;
 		restocksApi()
 			.createRestock(newRestock, { withCredentials: true })
 			.then((res) => {
@@ -139,6 +148,7 @@
 					total_cost_ttc: 0,
 					driver_id: '',
 					type: newRestock.type,
+					state: newRestock.state,
 					items: []
 				};
 				displayedValues = {
@@ -154,6 +164,7 @@
 				};
 				newItem = {
 					item_id: '',
+					item_name: '',
 					amount_of_bundle: 0,
 					amount_per_bundle: 0,
 					bundle_cost_ht: 0,
@@ -162,6 +173,34 @@
 					tva: 0
 				};
 				sure = false;
+				reloadRestocks();
+			});
+	}
+
+	async function applyEditRestock() {
+		newRestock.state = RestockState.RestockFinished;
+		saveEditRestock().then(() => {
+			selectedEditRestock = undefined;
+			sure = false;
+			reloadRestocks();
+		});
+	}
+
+	async function saveEditRestock() {
+		if (!selectedEditRestock) return;
+		console.log(newRestock);
+		restocksApi()
+			.updateRestock(selectedEditRestock.id, newRestock, { withCredentials: true })
+			.then((res) => {
+				newRestock = {
+					total_cost_ht: 0,
+					total_cost_ttc: 0,
+					driver_id: '',
+					type: newRestock.type,
+					state: newRestock.state,
+					items: []
+				};
+				reloadRestocks();
 			});
 	}
 
@@ -190,11 +229,23 @@
 	}
 
 	function deleteRestock(restockId: string) {
+		if (selectedEditRestock && selectedEditRestock.id === restockId) {
+			selectedEditRestock = undefined;
+		}
 		restocksApi()
 			.deleteRestock(restockId, { withCredentials: true })
 			.then(() => {
 				restocks = restocks.filter((ct) => ct.id !== restockId);
+				reloadRestocks();
 			});
+	}
+
+	function calculateTtc(item: NewRestockItem) {
+		return Math.round(item.bundle_cost_ht * (1 + item.tva / 10000));
+	}
+	
+	function calculateHt(item: NewRestockItem) {
+		return Math.round(item.bundle_cost_ttc / (1 + item.tva / 10000));
 	}
 </script>
 
@@ -230,20 +281,6 @@
 							Nom
 						</span>
 					</th>
-					<th scope="col" class="px-3 py-3 w-48">
-						<span
-							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
-						>
-							Prix coûtant HT
-						</span>
-					</th>
-					<th scope="col" class="px-3 py-3 w-48">
-						<span
-							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
-						>
-							Prix coûtant TTC
-						</span>
-					</th>
 					<th scope="col" class="px-3 py-3">
 						<span
 							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
@@ -277,6 +314,20 @@
 							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 						>
 							Prix d'un lot TTC
+						</span>
+					</th>
+					<th scope="col" class="px-3 py-3 w-48">
+						<span
+							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+						>
+							Prix total HT
+						</span>
+					</th>
+					<th scope="col" class="px-3 py-3 w-48">
+						<span
+							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+						>
+							Prix total TTC
 						</span>
 					</th>
 					<th scope="col" class="bg-blue-800 px-6 py-3">
@@ -330,6 +381,7 @@
 										displayedValues.tva = (item.last_tva ?? 0).toString();
 										newItem.tva = item.last_tva ?? 0;
 										newItem.item_id = item.id;
+										newItem.item_name = item.name;
 										searchName = '';
 									}}
 								>
@@ -342,24 +394,6 @@
 				<td class="px-3 py-3">
 					<div class="flex flex-col">
 						<input
-							class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-							disabled
-							placeholder={displayedValues.item_price_ht}
-						/>
-					</div>
-				</td>
-				<td class="px-3 py-3">
-					<div class="flex flex-col">
-						<input
-							class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-							disabled
-							placeholder={displayedValues.item_price}
-						/>
-					</div>
-				</td>
-				<td class="px-3 py-3">
-					<div class="flex flex-col">
-						<input
 							type="number"
 							class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							placeholder="Nombre de lots"
@@ -367,6 +401,9 @@
 							max="1000"
 							bind:value={newItem.amount_of_bundle}
 							on:change={() => {
+								if (newItem.amount_of_bundle < 0) {
+									newItem.amount_of_bundle = 0;
+								}
 								updatePrices();
 							}}
 						/>
@@ -382,6 +419,9 @@
 							max="1000"
 							bind:value={newItem.amount_per_bundle}
 							on:change={() => {
+								if (newItem.amount_per_bundle < 0) {
+									newItem.amount_per_bundle = 0;
+								}
 								updatePrices();
 							}}
 						/>
@@ -396,6 +436,11 @@
 							class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							placeholder={displayedValues.bundle_cost_ht}
 							on:change={(e) => {
+								// @ts-ignore
+								if (e.target?.value < 0) {
+									// @ts-ignore
+									e.target.value = 0;
+								}
 								// @ts-ignore
 								newItem.bundle_cost_ht = parsePrice(e.target?.value);
 								let r = formatPrice(newItem.bundle_cost_ht);
@@ -457,17 +502,32 @@
 						/>
 					</div>
 				</td>
+				<td class="px-3 py-3">
+					<div class="flex flex-col">
+						<input
+							class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+							disabled
+							placeholder={displayedValues.item_price_ht}
+						/>
+					</div>
+				</td>
+				<td class="px-3 py-3">
+					<div class="flex flex-col">
+						<input
+							class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+							disabled
+							placeholder={displayedValues.item_price}
+						/>
+					</div>
+				</td>
 				<td class="px-6 py-3">
 					<div class="flex flex-col">
 						<button
 							class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
 							on:click={() => {
 								let t = newRestock.items;
-								let n = nameList;
 								t.unshift(newItem);
-								n.unshift(displayedValues.name);
 								newRestock.items = t;
-								nameList = n;
 								displayedValues = {
 									name: 'Nom du produit',
 									item_price_calc: 0,
@@ -481,6 +541,7 @@
 								};
 								newItem = {
 									item_id: '',
+									item_name: '',
 									amount_of_bundle: 0,
 									amount_per_bundle: 0,
 									bundle_cost_ht: 0,
@@ -503,8 +564,84 @@
 							<div
 								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							>
-								<p>{nameList[i]}</p>
+								<p>{item.item_name}</p>
 							</div>
+						</div>
+					</td>
+					<td class="px-3 py-3">
+						<div class="flex flex-col">
+							<input
+								type="number"
+								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+								min="1"
+								max="1000"
+								bind:value={item.amount_of_bundle}
+							/>
+						</div>
+					</td>
+					<td class="px-3 py-3">
+						<div class="flex flex-col">
+							<input
+								type="number"
+								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+								min="1"
+								max="1000"
+								bind:value={item.amount_per_bundle}
+							/>
+						</div>
+					</td>
+					<td class="px-6 py-3">
+						<div class="flex flex-col">
+							<input
+								type="string"
+								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+								min="1"
+								max="1000"
+								value={(item.bundle_cost_ht / 100).toString()}
+								on:input={(e) => {
+									// @ts-ignore
+									item.bundle_cost_ht = parsePrice(e.target?.value);
+									item.bundle_cost_ttc = calculateTtc(item);
+									updateTotalHTandTTC();
+								}}
+							/>
+						</div>
+					</td>
+					<td class="px-6 py-3">
+						<div class="flex flex-col">
+							<select
+								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+								id="tva"
+								value={item.tva.toString()}
+								on:change={(e) => {
+									// @ts-ignore
+									item.tva = parseInt(e.target?.value);
+									item.bundle_cost_ttc = calculateTtc(item);
+									updateTotalHTandTTC();
+								}}
+							>
+								<option value="0">0%</option>
+								<option value="550">5.5%</option>
+								<option value="1000">10%</option>
+								<option value="2000">20%</option>
+							</select>
+						</div>
+					</td>
+					<td class="px-6 py-3">
+						<div class="flex flex-col">
+							<input
+								type="string"
+								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+								min="1"
+								max="1000"
+								value={(item.bundle_cost_ttc / 100).toString()}
+								on:input={(e) => {
+									// @ts-ignore
+									item.bundle_cost_ttc = parsePrice(e.target?.value);
+									item.bundle_cost_ht = calculateHt(item);
+									updateTotalHTandTTC();
+								}}
+							/>
 						</div>
 					</td>
 					<td class="px-3 py-3">
@@ -527,58 +664,12 @@
 							</div>
 						</div>
 					</td>
-					<td class="px-3 py-3">
-						<div class="flex flex-col">
-							<div
-								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-							>
-								<p>{item.amount_of_bundle}</p>
-							</div>
-						</div>
-					</td>
-					<td class="px-3 py-3">
-						<div class="flex flex-col">
-							<div
-								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-							>
-								<p>{item.amount_per_bundle}</p>
-							</div>
-						</div>
-					</td>
-					<td class="px-6 py-3">
-						<div class="flex flex-col">
-							<div
-								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-							>
-								<p>{formatPrice(item.bundle_cost_ht)}</p>
-							</div>
-						</div>
-					</td>
-					<td class="px-6 py-3">
-						<div class="flex flex-col">
-							<div
-								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-							>
-								<p>{item.tva / 100}%</p>
-							</div>
-						</div>
-					</td>
-					<td class="px-6 py-3">
-						<div class="flex flex-col">
-							<div
-								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-							>
-								<p>{formatPrice(item.bundle_cost_ttc)}</p>
-							</div>
-						</div>
-					</td>
 					<td class="px-6 py-3">
 						<div class="flex flex-col">
 							<button
 								class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
 								on:click={() => {
 									newRestock.items = newRestock.items.filter((_, index) => index !== i);
-									nameList = nameList.filter((_, index) => index !== i);
 									updateTotalHTandTTC();
 								}}
 							>
@@ -602,11 +693,34 @@
 			/>
 
 			{#if sure}
+				{#if !selectedEditRestock}
+					<button
+						on:click={() => applyRestock(RestockState.RestockFinished)}
+						class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+					>
+						<p class="font-bold text-white text-2xl">Terminer la réappro</p>
+					</button>
+				{:else}
+					<button
+						on:click={() => applyEditRestock()}
+						class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+					>
+						<p class="font-bold text-white text-2xl">Terminer la réappro en attente</p>
+					</button>
+				{/if}
+			{:else if !selectedEditRestock}
 				<button
-					on:click={() => applyRestock()}
-					class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+					on:click={() => applyRestock(RestockState.RestockPending)}
+					class="bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded"
 				>
-					<p class="font-bold text-white text-2xl">Terminer la réappro</p>
+					<p class="font-bold text-white text-2xl">Mettre la réappro en attente</p>
+				</button>
+			{:else}
+				<button
+					on:click={() => saveEditRestock()}
+					class="bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded"
+				>
+					<p class="font-bold text-white text-2xl">Sauvegarder la réappro en attente</p>
 				</button>
 			{/if}
 		</div>
@@ -636,6 +750,13 @@
 						Conducteur
 					</span>
 				</th>
+				<th scope="col" class="px-6 py-3">
+					<span
+						class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+					>
+						État
+					</span>
+				</th>
 				<th scope="col" class="px-2 py-3">
 					<p
 						class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
@@ -663,7 +784,7 @@
 				/>
 			{/if}
 			{#each restocks as restock}
-				<tr>
+				<tr class={restock.state == RestockState.RestockPending ? 'bg-orange-700' : 'bg-green-700'}>
 					<td class="px-6 py-3">
 						<div class="text-center flex flex-col">
 							<div
@@ -691,6 +812,15 @@
 							</div>
 						</div>
 					</td>
+					<td class="px-6 py-3">
+						<div class="text-center flex flex-col">
+							<div
+								class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-gray-300 text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+							>
+								<p>{restock.state}</p>
+							</div>
+						</div>
+					</td>
 					<td class="px-2 py-3">
 						<p
 							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
@@ -703,7 +833,7 @@
 							class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 						>
 							<button
-								class="px-2 inline-flex items-center text-sm text-blue-600 decoration-2 hover:underline font-medium"
+								class="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition ease-in-out duration-200"
 								on:click={() => {
 									deleteRestockCallback = () => {
 										deletingRestock = false;
@@ -721,17 +851,42 @@
 								Supprimer
 							</button>
 							<button
-								class="px-2 inline-flex items-center text-sm text-blue-600 decoration-2 hover:underline font-medium"
+								class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition ease-in-out duration-200"
 								on:click={() => {
-									if (selectedRestock == restock) {
-										selectedRestock = undefined;
+									if (selectedViewRestock == restock) {
+										selectedViewRestock = undefined;
 									} else {
-										selectedRestock = restock;
+										selectedViewRestock = restock;
 									}
 								}}
 							>
-								Voir
+								{#if selectedViewRestock == restock}
+								 	Fermer
+								{:else}
+									Voir
+								{/if}
 							</button>
+							{#if restock.state == RestockState.RestockPending}
+								<button
+									class="px-4 py-2 bg-orange-500 text-white font-semibold rounded-lg shadow-md hover:bg-orange-800 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition ease-in-out duration-200"
+									on:click={() => {
+										if (selectedEditRestock == restock) {
+											selectedEditRestock = undefined;
+											newRestock.items = [];
+											updateTotalHTandTTC();
+										} else {
+											selectedEditRestock = restock;
+											newRestock = structuredClone(selectedEditRestock);
+										}
+									}}
+								>
+									{#if selectedEditRestock == restock}
+										Fermer sans sauvegarder
+									{:else}
+										Modifier
+									{/if}
+								</button>
+							{/if}
 						</div>
 					</td>
 				</tr>
@@ -743,7 +898,7 @@
 	>
 		<div>
 			<p class="text-sm text-gray-600 dark:text-gray-400">
-				<span class="font-semibold text-gray-800 dark:text-gray-200">{items.length}</span>
+				<span class="font-semibold text-gray-800 dark:text-gray-200">{restocks.length}</span>
 				résultats
 			</p>
 		</div>
@@ -798,7 +953,7 @@
 			</div>
 		</div>
 	</div>
-	{#if selectedRestock != undefined}
+	{#if selectedViewRestock != undefined}
 		<table class="mb-10 min-w-full divide-y divide-gray-200 dark:divide-gray-700 bg-blue-950">
 			<thead class="bg-gray-50 dark:bg-blue-600">
 				<tr>
@@ -860,7 +1015,7 @@
 					</th>
 				</tr>
 			</thead>
-			{#each selectedRestock.items as item}
+			{#each selectedViewRestock.items as item}
 				<tr>
 					<td class="px-12 py-3">
 						<div class="flex flex-col">

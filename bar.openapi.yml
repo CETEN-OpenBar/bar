@@ -3093,16 +3093,13 @@ paths:
           schema:
             type: integer
             format: uint64
-        - name: search
+        - name: state
           in: query
-          description: search string
+          description: search state
+          required:
+            false
           schema:
-            type: string
-        - name: sort
-          in: query
-          description: sort string
-          schema:
-            type: string
+            $ref: "#/components/schemas/RestockState"
       responses:
         "200":
           description: ""
@@ -3204,9 +3201,65 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
+      security:
+        - admin_auth: []
       tags:
         - restocks
   /restocks/{restock_id}:
+    patch:
+      description: "Update a restock"
+      operationId: updateRestock
+      parameters:
+        - name: restock_id
+          in: path
+          description: ID of the restock
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      requestBody:
+        description: "Restock to update"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewRestock"
+      responses:
+        "204":
+          description: "Success"
+        "400":
+          description: "Finished restock"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not authenticated"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Restock not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - admin_auth: []
+      tags:
+        - restocks
     delete:
       description: "Delete a restock"
       operationId: deleteRestock
@@ -3244,6 +3297,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
+      security:
+        - admin_auth: []
       tags:
         - restocks
   /cash_movements:
@@ -5513,6 +5568,9 @@ components:
       properties:
         item_id:
           $ref: "#/components/schemas/UUID"
+        item_name:
+          type: string
+          description: Name of the current item
         amount_of_bundle:
           type: integer
           format: uint64
@@ -5533,6 +5591,7 @@ components:
           format: uint64
       required:
         - item_id
+        - item_name
         - amount_of_bundle
         - amount_per_bundle
         - bundle_cost_ht
@@ -5555,11 +5614,14 @@ components:
           $ref: "#/components/schemas/UUID"
         type:
           $ref: "#/components/schemas/RestockType"
+        state:
+          $ref: "#/components/schemas/RestockState"
       required:
         - items
         - total_cost_ht
         - total_cost_ttc
         - type
+        - state
     RestockItem:
       type: object
       properties:
@@ -5653,6 +5715,8 @@ components:
           format: uint64
         deleted_by:
           $ref: "#/components/schemas/UUID"
+        state:
+          $ref: "#/components/schemas/RestockState"
       required:
         - items
         - total_cost_ht
@@ -5662,6 +5726,15 @@ components:
         - created_at
         - created_by
         - created_by_name
+        - state
+    RestockState:
+      type: string
+      enum:
+        - finished
+        - pending
+      x-enum-varnames:
+        - RestockFinished
+        - RestockPending
     NewCashMovement:
       type: object
       properties:

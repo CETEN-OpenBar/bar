@@ -1,6 +1,7 @@
 package mongo
 
 import (
+	"bar/autogen"
 	"bar/internal/models"
 	"context"
 
@@ -47,7 +48,7 @@ func (b *Backend) CountRestocks(ctx context.Context, accountID string) (uint64, 
 	return uint64(count), nil
 }
 
-func (b *Backend) GetAllRestocks(ctx context.Context, page uint64, size uint64) ([]*models.Restock, error) {
+func (b *Backend) GetAllRestocks(ctx context.Context, page uint64, size uint64, state *autogen.RestockState) ([]*models.Restock, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
@@ -62,6 +63,10 @@ func (b *Backend) GetAllRestocks(ctx context.Context, page uint64, size uint64) 
 				"deleted_at": nil,
 			},
 		},
+	}
+
+	if state != nil {
+		filter["state"] = *state
 	}
 
 	// Get "size" restocks from "page" using aggregation
@@ -79,7 +84,7 @@ func (b *Backend) GetAllRestocks(ctx context.Context, page uint64, size uint64) 
 	return restocks, nil
 }
 
-func (b *Backend) CountAllRestocks(ctx context.Context) (uint64, error) {
+func (b *Backend) CountAllRestocks(ctx context.Context, state *autogen.RestockState) (uint64, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
@@ -94,6 +99,10 @@ func (b *Backend) CountAllRestocks(ctx context.Context) (uint64, error) {
 				"deleted_at": nil,
 			},
 		},
+	}
+
+	if state != nil {
+		filter["state"] = *state
 	}
 
 	count, err := b.db.Collection(RestocksCollection).CountDocuments(ctx, filter)
