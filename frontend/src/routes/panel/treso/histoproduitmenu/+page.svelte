@@ -9,7 +9,7 @@
 	let itemsPerPage = 5;
 	let searchItem: string = '';
 	let selectedItem: Item | undefined = undefined;
-
+	let hide_remotes = true;
 	async function reloadItems() {
 		let resp = await itemsApi().getAllItems(1, itemsPerPage, undefined, undefined, searchItem, undefined, {
 			withCredentials: true
@@ -18,34 +18,34 @@
 	}
 
 	let transactions: Transaction[] = [];
-	let transactionPerPage = 100;
 	let reloading = false;
 
 	async function reloadTransactions() {
 		if (reloading) return;
 		reloading = true;
 		try {
-			let resp = await transactionsApi().getTransactionsByTimestamp(parseInt(startDate), parseInt(endDate), 1, transactionPerPage, {
+			if (selectedItem != undefined){
+				itemID = selectedItem.id;
+			}
+			else{
+				var itemID = undefined;
+			}
+		
+			let resp = await transactionsApi().getTransactions(1, undefined, "finished", !hide_remotes, undefined, startDate, endDate, itemID, {
 				withCredentials: true
 			});
-			let temp = resp.data.transactions ?? [];
-
-			for (let p = 2; p <= resp.data.max_page; p++) {
-				let resp = await transactionsApi().getTransactionsByTimestamp(parseInt(startDate), parseInt(endDate), p, transactionPerPage, {
-					withCredentials: true
-				});
-				temp.push(...(resp.data.transactions ?? []));
-			}
-
+		
 			transactions = resp.data.transactions ?? [];
+			
+
 		} finally {
 			reloading = false;
 		}
 	}
 
 	let todayMorning = new Date(new Date().toLocaleDateString());
-	let startDate = time2Utc(todayMorning.getTime() / 1000).toString();
-	let endDate = time2Utc(todayMorning.getTime() / 1000 + 24 * 60 * 60).toString();
+	let startDate = time2Utc(todayMorning.getTime() / 1000)
+	let endDate = time2Utc(todayMorning.getTime() / 1000 + 24 * 60 * 60);
 </script>
 
 <div class="w-full flex flex-col items-center">
@@ -60,20 +60,30 @@
 				on:keydown={reloadItems}
 				on:keyup={reloadItems}
 				on:change={() => {
-					selectedItem = items.find((item) => item.name == searchItem);
+					selectedItem = items.find((item) => item.name == searchItem); 
 				}}
 			/>
+			
 			<button class="rounded-r-lg bg-slate-200 p-4"> &#x1F50D; </button>
 		</div>
+	
+	
 		<datalist id="items">
 			{#each items as item}
 				<option value={item.name} />
 			{/each}
 		</datalist>
-
+		<div class="flex flex-row gap-2 red-tex">
+		<h1 class="text-l text-white">En ligne </h1>
+		<input 
+				type="checkbox" 
+				class="h-6 w-6 align-middle ml-1"
+				bind:checked={hide_remotes}
+			/>
+		</div>
 		<div class="flex flex-row gap-2">
 			<div class="flex flex-col">
-				<h1 class="text-md font-semibold self-center">Début:</h1>
+				<h1 class="text-md font-semibold self-center text-white">Début:</h1>
 				<input
 					class="rounded-md bg-slate-200 p-2"
 					type="date"
@@ -84,13 +94,12 @@
 						todayMorning.toLocaleString('default', { day: '2-digit' })}
 					on:change={(e) => {
 						// @ts-ignore
-						let s = time2Utc(new Date(e.target.value).getTime() / 1000);
-						startDate = s.toString();
+						startDate = time2Utc(new Date(e.target.value).getTime() / 1000);
 					}}
 				/>
 			</div>
 			<div class="flex flex-col">
-				<h1 class="text-md font-semibold self-center">Fin:</h1>
+				<h1 class="text-md font-semibold self-center text-white">Fin:</h1>
 				<input
 					class="rounded-md bg-slate-200 p-2"
 					type="date"
@@ -101,8 +110,8 @@
 						todayMorning.toLocaleString('default', { day: '2-digit' })}
 					on:change={(e) => {
 						// @ts-ignore
-						let s = time2Utc(new Date(e.target.value).getTime() / 1000 + 24 * 60 * 60);
-						endDate = s.toString();
+						endDate = time2Utc(new Date(e.target.value).getTime() / 1000 + 24 * 60 * 60);
+			
 					}}
 				/>
 			</div>
@@ -181,7 +190,6 @@
 			</thead>
 			<tbody>
 				{#each transactions as t, index (t.id)}
-					{#if JSON.stringify(t).includes(selectedItem?.id ?? '')}
 						<tr>
 							<td class="px-4">{t.account_name}</td>
 							<td class="px-4">{formatDateTime(t.created_at)}</td>
@@ -206,7 +214,7 @@
 										.reduce((acc, item) => acc + item.item_amount, 0)}
 							</td>
 						</tr>
-					{/if}
+			
 				{/each}
 			</tbody>
 		</table>
