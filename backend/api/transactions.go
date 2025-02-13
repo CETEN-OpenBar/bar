@@ -152,6 +152,21 @@ func (s *Server) GetTransactions(c echo.Context, params autogen.GetTransactionsP
 		name = string(*params.Name)
 	}
 
+	var StartTime int
+	if params.StartTime != nil {
+		StartTime = int(*params.StartTime)
+	}
+
+	var EndTime int
+	if params.EndTime != nil {
+		EndTime = int(*params.EndTime)
+	}
+
+	var ItemId string
+	if params.ItemId != nil {
+		ItemId = string(*params.ItemId)
+	}
+
 	var hide_remotes bool
 	if params.HideRemote != nil {
 		hide_remotes = bool(*params.HideRemote)
@@ -159,7 +174,7 @@ func (s *Server) GetTransactions(c echo.Context, params autogen.GetTransactionsP
 		hide_remotes = true
 	}
 
-	count, err := s.DBackend.CountAllTransactions(c.Request().Context(), state, name, hide_remotes)
+	count, err := s.DBackend.CountAllTransactions(c.Request().Context(), state, name, hide_remotes, StartTime, EndTime, ItemId)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -168,7 +183,7 @@ func (s *Server) GetTransactions(c echo.Context, params autogen.GetTransactionsP
 	// Make sure the last page is not empty
 	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	data, err := s.DBackend.GetAllTransactions(c.Request().Context(), dbpage, limit, state, name, hide_remotes)
+	data, err := s.DBackend.GetAllTransactions(c.Request().Context(), dbpage, limit, state, name, hide_remotes, StartTime, EndTime, ItemId)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -208,47 +223,5 @@ func (s *Server) GetTransactionsItems(c echo.Context, params autogen.GetTransact
 	}
 
 	autogen.GetTransactionsItems200JSONResponse(data).VisitGetTransactionsItemsResponse(c.Response())
-	return nil
-}
-
-
-func (s *Server) GetTransactionsByTimestamp(c echo.Context, params autogen.GetTransactionsByTimestampParams) error {
-	_, err := MustGetAdmin(c)
-	if err != nil {
-		return nil
-	}
-	
-	StartTime := uint64(params.StartTime)
-	EndTime := uint64(params.EndTime)
-
-	if StartTime > EndTime {
-		return Error400(c)
-	}
-
-	count, err := s.DBackend.CountTransactionsByTimestamp(c.Request().Context(), StartTime, EndTime)
-	if err != nil {
-		logrus.Error(err)
-		return Error500(c)
-	}
-
-	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
-
-	data, err := s.DBackend.GetTransactionsByTimestamp(c.Request().Context(), StartTime, EndTime, dbpage, limit)
-	if err != nil {
-		logrus.Error(err)
-		return Error500(c)
-	}
-
-	transactions := make([]autogen.Transaction, len(data))
-	for i, transaction := range data {
-		transactions[i] = transaction.Transaction
-	}
-
-	autogen.GetTransactionsByTimestamp200JSONResponse{
-		Transactions: transactions,
-		Limit:        limit,
-		Page:         page,
-		MaxPage:      maxPage,
-	}.VisitGetTransactionsByTimestampResponse(c.Response())
 	return nil
 }
