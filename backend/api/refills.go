@@ -262,9 +262,12 @@ func (s *Server) PatchRefillId(c echo.Context, accountId autogen.UUID, refillId 
 				refill.CanceledBy = &admin.Id
 				refill.CanceledByName = &name
 
-				err = s.createCashMovement(ctx, admin.Id, admin.Name(), -int64(refill.Amount), fmt.Sprintf("Annulation de recharge %s", refill.Id))
-				if err != nil {
-					return nil, errors.New("failed to create cash movement")
+				// Only create a cash movement if the refill was a cash refill
+				if refill.Type == autogen.RefillCash {
+					err = s.createCashMovement(ctx, admin.Id, admin.Name(), -int64(refill.Amount), fmt.Sprintf("Annulation de recharge %s", refill.Id))
+					if err != nil {
+						return nil, errors.New("failed to create cash movement")
+					}
 				}
 			} else if oldState == autogen.Canceled && *params.State == autogen.Valid {
 				account.Balance += int64(refill.Amount)
