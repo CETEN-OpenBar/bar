@@ -7,7 +7,7 @@
 		RestockState,
 		RestockType
 	} from '$lib/api';
-	import { formatPrice } from '$lib/utils';
+	import { formatPrice, fournisseurIterator } from '$lib/utils';
 	import { goto } from '$app/navigation';
 	let items: CourseItem[] = [];
 	let fournisseur = RestockType.RestockPromocash;
@@ -107,10 +107,9 @@
 			reloadCourse();
 		}}
 	>
-		<option value="promocash">Promocash</option>
-		<option value="auchan_drive">Auchan drive</option>
-		<option value="auchan">Auchan</option>
-		<option value="viennoiserie">Boulangerie Benoist</option>
+	{#each fournisseurIterator as [val, name]}
+		<option value="{val}">{name}</option>
+	{/each}
 	</select>
 </div>
 
