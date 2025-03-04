@@ -5664,11 +5664,13 @@ components:
         - auchan_drive
         - viennoiserie
         - promocash
+        - holy
       x-enum-varnames:
         - RestockAuchan
         - RestockAuchanDrive
         - RestockViennoiserie
         - RestockPromocash
+        - RestockHoly
     Fournisseur:
       type: string
       enum:
@@ -5676,11 +5678,13 @@ components:
         - auchan_drive
         - viennoiserie
         - promocash
+        - holy
       x-enum-varnames:
         - Auchan
         - Auchan_Drive
         - Viennoiserie
         - Promocash
+        - Holy
     Restock:
       type: object
       properties:
