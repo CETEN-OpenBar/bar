@@ -8,7 +8,7 @@
 	} from '$lib/api';
 	import ConfirmationPopup from '$lib/components/confirmationPopup.svelte';
 	import { itemsApi, restocksApi } from '$lib/requests/requests';
-	import { formatPrice, parsePrice } from '$lib/utils';
+	import { formatPrice, parsePrice, restockTypeIterator } from '$lib/utils';
 	import { onMount } from 'svelte';
 	import Time from 'svelte-time';
 
@@ -256,10 +256,9 @@
 			placeholder="Type"
 			bind:value={newRestock.type}
 		>
-			<option value="promocash">Promocash</option>
-			<option value="auchan_drive">Auchan drive</option>
-			<option value="auchan">Auchan</option>
-			<option value="viennoiserie">Boulangerie Benoist</option>
+			{#each restockTypeIterator as [val, name]}
+				<option value="{val}">{name}</option>
+			{/each}
 		</select>
 		<div>
 			<p class="dark:text-white text-2xl ml-5">
