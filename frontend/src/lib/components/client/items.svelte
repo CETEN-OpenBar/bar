@@ -71,15 +71,17 @@
 					items = [];
 					setTimeout(() => {
 						items = newItems;
+						items.sort((a, b) => (a.amount_left === 0 ? 1 : b.amount_left === 0 ? -1 : 0));
 					}, 10);
 				} else {
 					items = res.data.items ?? [];
+					items.sort((a, b) => (a.amount_left === 0 ? 1 : b.amount_left === 0 ? -1 : 0));
 				}
 			})
 			.catch((err) => {
 				console.log(err);
 			});
-	}
+		}
 
 	let direction = 1;
 </script>
