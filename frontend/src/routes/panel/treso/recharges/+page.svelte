@@ -61,9 +61,9 @@
 				type="date"
 				value={todayMorning.toLocaleString('default', { year: 'numeric' }) +
 					'-' +
-					todayMorning.toLocaleString('default', { month: '2-digit' }) +
+					todayMorning.toLocaleString('default', { day: '2-digit' }) +
 					'-' +
-					todayMorning.toLocaleString('default', { day: '2-digit' })}
+					todayMorning.toLocaleString('default', { month: '2-digit' })}
 				on:change={(e) => {
 					// @ts-ignore
 					let s = time2Utc(new Date(e.target.value).getTime() / 1000);
