@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { dev } from '$app/environment';
+	import { pinIsShown } from '$lib/store/store';
 	import { onDestroy } from 'svelte';
 	export let callback: (card: string) => void = () => {};
+	$: $pinIsShown
 
 	let socket = new WebSocket('ws://localhost:3737/');
 
@@ -32,10 +34,10 @@
 
 	let buffer = '';
 	function handleInput(event: KeyboardEvent) {
-		if (event.key === 'Enter') {
+		if (event.key === 'Enter' && !$pinIsShown) {
 			callback(buffer);
 			buffer = '';
-		} else {
+		} else if (!$pinIsShown){
 			buffer += event.key;
 		}
 	}
