@@ -233,6 +233,7 @@ var (
 
 	TransactionsCollection   = "transactions"
 	RefillsCollection        = "refills"
+	StarringCollection       = "starring"
 	ItemsCollection          = "items"
 	CategoriesCollection     = "categories"
 	CarouselTextsCollection  = "carousel_texts"
