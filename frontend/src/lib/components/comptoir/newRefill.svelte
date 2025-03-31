@@ -63,7 +63,7 @@
 			<h1 class="text-3xl">Veuillez scanner la carte.</h1>
 		{:else if card.type === RefillType.RefillOther}
 			<h1>Veuillez selectionner le moyen de paiement.</h1>
-			<div class="grid grid-cols-2 w-full gap-4 p-4">
+			<div class="grid grid-cols-2 w-full gap-8 p-4">
 				<button
 					class="bg-blue-500 hover:bg-blue-700 text-white font-bold text-xl py-12 px-4 rounded "
 					on:click={() => (card.type = RefillType.RefillCard)}
@@ -71,7 +71,7 @@
 					Carte
 				</button>
 				<button
-					class="bg-blue-500 hover:bg-blue-700 text-white font-bold text-xl py-12 px-4 rounded"
+					class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold text-xl py-12 px-4 rounded"
 					on:click={() => (card.type = RefillType.RefillCash)}
 				>
 					Liquide
@@ -128,20 +128,6 @@
 							}, 1000);
 						}}
 					/>
-				</div>
-
-				<div class="flex flex-col">
-					<label for="refill-type" class="block text-xl mb-2 align-middle">Type :</label>
-					<select
-						id="refill-type"
-						name="refill-type"
-						class="text-sm bg-gray-200 rounded-md p-2 text-center"
-						bind:value={card.type}
-					>
-						<option value={RefillType.RefillCard}>Carte</option>
-						<option value={RefillType.RefillCash}>Liquide</option>
-						<option value={RefillType.RefillOther}>Autre</option>
-					</select>
 				</div>
 			</div>
 
