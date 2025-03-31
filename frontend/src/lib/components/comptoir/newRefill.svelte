@@ -15,10 +15,14 @@
 		card.id = id;
 	}
 	let rebounce = 0;
-	let card = {
+	let card: {
+		id: string;
+		amount: number;
+		type: RefillType;
+	} = {
 		id: '',
 		amount: 0,
-		type: RefillType.RefillCard
+		type: RefillType.RefillOther
 	};
 </script>
 
@@ -29,7 +33,6 @@
 {#if error != ''}
 	<Error {error} />
 {/if}
-
 
 <ReadCard callback={cardCallback} />
 
@@ -45,7 +48,7 @@
 <div id="popup" class="absolute w-full h-full top-0 left-0 flex justify-center items-center">
 	<div
 		class="relative text-black flex flex-col justify-center items-center gap-4 p-10 h-96 bg-white rounded-xl shadow-xl z-20"
-			>
+	>
 		<!-- button to close the popup -->
 		<button
 			class="absolute top-0 right-0 p-2 text-xl font-bold m-2 rounded-full transition-all text-black"
@@ -58,11 +61,31 @@
 		<!-- prompt to scan the card -->
 		{#if card.id == ''}
 			<h1 class="text-3xl">Veuillez scanner la carte.</h1>
+		{:else if card.type === RefillType.RefillOther}
+			<h1>Veuillez selectionner le moyen de paiement.</h1>
+			<div class="grid grid-cols-2 w-full gap-4 p-4">
+				<button
+					class="bg-blue-500 hover:bg-blue-700 text-white font-bold text-xl py-12 px-4 rounded "
+					on:click={() => (card.type = RefillType.RefillCard)}
+				>
+					Carte
+				</button>
+				<button
+					class="bg-blue-500 hover:bg-blue-700 text-white font-bold text-xl py-12 px-4 rounded"
+					on:click={() => (card.type = RefillType.RefillCash)}
+				>
+					Liquide
+				</button>
+				<!-- <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" 
+			on:click={() => selectedRefillType = RefillType.RefillOther}>
+			Autre
+			</button> -->
+			</div>
 		{:else}
 			<h1 class="text-3xl">Veuillez entrer le montant de la recharge.</h1>
 
 			<!-- svelte-ignore a11y-no-static-element-interactions -->
-			<div 
+			<div
 				class="flex flex-col gap-8"
 				on:keypress={(e) => {
 					if (e.key == 'Enter')
@@ -75,9 +98,8 @@
 							.catch(() => {
 								error = 'Une erreur est survenue.';
 							});
-					}
-				}
-				>
+				}}
+			>
 				<div class="flex flex-col">
 					<label for="price-new" class="block text-xl mb-2 align-middle">Montant :</label>
 					<input
@@ -114,10 +136,7 @@
 						id="refill-type"
 						name="refill-type"
 						class="text-sm bg-gray-200 rounded-md p-2 text-center"
-						on:change={(e) => {
-							// @ts-ignore	
-							card.type = e.target?.value;
-						}}
+						bind:value={card.type}
 					>
 						<option value={RefillType.RefillCard}>Carte</option>
 						<option value={RefillType.RefillCash}>Liquide</option>
