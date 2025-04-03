@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Account, NewAccount, NewCategory } from '$lib/api';
 	import Refills from '$lib/components/admin/refills.svelte';
+	import Stars from '$lib/components/admin/stars.svelte';
 	import ConfirmationPopup from '$lib/components/confirmationPopup.svelte';
 	import { accountsApi } from '$lib/requests/requests';
 	import { formatPrice } from '$lib/utils';
@@ -36,6 +37,7 @@
 	};
 	let accounts_per_page = 10;
 	let shown_refill: Account | undefined = undefined;
+	let shown_stars: Account | undefined = undefined;
 
 	let deletingAccount: boolean = false;
 	let confirmationMessage: string | undefined = undefined;
@@ -137,6 +139,15 @@
 		account={shown_refill}
 		onClose={() => {
 			shown_refill = undefined;
+		}}
+	/>
+{/if}
+
+{#if shown_stars}
+	<Stars
+		account={shown_stars}
+		close={() => {
+			shown_stars = undefined;
 		}}
 	/>
 {/if}
@@ -684,7 +695,7 @@
 												<button
 													class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
 													on:click={() => {
-														console.log('stars');
+														shown_stars = account;
 													}}
 												>
 													Ajouter des étoiles
