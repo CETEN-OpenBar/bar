@@ -644,7 +644,7 @@
 											<!-- Dropdown menu -->
 											<div
 												class="hidden fixed mt-2 py-2 w-48 bg-white rounded-md shadow-lg z-50 border border-gray-200 flex flex-col"
-												style="position: fixed; right: 5%;"
+												style="position: fixed; "
 											>
 												{#if askForCard == false}
 													<button
