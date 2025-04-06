@@ -64,43 +64,46 @@ func (b *Backend) GetAllTransactions(ctx context.Context, page uint64, size uint
 
 	filter := bson.M{}
 
-    if state != "" {
+	if state != "" {
         filter["state"] = state
     }
 
-    if name != "" {
-        filter["account_name"] = bson.M{
-		
-				"$regex": name,
-				"$options": "i",	
-    		
+
+	if name != "" {
+		filter["account_name"] = bson.M{
+			"$regex": name,
+			"$options": "i",
 		}
 	}
-    if hide_remotes {
+
+	if hide_remotes {
 		filter["$or"] = []bson.M{
-            {"is_remote": bson.M{"$ne": true}},
-            {"is_remote": nil}, 
-        }
-    }
+			{"is_remote": bson.M{"$ne": true}},
+			{"is_remote": nil},
+		}
+	}
 
-    if StartTime > 0 || EndTime > 0 {
-        timeFilter := bson.M{}
-        if StartTime > 0 {
-            timeFilter["$gte"] = StartTime
-        }
-        if EndTime > 0 {
-            timeFilter["$lte"] = EndTime
-        }
-        filter["created_at"] = timeFilter
-    }
+	if StartTime > 0 || EndTime > 0 {
+		timeFilter := bson.M{}
+		if StartTime > 0 {
+			timeFilter["$gte"] = StartTime
+		}
+		if EndTime > 0 {
+			timeFilter["$lte"] = EndTime
+		}
+		filter["created_at"] = timeFilter
+	}
 
-    if ItemID != "" {
-        filter["items"] = bson.M{
-            "$elemMatch": bson.M{
-                "item_id": uuid.MustParse(ItemID),
-            },
-        }
-    }
+	var itemsElemMatch bson.M = bson.M{}
+	if ItemID != "" {
+		itemsElemMatch["item_id"] = uuid.MustParse(ItemID)
+	}
+	if state != "" {
+		itemsElemMatch["state"] = bson.M{"$ne": "canceled"} 
+	}
+	if len(itemsElemMatch) > 0 {
+		filter["items"] = bson.M{"$elemMatch": itemsElemMatch}
+	}
 
 
 	// Get "size" transactions from "page" using aggregation
@@ -125,43 +128,46 @@ func (b *Backend) CountAllTransactions(ctx context.Context, state string, name s
 
 	filter := bson.M{}
 
-    if state != "" {
+	if state != "" {
         filter["state"] = state
     }
 
-    if name != "" {
-        filter["account_name"] = bson.M{
-		
-				"$regex": name,
-				"$options": "i",	
-    		
+
+	if name != "" {
+		filter["account_name"] = bson.M{
+			"$regex": name,
+			"$options": "i",
 		}
 	}
-    if hide_remotes {
+
+	if hide_remotes {
 		filter["$or"] = []bson.M{
-            {"is_remote": bson.M{"$ne": true}},
-            {"is_remote": nil}, 
-        }
-    }
+			{"is_remote": bson.M{"$ne": true}},
+			{"is_remote": nil},
+		}
+	}
 
-    if StartTime > 0 || EndTime > 0 {
-        timeFilter := bson.M{}
-        if StartTime > 0 {
-            timeFilter["$gte"] = StartTime
-        }
-        if EndTime > 0 {
-            timeFilter["$lte"] = EndTime
-        }
-        filter["created_at"] = timeFilter
-    }
+	if StartTime > 0 || EndTime > 0 {
+		timeFilter := bson.M{}
+		if StartTime > 0 {
+			timeFilter["$gte"] = StartTime
+		}
+		if EndTime > 0 {
+			timeFilter["$lte"] = EndTime
+		}
+		filter["created_at"] = timeFilter
+	}
 
-    if ItemID != "" {
-        filter["items"] = bson.M{
-            "$elemMatch": bson.M{
-                "item_id": uuid.MustParse(ItemID),
-            },
-        }
-    }
+	var itemsElemMatch bson.M = bson.M{}
+	if ItemID != "" {
+		itemsElemMatch["item_id"] = uuid.MustParse(ItemID)
+	}
+	if state != "" {
+		itemsElemMatch["state"] = bson.M{"$ne": "canceled"} 
+	}
+	if len(itemsElemMatch) > 0 {
+		filter["items"] = bson.M{"$elemMatch": itemsElemMatch}
+	}
 
 	count, err := b.db.Collection(TransactionsCollection).CountDocuments(ctx, filter)
 	if err != nil {
