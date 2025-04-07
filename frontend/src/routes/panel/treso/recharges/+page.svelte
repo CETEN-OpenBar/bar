@@ -22,9 +22,13 @@
 	};
 	let itemsPerPage = 100;
 
-	let todayMorning = new Date(new Date().toLocaleDateString());
-	let startDate = time2Utc(todayMorning.getTime() / 1000).toString();
-	let endDate = time2Utc(todayMorning.getTime() / 1000 + 24 * 60 * 60).toString();
+	let today = new Date();
+	// Set it precisely to midnight LOCAL time today
+	today.setHours(0, 0, 0, 0);
+	let startTimestampSeconds = today.getTime() / 1000;
+	let endTimestampSeconds = startTimestampSeconds + (24 * 60 * 60);
+	let startDate = Math.floor(startTimestampSeconds).toString();
+	let endDate = Math.floor(endTimestampSeconds).toString();
 
 	async function reloadItems() {
 		let resp = await refillsApi().getRefills(page, itemsPerPage, startDate, endDate, {
@@ -59,11 +63,7 @@
 			<input
 				class="rounded-md bg-blue-200"
 				type="date"
-				value={todayMorning.toLocaleString('default', { year: 'numeric' }) +
-					'-' +
-					todayMorning.toLocaleString('default', { day: '2-digit' }) +
-					'-' +
-					todayMorning.toLocaleString('default', { month: '2-digit' })}
+				value={today.toISOString().split('T')[0]}
 				on:change={(e) => {
 					// @ts-ignore
 					let s = time2Utc(new Date(e.target.value).getTime() / 1000);
