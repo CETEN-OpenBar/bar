@@ -1,10 +1,12 @@
 <script lang="ts">
 	import type { Account, NewAccount, NewCategory } from '$lib/api';
 	import Refills from '$lib/components/admin/refills.svelte';
+	import Stars from '$lib/components/admin/stars.svelte';
 	import ConfirmationPopup from '$lib/components/confirmationPopup.svelte';
 	import { accountsApi } from '$lib/requests/requests';
 	import { formatPrice } from '$lib/utils';
 	import { onMount } from 'svelte';
+	import { browser } from '$app/environment';
 	import ReadCard from '$lib/components/readCard.svelte';
 
 	let accounts: Account[] = [];
@@ -35,6 +37,7 @@
 	};
 	let accounts_per_page = 10;
 	let shown_refill: Account | undefined = undefined;
+	let shown_stars: Account | undefined = undefined;
 
 	let deletingAccount: boolean = false;
 	let confirmationMessage: string | undefined = undefined;
@@ -43,6 +46,18 @@
 	let askForCard = false;
 	onMount(() => {
 		reloadAccounts();
+
+		if (browser) {
+			// Close dropdown menus when clicking outside
+			document.addEventListener('click', () => {
+				const dropdownMenus = document.querySelectorAll('.fixed.mt-2');
+				dropdownMenus.forEach((menu) => {
+					if (!menu.classList.contains('hidden')) {
+						menu.classList.add('hidden');
+					}
+				});
+			});
+		}
 	});
 
 	function reloadAccounts() {
@@ -124,6 +139,15 @@
 		account={shown_refill}
 		onClose={() => {
 			shown_refill = undefined;
+		}}
+	/>
+{/if}
+
+{#if shown_stars}
+	<Stars
+		account={shown_stars}
+		close={() => {
+			shown_stars = undefined;
 		}}
 	/>
 {/if}
@@ -433,6 +457,15 @@
 										</span>
 									</div>
 								</th>
+								<th scope="col" class="px-6 py-3 text-left">
+									<div class="flex items-center gap-x-2">
+										<span
+											class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+										>
+											Actions
+										</span>
+									</div>
+								</th>
 								<th scope="col" class="px-6 py-3 text-right" />
 							</tr>
 						</thead>
@@ -593,43 +626,81 @@
 											</select>
 										</div>
 									</td>
-									<td class="h-px w-px whitespace-nowrap">
+									<td class="h-px w-px whitespace-nowrap relative">
 										<div class="px-6 py-1.5">
-											{#if askForCard == false}
 											<button
-												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
-												on:click={() => {
-													selectedAccount = account;
-													askForCard = true;
+												class="text-sm text-blue-600 font-medium hover:bg-gray-100 p-2 rounded-md flex items-center gap-2"
+												on:click={(e) => {
+													const menu = e.currentTarget.nextElementSibling;
+													menu?.classList.toggle('hidden');
+													e.stopPropagation();
 												}}
 											>
-												Nouvelle Carte
+												Actions
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													width="16"
+													height="16"
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													stroke-width="2"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+												>
+													<path d="m6 9 6 6 6-6" />
+												</svg>
 											</button>
-											{/if}
-											<button
-												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
-												on:click={() => (shown_refill = account)}
+
+											<!-- Dropdown menu -->
+											<div
+												class="hidden fixed mt-2 py-2 w-48 bg-white rounded-md shadow-lg z-50 border border-gray-200 flex flex-col"
+												style="position: fixed; "
 											>
-												Transactions
-											</button>
-											<button
-												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
-												on:click={() => {
-													deleteAccountCallback = () => {
-														deletingAccount = false;
-														deleteAccount(account.id)
-													};
-													confirmationMessage =
-														'Supprimer le compte de ' +
-														account.first_name +
-														' ' +
-														account.last_name +
-														' ?';
-													deletingAccount = true;
-												}}
-											>
-												Supprimer
-											</button>
+												{#if askForCard == false}
+													<button
+														class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+														on:click={() => {
+															selectedAccount = account;
+															askForCard = true;
+														}}
+													>
+														Nouvelle Carte
+													</button>
+												{/if}
+												<button
+													class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+													on:click={() => (shown_refill = account)}
+												>
+													Transactions
+												</button>
+												<button
+													class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+													on:click={() => {
+														deleteAccountCallback = () => {
+															deletingAccount = false;
+															deleteAccount(account.id);
+														};
+														confirmationMessage =
+															'Supprimer le compte de ' +
+															account.first_name +
+															' ' +
+															account.last_name +
+															' ?';
+														deletingAccount = true;
+													}}
+												>
+													Supprimer
+												</button>
+												<button
+													class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+													on:click={() => {
+														shown_stars = account;
+													}}
+												>
+													Ajouter des étoiles
+												</button>
+											</div>
 										</div>
 									</td>
 								</tr>
