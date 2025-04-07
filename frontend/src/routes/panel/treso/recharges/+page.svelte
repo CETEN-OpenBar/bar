@@ -22,13 +22,9 @@
 	};
 	let itemsPerPage = 100;
 
-	let today = new Date();
-	// Set it precisely to midnight LOCAL time today
-	today.setHours(0, 0, 0, 0);
-	let startTimestampSeconds = today.getTime() / 1000;
-	let endTimestampSeconds = startTimestampSeconds + (24 * 60 * 60);
-	let startDate = Math.floor(startTimestampSeconds).toString();
-	let endDate = Math.floor(endTimestampSeconds).toString();
+	let todayMorning = new Date(new Date().toLocaleDateString());
+	let startDate = time2Utc(todayMorning.getTime() / 1000).toString();
+	let endDate = time2Utc(todayMorning.getTime() / 1000 + 24 * 60 * 60).toString();
 
 	async function reloadItems() {
 		let resp = await refillsApi().getRefills(page, itemsPerPage, startDate, endDate, {
@@ -63,7 +59,11 @@
 			<input
 				class="rounded-md bg-blue-200"
 				type="date"
-				value={today.toISOString().split('T')[0]}
+				value={todayMorning.toLocaleString('default', { year: 'numeric' }) +
+					'-' +
+					todayMorning.toLocaleString('default', { month: '2-digit' }) +
+					'-' +
+					todayMorning.toLocaleString('default', { day: '2-digit' })}
 				on:change={(e) => {
 					// @ts-ignore
 					let s = time2Utc(new Date(e.target.value).getTime() / 1000);
@@ -103,12 +103,11 @@
 							<tr>
 								<td class="px-4">
 									{refills.filter((refill) => refill.type == t).length}
-								</td>
+									</td>
 								<td class="px-4">
-									{refills
-										.filter((refill) => refill.type == t)
-										.filter((refill) => refill.canceled_by == undefined).length}
-								</td>
+									{refills.filter((refill) => refill.type == t)
+									.filter((refill) => refill.canceled_by == undefined).length}
+									</td>
 								<td class="px-4">
 									{formatPrice(
 										refills
