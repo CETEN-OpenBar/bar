@@ -9084,12 +9084,13 @@ export const StarsApiAxiosParamCreator = function (configuration?: Configuration
          * Get all stars donations
          * @param {number} [page] Page number
          * @param {number} [limit] Number of donations per page
+         * @param {string} [name] Filter by account name
          * @param {string} [startDate] Start date of the donations
          * @param {string} [endDate] End date of the donations
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getStarrings: async (page?: number, limit?: number, startDate?: string, endDate?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getStarrings: async (page?: number, limit?: number, name?: string, startDate?: string, endDate?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/stars`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -9110,6 +9111,10 @@ export const StarsApiAxiosParamCreator = function (configuration?: Configuration
 
             if (limit !== undefined) {
                 localVarQueryParameter['limit'] = limit;
+            }
+
+            if (name !== undefined) {
+                localVarQueryParameter['name'] = name;
             }
 
             if (startDate !== undefined) {
@@ -9313,13 +9318,14 @@ export const StarsApiFp = function(configuration?: Configuration) {
          * Get all stars donations
          * @param {number} [page] Page number
          * @param {number} [limit] Number of donations per page
+         * @param {string} [name] Filter by account name
          * @param {string} [startDate] Start date of the donations
          * @param {string} [endDate] End date of the donations
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getStarrings(page?: number, limit?: number, startDate?: string, endDate?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetStarrings200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getStarrings(page, limit, startDate, endDate, options);
+        async getStarrings(page?: number, limit?: number, name?: string, startDate?: string, endDate?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetStarrings200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getStarrings(page, limit, name, startDate, endDate, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['StarsApi.getStarrings']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -9405,13 +9411,14 @@ export const StarsApiFactory = function (configuration?: Configuration, basePath
          * Get all stars donations
          * @param {number} [page] Page number
          * @param {number} [limit] Number of donations per page
+         * @param {string} [name] Filter by account name
          * @param {string} [startDate] Start date of the donations
          * @param {string} [endDate] End date of the donations
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getStarrings(page?: number, limit?: number, startDate?: string, endDate?: string, options?: RawAxiosRequestConfig): AxiosPromise<GetStarrings200Response> {
-            return localVarFp.getStarrings(page, limit, startDate, endDate, options).then((request) => request(axios, basePath));
+        getStarrings(page?: number, limit?: number, name?: string, startDate?: string, endDate?: string, options?: RawAxiosRequestConfig): AxiosPromise<GetStarrings200Response> {
+            return localVarFp.getStarrings(page, limit, name, startDate, endDate, options).then((request) => request(axios, basePath));
         },
         /**
          * Cancels a donation
@@ -9489,14 +9496,15 @@ export class StarsApi extends BaseAPI {
      * Get all stars donations
      * @param {number} [page] Page number
      * @param {number} [limit] Number of donations per page
+     * @param {string} [name] Filter by account name
      * @param {string} [startDate] Start date of the donations
      * @param {string} [endDate] End date of the donations
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof StarsApi
      */
-    public getStarrings(page?: number, limit?: number, startDate?: string, endDate?: string, options?: RawAxiosRequestConfig) {
-        return StarsApiFp(this.configuration).getStarrings(page, limit, startDate, endDate, options).then((request) => request(this.axios, this.basePath));
+    public getStarrings(page?: number, limit?: number, name?: string, startDate?: string, endDate?: string, options?: RawAxiosRequestConfig) {
+        return StarsApiFp(this.configuration).getStarrings(page, limit, name, startDate, endDate, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

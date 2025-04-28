@@ -4,7 +4,6 @@
 	import { starsApi } from '$lib/requests/requests';
 
 	let stars: Starring[] = [];
-	let displayed: Starring[] = [];
 	let start_date = '';
 	let end_date = '';
 	let nameFilter = '';
@@ -25,20 +24,19 @@
 	};
 
 	async function fetchStars() {
-		const response = await starsApi().getStarrings(page, stars_per_page, start_date, end_date, {
-			withCredentials: true
-		});
+		const response = await starsApi().getStarrings(
+			page,
+			stars_per_page,
+			nameFilter.trim(),
+			start_date,
+			end_date,
+			{ withCredentials: true }
+		);
 		const data = response.data;
 		stars = Array.isArray(data.stars) ? data.stars : [];
 		page = data.page;
 		maxPage = data.max_page;
 		stars_per_page = data.limit;
-		applyFilter();
-	}
-
-	function applyFilter() {
-		const term = nameFilter.trim().toLowerCase();
-		displayed = term ? stars.filter((s) => s.account_name.toLowerCase().includes(term)) : stars;
 	}
 
 	onMount(fetchStars);
@@ -69,7 +67,10 @@
 			type="text"
 			placeholder="Nom"
 			bind:value={nameFilter}
-			on:input={applyFilter}
+			on:input={() => {
+				page = 0;
+				fetchStars();
+			}}
 			class="border px-2 py-1 rounded"
 		/>
 	</label>
@@ -87,7 +88,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		{#each displayed as star}
+		{#each stars as star}
 			<tr class="hover:bg-gray-50">
 				<td class="border p-2">{new Date(star.issued_at).toLocaleString()}</td>
 				<td class="border p-2">{star.account_name}</td>
