@@ -184,8 +184,8 @@ type DBackend interface {
 	GetAllCarouselTexts(ctx context.Context) ([]*models.CarouselText, error)
 	GetStarrings(ctx context.Context, account string, page uint64, size uint64, startAt, endAt uint64) ([]*models.Starring, error)
 	CountStarrings(ctx context.Context, account string, startAt, endAt uint64) (uint64, error)
-	GetAllStarrings(ctx context.Context, page uint64, size uint64, startAt, endAt uint64) ([]*models.Starring, error)
-	CountAllStarrings(ctx context.Context, startAt, endAt uint64) (uint64, error)
+	GetAllStarrings(ctx context.Context, page uint64, size uint64,  name string, startAt, endAt uint64) ([]*models.Starring, error)
+	CountAllStarrings(ctx context.Context, name string, startAt, endAt uint64) (uint64, error)
 
 	// Mongo transactions
 	WithTransaction(ctx context.Context, fn func(ctx mongo.SessionContext) (interface{}, error), opts ...*options.TransactionOptions) (interface{}, error)

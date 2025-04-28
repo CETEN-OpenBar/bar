@@ -2146,6 +2146,12 @@ paths:
           schema:
             type: integer
             format: uint64
+        - name: name
+          in: query
+          description: Filter by account name
+          required: false
+          schema:
+            type: string
         - name: start_date
           in: query
           description: Start date of the donations

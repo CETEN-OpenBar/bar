@@ -77,6 +77,13 @@ func (s *Server) GetStarrings(c echo.Context, params autogen.GetStarringsParams)
 	if err != nil {
 		return nil
 	}
+
+	logrus.Debug("GetStarrings, called with startsAt: ", *params.StartDate, " endsAt: ", *params.EndDate, " name: ", *params.Name, " page: ", *params.Page, " size: ", *params.Limit)
+
+	var name string
+	if params.Name != nil {
+		name = string(*params.Name)
+	}
 	var startsAt uint64 = 0
 	if params.StartDate != nil {
 		t, err := time.Parse("2006-01-02", *params.StartDate) // 2006-01-02 is the reference time in Go
@@ -91,7 +98,10 @@ func (s *Server) GetStarrings(c echo.Context, params autogen.GetStarringsParams)
 			endsAt = uint64(t.Unix())
 		}
 	}
-	count, err := s.DBackend.CountAllStarrings(c.Request().Context(), startsAt, endsAt)
+
+	logrus.Debug("GetStarrings, query with startsAt: ", startsAt, " endsAt: ", endsAt, " name: ", name, "")
+
+	count, err := s.DBackend.CountAllStarrings(c.Request().Context(), name, startsAt, endsAt)
 	if err != nil {
 		return Error500(c)
 	}
@@ -99,7 +109,7 @@ func (s *Server) GetStarrings(c echo.Context, params autogen.GetStarringsParams)
 	// Make sure the last page is not empty
 	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	data, err := s.DBackend.GetAllStarrings(c.Request().Context(), dbpage, limit, startsAt, endsAt)
+	data, err := s.DBackend.GetAllStarrings(c.Request().Context(), dbpage, limit, name, startsAt, endsAt)
 	if err != nil {
 		return Error500(c)
 	}
