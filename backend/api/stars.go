@@ -5,16 +5,15 @@ import (
 	"bar/internal/models"
 	"errors"
 	"math"
-	"strconv"
 	"time"
-//	"fmt"
+
+	//	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 )
-
 
 // (POST /accounts/{account_id}/stars)
 func (s *Server) PostStarring(c echo.Context, accountId string, params autogen.PostStarringParams) error {
@@ -72,23 +71,26 @@ func (s *Server) PostStarring(c echo.Context, accountId string, params autogen.P
 	return nil
 }
 
-
 // (GET /stars)
 func (s *Server) GetStarrings(c echo.Context, params autogen.GetStarringsParams) error {
 	_, err := MustGetAdmin(c)
 	if err != nil {
 		return nil
 	}
-	logrus.Info("dd")
 	var startsAt uint64 = 0
 	if params.StartDate != nil {
-		startsAt, _ = strconv.ParseUint(*params.StartDate, 10, 64)
+		t, err := time.Parse("2006-01-02", *params.StartDate) // 2006-01-02 is the reference time in Go
+		if err == nil {
+			startsAt = uint64(t.Unix())
+		}
 	}
 	var endsAt uint64 = math.MaxInt64
 	if params.EndDate != nil {
-		endsAt, _ = strconv.ParseUint(*params.EndDate, 10, 64)
+		t, err := time.Parse("2006-01-02", *params.EndDate) // Putting the same date doesn't activate the date filter
+		if err == nil {
+			endsAt = uint64(t.Unix())
+		}
 	}
-
 	count, err := s.DBackend.CountAllStarrings(c.Request().Context(), startsAt, endsAt)
 	if err != nil {
 		return Error500(c)
@@ -109,7 +111,7 @@ func (s *Server) GetStarrings(c echo.Context, params autogen.GetStarringsParams)
 	}
 
 	autogen.GetStarrings200JSONResponse{
-		Stars: starrings,
+		Stars:   starrings,
 		Limit:   limit,
 		Page:    page,
 		MaxPage: maxPage,
@@ -157,7 +159,7 @@ func (s *Server) GetSelfStarring(c echo.Context, params autogen.GetSelfStarringP
 	}
 
 	autogen.GetSelfStarring200JSONResponse{
-		Stars: starrings,
+		Stars:   starrings,
 		Limit:   limit,
 		Page:    page,
 		MaxPage: maxPage,
@@ -213,14 +215,13 @@ func (s *Server) GetAccountStarring(c echo.Context, accountId string, params aut
 	}
 
 	autogen.GetAccountStarring200JSONResponse{
-		Stars: starrings,
+		Stars:   starrings,
 		Limit:   limit,
 		Page:    page,
 		MaxPage: maxPage,
 	}.VisitGetAccountStarringResponse(c.Response())
 	return nil
 }
-
 
 // (PATCH /accounts/{account_id}/stars/{starring_id})
 func (s *Server) PatchStarringId(c echo.Context, accountId autogen.UUID, starringId autogen.UUID, params autogen.PatchStarringIdParams) error {
@@ -263,7 +264,6 @@ func (s *Server) PatchStarringId(c echo.Context, accountId autogen.UUID, starrin
 				starring.CanceledBy = nil
 				starring.CanceledByName = nil
 
-				
 			}
 		}
 
@@ -316,5 +316,3 @@ func (s *Server) MarkDeleteStarring(c echo.Context, accountId autogen.UUID, star
 	autogen.MarkDeleteAccountId204Response{}.VisitMarkDeleteAccountIdResponse(c.Response())
 	return nil
 }
-
-
