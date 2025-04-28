@@ -78,8 +78,6 @@ func (s *Server) GetStarrings(c echo.Context, params autogen.GetStarringsParams)
 		return nil
 	}
 
-	logrus.Debug("GetStarrings, called with startsAt: ", *params.StartDate, " endsAt: ", *params.EndDate, " name: ", *params.Name, " page: ", *params.Page, " size: ", *params.Limit)
-
 	var name string
 	if params.Name != nil {
 		name = string(*params.Name)
@@ -98,8 +96,6 @@ func (s *Server) GetStarrings(c echo.Context, params autogen.GetStarringsParams)
 			endsAt = uint64(t.Unix())
 		}
 	}
-
-	logrus.Debug("GetStarrings, query with startsAt: ", startsAt, " endsAt: ", endsAt, " name: ", name, "")
 
 	count, err := s.DBackend.CountAllStarrings(c.Request().Context(), name, startsAt, endsAt)
 	if err != nil {
