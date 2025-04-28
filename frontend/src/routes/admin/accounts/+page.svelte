@@ -164,10 +164,10 @@
 
 	<div id="popup" class="absolute w-full h-full top-0 left-0 flex justify-center items-center">
 		<div
-			class="relative text-black flex flex-col justify-center items-center gap-4 p-10 h-96 bg-white rounded-xl shadow-xl z-20"
+			class="relative flex flex-col justify-center items-center gap-4 p-10 h-96 bg-white dark:bg-slate-900 text-black dark:text-white rounded-xl shadow-xl z-20"
 		>
 			<button
-				class="absolute top-0 right-0 p-2 text-xl font-bold m-2 rounded-full transition-all text-black"
+				class="absolute top-0 right-0 p-2 text-xl font-bold m-2 rounded-full transition-all text-black dark:text-white"
 				on:click={() => {
 					reset();
 				}}
@@ -629,7 +629,7 @@
 									<td class="h-px w-px whitespace-nowrap relative">
 										<div class="px-6 py-1.5">
 											<button
-												class="text-sm text-blue-600 font-medium hover:bg-gray-100 p-2 rounded-md flex items-center gap-2"
+												class="text-sm text-blue-600 dark:text-blue-400 font-medium hover:bg-gray-100 dark:hover:bg-slate-800 p-2 rounded-md flex items-center gap-2"
 												on:click={(e) => {
 													const menu = e.currentTarget.nextElementSibling;
 													menu?.classList.toggle('hidden');
@@ -654,12 +654,12 @@
 
 											<!-- Dropdown menu -->
 											<div
-												class="hidden fixed mt-2 py-2 w-48 bg-white rounded-md shadow-lg z-50 border border-gray-200 flex flex-col"
+												class="hidden fixed mt-2 py-2 w-48 bg-white dark:bg-slate-900 rounded-md shadow-lg z-50 border border-gray-200 dark:border-gray-700 flex flex-col"
 												style="position: fixed; "
 											>
 												{#if askForCard == false}
 													<button
-														class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+														class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800"
 														on:click={() => {
 															selectedAccount = account;
 															askForCard = true;
@@ -669,13 +669,13 @@
 													</button>
 												{/if}
 												<button
-													class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+													class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800"
 													on:click={() => (shown_refill = account)}
 												>
 													Transactions
 												</button>
 												<button
-													class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+													class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800"
 													on:click={() => {
 														deleteAccountCallback = () => {
 															deletingAccount = false;
@@ -693,7 +693,7 @@
 													Supprimer
 												</button>
 												<button
-													class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+													class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800"
 													on:click={() => {
 														shown_stars = account;
 													}}

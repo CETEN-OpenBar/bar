@@ -27,10 +27,10 @@ function sendStars() {
 
 <div id="popup" class="absolute w-full h-full top-0 left-0 flex justify-center items-center">
   <div
-    class="relative text-black flex flex-col justify-center items-center gap-4 p-10 bg-white rounded-xl shadow-xl z-20"
+    class="relative flex flex-col justify-center items-center gap-4 p-10 bg-white dark:bg-slate-900 text-black dark:text-white rounded-xl shadow-xl z-20"
   >
     <button
-      class="absolute top-0 right-0 p-2 text-xl font-bold m-2 rounded-full transition-all text-black"
+      class="absolute top-0 right-0 p-2 text-xl font-bold m-2 rounded-full transition-all text-black dark:text-white"
       on:click={close}
     >
       <iconify-icon icon="mdi:close" />
@@ -43,7 +43,7 @@ function sendStars() {
         <input
           type="number"
           required
-          class="w-full p-2 border-2 rounded-md"
+          class="w-full p-2 border-2 rounded-md dark:bg-slate-800 dark:text-white dark:border-gray-700"
           bind:value={amount}
           min="0"
           placeholder="Nombre d'étoiles"
@@ -52,7 +52,7 @@ function sendStars() {
       </div>
 
       <button
-        class="px-4 py-2 bg-blue-500 text-white rounded-md disabled:bg-gray-400"
+        class="px-4 py-2 bg-blue-500 text-white rounded-md disabled:bg-gray-400 dark:disabled:bg-gray-600"
         disabled={amount < 0}
         on:click={sendStars}
       >
