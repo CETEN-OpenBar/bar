@@ -43,7 +43,7 @@
 	onMount(fetchStars);
 </script>
 
-<div class="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+<div class="flex-grow grid grid-cols-1 grid-rows-[auto_1fr_auto] bg-gray-50 dark:bg-gray-900">
 	<div class="m-3 p-2">
 		<div class="flex flex-wrap items-center gap-6">
 			<div class="flex items-center gap-3">
@@ -106,7 +106,7 @@
 				{#each stars as star}
 					<div class="grid grid-cols-[1fr_1.5fr_1fr_0.75fr_0.5fr_0.5fr] divide-x divide-gray-200 dark:divide-gray-700">
 						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-                            {new Date(star.issued_at).toLocaleDateString('fr-FR', {
+                            {new Date(star.issued_at * 1000).toLocaleDateString('fr-FR', {
 								day: 'numeric',
 								month: 'long',
 								year: 'numeric',
