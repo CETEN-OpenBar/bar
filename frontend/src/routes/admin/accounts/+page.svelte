@@ -670,37 +670,41 @@
 											>
 												{#if askForCard == false}
 													<button
-														class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800"
+														class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center gap-2"
 														on:click={() => {
 															selectedAccount = account;
 															askForCard = true;
 														}}
 													>
+														<iconify-icon icon="mdi:card-account-details" width="20" height="20" />
 														Nouvelle Carte
 													</button>
 												{/if}
 												<button
-													class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800"
-													on:click={() => (recharging_account = account)}
-												>
-													Recharger
-												</button>
-												<button
-													class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800"
+													class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center gap-2"
 													on:click={() => (shown_refill = account)}
 												>
+													<iconify-icon icon="mdi:history" width="20" height="20" />
 													Transactions
 												</button>
 												<button
-													class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800"
+													class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center gap-2"
+													on:click={() => (recharging_account = account)}
+												>
+													<iconify-icon icon="mdi:wallet-plus" width="20" height="20" />
+													Recharger
+												</button>
+												<button
+													class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center gap-2"
 													on:click={() => {
 														shown_stars = account;
 													}}
 												>
+													<iconify-icon icon="mdi:star-plus" width="20" height="20" />
 													Ajouter des étoiles
 												</button>
 												<button
-													class="w-full text-left px-4 py-2 text-sm text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-800"
+													class="w-full text-left px-4 py-2 text-sm text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-800 flex items-center gap-2"
 													on:click={() => {
 														deleteAccountCallback = () => {
 															deletingAccount = false;
@@ -715,6 +719,7 @@
 														deletingAccount = true;
 													}}
 												>
+													<iconify-icon icon="mdi:delete" width="20" height="20" />
 													Supprimer
 												</button>
 											</div>
