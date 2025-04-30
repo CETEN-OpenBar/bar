@@ -2,6 +2,7 @@
 	import type { Account, NewAccount, NewCategory } from '$lib/api';
 	import Refills from '$lib/components/admin/refills.svelte';
 	import Stars from '$lib/components/admin/stars.svelte';
+	import NewRefill from '$lib/components/comptoir/newRefill.svelte';
 	import ConfirmationPopup from '$lib/components/confirmationPopup.svelte';
 	import { accountsApi } from '$lib/requests/requests';
 	import { formatPrice } from '$lib/utils';
@@ -38,6 +39,7 @@
 	let accounts_per_page = 10;
 	let shown_refill: Account | undefined = undefined;
 	let shown_stars: Account | undefined = undefined;
+	let recharging_account: Account | undefined = undefined;
 
 	let deletingAccount: boolean = false;
 	let confirmationMessage: string | undefined = undefined;
@@ -149,6 +151,16 @@
 		close={() => {
 			shown_stars = undefined;
 		}}
+	/>
+{/if}
+
+{#if recharging_account}
+	<NewRefill
+		close={() => {
+			recharging_account = undefined;
+			reloadAccounts();
+		}}
+		cardId={recharging_account.card_id}
 	/>
 {/if}
 
@@ -669,36 +681,42 @@
 												{/if}
 												<button
 													class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800"
+													on:click={() => (recharging_account = account)}
+												>
+													Recharger
+												</button>
+												<button
+													class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800"
 													on:click={() => (shown_refill = account)}
 												>
 													Transactions
 												</button>
 												<button
-                                                class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800"
-                                                on:click={() => {
-                                                    shown_stars = account;
-                                                }}
+													class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800"
+													on:click={() => {
+														shown_stars = account;
+													}}
 												>
-                                                Ajouter des étoiles
-                                            </button>
-                                            <button
-                                                class="w-full text-left px-4 py-2 text-sm text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-800"
-                                                on:click={() => {
-                                                    deleteAccountCallback = () => {
-                                                        deletingAccount = false;
-                                                        deleteAccount(account.id);
-                                                    };
-                                                    confirmationMessage =
-                                                        'Supprimer le compte de ' +
-                                                        account.first_name +
-                                                        ' ' +
-                                                        account.last_name +
-                                                        ' ?';
-                                                    deletingAccount = true;
-                                                }}
-                                            >
-                                                Supprimer
-                                            </button>
+													Ajouter des étoiles
+												</button>
+												<button
+													class="w-full text-left px-4 py-2 text-sm text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-800"
+													on:click={() => {
+														deleteAccountCallback = () => {
+															deletingAccount = false;
+															deleteAccount(account.id);
+														};
+														confirmationMessage =
+															'Supprimer le compte de ' +
+															account.first_name +
+															' ' +
+															account.last_name +
+															' ?';
+														deletingAccount = true;
+													}}
+												>
+													Supprimer
+												</button>
 											</div>
 										</div>
 									</td>
