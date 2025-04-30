@@ -655,7 +655,6 @@
 											<!-- Dropdown menu -->
 											<div
 												class="hidden fixed mt-2 py-2 w-48 bg-white dark:bg-slate-900 rounded-md shadow-lg z-50 border border-gray-200 dark:border-gray-700 flex flex-col"
-												style="position: fixed; "
 											>
 												{#if askForCard == false}
 													<button
@@ -675,31 +674,31 @@
 													Transactions
 												</button>
 												<button
-													class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800"
-													on:click={() => {
-														deleteAccountCallback = () => {
-															deletingAccount = false;
-															deleteAccount(account.id);
-														};
-														confirmationMessage =
-															'Supprimer le compte de ' +
-															account.first_name +
-															' ' +
-															account.last_name +
-															' ?';
-														deletingAccount = true;
-													}}
+                                                class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800"
+                                                on:click={() => {
+                                                    shown_stars = account;
+                                                }}
 												>
-													Supprimer
-												</button>
-												<button
-													class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800"
-													on:click={() => {
-														shown_stars = account;
-													}}
-												>
-													Ajouter des étoiles
-												</button>
+                                                Ajouter des étoiles
+                                            </button>
+                                            <button
+                                                class="w-full text-left px-4 py-2 text-sm text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-800"
+                                                on:click={() => {
+                                                    deleteAccountCallback = () => {
+                                                        deletingAccount = false;
+                                                        deleteAccount(account.id);
+                                                    };
+                                                    confirmationMessage =
+                                                        'Supprimer le compte de ' +
+                                                        account.first_name +
+                                                        ' ' +
+                                                        account.last_name +
+                                                        ' ?';
+                                                    deletingAccount = true;
+                                                }}
+                                            >
+                                                Supprimer
+                                            </button>
 											</div>
 										</div>
 									</td>
