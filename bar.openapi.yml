@@ -1162,6 +1162,24 @@ paths:
           required: false
           schema:
             type: string
+        - name: start_time
+          in: query
+          description: Filter by start_time
+          required: false
+          schema:
+            type: integer
+        - name: end_time
+          in: query
+          description: Filter by end_time
+          required: false
+          schema:
+            type: integer
+        - name: item_id
+          in: query
+          description: Filter by item
+          required: false
+          schema:
+            type: string
       responses:
         "200":
           description: ""
