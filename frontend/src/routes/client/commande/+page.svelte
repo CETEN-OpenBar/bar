@@ -35,6 +35,15 @@
 	let order: NewTransactionItemWithItem[] = [];
 	let orderPrice: number = 0;
 
+	let admin = false;
+	accountsApi()
+		.getAccountAdmin({ withCredentials: true })
+		.then((res) => {
+			if (res.data.is_allowed) {
+				admin=true;
+			}
+		})
+		
 	onMount(() => {
 		unsub = store.subscribe((state) => {
 			account = state.account;
@@ -363,7 +372,16 @@
 	<div class="bg-[#222831] flex flex-row w-full p-3 items-center {categories_menu || order_menu ? 'blur-sm' : ''}">
 		<Hamburger activated={categories_menu} toggle={toggleCategoriesMenu} />
 		<button class="flex-grow font-semibold ml-3 text-left" on:click={toggleCategoriesMenu}>{currentCategoryName}</button>
-
+		{#if admin}
+		<button
+			class="flex mr-5 items-center space-x-2 px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 md:display sm:block hidden"
+				on:click={() => {
+					goto('/panel');
+				}}
+			>
+			<span class="text-white text-lg font-bold">Panel Admin</span>
+		</button>
+		{/if}
 		<div class="flex flex-col items-end mr-3 text-xs space-y-2">
 			<Price amount={account?.balance ?? 0} />
 			{#if (account?.points ?? 0) > 0}
