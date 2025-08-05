@@ -374,7 +374,7 @@
 		<button class="flex-grow font-semibold ml-3 text-left" on:click={toggleCategoriesMenu}>{currentCategoryName}</button>
 		{#if admin}
 		<button
-			class="flex mr-5 items-center space-x-2 px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600"
+			class="flex mr-5 items-center space-x-2 px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 md:display sm:block hidden"
 				on:click={() => {
 					goto('/panel');
 				}}
