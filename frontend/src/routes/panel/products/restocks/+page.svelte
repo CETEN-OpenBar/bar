@@ -11,6 +11,7 @@
 	import { formatPrice, parsePrice, restockTypeIterator } from '$lib/utils';
 	import { onMount } from 'svelte';
 	import Time from 'svelte-time';
+	import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
 
 	let sure: boolean = false;
 	let items: Item[] = [];
@@ -247,7 +248,104 @@
 	function calculateHt(item: NewRestockItem) {
 		return Math.round(item.bundle_cost_ttc / (1 + item.tva / 10000));
 	}
+
+	onMount(() => {
+    GlobalWorkerOptions.workerSrc = './pdf.worker.mjs';
+  });
+
+  let fileInput: HTMLInputElement;
+  let pdfText = '';
+
+  const handleFileChange = async (event: Event) => {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const fileReader = new FileReader();
+
+      fileReader.onload = async (event) => {
+        const arrayBuffer = event.target?.result as ArrayBuffer;
+        if (arrayBuffer) {
+          const pdf = await getDocument(arrayBuffer).promise;
+          let fullText = '';
+
+          for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const textContent = await page.getTextContent();
+            const text = textContent.items.map((item: any) => item.str).join(' ');
+            fullText += text + ' ';
+          }
+
+          pdfText = fullText;
+          console.log('PDF text:', fullText);
+        }
+      };
+
+      fileReader.readAsArrayBuffer(file);
+    }
+  };
+
 </script>
+
+<!-- Popup reappro pdf -->
+<div
+	id="hs-modal-new-image"
+	class="hs-overlay hidden w-full h-full fixed top-0 left-0 z-[60] overflow-x-hidden overflow-y-auto"
+>
+	<div
+		class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto"
+	>
+		<div
+			class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-gray-800 dark:border-gray-700"
+		>
+			<div class="p-4 sm:p-7">
+				<div class="text-center">
+					<h2 class="block text-2xl font-bold text-gray-800 dark:text-gray-200">
+						Ajouter une facture PDF
+					</h2>
+				</div>
+
+				<div class="mt-5">
+					<!-- Form -->
+					<div class="grid gap-y-4">
+						<!-- Form Group -->
+						<div>							
+							<label for="invoice" class="block text-sm mb-2 dark:text-white">Facture</label>
+							<div class="relative">
+								<input
+									type="file"
+									id="invoice"
+									name="invoice"
+									accept=".pdf"
+									bind:this={fileInput}
+									on:change={handleFileChange}
+									class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+									required
+									aria-describedby="text-error"
+									/>
+
+									{#if pdfText}
+									<div>
+										<h3>Extracted Text:</h3>
+										<pre>{pdfText}</pre>
+									</div>
+									{/if}
+							</div>
+
+							<button
+								type="submit"
+								class="mt-4 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
+								
+								data-hs-overlay="#hs-modal-new-image">Réappro</button
+							>
+						</div>
+					</div>
+					<!-- End Form -->
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 
 <div class="max-w-[95%] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
 	<div class="py-3 px-2 w-1.0 flex m-auto">
@@ -268,6 +366,11 @@
 				Total TTC : {formatPrice(newRestock.total_cost_ttc)}
 			</p>
 		</div>
+		{#if newRestock.type=='auchan' || newRestock.type == 'auchan_drive'}
+		<button
+			data-hs-overlay="#hs-modal-new-image"
+			id="reapproPdf" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded ml-4">PDF</button>
+		{/if}
 	</div>
 	<div class="flex flex-col">
 		<table class="mb-10 min-w-full divide-y divide-gray-200 dark:divide-gray-700 bg-blue-950">
