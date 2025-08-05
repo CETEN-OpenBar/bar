@@ -35,21 +35,21 @@ func (s *Server) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		if err != nil {
 			userSess.Options.MaxAge = -1
 			userSess.Save(c.Request(), c.Response())
-			return Error500(c)
+			return ErrorNotAuthenticated(c)
 		}
 
 		adminSess, err := adminStore.Get(c.Request(), "BAR_ADMIN_SESS")
 		if err != nil {
 			adminSess.Options.MaxAge = -1
 			adminSess.Save(c.Request(), c.Response())
-			return Error500(c)
+			return ErrorNotAuthenticated(c)
 		}
 
 		onBoardSess, err := onBoardStore.Get(c.Request(), "BAR_ONBOARD_SESS")
 		if err != nil {
 			onBoardSess.Options.MaxAge = -1
 			onBoardSess.Save(c.Request(), c.Response())
-			return Error500(c)
+			return ErrorNotAuthenticated(c)
 
 		}
 
