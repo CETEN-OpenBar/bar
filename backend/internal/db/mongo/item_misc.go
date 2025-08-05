@@ -11,13 +11,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (b *Backend) GetItems(ctx context.Context, categoryID string, page, size uint64, state string, name string, fournisseur string) ([]*models.Item, error) {
+func (b *Backend) GetItems(ctx context.Context, categoryID string, page, size uint64, state string, name string, fournisseur string, sort bool) ([]*models.Item, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	var items []*models.Item
 
-	filter := bson.M{
+	matchFilter := bson.M{
 		"$or": []bson.M{
 			{
 				"deleted_at": bson.M{
@@ -30,12 +30,12 @@ func (b *Backend) GetItems(ctx context.Context, categoryID string, page, size ui
 		},
 	}
 	if state != "" {
-		filter["state"] = state
+		matchFilter["state"] = state
 		if state == string(autogen.ItemBuyable) {
-			// Get seconds since day start
+						// Get seconds since day start
 			t := time.Since(time.Now().Truncate(24 * time.Hour)).Seconds()
 			// available_from <= t <= available_until or (available_from == nil && available_until == nil)
-			filter["$and"] = []bson.M{
+			matchFilter["$and"] = []bson.M{
 				{
 					"$or": []bson.M{
 						{
@@ -64,19 +64,51 @@ func (b *Backend) GetItems(ctx context.Context, categoryID string, page, size ui
 		}
 	}
 	if categoryID != "" {
-		filter["category_id"] = uuid.MustParse(categoryID)
+		matchFilter["category_id"] = uuid.MustParse(categoryID)
 	}
 	if name != "" {
-		filter["name"] = bson.M{
+		matchFilter["name"] = bson.M{
 			"$regex":   name,
 			"$options": "i",
 		}
 	}
 	if fournisseur != "" {
-		filter["fournisseur"] = fournisseur
+		matchFilter["fournisseur"] = fournisseur
 	}
 
-	cursor, err := b.db.Collection(ItemsCollection).Find(ctx, filter, options.Find().SetSkip(int64(page*size)).SetLimit(int64(size)))
+	pipeline := []bson.M{
+		{"$match": matchFilter},
+	}
+
+	if sort {
+		pipeline = append(pipeline, bson.M{
+			"$addFields": bson.M{
+				"sortPriority": bson.M{
+					"$cond": bson.A{
+						bson.M{"$eq": bson.A{"$amount_left", 0}},
+						2, 
+						1,
+					},
+				},
+			},
+		})
+
+		pipeline = append(pipeline, bson.M{
+			"$sort": bson.D{
+				{"sortPriority", 1},
+			},
+		})
+	}
+	pipeline = append(pipeline, bson.M{"$skip": int64(page * size)})
+	pipeline = append(pipeline, bson.M{"$limit": int64(size)})
+
+	if sort {
+		pipeline = append(pipeline, bson.M{
+			"$project": bson.M{"sortPriority": 0},
+		})
+	}
+
+	cursor, err := b.db.Collection(ItemsCollection).Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
