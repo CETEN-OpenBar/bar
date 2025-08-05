@@ -43,10 +43,11 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 	// Make sure the last page is not empty
 	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	data, err := s.DBackend.GetItems(c.Request().Context(), categoryId.String(), dbpage, limit, state, "", "")
+	data, err := s.DBackend.GetItems(c.Request().Context(), categoryId.String(), dbpage, limit, state, "", "", true)
 	if err != nil {
 		return Error500(c)
 	}
+	logrus.Info(data)
 
 	var items []autogen.Item
 
@@ -270,7 +271,7 @@ func (s *Server) GetAllItems(c echo.Context, params autogen.GetAllItemsParams) e
 	// Make sure the last page is not empty
 	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	data, err := s.DBackend.GetItems(c.Request().Context(), categoryId, dbpage, limit, state, name, fournisseur)
+	data, err := s.DBackend.GetItems(c.Request().Context(), categoryId, dbpage, limit, state, name, fournisseur, false)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
