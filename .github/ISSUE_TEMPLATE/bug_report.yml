@@ -1,0 +1,59 @@
+name: "Bug report"
+description: Signalez un bug pour nous aider à nous améliorer
+title: "[BUG] <title>"
+labels: ["bug", "needs triage"]
+type: bug
+assignees: ['aripot007']
+body:
+- type: checkboxes
+  attributes:
+    label: Existe-t'il d'autres issues pour ce bug ?
+    description: Merci de rechercher pour voir s'il existe déjà une issue pour le bug que vous rencontrez.
+    options:
+    - label: J'ai recherché dans les issues existantes.
+      required: true
+- type: textarea
+  attributes:
+    label: Description du bug
+    description: Une description concise du bug
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Comportement attendu
+    description: Une description concise du comportement attendu.
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Étapes de reproduction
+    description: Étapes pour reproduire le bug
+    placeholder: |
+      1. Dans cet environnement ...
+      1. Avec cette configuration ...
+      1. Cliquer sur '...'
+      1. Observer l'erreur ...
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Environnement
+    description: |
+      exemples:
+        - **OS**: Ubuntu 20.04
+        - **Navigateur**: Firefox 128.12.0esr (64-bit)
+    value: |
+        - OS:
+        - Navigateur: 
+    render: markdown
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Autre chose ?
+    description: |
+      Liens ? Références ? Anything that will give us more context about the issue you are encountering!
+
+      Astuce: Vous pouvez joindre des screenshots ou des fichiers en cliquant sur ce champ pour le sélectionner, puis en glissant des fichiers dedans.
+  validations:
+    required: false
