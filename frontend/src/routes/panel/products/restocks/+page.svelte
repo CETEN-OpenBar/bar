@@ -141,6 +141,8 @@
 
 	async function applyRestock(state: RestockState) {
 		//if (!sure) return;
+		console.log("whyyy");
+		console.log("Request data:", newRestock);
 		newRestock.driver_id = undefined;
 		newRestock.total_cost_ttc = Math.round(newRestock.total_cost_ttc);
 		newRestock.total_cost_ht = Math.round(newRestock.total_cost_ht);
@@ -506,20 +508,21 @@
 										items = restockAuchanDrive(pdfText);
 									}									
 									if (items != undefined){
-										for (let i=0;i<items.length;i++){
-											let item = items[i];
+										items.forEach(item => {
 											itemsApi()
 											.getAllItems(undefined, undefined, undefined, undefined, undefined, undefined, {
 												withCredentials: true
 											})
 											.then((res) => {
 													let nameItem = undefined;
+													let idItem="";
 													let amountPerBundle = 0;
 													let searchItems = res.data.items ?? [];
 													for (let i=0;i<searchItems.length;i++){
 														let searchItem = searchItems[i];														
 														if (searchItem.ref_bundle == item.reference.toString()){
 															nameItem = searchItem.name;
+															idItem = searchItem.id;
 															if (searchItem.amount_per_bundle != undefined){
 																amountPerBundle = searchItem.amount_per_bundle;
 															}
@@ -527,11 +530,13 @@
 														}
 													}
 													if (nameItem != undefined){
+														newItem.item_id = idItem;
 														newItem.item_name = nameItem;
 														newItem.amount_of_bundle = item.quantity;
 														newItem.amount_per_bundle = amountPerBundle;
-														newItem.bundle_cost_ht = item.unitPriceHT*100;
+														newItem.bundle_cost_ht = Math.round(item.unitPriceHT*100);
 														newItem.tva = item.tvaRate*100;
+														newItem.bundle_cost_float_ttc = newItem.bundle_cost_ht * (1 + newItem.tva / 10000); 
 														newItem.bundle_cost_ttc = Math.round(newItem.bundle_cost_ht * (1 + newItem.tva / 10000));
 														add_item_to_restock();		
 													}
@@ -543,7 +548,7 @@
 													}
 												});
 									
-										};
+										});
 									}
 								}}
 								
