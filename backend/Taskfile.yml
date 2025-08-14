@@ -13,3 +13,8 @@ tasks:
       - oapi-codegen -generate="types,server,strict-server,spec" -package autogen ../bar.openapi.yml > autogen/bar.gen.go
       - go mod tidy
       - gomodifytags -all -file ./autogen/bar.gen.go -add-tags bson -w > /dev/null
+  update-helloasso:
+    desc: Update the helloasso api
+    cmds:
+      - curl --fail -o autogen/helloasso/helloasso.openapi.json https://raw.githubusercontent.com/HelloAsso/helloasso-open-api/refs/heads/main/helloasso.json
+      - oapi-codegen -generate="models,types,client" -package helloasso autogen/helloasso/helloasso.openapi.json > autogen/helloasso/helloasso.gen.go
