@@ -181,6 +181,11 @@ func (s *Server) PostRefill(c echo.Context, accountId string, params autogen.Pos
 		return Error500(c)
 	}
 
+	// Prevent creation of HelloAsso refills, as they should not be created manually
+	if params.Type == autogen.RefillHelloAsso {
+		return Error400(c)
+	}
+
 	refill := &models.Refill{
 		Refill: autogen.Refill{
 			AccountId:    account.Id,
@@ -249,6 +254,11 @@ func (s *Server) PatchRefillId(c echo.Context, accountId autogen.UUID, refillId 
 		return Error500(c)
 	}
 
+	// Prevent modification of HelloAsso refills
+	if refill.Type == autogen.RefillHelloAsso {
+		return Error400(c)
+	}
+
 	_, err = s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {
 		if params.State != nil {
 			oldState := refill.State
@@ -313,12 +323,17 @@ func (s *Server) MarkDeleteRefill(c echo.Context, accountId autogen.UUID, refill
 		return nil
 	}
 
-	_, err = s.DBackend.GetRefill(c.Request().Context(), refillId.String())
+	refill, err := s.DBackend.GetRefill(c.Request().Context(), refillId.String())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return ErrorRefillNotFound(c)
 		}
 		return Error500(c)
+	}
+
+	// Prevent modification of HelloAsso refills
+	if refill.Type == autogen.RefillHelloAsso {
+		return Error400(c)
 	}
 
 	err = s.DBackend.MarkDeleteRefill(c.Request().Context(), refillId.String(), account.Id.String())

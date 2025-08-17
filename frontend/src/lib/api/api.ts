@@ -850,6 +850,37 @@ export interface GetRefills200Response {
 /**
  * 
  * @export
+ * @interface GetRemoteRefills200Response
+ */
+export interface GetRemoteRefills200Response {
+    /**
+     * 
+     * @type {Array<RemoteRefill>}
+     * @memberof GetRemoteRefills200Response
+     */
+    'remote_refills': Array<RemoteRefill>;
+    /**
+     * 
+     * @type {number}
+     * @memberof GetRemoteRefills200Response
+     */
+    'page': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof GetRemoteRefills200Response
+     */
+    'limit': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof GetRemoteRefills200Response
+     */
+    'max_page': number;
+}
+/**
+ * 
+ * @export
  * @interface GetRestocks200Response
  */
 export interface GetRestocks200Response {
@@ -1764,10 +1795,88 @@ export const RefillType = {
     RefillCard: 'card',
     RefillTransfer: 'tranfer',
     RefillCheck: 'check',
+    RefillHelloAsso: 'helloasso',
     RefillOther: 'other'
 } as const;
 
 export type RefillType = typeof RefillType[keyof typeof RefillType];
+
+
+/**
+ * A remote (HelloAsso) refill
+ * @export
+ * @interface RemoteRefill
+ */
+export interface RemoteRefill {
+    /**
+     * 
+     * @type {string}
+     * @memberof RemoteRefill
+     */
+    'id': string;
+    /**
+     * 
+     * @type {RemoteRefillState}
+     * @memberof RemoteRefill
+     */
+    'state': RemoteRefillState;
+    /**
+     * HelloAsso checkout id
+     * @type {number}
+     * @memberof RemoteRefill
+     */
+    'checkout_intent_id'?: number;
+    /**
+     * HelloAsso order id, if the transaction suceeded
+     * @type {number}
+     * @memberof RemoteRefill
+     */
+    'order_id'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof RemoteRefill
+     */
+    'account_id': string;
+    /**
+     * Name of the account
+     * @type {string}
+     * @memberof RemoteRefill
+     */
+    'account_name': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof RemoteRefill
+     */
+    'amount': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof RemoteRefill
+     */
+    'created_at': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof RemoteRefill
+     */
+    'refill_id'?: string;
+}
+
+
+/**
+ * 
+ * @export
+ * @enum {string}
+ */
+
+export const RemoteRefillState = {
+    RemoteRefillStarted: 'started',
+    RemoteRefillProcessed: 'processed'
+} as const;
+
+export type RemoteRefillState = typeof RemoteRefillState[keyof typeof RemoteRefillState];
 
 
 /**
@@ -1943,6 +2052,19 @@ export const RestockType = {
 export type RestockType = typeof RestockType[keyof typeof RestockType];
 
 
+/**
+ * 
+ * @export
+ * @interface StartRemoteRefill200Response
+ */
+export interface StartRemoteRefill200Response {
+    /**
+     * 
+     * @type {string}
+     * @memberof StartRemoteRefill200Response
+     */
+    'redirect_url': string;
+}
 /**
  * 
  * @export
@@ -5278,6 +5400,42 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * Validate a remote refill
+         * @param {number} checkoutIntentId HelloAsso checkout intent id to validate
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        selfValidateRemoteRefill: async (checkoutIntentId: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'checkoutIntentId' is not null or undefined
+            assertParamExists('selfValidateRemoteRefill', 'checkoutIntentId', checkoutIntentId)
+            const localVarPath = `/account/remote-refills/validate`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (checkoutIntentId !== undefined) {
+                localVarQueryParameter['checkout_intent_id'] = checkoutIntentId;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -5319,6 +5477,16 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.postBorneAuthQR(postBorneAuthQRRequest, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
+        /**
+         * Validate a remote refill
+         * @param {number} checkoutIntentId HelloAsso checkout intent id to validate
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async selfValidateRemoteRefill(checkoutIntentId: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Refill>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.selfValidateRemoteRefill(checkoutIntentId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
     }
 };
 
@@ -5356,6 +5524,15 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         postBorneAuthQR(postBorneAuthQRRequest?: PostBorneAuthQRRequest, options?: any): AxiosPromise<ConnectCard200Response> {
             return localVarFp.postBorneAuthQR(postBorneAuthQRRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Validate a remote refill
+         * @param {number} checkoutIntentId HelloAsso checkout intent id to validate
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        selfValidateRemoteRefill(checkoutIntentId: number, options?: any): AxiosPromise<Refill> {
+            return localVarFp.selfValidateRemoteRefill(checkoutIntentId, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -5399,6 +5576,17 @@ export class DefaultApi extends BaseAPI {
      */
     public postBorneAuthQR(postBorneAuthQRRequest?: PostBorneAuthQRRequest, options?: AxiosRequestConfig) {
         return DefaultApiFp(this.configuration).postBorneAuthQR(postBorneAuthQRRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Validate a remote refill
+     * @param {number} checkoutIntentId HelloAsso checkout intent id to validate
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public selfValidateRemoteRefill(checkoutIntentId: number, options?: AxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).selfValidateRemoteRefill(checkoutIntentId, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -7624,6 +7812,67 @@ export const RefillsApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
+         * Get all remote refills
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of transactions per page
+         * @param {string} [startDate] Start date of the refill
+         * @param {string} [endDate] End date of the refill
+         * @param {number} [checkoutIntentId] HelloAsso Checkout Intent Id associated with the refill
+         * @param {number} [orderId] HelloAsso Order ID associated with the refill
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getRemoteRefills: async (page?: number, limit?: number, startDate?: string, endDate?: string, checkoutIntentId?: number, orderId?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/remote-refills`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+            if (startDate !== undefined) {
+                localVarQueryParameter['start_date'] = startDate;
+            }
+
+            if (endDate !== undefined) {
+                localVarQueryParameter['end_date'] = endDate;
+            }
+
+            if (checkoutIntentId !== undefined) {
+                localVarQueryParameter['checkout_intent_id'] = checkoutIntentId;
+            }
+
+            if (orderId !== undefined) {
+                localVarQueryParameter['order_id'] = orderId;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Get all refills
          * @param {number} [page] Page number
          * @param {number} [limit] Number of transactions per page
@@ -7815,6 +8064,44 @@ export const RefillsApiAxiosParamCreator = function (configuration?: Configurati
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * Start a remote refill
+         * @param {number} amount Amount of the refill in cents
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        startRemoteRefill: async (amount: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'amount' is not null or undefined
+            assertParamExists('startRemoteRefill', 'amount', amount)
+            const localVarPath = `/account/remote-refills/start`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication auth required
+
+            if (amount !== undefined) {
+                localVarQueryParameter['amount'] = amount;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -7850,6 +8137,21 @@ export const RefillsApiFp = function(configuration?: Configuration) {
          */
         async getRefills(page?: number, limit?: number, startDate?: string, endDate?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetRefills200Response>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getRefills(page, limit, startDate, endDate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Get all remote refills
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of transactions per page
+         * @param {string} [startDate] Start date of the refill
+         * @param {string} [endDate] End date of the refill
+         * @param {number} [checkoutIntentId] HelloAsso Checkout Intent Id associated with the refill
+         * @param {number} [orderId] HelloAsso Order ID associated with the refill
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getRemoteRefills(page?: number, limit?: number, startDate?: string, endDate?: string, checkoutIntentId?: number, orderId?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetRemoteRefills200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getRemoteRefills(page, limit, startDate, endDate, checkoutIntentId, orderId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -7901,6 +8203,16 @@ export const RefillsApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.postRefill(accountId, amount, type, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
+        /**
+         * Start a remote refill
+         * @param {number} amount Amount of the refill in cents
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async startRemoteRefill(amount: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StartRemoteRefill200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.startRemoteRefill(amount, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
     }
 };
 
@@ -7935,6 +8247,20 @@ export const RefillsApiFactory = function (configuration?: Configuration, basePa
          */
         getRefills(page?: number, limit?: number, startDate?: string, endDate?: string, options?: any): AxiosPromise<GetRefills200Response> {
             return localVarFp.getRefills(page, limit, startDate, endDate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get all remote refills
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of transactions per page
+         * @param {string} [startDate] Start date of the refill
+         * @param {string} [endDate] End date of the refill
+         * @param {number} [checkoutIntentId] HelloAsso Checkout Intent Id associated with the refill
+         * @param {number} [orderId] HelloAsso Order ID associated with the refill
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getRemoteRefills(page?: number, limit?: number, startDate?: string, endDate?: string, checkoutIntentId?: number, orderId?: number, options?: any): AxiosPromise<GetRemoteRefills200Response> {
+            return localVarFp.getRemoteRefills(page, limit, startDate, endDate, checkoutIntentId, orderId, options).then((request) => request(axios, basePath));
         },
         /**
          * Get all refills
@@ -7981,6 +8307,15 @@ export const RefillsApiFactory = function (configuration?: Configuration, basePa
         postRefill(accountId: string, amount: number, type: RefillType, options?: any): AxiosPromise<Refill> {
             return localVarFp.postRefill(accountId, amount, type, options).then((request) => request(axios, basePath));
         },
+        /**
+         * Start a remote refill
+         * @param {number} amount Amount of the refill in cents
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        startRemoteRefill(amount: number, options?: any): AxiosPromise<StartRemoteRefill200Response> {
+            return localVarFp.startRemoteRefill(amount, options).then((request) => request(axios, basePath));
+        },
     };
 };
 
@@ -8018,6 +8353,22 @@ export class RefillsApi extends BaseAPI {
      */
     public getRefills(page?: number, limit?: number, startDate?: string, endDate?: string, options?: AxiosRequestConfig) {
         return RefillsApiFp(this.configuration).getRefills(page, limit, startDate, endDate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get all remote refills
+     * @param {number} [page] Page number
+     * @param {number} [limit] Number of transactions per page
+     * @param {string} [startDate] Start date of the refill
+     * @param {string} [endDate] End date of the refill
+     * @param {number} [checkoutIntentId] HelloAsso Checkout Intent Id associated with the refill
+     * @param {number} [orderId] HelloAsso Order ID associated with the refill
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof RefillsApi
+     */
+    public getRemoteRefills(page?: number, limit?: number, startDate?: string, endDate?: string, checkoutIntentId?: number, orderId?: number, options?: AxiosRequestConfig) {
+        return RefillsApiFp(this.configuration).getRemoteRefills(page, limit, startDate, endDate, checkoutIntentId, orderId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -8071,6 +8422,17 @@ export class RefillsApi extends BaseAPI {
      */
     public postRefill(accountId: string, amount: number, type: RefillType, options?: AxiosRequestConfig) {
         return RefillsApiFp(this.configuration).postRefill(accountId, amount, type, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Start a remote refill
+     * @param {number} amount Amount of the refill in cents
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof RefillsApi
+     */
+    public startRemoteRefill(amount: number, options?: AxiosRequestConfig) {
+        return RefillsApiFp(this.configuration).startRemoteRefill(amount, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
