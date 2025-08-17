@@ -251,45 +251,45 @@ const (
 
 // HaTrustContractLegalInformationAddressAddressDto defines model for HaTrust.Contract.LegalInformation.Address.AddressDto.
 type HaTrustContractLegalInformationAddressAddressDto struct {
-	City          *string `json:"city"`
-	Country       *int32  `json:"country"`
-	CountryAlpha3 *string `json:"countryAlpha3"`
-	CountryName   *string `json:"countryName"`
-	Line          *string `json:"line"`
-	ZipCode       *string `json:"zipCode"`
+	City          *string `json:"city" bson:"city"`
+	Country       *int32  `json:"country" bson:"country"`
+	CountryAlpha3 *string `json:"countryAlpha3" bson:"country_alpha_3"`
+	CountryName   *string `json:"countryName" bson:"country_name"`
+	Line          *string `json:"line" bson:"line"`
+	ZipCode       *string `json:"zipCode" bson:"zip_code"`
 }
 
 // HelloAssoApiV5ModelsAccountCompanyLegalStatusModel user/payer company legal status
 type HelloAssoApiV5ModelsAccountCompanyLegalStatusModel struct {
 	// Id Company legal status id
-	Id *int32 `json:"id,omitempty"`
+	Id *int32 `json:"id,omitempty" bson:"id"`
 
 	// Label Company legal status label
-	Label *string `json:"label"`
+	Label *string `json:"label" bson:"label"`
 }
 
 // HelloAssoApiV5ModelsAccountOrganismCategoryModel defines model for HelloAsso.Api.V5.Models.Account.OrganismCategoryModel.
 type HelloAssoApiV5ModelsAccountOrganismCategoryModel struct {
-	Id         *int32  `json:"id,omitempty"`
-	Label      *string `json:"label"`
-	ShortLabel *string `json:"shortLabel"`
+	Id         *int32  `json:"id,omitempty" bson:"id"`
+	Label      *string `json:"label" bson:"label"`
+	ShortLabel *string `json:"shortLabel" bson:"short_label"`
 }
 
 // HelloAssoApiV5ModelsAccountsClientsApiClientModel defines model for HelloAsso.Api.V5.Models.Accounts.Clients.ApiClientModel.
 type HelloAssoApiV5ModelsAccountsClientsApiClientModel struct {
-	Domain      *string   `json:"domain"`
-	Id          *string   `json:"id"`
-	PartnerName *string   `json:"partnerName"`
-	Privileges  *[]string `json:"privileges"`
+	Domain      *string   `json:"domain" bson:"domain"`
+	Id          *string   `json:"id" bson:"id"`
+	PartnerName *string   `json:"partnerName" bson:"partner_name"`
+	Privileges  *[]string `json:"privileges" bson:"privileges"`
 
 	// Secret Filled only when requested by the organization back office
-	Secret *string `json:"secret"`
+	Secret *string `json:"secret" bson:"secret"`
 }
 
 // HelloAssoApiV5ModelsAccountsClientsPublicPutApiClientRequest defines model for HelloAsso.Api.V5.Models.Accounts.Clients.PublicPutApiClientRequest.
 type HelloAssoApiV5ModelsAccountsClientsPublicPutApiClientRequest struct {
 	// Domain Client domain : Url used to grant authorization redirection
-	Domain *string `json:"domain"`
+	Domain *string `json:"domain" bson:"domain"`
 }
 
 // HelloAssoApiV5ModelsApiNotificationsApiNotificationType defines model for HelloAsso.Api.V5.Models.ApiNotifications.ApiNotificationType.
@@ -297,401 +297,401 @@ type HelloAssoApiV5ModelsApiNotificationsApiNotificationType string
 
 // HelloAssoApiV5ModelsApiNotificationsApiUrlNotificationModel Organization notification URL Model class
 type HelloAssoApiV5ModelsApiNotificationsApiUrlNotificationModel struct {
-	ApiNotificationType *HelloAssoApiV5ModelsApiNotificationsApiNotificationType `json:"apiNotificationType,omitempty"`
+	ApiNotificationType *HelloAssoApiV5ModelsApiNotificationsApiNotificationType `json:"apiNotificationType,omitempty" bson:"api_notification_type"`
 
 	// SignatureKey Signature Key : allows you to verify the authenticity of notifications
-	SignatureKey *string `json:"signatureKey"`
+	SignatureKey *string `json:"signatureKey" bson:"signature_key"`
 
 	// Url The notification Url
-	Url *string `json:"url"`
+	Url *string `json:"url" bson:"url"`
 }
 
 // HelloAssoApiV5ModelsApiNotificationsPostApiUrlNotificationBody defines model for HelloAsso.Api.V5.Models.ApiNotifications.PostApiUrlNotificationBody.
 type HelloAssoApiV5ModelsApiNotificationsPostApiUrlNotificationBody struct {
-	NotificationType *HelloAssoApiV5ModelsApiNotificationsApiNotificationType `json:"notificationType,omitempty"`
+	NotificationType *HelloAssoApiV5ModelsApiNotificationsApiNotificationType `json:"notificationType,omitempty" bson:"notification_type"`
 
 	// Url The Api notification Url
-	Url string `json:"url"`
+	Url string `json:"url" bson:"url"`
 }
 
 // HelloAssoApiV5ModelsCartsCheckoutIntentResponse defines model for HelloAsso.Api.V5.Models.Carts.CheckoutIntentResponse.
 type HelloAssoApiV5ModelsCartsCheckoutIntentResponse struct {
 	// Id Id of the checkout intent
-	Id *int32 `json:"id,omitempty"`
+	Id *int32 `json:"id,omitempty" bson:"id"`
 
 	// Metadata Metadata (Json object)
 	// Only if metadata were sent on the checkout form initialization
-	Metadata *interface{}                               `json:"metadata"`
-	Order    *HelloAssoApiV5ModelsStatisticsOrderDetail `json:"order,omitempty"`
+	Metadata *interface{}                               `json:"metadata" bson:"metadata"`
+	Order    *HelloAssoApiV5ModelsStatisticsOrderDetail `json:"order,omitempty" bson:"order"`
 
 	// RedirectUrl Url where the contributor must be redirected to
-	RedirectUrl *string `json:"redirectUrl"`
+	RedirectUrl *string `json:"redirectUrl" bson:"redirect_url"`
 }
 
 // HelloAssoApiV5ModelsCartsCheckoutPayer defines model for HelloAsso.Api.V5.Models.Carts.CheckoutPayer.
 type HelloAssoApiV5ModelsCartsCheckoutPayer struct {
 	// Address Address
-	Address *string `json:"address"`
+	Address *string `json:"address" bson:"address"`
 
 	// City City
-	City *string `json:"city"`
+	City *string `json:"city" bson:"city"`
 
 	// CompanyName Used if the payer is a company
-	CompanyName *string `json:"companyName"`
+	CompanyName *string `json:"companyName" bson:"company_name"`
 
 	// Country 3 letter country code
-	Country *string `json:"country"`
+	Country *string `json:"country" bson:"country"`
 
 	// DateOfBirth Date of birth (Date only, no time part)
-	DateOfBirth *time.Time `json:"dateOfBirth"`
+	DateOfBirth *time.Time `json:"dateOfBirth" bson:"date_of_birth"`
 
 	// Email Email
-	Email *string `json:"email"`
+	Email *string `json:"email" bson:"email"`
 
 	// FirstName FirstName
-	FirstName *string `json:"firstName"`
+	FirstName *string `json:"firstName" bson:"first_name"`
 
 	// LastName LastName
-	LastName *string `json:"lastName"`
+	LastName *string `json:"lastName" bson:"last_name"`
 
 	// ZipCode ZipCode
-	ZipCode *string `json:"zipCode"`
+	ZipCode *string `json:"zipCode" bson:"zip_code"`
 }
 
 // HelloAssoApiV5ModelsCartsCheckoutTerm defines model for HelloAsso.Api.V5.Models.Carts.CheckoutTerm.
 type HelloAssoApiV5ModelsCartsCheckoutTerm struct {
 	// Amount Term amount, all taxes included, in cents
-	Amount int32 `json:"amount"`
+	Amount int32 `json:"amount" bson:"amount"`
 
 	// Date Term date
-	Date time.Time `json:"date"`
+	Date time.Time `json:"date" bson:"date"`
 }
 
 // HelloAssoApiV5ModelsCartsInitCheckoutBody defines model for HelloAsso.Api.V5.Models.Carts.InitCheckoutBody.
 type HelloAssoApiV5ModelsCartsInitCheckoutBody struct {
 	// BackUrl Url followed by the contributor if he wants to return to its previous site
-	BackUrl string `json:"backUrl"`
+	BackUrl string `json:"backUrl" bson:"back_url"`
 
 	// ContainsDonation The sale (or a part of) is a donation
-	ContainsDonation bool `json:"containsDonation"`
+	ContainsDonation bool `json:"containsDonation" bson:"contains_donation"`
 
 	// ErrorUrl Url called in case of an error during the checkout process
-	ErrorUrl string `json:"errorUrl"`
+	ErrorUrl string `json:"errorUrl" bson:"error_url"`
 
 	// InitialAmount The amount for the first term, all taxes included, in cents (required)
-	InitialAmount int32 `json:"initialAmount"`
+	InitialAmount int32 `json:"initialAmount" bson:"initial_amount"`
 
 	// ItemName Item name (required)
 	// A text describing what the user paid for ('Renew license', '3 tickets', donation, etc).
 	// Will be displayed in the near future in the user space and in the organization back office
-	ItemName string `json:"itemName"`
+	ItemName string `json:"itemName" bson:"item_name"`
 
 	// Metadata Metadata (optional)
 	// Json object (max length : 20000)
-	Metadata *interface{}                            `json:"metadata"`
-	Payer    *HelloAssoApiV5ModelsCartsCheckoutPayer `json:"payer,omitempty"`
+	Metadata *interface{}                            `json:"metadata" bson:"metadata"`
+	Payer    *HelloAssoApiV5ModelsCartsCheckoutPayer `json:"payer,omitempty" bson:"payer"`
 
 	// ReturnUrl Url called after the payment
-	ReturnUrl string `json:"returnUrl"`
+	ReturnUrl string `json:"returnUrl" bson:"return_url"`
 
 	// Terms The list of future terms (if applicable)
-	Terms *[]HelloAssoApiV5ModelsCartsCheckoutTerm `json:"terms"`
+	Terms *[]HelloAssoApiV5ModelsCartsCheckoutTerm `json:"terms" bson:"terms"`
 
 	// TotalAmount Total amount, all taxes included, in cents (required)
 	// Must be equal to the sum of the initial amount and subsequent terms
-	TotalAmount int32 `json:"totalAmount"`
+	TotalAmount int32 `json:"totalAmount" bson:"total_amount"`
 }
 
 // HelloAssoApiV5ModelsCartsInitCheckoutResponse defines model for HelloAsso.Api.V5.Models.Carts.InitCheckoutResponse.
 type HelloAssoApiV5ModelsCartsInitCheckoutResponse struct {
 	// Id Id of the checkout intent
-	Id *int32 `json:"id,omitempty"`
+	Id *int32 `json:"id,omitempty" bson:"id"`
 
 	// RedirectUrl Url where the contributor must be redirected to
-	RedirectUrl *string `json:"redirectUrl"`
+	RedirectUrl *string `json:"redirectUrl" bson:"redirect_url"`
 }
 
 // HelloAssoApiV5ModelsCommonContactModel Contact class
 type HelloAssoApiV5ModelsCommonContactModel struct {
 	// Email Contact email
-	Email *string `json:"email"`
+	Email *string `json:"email" bson:"email"`
 
 	// PhoneNumber Contact phone number
-	PhoneNumber *string `json:"phoneNumber"`
+	PhoneNumber *string `json:"phoneNumber" bson:"phone_number"`
 }
 
 // HelloAssoApiV5ModelsCommonDocumentModel DocumentModel class
 type HelloAssoApiV5ModelsCommonDocumentModel struct {
 	// FileName The file name of document
-	FileName *string `json:"fileName"`
-	Id       *int32  `json:"id"`
+	FileName *string `json:"fileName" bson:"file_name"`
+	Id       *int32  `json:"id" bson:"id"`
 
 	// PublicUrl The public url of document
-	PublicUrl *string `json:"publicUrl"`
+	PublicUrl *string `json:"publicUrl" bson:"public_url"`
 }
 
 // HelloAssoApiV5ModelsCommonMetaModel MetaModel class
 type HelloAssoApiV5ModelsCommonMetaModel struct {
 	// CreatedAt CreatedAt
-	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	CreatedAt *time.Time `json:"createdAt,omitempty" bson:"created_at"`
 
 	// UpdatedAt UpdateAt
-	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty" bson:"updated_at"`
 }
 
 // HelloAssoApiV5ModelsCommonPaginationModel Pagination model class
 type HelloAssoApiV5ModelsCommonPaginationModel struct {
 	// ContinuationToken Continuation Token to get next results
-	ContinuationToken *string `json:"continuationToken"`
+	ContinuationToken *string `json:"continuationToken" bson:"continuation_token"`
 
 	// PageIndex Current page index
-	PageIndex *int32 `json:"pageIndex,omitempty"`
+	PageIndex *int32 `json:"pageIndex,omitempty" bson:"page_index"`
 
 	// PageSize Page size
-	PageSize *int32 `json:"pageSize,omitempty"`
+	PageSize *int32 `json:"pageSize,omitempty" bson:"page_size"`
 
 	// TotalCount Total number of results available
-	TotalCount *int32 `json:"totalCount,omitempty"`
+	TotalCount *int32 `json:"totalCount,omitempty" bson:"total_count"`
 
 	// TotalPages Total number of pages of results with current page size
-	TotalPages *int32 `json:"totalPages,omitempty"`
+	TotalPages *int32 `json:"totalPages,omitempty" bson:"total_pages"`
 }
 
 // HelloAssoApiV5ModelsCommonPlaceModel PlaceModel class
 type HelloAssoApiV5ModelsCommonPlaceModel struct {
 	// Address Address
-	Address *string `json:"address"`
+	Address *string `json:"address" bson:"address"`
 
 	// City City
-	City *string `json:"city"`
+	City *string `json:"city" bson:"city"`
 
 	// Country 3 letter country code
-	Country     *string                           `json:"country"`
-	GeoLocation *HelloAssoModelsSharedGeoLocation `json:"geoLocation,omitempty"`
+	Country     *string                           `json:"country" bson:"country"`
+	GeoLocation *HelloAssoModelsSharedGeoLocation `json:"geoLocation,omitempty" bson:"geo_location"`
 
 	// Name Name of the place
-	Name *string `json:"name"`
+	Name *string `json:"name" bson:"name"`
 
 	// ZipCode ZipCode
-	ZipCode *string `json:"zipCode"`
+	ZipCode *string `json:"zipCode" bson:"zip_code"`
 }
 
 // HelloAssoApiV5ModelsDirectoryDirectoryOrganizationPublicModel DirectoryOrganizationPublicModel class
 type HelloAssoApiV5ModelsDirectoryDirectoryOrganizationPublicModel struct {
 	// Address Organization Address (for authorized applications or if authorized by the organization)
-	Address *string `json:"address"`
+	Address *string `json:"address" bson:"address"`
 
 	// Banner The organization banner
-	Banner *string `json:"banner"`
+	Banner *string `json:"banner" bson:"banner"`
 
 	// Category Organization category label
-	Category     *string `json:"category"`
-	CategoryJoId *int32  `json:"categoryJoId"`
+	Category     *string `json:"category" bson:"category"`
+	CategoryJoId *int32  `json:"categoryJoId" bson:"category_jo_id"`
 
 	// City Organization city
-	City *string `json:"city"`
+	City *string `json:"city" bson:"city"`
 
 	// Description Organization description
-	Description *string `json:"description"`
+	Description *string `json:"description" bson:"description"`
 
 	// FiscalReceiptEligibility The organism can issue fiscal receipts (type ok and has not deactivated it)
 	// Must configure it and be authenticated to become enabled
-	FiscalReceiptEligibility *bool `json:"fiscalReceiptEligibility,omitempty"`
+	FiscalReceiptEligibility *bool `json:"fiscalReceiptEligibility,omitempty" bson:"fiscal_receipt_eligibility"`
 
 	// FiscalReceiptIssuanceEnabled The organism is eligible, has set up his options, and is authenticated.
-	FiscalReceiptIssuanceEnabled *bool                             `json:"fiscalReceiptIssuanceEnabled,omitempty"`
-	Geolocation                  *HelloAssoModelsSharedGeoLocation `json:"geolocation,omitempty"`
+	FiscalReceiptIssuanceEnabled *bool                             `json:"fiscalReceiptIssuanceEnabled,omitempty" bson:"fiscal_receipt_issuance_enabled"`
+	Geolocation                  *HelloAssoModelsSharedGeoLocation `json:"geolocation,omitempty" bson:"geolocation"`
 
 	// IsAuthenticated The organization is authenticated. Property returned only when asked by an organization admin.
-	IsAuthenticated *bool `json:"isAuthenticated"`
+	IsAuthenticated *bool `json:"isAuthenticated" bson:"is_authenticated"`
 
 	// IsCashInCompliant If transaction can be init on the organization or not.
-	IsCashInCompliant *bool `json:"isCashInCompliant"`
+	IsCashInCompliant *bool `json:"isCashInCompliant" bson:"is_cash_in_compliant"`
 
 	// LinkedPartners Partners linked to this organization
-	LinkedPartners *[]string `json:"linkedPartners"`
+	LinkedPartners *[]string `json:"linkedPartners" bson:"linked_partners"`
 
 	// Logo Logo of organization
-	Logo *string `json:"logo"`
+	Logo *string `json:"logo" bson:"logo"`
 
 	// Name Name of organization
-	Name *string `json:"name"`
+	Name *string `json:"name" bson:"name"`
 
 	// OrganizationSlug The organization slug
-	OrganizationSlug *string `json:"organizationSlug"`
+	OrganizationSlug *string `json:"organizationSlug" bson:"organization_slug"`
 
 	// RnaNumber Unique identifier assigned when creating the association
-	RnaNumber *string                         `json:"rnaNumber"`
-	Role      *HelloAssoModelsEnumsGlobalRole `json:"role,omitempty"`
+	RnaNumber *string                         `json:"rnaNumber" bson:"rna_number"`
+	Role      *HelloAssoModelsEnumsGlobalRole `json:"role,omitempty" bson:"role"`
 
 	// Tags The public tags of the organization
-	Tags *[]string                                  `json:"tags"`
-	Type *HelloAssoApiV5ModelsEnumsOrganizationType `json:"type,omitempty"`
+	Tags *[]string                                  `json:"tags" bson:"tags"`
+	Type *HelloAssoApiV5ModelsEnumsOrganizationType `json:"type,omitempty" bson:"type"`
 
 	// UpdateDate Last update date of the organization
-	UpdateDate *time.Time `json:"updateDate,omitempty"`
+	UpdateDate *time.Time `json:"updateDate,omitempty" bson:"update_date"`
 
 	// Url The organization url
-	Url *string `json:"url"`
+	Url *string `json:"url" bson:"url"`
 
 	// ZipCode Organization zip code
-	ZipCode *string `json:"zipCode"`
+	ZipCode *string `json:"zipCode" bson:"zip_code"`
 }
 
 // HelloAssoApiV5ModelsDirectoryListFormsRequest defines model for HelloAsso.Api.V5.Models.Directory.ListFormsRequest.
 type HelloAssoApiV5ModelsDirectoryListFormsRequest struct {
 	// FormActivityType The Activity Type of the form
-	FormActivityType *[]string `json:"formActivityType"`
+	FormActivityType *[]string `json:"formActivityType" bson:"form_activity_type"`
 
 	// FormCities The cities where the forms are located
-	FormCities *[]string `json:"formCities"`
+	FormCities *[]string `json:"formCities" bson:"form_cities"`
 
 	// FormCountries The countries where the forms are located
-	FormCountries *[]string `json:"formCountries"`
+	FormCountries *[]string `json:"formCountries" bson:"form_countries"`
 
 	// FormDepartments The departments where the forms are located
-	FormDepartments *[]string `json:"formDepartments"`
+	FormDepartments *[]string `json:"formDepartments" bson:"form_departments"`
 
 	// FormDescription Textual search for form description
-	FormDescription *string `json:"formDescription"`
+	FormDescription *string `json:"formDescription" bson:"form_description"`
 
 	// FormEndDateMax The exclusive maximum end date of the forms, format "yyyy-MM-ddTHH:mm:ss.fffK"
-	FormEndDateMax *time.Time `json:"formEndDateMax"`
+	FormEndDateMax *time.Time `json:"formEndDateMax" bson:"form_end_date_max"`
 
 	// FormEndDateMin The inclusive minimum end date of the forms, format "yyyy-MM-ddTHH:mm:ss.fffK"
-	FormEndDateMin *time.Time `json:"formEndDateMin"`
+	FormEndDateMin *time.Time `json:"formEndDateMin" bson:"form_end_date_min"`
 
 	// FormHasRemainingEntries Allow only forms with remaning entries if true
-	FormHasRemainingEntries *bool `json:"formHasRemainingEntries"`
+	FormHasRemainingEntries *bool `json:"formHasRemainingEntries" bson:"form_has_remaining_entries"`
 
 	// FormInternalTags Allow only forms with internal tags
 	// this filter is for special operations only
-	FormInternalTags *[]string `json:"formInternalTags"`
+	FormInternalTags *[]string `json:"formInternalTags" bson:"form_internal_tags"`
 
 	// FormIsFree Allow only free forms if true
-	FormIsFree *bool `json:"formIsFree"`
+	FormIsFree *bool `json:"formIsFree" bson:"form_is_free"`
 
 	// FormName Textual search for form name
-	FormName *string `json:"formName"`
+	FormName *string `json:"formName" bson:"form_name"`
 
 	// FormPublicTags Allow only forms with public tags
-	FormPublicTags *[]string `json:"formPublicTags"`
+	FormPublicTags *[]string `json:"formPublicTags" bson:"form_public_tags"`
 
 	// FormPublicationStartDateMax The exclusive maximum publication date of the forms, format "yyyy-MM-ddTHH:mm:ss.fffK"
-	FormPublicationStartDateMax *time.Time `json:"formPublicationStartDateMax"`
+	FormPublicationStartDateMax *time.Time `json:"formPublicationStartDateMax" bson:"form_publication_start_date_max"`
 
 	// FormPublicationStartDateMin The inclusive minimum publication date of the forms, format "yyyy-MM-ddTHH:mm:ss.fffK"
-	FormPublicationStartDateMin *time.Time `json:"formPublicationStartDateMin"`
+	FormPublicationStartDateMin *time.Time `json:"formPublicationStartDateMin" bson:"form_publication_start_date_min"`
 
 	// FormRegions The regions where the forms are located
-	FormRegions *[]string `json:"formRegions"`
+	FormRegions *[]string `json:"formRegions" bson:"form_regions"`
 
 	// FormStartDateMax The exclusive maximum start date of the forms, format "yyyy-MM-ddTHH:mm:ss.fffK"
-	FormStartDateMax *time.Time `json:"formStartDateMax"`
+	FormStartDateMax *time.Time `json:"formStartDateMax" bson:"form_start_date_max"`
 
 	// FormStartDateMin The inclusive minimum start date of the forms, format "yyyy-MM-ddTHH:mm:ss.fffK"
-	FormStartDateMin *time.Time `json:"formStartDateMin"`
+	FormStartDateMin *time.Time `json:"formStartDateMin" bson:"form_start_date_min"`
 
 	// FormTypes The form types : CrowdFunding, Membership, Event, Donation, PaymentForm ...
-	FormTypes *[]HelloAssoApiV5ModelsEnumsFormType `json:"formTypes"`
+	FormTypes *[]HelloAssoApiV5ModelsEnumsFormType `json:"formTypes" bson:"form_types"`
 
 	// FormZipCodes The zip codes where the forms are located
-	FormZipCodes *[]string `json:"formZipCodes"`
+	FormZipCodes *[]string `json:"formZipCodes" bson:"form_zip_codes"`
 
 	// OrganizationCategories The categories of the forms
-	OrganizationCategories *[]string `json:"organizationCategories"`
+	OrganizationCategories *[]string `json:"organizationCategories" bson:"organization_categories"`
 
 	// OrganizationCities The cities where the organizations are located
-	OrganizationCities *[]string `json:"organizationCities"`
+	OrganizationCities *[]string `json:"organizationCities" bson:"organization_cities"`
 
 	// OrganizationDepartments The departments where the organizations are located
-	OrganizationDepartments *[]string `json:"organizationDepartments"`
+	OrganizationDepartments *[]string `json:"organizationDepartments" bson:"organization_departments"`
 
 	// OrganizationDescription Textual search for organization description
-	OrganizationDescription *string `json:"organizationDescription"`
+	OrganizationDescription *string `json:"organizationDescription" bson:"organization_description"`
 
 	// OrganizationFiscalReceiptEligibility Allow only organization with a fiscal receipt eligibility
-	OrganizationFiscalReceiptEligibility *bool `json:"organizationFiscalReceiptEligibility"`
+	OrganizationFiscalReceiptEligibility *bool `json:"organizationFiscalReceiptEligibility" bson:"organization_fiscal_receipt_eligibility"`
 
 	// OrganizationLinkedPartners Organization linked partners
-	OrganizationLinkedPartners *[]string `json:"organizationLinkedPartners"`
+	OrganizationLinkedPartners *[]string `json:"organizationLinkedPartners" bson:"organization_linked_partners"`
 
 	// OrganizationName Textual search for organization name
-	OrganizationName *string `json:"organizationName"`
+	OrganizationName *string `json:"organizationName" bson:"organization_name"`
 
 	// OrganizationRegions The regions where the organizations are located
-	OrganizationRegions *[]string `json:"organizationRegions"`
+	OrganizationRegions *[]string `json:"organizationRegions" bson:"organization_regions"`
 
 	// OrganizationTypes The organization types
-	OrganizationTypes *[]string `json:"organizationTypes"`
+	OrganizationTypes *[]string `json:"organizationTypes" bson:"organization_types"`
 
 	// OrganizationZipCodes The zip codes where the organizations are located
-	OrganizationZipCodes *[]string `json:"organizationZipCodes"`
+	OrganizationZipCodes *[]string `json:"organizationZipCodes" bson:"organization_zip_codes"`
 }
 
 // HelloAssoApiV5ModelsDirectoryListOrganizationsRequest defines model for HelloAsso.Api.V5.Models.Directory.ListOrganizationsRequest.
 type HelloAssoApiV5ModelsDirectoryListOrganizationsRequest struct {
 	// Categories The categories of the organizations
-	Categories *[]string `json:"categories"`
+	Categories *[]string `json:"categories" bson:"categories"`
 
 	// Cities The cities where the organizations are located
-	Cities *[]string `json:"cities"`
+	Cities *[]string `json:"cities" bson:"cities"`
 
 	// Departments The departments where the organizations are located
-	Departments *[]string `json:"departments"`
+	Departments *[]string `json:"departments" bson:"departments"`
 
 	// Description Textual search for organization description
-	Description *string `json:"description"`
+	Description *string `json:"description" bson:"description"`
 
 	// FiscalReceiptEligibility Allow only organization with a fiscal receipt eligibility
-	FiscalReceiptEligibility *bool `json:"fiscalReceiptEligibility"`
+	FiscalReceiptEligibility *bool `json:"fiscalReceiptEligibility" bson:"fiscal_receipt_eligibility"`
 
 	// InternalTags Allow only Organization with internal tags
 	// this filter is for special operations only
-	InternalTags *[]string `json:"internalTags"`
+	InternalTags *[]string `json:"internalTags" bson:"internal_tags"`
 
 	// LinkedPartners Allow only Organization with linked partners
-	LinkedPartners *[]string `json:"linkedPartners"`
+	LinkedPartners *[]string `json:"linkedPartners" bson:"linked_partners"`
 
 	// Name Textual search for organization name
-	Name *string `json:"name"`
+	Name *string `json:"name" bson:"name"`
 
 	// Regions The regions where the organizations are located
-	Regions *[]string `json:"regions"`
+	Regions *[]string `json:"regions" bson:"regions"`
 
 	// Tags Allow only Organization with public tags
-	Tags *[]string `json:"tags"`
+	Tags *[]string `json:"tags" bson:"tags"`
 
 	// Types The organization types
-	Types *[]string `json:"types"`
+	Types *[]string `json:"types" bson:"types"`
 
 	// ZipCodes The zip codes where the organizations are located
-	ZipCodes *[]string `json:"zipCodes"`
+	ZipCodes *[]string `json:"zipCodes" bson:"zip_codes"`
 }
 
 // HelloAssoApiV5ModelsDirectoryPartnerOrganizationModel PartnerOrganizationModel class
 type HelloAssoApiV5ModelsDirectoryPartnerOrganizationModel struct {
 	// AvailableAccessToken True if exist a valid organization access token obtained by authorize flow
-	AvailableAccessToken *bool `json:"availableAccessToken,omitempty"`
+	AvailableAccessToken *bool `json:"availableAccessToken,omitempty" bson:"available_access_token"`
 
 	// Organization DirectoryOrganizationPublicModel class
-	Organization *HelloAssoApiV5ModelsDirectoryDirectoryOrganizationPublicModel `json:"organization,omitempty"`
+	Organization *HelloAssoApiV5ModelsDirectoryDirectoryOrganizationPublicModel `json:"organization,omitempty" bson:"organization"`
 }
 
 // HelloAssoApiV5ModelsDirectorySynchronizableFormModel SynchronizableFormModel class
 type HelloAssoApiV5ModelsDirectorySynchronizableFormModel struct {
-	Action *HelloAssoApiV5ModelsEnumsRecordActionType `json:"action,omitempty"`
+	Action *HelloAssoApiV5ModelsEnumsRecordActionType `json:"action,omitempty" bson:"action"`
 
 	// Record A basic form model
-	Record *HelloAssoApiV5ModelsFormsFormBasicModel `json:"record,omitempty"`
+	Record *HelloAssoApiV5ModelsFormsFormBasicModel `json:"record,omitempty" bson:"record"`
 }
 
 // HelloAssoApiV5ModelsDirectorySynchronizableOrganizationModel SynchronizableOrganizationModel class
 type HelloAssoApiV5ModelsDirectorySynchronizableOrganizationModel struct {
-	Action *HelloAssoApiV5ModelsEnumsRecordActionType `json:"action,omitempty"`
+	Action *HelloAssoApiV5ModelsEnumsRecordActionType `json:"action,omitempty" bson:"action"`
 
 	// Record A basic organization model
-	Record *HelloAssoApiV5ModelsOrganizationOrganizationBasicModel `json:"record,omitempty"`
+	Record *HelloAssoApiV5ModelsOrganizationOrganizationBasicModel `json:"record,omitempty" bson:"record"`
 }
 
 // HelloAssoApiV5ModelsEnumsFieldType defines model for HelloAsso.Api.V5.Models.Enums.FieldType.
@@ -752,1215 +752,1215 @@ type HelloAssoApiV5ModelsEnumsTierType string
 // It is used to give extra information during the reservation of a tier
 type HelloAssoApiV5ModelsFormsCustomFieldPublicModel struct {
 	// Id Id of the customField
-	Id *int32 `json:"id,omitempty"`
+	Id *int32 `json:"id,omitempty" bson:"id"`
 
 	// IsRequired True if the custom field must be filled by the user before validating a cart
-	IsRequired *bool `json:"isRequired,omitempty"`
+	IsRequired *bool `json:"isRequired,omitempty" bson:"is_required"`
 
 	// Label The label to be displayed to the user
-	Label *string                             `json:"label"`
-	Type  *HelloAssoApiV5ModelsEnumsFieldType `json:"type,omitempty"`
+	Label *string                             `json:"label" bson:"label"`
+	Type  *HelloAssoApiV5ModelsEnumsFieldType `json:"type,omitempty" bson:"type"`
 
 	// Values The list of possible values if type is a CHOICE_LIST
-	Values *[]string `json:"values"`
+	Values *[]string `json:"values" bson:"values"`
 }
 
 // HelloAssoApiV5ModelsFormsExtraOptionPublicModel ExtraOptionFullModel
 type HelloAssoApiV5ModelsFormsExtraOptionPublicModel struct {
 	// CustomFields List of custom fields to be filled by the user
-	CustomFields *[]HelloAssoApiV5ModelsFormsCustomFieldPublicModel `json:"customFields"`
+	CustomFields *[]HelloAssoApiV5ModelsFormsCustomFieldPublicModel `json:"customFields" bson:"custom_fields"`
 
 	// Description The description of the option
-	Description *string `json:"description"`
+	Description *string `json:"description" bson:"description"`
 
 	// Id Id
-	Id *int32 `json:"id,omitempty"`
+	Id *int32 `json:"id,omitempty" bson:"id"`
 
 	// IsRequired Additional option is required/mandatory
-	IsRequired *bool `json:"isRequired,omitempty"`
+	IsRequired *bool `json:"isRequired,omitempty" bson:"is_required"`
 
 	// Label The name of the option
-	Label *string `json:"label"`
+	Label *string `json:"label" bson:"label"`
 
 	// Price Price of the extraOption, can be free
-	Price *int32 `json:"price,omitempty"`
+	Price *int32 `json:"price,omitempty" bson:"price"`
 
 	// VatRate Vat rate if applicable
 	// Amount have to be 0.10 for 10%
-	VatRate *float64 `json:"vatRate,omitempty"`
+	VatRate *float64 `json:"vatRate,omitempty" bson:"vat_rate"`
 }
 
 // HelloAssoApiV5ModelsFormsFormBasicModel A basic form model
 type HelloAssoApiV5ModelsFormsFormBasicModel struct {
 	// FormSlug The form slug
-	FormSlug *string                            `json:"formSlug"`
-	FormType *HelloAssoApiV5ModelsEnumsFormType `json:"formType,omitempty"`
+	FormSlug *string                            `json:"formSlug" bson:"form_slug"`
+	FormType *HelloAssoApiV5ModelsEnumsFormType `json:"formType,omitempty" bson:"form_type"`
 
 	// OrganizationSlug The organization slug
-	OrganizationSlug *string `json:"organizationSlug"`
+	OrganizationSlug *string `json:"organizationSlug" bson:"organization_slug"`
 
 	// Url The form url
-	Url *string `json:"url"`
+	Url *string `json:"url" bson:"url"`
 }
 
 // HelloAssoApiV5ModelsFormsFormLightModel FormLightModel class
 type HelloAssoApiV5ModelsFormsFormLightModel struct {
 	// Banner DocumentModel class
-	Banner *HelloAssoApiV5ModelsCommonDocumentModel `json:"banner,omitempty"`
+	Banner *HelloAssoApiV5ModelsCommonDocumentModel `json:"banner,omitempty" bson:"banner"`
 
 	// Currency Currency
-	Currency *string `json:"currency"`
+	Currency *string `json:"currency" bson:"currency"`
 
 	// Description Short description (one line)
-	Description *string `json:"description"`
+	Description *string `json:"description" bson:"description"`
 
 	// EndDate The datetime of the activity end
-	EndDate *time.Time `json:"endDate"`
+	EndDate *time.Time `json:"endDate" bson:"end_date"`
 
 	// FormSlug The form slug
-	FormSlug *string                            `json:"formSlug"`
-	FormType *HelloAssoApiV5ModelsEnumsFormType `json:"formType,omitempty"`
+	FormSlug *string                            `json:"formSlug" bson:"form_slug"`
+	FormType *HelloAssoApiV5ModelsEnumsFormType `json:"formType,omitempty" bson:"form_type"`
 
 	// Logo DocumentModel class
-	Logo *HelloAssoApiV5ModelsCommonDocumentModel `json:"logo,omitempty"`
+	Logo *HelloAssoApiV5ModelsCommonDocumentModel `json:"logo,omitempty" bson:"logo"`
 
 	// Meta MetaModel class
-	Meta *HelloAssoApiV5ModelsCommonMetaModel `json:"meta,omitempty"`
+	Meta *HelloAssoApiV5ModelsCommonMetaModel `json:"meta,omitempty" bson:"meta"`
 
 	// OrganizationSlug The organization slug
-	OrganizationSlug *string `json:"organizationSlug"`
+	OrganizationSlug *string `json:"organizationSlug" bson:"organization_slug"`
 
 	// PrivateTitle Private Title
-	PrivateTitle *string `json:"privateTitle"`
+	PrivateTitle *string `json:"privateTitle" bson:"private_title"`
 
 	// StartDate The datetime of the activity start
-	StartDate *time.Time                          `json:"startDate"`
-	State     *HelloAssoApiV5ModelsEnumsFormState `json:"state,omitempty"`
+	StartDate *time.Time                          `json:"startDate" bson:"start_date"`
+	State     *HelloAssoApiV5ModelsEnumsFormState `json:"state,omitempty" bson:"state"`
 
 	// Title Title
-	Title *string `json:"title"`
+	Title *string `json:"title" bson:"title"`
 
 	// Url The form url
-	Url *string `json:"url"`
+	Url *string `json:"url" bson:"url"`
 
 	// WidgetButtonUrl Url of the widget button
-	WidgetButtonUrl *string `json:"widgetButtonUrl"`
+	WidgetButtonUrl *string `json:"widgetButtonUrl" bson:"widget_button_url"`
 
 	// WidgetCounterUrl Url of the counter widget
-	WidgetCounterUrl *string `json:"widgetCounterUrl"`
+	WidgetCounterUrl *string `json:"widgetCounterUrl" bson:"widget_counter_url"`
 
 	// WidgetFullUrl Url of the form widget
-	WidgetFullUrl *string `json:"widgetFullUrl"`
+	WidgetFullUrl *string `json:"widgetFullUrl" bson:"widget_full_url"`
 
 	// WidgetVignetteHorizontalUrl Url of the horizontal vignette widget
-	WidgetVignetteHorizontalUrl *string `json:"widgetVignetteHorizontalUrl"`
+	WidgetVignetteHorizontalUrl *string `json:"widgetVignetteHorizontalUrl" bson:"widget_vignette_horizontal_url"`
 
 	// WidgetVignetteVerticalUrl Url of the vertical vignette widget
-	WidgetVignetteVerticalUrl *string `json:"widgetVignetteVerticalUrl"`
+	WidgetVignetteVerticalUrl *string `json:"widgetVignetteVerticalUrl" bson:"widget_vignette_vertical_url"`
 }
 
 // HelloAssoApiV5ModelsFormsFormPublicModel FormPublicModel class
 type HelloAssoApiV5ModelsFormsFormPublicModel struct {
 	// ActivityType Activity type of the event eg. "Atelier(s) / Stage(s)" matching one of the provided type values <a href="index#!/Values/Values_Get"> provided here</a> or a custom value is allowed.
-	ActivityType *string `json:"activityType"`
+	ActivityType *string `json:"activityType" bson:"activity_type"`
 
 	// ActivityTypeId Activity type identifier
-	ActivityTypeId *int32 `json:"activityTypeId,omitempty"`
+	ActivityTypeId *int32 `json:"activityTypeId,omitempty" bson:"activity_type_id"`
 
 	// Banner DocumentModel class
-	Banner *HelloAssoApiV5ModelsCommonDocumentModel `json:"banner,omitempty"`
+	Banner *HelloAssoApiV5ModelsCommonDocumentModel `json:"banner,omitempty" bson:"banner"`
 
 	// Currency Currency
-	Currency *string `json:"currency"`
+	Currency *string `json:"currency" bson:"currency"`
 
 	// Description Short description (one line)
-	Description *string `json:"description"`
+	Description *string `json:"description" bson:"description"`
 
 	// EndDate The datetime of the activity end
-	EndDate *time.Time `json:"endDate"`
+	EndDate *time.Time `json:"endDate" bson:"end_date"`
 
 	// FormSlug The form slug
-	FormSlug *string                            `json:"formSlug"`
-	FormType *HelloAssoApiV5ModelsEnumsFormType `json:"formType,omitempty"`
+	FormSlug *string                            `json:"formSlug" bson:"form_slug"`
+	FormType *HelloAssoApiV5ModelsEnumsFormType `json:"formType,omitempty" bson:"form_type"`
 
 	// Logo DocumentModel class
-	Logo *HelloAssoApiV5ModelsCommonDocumentModel `json:"logo,omitempty"`
+	Logo *HelloAssoApiV5ModelsCommonDocumentModel `json:"logo,omitempty" bson:"logo"`
 
 	// Meta MetaModel class
-	Meta *HelloAssoApiV5ModelsCommonMetaModel `json:"meta,omitempty"`
+	Meta *HelloAssoApiV5ModelsCommonMetaModel `json:"meta,omitempty" bson:"meta"`
 
 	// OrganizationLogo Organization Logo
-	OrganizationLogo *string `json:"organizationLogo"`
+	OrganizationLogo *string `json:"organizationLogo" bson:"organization_logo"`
 
 	// OrganizationName Organization Name
-	OrganizationName *string `json:"organizationName"`
+	OrganizationName *string `json:"organizationName" bson:"organization_name"`
 
 	// OrganizationSlug The organization slug
-	OrganizationSlug *string `json:"organizationSlug"`
+	OrganizationSlug *string `json:"organizationSlug" bson:"organization_slug"`
 
 	// PersonalizedMessage A message customized by the organization administrator.
-	PersonalizedMessage *string `json:"personalizedMessage"`
+	PersonalizedMessage *string `json:"personalizedMessage" bson:"personalized_message"`
 
 	// Place PlaceModel class
-	Place *HelloAssoApiV5ModelsCommonPlaceModel `json:"place,omitempty"`
+	Place *HelloAssoApiV5ModelsCommonPlaceModel `json:"place,omitempty" bson:"place"`
 
 	// PrivateTitle Private Title
-	PrivateTitle *string `json:"privateTitle"`
+	PrivateTitle *string `json:"privateTitle" bson:"private_title"`
 
 	// SaleEndDate The datetime (Inclusive) at which the sales end.
 	// If null the orders will be available until the end of the campaign.
-	SaleEndDate *time.Time `json:"saleEndDate"`
+	SaleEndDate *time.Time `json:"saleEndDate" bson:"sale_end_date"`
 
 	// SaleStartDate The datetime (Inclusive) at which the users can start placing orders.
 	// If null the orders will be available as soon as the campaign is published.
-	SaleStartDate *time.Time `json:"saleStartDate"`
+	SaleStartDate *time.Time `json:"saleStartDate" bson:"sale_start_date"`
 
 	// StartDate The datetime of the activity start
-	StartDate *time.Time                          `json:"startDate"`
-	State     *HelloAssoApiV5ModelsEnumsFormState `json:"state,omitempty"`
+	StartDate *time.Time                          `json:"startDate" bson:"start_date"`
+	State     *HelloAssoApiV5ModelsEnumsFormState `json:"state,omitempty" bson:"state"`
 
 	// Tiers Tiers
-	Tiers *[]HelloAssoApiV5ModelsFormsTierPublicModel `json:"tiers"`
+	Tiers *[]HelloAssoApiV5ModelsFormsTierPublicModel `json:"tiers" bson:"tiers"`
 
 	// Title Title
-	Title *string `json:"title"`
+	Title *string `json:"title" bson:"title"`
 
 	// Url The form url
-	Url *string `json:"url"`
+	Url *string `json:"url" bson:"url"`
 
 	// ValidityType Enum which represents the membership validity type
-	ValidityType *HelloAssoApiV5ModelsEnumsMembershipValidityType `json:"validityType,omitempty"`
+	ValidityType *HelloAssoApiV5ModelsEnumsMembershipValidityType `json:"validityType,omitempty" bson:"validity_type"`
 
 	// WidgetButtonUrl Url of the widget button
-	WidgetButtonUrl *string `json:"widgetButtonUrl"`
+	WidgetButtonUrl *string `json:"widgetButtonUrl" bson:"widget_button_url"`
 
 	// WidgetCounterUrl Url of the counter widget
-	WidgetCounterUrl *string `json:"widgetCounterUrl"`
+	WidgetCounterUrl *string `json:"widgetCounterUrl" bson:"widget_counter_url"`
 
 	// WidgetFullUrl Url of the form widget
-	WidgetFullUrl *string `json:"widgetFullUrl"`
+	WidgetFullUrl *string `json:"widgetFullUrl" bson:"widget_full_url"`
 
 	// WidgetVignetteHorizontalUrl Url of the horizontal vignette widget
-	WidgetVignetteHorizontalUrl *string `json:"widgetVignetteHorizontalUrl"`
+	WidgetVignetteHorizontalUrl *string `json:"widgetVignetteHorizontalUrl" bson:"widget_vignette_horizontal_url"`
 
 	// WidgetVignetteVerticalUrl Url of the vertical vignette widget
-	WidgetVignetteVerticalUrl *string `json:"widgetVignetteVerticalUrl"`
+	WidgetVignetteVerticalUrl *string `json:"widgetVignetteVerticalUrl" bson:"widget_vignette_vertical_url"`
 }
 
 // HelloAssoApiV5ModelsFormsFormQuickCreateModel defines model for HelloAsso.Api.V5.Models.Forms.FormQuickCreateModel.
 type HelloAssoApiV5ModelsFormsFormQuickCreateModel struct {
-	FormSlug         *string `json:"formSlug"`
-	OrganizationSlug *string `json:"organizationSlug"`
-	PublicUrl        *string `json:"publicUrl"`
+	FormSlug         *string `json:"formSlug" bson:"form_slug"`
+	OrganizationSlug *string `json:"organizationSlug" bson:"organization_slug"`
+	PublicUrl        *string `json:"publicUrl" bson:"public_url"`
 }
 
 // HelloAssoApiV5ModelsFormsFormQuickCreateRequest defines model for HelloAsso.Api.V5.Models.Forms.FormQuickCreateRequest.
 type HelloAssoApiV5ModelsFormsFormQuickCreateRequest struct {
 	// AcceptOpenDonation Whether the user will be allowed to make a single open donation with an order. The amount of the donation is open, but 3 presets can be set in OpenDonationPresetAmount
-	AcceptOpenDonation *bool `json:"acceptOpenDonation,omitempty"`
+	AcceptOpenDonation *bool `json:"acceptOpenDonation,omitempty" bson:"accept_open_donation"`
 
 	// AcceptOpenMonthlyDonation Whether the user will be allowed to make a monthly open donation for donation forms
-	AcceptOpenMonthlyDonation *bool `json:"acceptOpenMonthlyDonation,omitempty"`
+	AcceptOpenMonthlyDonation *bool `json:"acceptOpenMonthlyDonation,omitempty" bson:"accept_open_monthly_donation"`
 
 	// ActivityTypeId Activity type identifier, matching one of the provided type values <a href="index#!/Values/Values_Get"> provided here</a>
-	ActivityTypeId *int32 `json:"activityTypeId"`
+	ActivityTypeId *int32 `json:"activityTypeId" bson:"activity_type_id"`
 
 	// AllowComment allowComment
-	AllowComment *bool `json:"allowComment,omitempty"`
+	AllowComment *bool `json:"allowComment,omitempty" bson:"allow_comment"`
 
 	// AllowIndividualPayer Whether user are allowed to personally contribute to this form (only for donation and crowdfunding).
-	AllowIndividualPayer *bool `json:"allowIndividualPayer,omitempty"`
+	AllowIndividualPayer *bool `json:"allowIndividualPayer,omitempty" bson:"allow_individual_payer"`
 
 	// AllowOrganismPayer Whether users are allowed to contribute to this form through an organism (only for donation and crowdfunding).
-	AllowOrganismPayer *bool `json:"allowOrganismPayer,omitempty"`
+	AllowOrganismPayer *bool `json:"allowOrganismPayer,omitempty" bson:"allow_organism_payer"`
 
 	// AmountVisible amountVisible
-	AmountVisible *bool `json:"amountVisible,omitempty"`
+	AmountVisible *bool `json:"amountVisible,omitempty" bson:"amount_visible"`
 
 	// Banner The banner of the form
-	Banner *string `json:"banner"`
+	Banner *string `json:"banner" bson:"banner"`
 
 	// Color The color of the form
-	Color *string `json:"color"`
+	Color *string `json:"color" bson:"color"`
 
 	// Contact Contact class
-	Contact *HelloAssoApiV5ModelsCommonContactModel `json:"contact,omitempty"`
+	Contact *HelloAssoApiV5ModelsCommonContactModel `json:"contact,omitempty" bson:"contact"`
 
 	// Description The description of form
-	Description *string `json:"description"`
+	Description *string `json:"description" bson:"description"`
 
 	// DisplayContributorName Display contributor name for fundraiser
-	DisplayContributorName *bool `json:"displayContributorName,omitempty"`
+	DisplayContributorName *bool `json:"displayContributorName,omitempty" bson:"display_contributor_name"`
 
 	// DisplayParticipantsCount Indicates that the members count must be displayed on the form.
-	DisplayParticipantsCount *bool `json:"displayParticipantsCount,omitempty"`
+	DisplayParticipantsCount *bool `json:"displayParticipantsCount,omitempty" bson:"display_participants_count"`
 
 	// DisplayRemainingEntries Indicates that the remaining entries must be displayed on the form.
-	DisplayRemainingEntries *bool `json:"displayRemainingEntries,omitempty"`
+	DisplayRemainingEntries *bool `json:"displayRemainingEntries,omitempty" bson:"display_remaining_entries"`
 
 	// DisplayVersion The form display version (only for donation).
-	DisplayVersion *int32 `json:"displayVersion"`
+	DisplayVersion *int32 `json:"displayVersion" bson:"display_version"`
 
 	// EndDate The datetime of the activity end
-	EndDate *time.Time `json:"endDate"`
+	EndDate *time.Time `json:"endDate" bson:"end_date"`
 
 	// FinancialGoal Indicates the financial goal (amount of money raised) for the whole form. Null means no goal.
-	FinancialGoal *int64 `json:"financialGoal"`
+	FinancialGoal *int64 `json:"financialGoal" bson:"financial_goal"`
 
 	// GenerateMembershipCards Entrust the issuance of membership cards to HelloAsso (automatically sent by email to participants)
-	GenerateMembershipCards *bool `json:"generateMembershipCards,omitempty"`
+	GenerateMembershipCards *bool `json:"generateMembershipCards,omitempty" bson:"generate_membership_cards"`
 
 	// GenerateTickets Entrust the issuance of tickets to HelloAsso (automatically sent by email to participants)
-	GenerateTickets *bool `json:"generateTickets,omitempty"`
+	GenerateTickets *bool `json:"generateTickets,omitempty" bson:"generate_tickets"`
 
 	// InvertDescriptions Allows you to add the long description above the store catalog.
-	InvertDescriptions *bool `json:"invertDescriptions,omitempty"`
+	InvertDescriptions *bool `json:"invertDescriptions,omitempty" bson:"invert_descriptions"`
 
 	// LabelConditionsAndTermsFile Label conditions and terms file
-	LabelConditionsAndTermsFile *string `json:"labelConditionsAndTermsFile"`
+	LabelConditionsAndTermsFile *string `json:"labelConditionsAndTermsFile" bson:"label_conditions_and_terms_file"`
 
 	// Logo The logo of the form
-	Logo *string `json:"logo"`
+	Logo *string `json:"logo" bson:"logo"`
 
 	// LongDescription The long description of the form (rich Html)
-	LongDescription *string `json:"longDescription"`
+	LongDescription *string `json:"longDescription" bson:"long_description"`
 
 	// MaxEntries Indicates the maximum available entries for the whole form. Null means unlimited entries.
-	MaxEntries *int32 `json:"maxEntries"`
+	MaxEntries *int32 `json:"maxEntries" bson:"max_entries"`
 
 	// OpenDonationPresetAmounts The preset amounts to be shown to the user. Maximum 3 amounts.
-	OpenDonationPresetAmounts *[]int32 `json:"openDonationPresetAmounts"`
+	OpenDonationPresetAmounts *[]int32 `json:"openDonationPresetAmounts" bson:"open_donation_preset_amounts"`
 
 	// PersonalizedMessage Personalized message for participants
-	PersonalizedMessage *string `json:"personalizedMessage"`
+	PersonalizedMessage *string `json:"personalizedMessage" bson:"personalized_message"`
 
 	// Place PlaceModel class
-	Place *HelloAssoApiV5ModelsCommonPlaceModel `json:"place,omitempty"`
+	Place *HelloAssoApiV5ModelsCommonPlaceModel `json:"place,omitempty" bson:"place"`
 
 	// PrivateTitle Private Title : displayed only in the organization back office
-	PrivateTitle *string `json:"privateTitle"`
+	PrivateTitle *string `json:"privateTitle" bson:"private_title"`
 
 	// ProjectBeneficiaries The project beneficiaries of the form (rich Html)
-	ProjectBeneficiaries *string `json:"projectBeneficiaries"`
+	ProjectBeneficiaries *string `json:"projectBeneficiaries" bson:"project_beneficiaries"`
 
 	// ProjectExpensesDetails Details of the project expenses (rich Html)
-	ProjectExpensesDetails *string `json:"projectExpensesDetails"`
+	ProjectExpensesDetails *string `json:"projectExpensesDetails" bson:"project_expenses_details"`
 
 	// ProjectOwners Description of the project owners (rich Html)
-	ProjectOwners *string `json:"projectOwners"`
+	ProjectOwners *string `json:"projectOwners" bson:"project_owners"`
 
 	// ProjectTargetCountry 3 letter country code
-	ProjectTargetCountry *string `json:"projectTargetCountry"`
+	ProjectTargetCountry *string `json:"projectTargetCountry" bson:"project_target_country"`
 
 	// SaleEndDate The datetime (Inclusive) at which the sales end.
 	// If null the orders will be available until the end of the campaign.
-	SaleEndDate *time.Time `json:"saleEndDate"`
+	SaleEndDate *time.Time `json:"saleEndDate" bson:"sale_end_date"`
 
 	// SaleStartDate The datetime (Inclusive) at which the users can start placing orders.
 	// If null the orders will be available as soon as the campaign is published.
-	SaleStartDate *time.Time `json:"saleStartDate"`
+	SaleStartDate *time.Time `json:"saleStartDate" bson:"sale_start_date"`
 
 	// StartDate The datetime of the activity start
-	StartDate *time.Time                                 `json:"startDate"`
-	TierList  *[]HelloAssoApiV5ModelsFormsTierLightModel `json:"tierList"`
+	StartDate *time.Time                                 `json:"startDate" bson:"start_date"`
+	TierList  *[]HelloAssoApiV5ModelsFormsTierLightModel `json:"tierList" bson:"tier_list"`
 
 	// Title The title of the form. It will be used to generate the url which that can't be changed.
-	Title string `json:"title"`
+	Title string `json:"title" bson:"title"`
 
 	// ValidityType Enum which represents the membership validity type
-	ValidityType *HelloAssoApiV5ModelsEnumsMembershipValidityType `json:"validityType,omitempty"`
+	ValidityType *HelloAssoApiV5ModelsEnumsMembershipValidityType `json:"validityType,omitempty" bson:"validity_type"`
 
 	// WidgetButtonText The text displayed in the widget button
-	WidgetButtonText *string `json:"widgetButtonText"`
+	WidgetButtonText *string `json:"widgetButtonText" bson:"widget_button_text"`
 }
 
 // HelloAssoApiV5ModelsFormsTermModel TermsModel class
 type HelloAssoApiV5ModelsFormsTermModel struct {
 	// Amount Term Amount
-	Amount *int32 `json:"amount,omitempty"`
+	Amount *int32 `json:"amount,omitempty" bson:"amount"`
 
 	// Date Term Date
-	Date *time.Time `json:"date"`
+	Date *time.Time `json:"date" bson:"date"`
 }
 
 // HelloAssoApiV5ModelsFormsTierLightModel defines model for HelloAsso.Api.V5.Models.Forms.TierLightModel.
 type HelloAssoApiV5ModelsFormsTierLightModel struct {
-	Label *string `json:"label"`
-	Price *int32  `json:"price,omitempty"`
+	Label *string `json:"label" bson:"label"`
+	Price *int32  `json:"price,omitempty" bson:"price"`
 }
 
 // HelloAssoApiV5ModelsFormsTierPublicModel TierPublicModel class
 type HelloAssoApiV5ModelsFormsTierPublicModel struct {
 	// CustomFields List of custom fields to be filled by the user
-	CustomFields *[]HelloAssoApiV5ModelsFormsCustomFieldPublicModel `json:"customFields"`
+	CustomFields *[]HelloAssoApiV5ModelsFormsCustomFieldPublicModel `json:"customFields" bson:"custom_fields"`
 
 	// Description description
-	Description *string `json:"description"`
+	Description *string `json:"description" bson:"description"`
 
 	// ExtraOptions List of available extra options to buy along the tier
-	ExtraOptions *[]HelloAssoApiV5ModelsFormsExtraOptionPublicModel `json:"extraOptions"`
+	ExtraOptions *[]HelloAssoApiV5ModelsFormsExtraOptionPublicModel `json:"extraOptions" bson:"extra_options"`
 
 	// Id id
-	Id *int32 `json:"id,omitempty"`
+	Id *int32 `json:"id,omitempty" bson:"id"`
 
 	// IsEligibleTaxReceipt Whether this is eligible to a deduction
-	IsEligibleTaxReceipt *bool `json:"isEligibleTaxReceipt,omitempty"`
+	IsEligibleTaxReceipt *bool `json:"isEligibleTaxReceipt,omitempty" bson:"is_eligible_tax_receipt"`
 
 	// IsExcludedFromFormPaymentTerms True means this tier must be paid in the initial payment, false means it can be paid in payment with installments
 	// Null when the form payment terms are disabled or not compatible with the related form
-	IsExcludedFromFormPaymentTerms *bool `json:"isExcludedFromFormPaymentTerms"`
+	IsExcludedFromFormPaymentTerms *bool `json:"isExcludedFromFormPaymentTerms" bson:"is_excluded_from_form_payment_terms"`
 
 	// Label label
-	Label *string `json:"label"`
+	Label *string `json:"label" bson:"label"`
 
 	// MaxPerUser Max quantity buyable in this cart
-	MaxPerUser *int32 `json:"maxPerUser"`
+	MaxPerUser *int32 `json:"maxPerUser" bson:"max_per_user"`
 
 	// Meta MetaModel class
-	Meta *HelloAssoApiV5ModelsCommonMetaModel `json:"meta,omitempty"`
+	Meta *HelloAssoApiV5ModelsCommonMetaModel `json:"meta,omitempty" bson:"meta"`
 
 	// MinAmount If set, it means the payment is free to choose, according to the specified minAmount in cents
-	MinAmount        *int32                                         `json:"minAmount"`
-	PaymentFrequency *HelloAssoApiV5ModelsEnumsPaymentFrequencyType `json:"paymentFrequency,omitempty"`
+	MinAmount        *int32                                         `json:"minAmount" bson:"min_amount"`
+	PaymentFrequency *HelloAssoApiV5ModelsEnumsPaymentFrequencyType `json:"paymentFrequency,omitempty" bson:"payment_frequency"`
 
 	// Picture DocumentModel class
-	Picture *HelloAssoApiV5ModelsCommonDocumentModel `json:"picture,omitempty"`
+	Picture *HelloAssoApiV5ModelsCommonDocumentModel `json:"picture,omitempty" bson:"picture"`
 
 	// Price the Price in cents
 	// if price equals 0 then it is free or there is a MinAmount
-	Price *int32 `json:"price"`
+	Price *int32 `json:"price" bson:"price"`
 
 	// SaleEndDate The datetime (Inclusive) at which the tier is no longer available.
 	// If null the tier will be available until the end of the event.
-	SaleEndDate *time.Time `json:"saleEndDate"`
+	SaleEndDate *time.Time `json:"saleEndDate" bson:"sale_end_date"`
 
 	// SaleStartDate The datetime (Inclusive) at which the users can start buying this tier.
 	// If null the tier will be available at the start of the event.
-	SaleStartDate *time.Time `json:"saleStartDate"`
+	SaleStartDate *time.Time `json:"saleStartDate" bson:"sale_start_date"`
 
 	// Terms Terms of tier
-	Terms    *[]HelloAssoApiV5ModelsFormsTermModel `json:"terms"`
-	TierType *HelloAssoApiV5ModelsEnumsTierType    `json:"tierType,omitempty"`
+	Terms    *[]HelloAssoApiV5ModelsFormsTermModel `json:"terms" bson:"terms"`
+	TierType *HelloAssoApiV5ModelsEnumsTierType    `json:"tierType,omitempty" bson:"tier_type"`
 
 	// VatRate Vat rate if applicable
 	// Amount have to be 0.10 for 10%
-	VatRate *float64 `json:"vatRate,omitempty"`
+	VatRate *float64 `json:"vatRate,omitempty" bson:"vat_rate"`
 }
 
 // HelloAssoApiV5ModelsOrganizationOrganizationBasicModel A basic organization model
 type HelloAssoApiV5ModelsOrganizationOrganizationBasicModel struct {
 	// OrganizationSlug The organization slug
-	OrganizationSlug *string `json:"organizationSlug"`
+	OrganizationSlug *string `json:"organizationSlug" bson:"organization_slug"`
 
 	// Url The organization url
-	Url *string `json:"url"`
+	Url *string `json:"url" bson:"url"`
 }
 
 // HelloAssoApiV5ModelsOrganizationOrganizationLightModel OrganizationLightModel class
 type HelloAssoApiV5ModelsOrganizationOrganizationLightModel struct {
-	CategoryJoId *int32 `json:"categoryJoId"`
+	CategoryJoId *int32 `json:"categoryJoId" bson:"category_jo_id"`
 
 	// City Organization city
-	City *string `json:"city"`
+	City *string `json:"city" bson:"city"`
 
 	// Description Organization description
-	Description *string `json:"description"`
+	Description *string `json:"description" bson:"description"`
 
 	// Logo Logo of organization
-	Logo *string `json:"logo"`
+	Logo *string `json:"logo" bson:"logo"`
 
 	// Name Name of organization
-	Name *string `json:"name"`
+	Name *string `json:"name" bson:"name"`
 
 	// OrganizationSlug The organization slug
-	OrganizationSlug *string                         `json:"organizationSlug"`
-	Role             *HelloAssoModelsEnumsGlobalRole `json:"role,omitempty"`
+	OrganizationSlug *string                         `json:"organizationSlug" bson:"organization_slug"`
+	Role             *HelloAssoModelsEnumsGlobalRole `json:"role,omitempty" bson:"role"`
 
 	// UpdateDate Last update date of the organization
-	UpdateDate *time.Time `json:"updateDate,omitempty"`
+	UpdateDate *time.Time `json:"updateDate,omitempty" bson:"update_date"`
 
 	// Url The organization url
-	Url *string `json:"url"`
+	Url *string `json:"url" bson:"url"`
 
 	// ZipCode Organization zip code
-	ZipCode *string `json:"zipCode"`
+	ZipCode *string `json:"zipCode" bson:"zip_code"`
 }
 
 // HelloAssoApiV5ModelsOrganizationOrganizationModel OrganizationsModel class
 type HelloAssoApiV5ModelsOrganizationOrganizationModel struct {
 	// Address Organization Address (for authorized applications or if authorized by the organization)
-	Address *string `json:"address"`
+	Address *string `json:"address" bson:"address"`
 
 	// Banner The organization banner
-	Banner *string `json:"banner"`
+	Banner *string `json:"banner" bson:"banner"`
 
 	// Category Organization category label
-	Category     *string `json:"category"`
-	CategoryJoId *int32  `json:"categoryJoId"`
+	Category     *string `json:"category" bson:"category"`
+	CategoryJoId *int32  `json:"categoryJoId" bson:"category_jo_id"`
 
 	// City Organization city
-	City *string `json:"city"`
+	City *string `json:"city" bson:"city"`
 
 	// Description Organization description
-	Description *string `json:"description"`
+	Description *string `json:"description" bson:"description"`
 
 	// FiscalReceiptEligibility The organism can issue fiscal receipts (type ok and has not deactivated it)
 	// Must configure it and be authenticated to become enabled
-	FiscalReceiptEligibility *bool `json:"fiscalReceiptEligibility,omitempty"`
+	FiscalReceiptEligibility *bool `json:"fiscalReceiptEligibility,omitempty" bson:"fiscal_receipt_eligibility"`
 
 	// FiscalReceiptIssuanceEnabled The organism is eligible, has set up his options, and is authenticated.
-	FiscalReceiptIssuanceEnabled *bool                             `json:"fiscalReceiptIssuanceEnabled,omitempty"`
-	Geolocation                  *HelloAssoModelsSharedGeoLocation `json:"geolocation,omitempty"`
+	FiscalReceiptIssuanceEnabled *bool                             `json:"fiscalReceiptIssuanceEnabled,omitempty" bson:"fiscal_receipt_issuance_enabled"`
+	Geolocation                  *HelloAssoModelsSharedGeoLocation `json:"geolocation,omitempty" bson:"geolocation"`
 
 	// IsAuthenticated The organization is authenticated. Property returned only when asked by an organization admin.
-	IsAuthenticated *bool `json:"isAuthenticated"`
+	IsAuthenticated *bool `json:"isAuthenticated" bson:"is_authenticated"`
 
 	// IsCashInCompliant If transaction can be init on the organization or not.
-	IsCashInCompliant *bool `json:"isCashInCompliant"`
+	IsCashInCompliant *bool `json:"isCashInCompliant" bson:"is_cash_in_compliant"`
 
 	// Logo Logo of organization
-	Logo *string `json:"logo"`
+	Logo *string `json:"logo" bson:"logo"`
 
 	// Name Name of organization
-	Name *string `json:"name"`
+	Name *string `json:"name" bson:"name"`
 
 	// OrganizationSlug The organization slug
-	OrganizationSlug *string `json:"organizationSlug"`
+	OrganizationSlug *string `json:"organizationSlug" bson:"organization_slug"`
 
 	// RnaNumber Unique identifier assigned when creating the association
-	RnaNumber *string                                    `json:"rnaNumber"`
-	Role      *HelloAssoModelsEnumsGlobalRole            `json:"role,omitempty"`
-	Type      *HelloAssoApiV5ModelsEnumsOrganizationType `json:"type,omitempty"`
+	RnaNumber *string                                    `json:"rnaNumber" bson:"rna_number"`
+	Role      *HelloAssoModelsEnumsGlobalRole            `json:"role,omitempty" bson:"role"`
+	Type      *HelloAssoApiV5ModelsEnumsOrganizationType `json:"type,omitempty" bson:"type"`
 
 	// UpdateDate Last update date of the organization
-	UpdateDate *time.Time `json:"updateDate,omitempty"`
+	UpdateDate *time.Time `json:"updateDate,omitempty" bson:"update_date"`
 
 	// Url The organization url
-	Url *string `json:"url"`
+	Url *string `json:"url" bson:"url"`
 
 	// ZipCode Organization zip code
-	ZipCode *string `json:"zipCode"`
+	ZipCode *string `json:"zipCode" bson:"zip_code"`
 }
 
 // HelloAssoApiV5ModelsOrganizationLegalInformationsOrganizationLegalStructuresModel defines model for HelloAsso.Api.V5.Models.OrganizationLegalInformations.OrganizationLegalStructuresModel.
 type HelloAssoApiV5ModelsOrganizationLegalInformationsOrganizationLegalStructuresModel struct {
-	Agreement               *string `json:"agreement"`
-	Id                      *int32  `json:"id,omitempty"`
-	IsFiscalReceiptEligible *bool   `json:"isFiscalReceiptEligible,omitempty"`
-	LegalStructure          *string `json:"legalStructure"`
+	Agreement               *string `json:"agreement" bson:"agreement"`
+	Id                      *int32  `json:"id,omitempty" bson:"id"`
+	IsFiscalReceiptEligible *bool   `json:"isFiscalReceiptEligible,omitempty" bson:"is_fiscal_receipt_eligible"`
+	LegalStructure          *string `json:"legalStructure" bson:"legal_structure"`
 }
 
 // HelloAssoApiV5ModelsOrganizationLegalInformationsUpdateOrganizationFiscalReceiptTransmitterBody defines model for HelloAsso.Api.V5.Models.OrganizationLegalInformations.UpdateOrganizationFiscalReceiptTransmitterBody.
 type HelloAssoApiV5ModelsOrganizationLegalInformationsUpdateOrganizationFiscalReceiptTransmitterBody struct {
-	IsHelloAssoFiscalReceiptTransmitter *bool `json:"isHelloAssoFiscalReceiptTransmitter,omitempty"`
+	IsHelloAssoFiscalReceiptTransmitter *bool `json:"isHelloAssoFiscalReceiptTransmitter,omitempty" bson:"is_hello_asso_fiscal_receipt_transmitter"`
 }
 
 // HelloAssoApiV5ModelsOrganizationLegalInformationsUpdateOrganizationLegalInformationConfigurationBody defines model for HelloAsso.Api.V5.Models.OrganizationLegalInformations.UpdateOrganizationLegalInformationConfigurationBody.
 type HelloAssoApiV5ModelsOrganizationLegalInformationsUpdateOrganizationLegalInformationConfigurationBody struct {
-	AllowIfiTaxReductions bool  `json:"allowIfiTaxReductions"`
-	IsColuche             bool  `json:"isColuche"`
-	LegalStructureId      int32 `json:"legalStructureId"`
+	AllowIfiTaxReductions bool  `json:"allowIfiTaxReductions" bson:"allow_ifi_tax_reductions"`
+	IsColuche             bool  `json:"isColuche" bson:"is_coluche"`
+	LegalStructureId      int32 `json:"legalStructureId" bson:"legal_structure_id"`
 }
 
 // HelloAssoApiV5ModelsPartnerStatisticsModel defines model for HelloAsso.Api.V5.Models.PartnerStatisticsModel.
 type HelloAssoApiV5ModelsPartnerStatisticsModel struct {
 	// AvailableOrganizationsAccessTokenCount Number of organizations access token obtains by authorize flow
-	AvailableOrganizationsAccessTokenCount *int32 `json:"availableOrganizationsAccessTokenCount,omitempty"`
+	AvailableOrganizationsAccessTokenCount *int32 `json:"availableOrganizationsAccessTokenCount,omitempty" bson:"available_organizations_access_token_count"`
 
 	// CheckoutCollectedAmount Collected amount by All partner checkouts
-	CheckoutCollectedAmount *int64 `json:"checkoutCollectedAmount,omitempty"`
+	CheckoutCollectedAmount *int64 `json:"checkoutCollectedAmount,omitempty" bson:"checkout_collected_amount"`
 
 	// LinkedOrganizationsCollectedAmount Collected amount by linked organizations
-	LinkedOrganizationsCollectedAmount *int64 `json:"linkedOrganizationsCollectedAmount,omitempty"`
+	LinkedOrganizationsCollectedAmount *int64 `json:"linkedOrganizationsCollectedAmount,omitempty" bson:"linked_organizations_collected_amount"`
 
 	// LinkedOrganizationsCount Number of organizations linked to this partner
-	LinkedOrganizationsCount *int32 `json:"linkedOrganizationsCount,omitempty"`
+	LinkedOrganizationsCount *int32 `json:"linkedOrganizationsCount,omitempty" bson:"linked_organizations_count"`
 
 	// OrganizationsUsingCheckout Number of organizations using the checkout with this partner
-	OrganizationsUsingCheckout *int32 `json:"organizationsUsingCheckout,omitempty"`
+	OrganizationsUsingCheckout *int32 `json:"organizationsUsingCheckout,omitempty" bson:"organizations_using_checkout"`
 }
 
 // HelloAssoApiV5ModelsPartnersPartnerPublicModel defines model for HelloAsso.Api.V5.Models.Partners.PartnerPublicModel.
 type HelloAssoApiV5ModelsPartnersPartnerPublicModel struct {
-	ApiClient *HelloAssoApiV5ModelsAccountsClientsApiClientModel `json:"apiClient,omitempty"`
+	ApiClient *HelloAssoApiV5ModelsAccountsClientsApiClientModel `json:"apiClient,omitempty" bson:"api_client"`
 
 	// Description Description of the partner
-	Description *string `json:"description"`
+	Description *string `json:"description" bson:"description"`
 
 	// DisplayName Display Name of the partner
-	DisplayName *string `json:"displayName"`
+	DisplayName *string `json:"displayName" bson:"display_name"`
 
 	// Logo Logo of the partner : square format
-	Logo *string `json:"logo"`
+	Logo *string `json:"logo" bson:"logo"`
 
 	// LogoRectangle Logo of the partner : rectangle format
-	LogoRectangle *string `json:"logoRectangle"`
+	LogoRectangle *string `json:"logoRectangle" bson:"logo_rectangle"`
 
 	// Name Name of the partner
-	Name              *string                                     `json:"name"`
-	PartnerStatistics *HelloAssoApiV5ModelsPartnerStatisticsModel `json:"partnerStatistics,omitempty"`
+	Name              *string                                     `json:"name" bson:"name"`
+	PartnerStatistics *HelloAssoApiV5ModelsPartnerStatisticsModel `json:"partnerStatistics,omitempty" bson:"partner_statistics"`
 
 	// Url Website of the partner
-	Url *string `json:"url"`
+	Url *string `json:"url" bson:"url"`
 
 	// UrlNotificationList Url Notification of the partner
-	UrlNotificationList *[]HelloAssoApiV5ModelsApiNotificationsApiUrlNotificationModel `json:"urlNotificationList"`
+	UrlNotificationList *[]HelloAssoApiV5ModelsApiNotificationsApiUrlNotificationModel `json:"urlNotificationList" bson:"url_notification_list"`
 }
 
 // HelloAssoApiV5ModelsPaymentPublicPaymentModel defines model for HelloAsso.Api.V5.Models.Payment.PublicPaymentModel.
 type HelloAssoApiV5ModelsPaymentPublicPaymentModel struct {
 	// Amount Amount
-	Amount *int32 `json:"amount,omitempty"`
+	Amount *int32 `json:"amount,omitempty" bson:"amount"`
 
 	// AuthorizationDate If the payment is authorized, this is the date of authorization
-	AuthorizationDate *time.Time                                    `json:"authorizationDate"`
-	CashOutState      *HelloAssoApiV5ModelsEnumsPaymentCashOutState `json:"cashOutState,omitempty"`
+	AuthorizationDate *time.Time                                    `json:"authorizationDate" bson:"authorization_date"`
+	CashOutState      *HelloAssoApiV5ModelsEnumsPaymentCashOutState `json:"cashOutState,omitempty" bson:"cash_out_state"`
 
 	// Date The payment Date.
-	Date *time.Time `json:"date,omitempty"`
+	Date *time.Time `json:"date,omitempty" bson:"date"`
 
 	// FiscalReceiptGenerated Whether a Fiscal receipt document has been generated for this payment or not.
-	FiscalReceiptGenerated *bool `json:"fiscalReceiptGenerated,omitempty"`
+	FiscalReceiptGenerated *bool `json:"fiscalReceiptGenerated,omitempty" bson:"fiscal_receipt_generated"`
 
 	// FormId The form id where the payment was made. Used with FormType
-	FormId   *int32                             `json:"formId"`
-	FormType *HelloAssoApiV5ModelsEnumsFormType `json:"formType,omitempty"`
+	FormId   *int32                             `json:"formId" bson:"form_id"`
+	FormType *HelloAssoApiV5ModelsEnumsFormType `json:"formType,omitempty" bson:"form_type"`
 
 	// Id The payment id
-	Id *int32 `json:"id,omitempty"`
+	Id *int32 `json:"id,omitempty" bson:"id"`
 
 	// InstallmentNumber Indicates the payment number (useful in the case of an order comprising payments with installments)
 	// Starting with 1.
-	InstallmentNumber *int32                                 `json:"installmentNumber"`
-	MeansPayment      *HelloAssoApiV5ModelsEnumsPaymentMeans `json:"meansPayment,omitempty"`
+	InstallmentNumber *int32                                 `json:"installmentNumber" bson:"installment_number"`
+	MeansPayment      *HelloAssoApiV5ModelsEnumsPaymentMeans `json:"meansPayment,omitempty" bson:"means_payment"`
 
 	// Meta MetaModel class
-	Meta *HelloAssoApiV5ModelsCommonMetaModel `json:"meta,omitempty"`
+	Meta *HelloAssoApiV5ModelsCommonMetaModel `json:"meta,omitempty" bson:"meta"`
 
 	// OrderDate Date at which the Order was placed.
 	// Important for monthly payments or scheduled payments.
-	OrderDate *time.Time `json:"orderDate,omitempty"`
+	OrderDate *time.Time `json:"orderDate,omitempty" bson:"order_date"`
 
 	// OrderId The id of the order
-	OrderId *int32 `json:"orderId,omitempty"`
+	OrderId *int32 `json:"orderId,omitempty" bson:"order_id"`
 
 	// OrganizationId The Organization id, which the payment was made to
-	OrganizationId *int32 `json:"organizationId,omitempty"`
+	OrganizationId *int32 `json:"organizationId,omitempty" bson:"organization_id"`
 
 	// PayerFirstName The inputted payer first name, might differs from User firstname, from linked user Id
-	PayerFirstName *string `json:"payerFirstName"`
+	PayerFirstName *string `json:"payerFirstName" bson:"payer_first_name"`
 
 	// PayerLastName The inputted payer last name,  might differs from User lastname, from linked user Id
-	PayerLastName *string `json:"payerLastName"`
+	PayerLastName *string `json:"payerLastName" bson:"payer_last_name"`
 
 	// ProviderTitle name of the provider
-	ProviderTitle *string `json:"providerTitle"`
+	ProviderTitle *string `json:"providerTitle" bson:"provider_title"`
 
 	// RefundOperations The refund operations for the specific payment.
-	RefundOperations *[]HelloAssoApiV5ModelsStatisticsRefundOperationLightModel `json:"refundOperations"`
-	Status           *HelloAssoApiV5ModelsEnumsPaymentState                     `json:"status,omitempty"`
+	RefundOperations *[]HelloAssoApiV5ModelsStatisticsRefundOperationLightModel `json:"refundOperations" bson:"refund_operations"`
+	Status           *HelloAssoApiV5ModelsEnumsPaymentState                     `json:"status,omitempty" bson:"status"`
 
 	// UserEmail The email of the user account who initiated the payment.
-	UserEmail *string `json:"userEmail"`
+	UserEmail *string `json:"userEmail" bson:"user_email"`
 
 	// UserFirstName The name of the user who initiated the payment. May differ from PayerFirstName
-	UserFirstName *string `json:"userFirstName"`
+	UserFirstName *string `json:"userFirstName" bson:"user_first_name"`
 
 	// UserId The user id who initiated the payment
-	UserId *int32 `json:"userId"`
+	UserId *int32 `json:"userId" bson:"user_id"`
 
 	// UserLastName The name of the user who initiated the payment. May differ from PayerLastName
-	UserLastName *string `json:"userLastName"`
+	UserLastName *string `json:"userLastName" bson:"user_last_name"`
 }
 
 // HelloAssoApiV5ModelsPaymentRefundOperationModel RefundOperationModel class
 type HelloAssoApiV5ModelsPaymentRefundOperationModel struct {
 	// Amount The amount to refund
-	Amount *int32 `json:"amount,omitempty"`
+	Amount *int32 `json:"amount,omitempty" bson:"amount"`
 
 	// CancelOrder Whether the future payments and linked items of this order must be canceled (possible only if the payment is fully refunded)
-	CancelOrder *bool `json:"cancelOrder,omitempty"`
+	CancelOrder *bool `json:"cancelOrder,omitempty" bson:"cancel_order"`
 
 	// CreationDate The refund operation creation date
-	CreationDate *time.Time `json:"creationDate,omitempty"`
+	CreationDate *time.Time `json:"creationDate,omitempty" bson:"creation_date"`
 
 	// Id The refund operation id
-	Id *int32 `json:"id,omitempty"`
+	Id *int32 `json:"id,omitempty" bson:"id"`
 
 	// PaymentId The payment id
-	PaymentId *int32 `json:"paymentId,omitempty"`
+	PaymentId *int32 `json:"paymentId,omitempty" bson:"payment_id"`
 
 	// SendRefundMail Whether a refund mail must be send or not.
-	SendRefundMail *bool                                    `json:"sendRefundMail,omitempty"`
-	State          *HelloAssoApiV5ModelsEnumsOperationState `json:"state,omitempty"`
+	SendRefundMail *bool                                    `json:"sendRefundMail,omitempty" bson:"send_refund_mail"`
+	State          *HelloAssoApiV5ModelsEnumsOperationState `json:"state,omitempty" bson:"state"`
 }
 
 // HelloAssoApiV5ModelsStatisticsItemCustomField Custom field associated with the item or option
 type HelloAssoApiV5ModelsStatisticsItemCustomField struct {
 	// Answer Participant or user answer
-	Answer *string                             `json:"answer"`
-	Id     *int32                              `json:"id,omitempty"`
-	Name   *string                             `json:"name"`
-	Type   *HelloAssoApiV5ModelsEnumsFieldType `json:"type,omitempty"`
+	Answer *string                             `json:"answer" bson:"answer"`
+	Id     *int32                              `json:"id,omitempty" bson:"id"`
+	Name   *string                             `json:"name" bson:"name"`
+	Type   *HelloAssoApiV5ModelsEnumsFieldType `json:"type,omitempty" bson:"type"`
 }
 
 // HelloAssoApiV5ModelsStatisticsItemDetail defines model for HelloAsso.Api.V5.Models.Statistics.ItemDetail.
 type HelloAssoApiV5ModelsStatisticsItemDetail struct {
 	// Amount Total item Price in cents (after discount without extra options)
-	Amount  *int32  `json:"amount,omitempty"`
-	Comment *string `json:"comment"`
+	Amount  *int32  `json:"amount,omitempty" bson:"amount"`
+	Comment *string `json:"comment" bson:"comment"`
 
 	// CustomFields Custom fields related to this item
-	CustomFields *[]HelloAssoApiV5ModelsStatisticsItemCustomField `json:"customFields"`
+	CustomFields *[]HelloAssoApiV5ModelsStatisticsItemCustomField `json:"customFields" bson:"custom_fields"`
 
 	// DayOfLevy The day of levy for monthly donation only
-	DayOfLevy *int32                                      `json:"dayOfLevy"`
-	Discount  *HelloAssoApiV5ModelsStatisticsItemDiscount `json:"discount,omitempty"`
+	DayOfLevy *int32                                      `json:"dayOfLevy" bson:"day_of_levy"`
+	Discount  *HelloAssoApiV5ModelsStatisticsItemDiscount `json:"discount,omitempty" bson:"discount"`
 
 	// Id ID of the Item
-	Id *int32 `json:"id,omitempty"`
+	Id *int32 `json:"id,omitempty" bson:"id"`
 
 	// InitialAmount The raw amount (without reduction)
-	InitialAmount *int32 `json:"initialAmount"`
+	InitialAmount *int32 `json:"initialAmount" bson:"initial_amount"`
 
 	// MembershipCardUrl The Membership Card Url
-	MembershipCardUrl *string `json:"membershipCardUrl"`
+	MembershipCardUrl *string `json:"membershipCardUrl" bson:"membership_card_url"`
 
 	// MinAmount Minimum amount that was specified on the tier (in cents)
-	MinAmount *int32  `json:"minAmount"`
-	Name      *string `json:"name"`
+	MinAmount *int32  `json:"minAmount" bson:"min_amount"`
+	Name      *string `json:"name" bson:"name"`
 
 	// Options Extra options taken with this item
-	Options *[]HelloAssoApiV5ModelsStatisticsItemOption `json:"options"`
-	Order   *HelloAssoApiV5ModelsStatisticsOrderLight   `json:"order,omitempty"`
-	Payer   *HelloAssoApiV5ModelsStatisticsPayer        `json:"payer,omitempty"`
+	Options *[]HelloAssoApiV5ModelsStatisticsItemOption `json:"options" bson:"options"`
+	Order   *HelloAssoApiV5ModelsStatisticsOrderLight   `json:"order,omitempty" bson:"order"`
+	Payer   *HelloAssoApiV5ModelsStatisticsPayer        `json:"payer,omitempty" bson:"payer"`
 
 	// Payments Payments linked to this item
-	Payments      *[]HelloAssoApiV5ModelsStatisticsItemPayment `json:"payments"`
-	PriceCategory *HelloAssoApiV5ModelsEnumsPriceCategory      `json:"priceCategory,omitempty"`
+	Payments      *[]HelloAssoApiV5ModelsStatisticsItemPayment `json:"payments" bson:"payments"`
+	PriceCategory *HelloAssoApiV5ModelsEnumsPriceCategory      `json:"priceCategory,omitempty" bson:"price_category"`
 
 	// QrCode The item QrCode (for ticket scanning only)
-	QrCode *string                             `json:"qrCode"`
-	State  *HelloAssoApiV5ModelsEnumsItemState `json:"state,omitempty"`
+	QrCode *string                             `json:"qrCode" bson:"qr_code"`
+	State  *HelloAssoApiV5ModelsEnumsItemState `json:"state,omitempty" bson:"state"`
 
 	// TicketUrl The Ticket Url
-	TicketUrl *string `json:"ticketUrl"`
+	TicketUrl *string `json:"ticketUrl" bson:"ticket_url"`
 
 	// TierDescription Tier description
-	TierDescription *string                             `json:"tierDescription"`
-	TierId          *int32                              `json:"tierId"`
-	Type            *HelloAssoApiV5ModelsEnumsTierType  `json:"type,omitempty"`
-	User            *HelloAssoApiV5ModelsStatisticsUser `json:"user,omitempty"`
+	TierDescription *string                             `json:"tierDescription" bson:"tier_description"`
+	TierId          *int32                              `json:"tierId" bson:"tier_id"`
+	Type            *HelloAssoApiV5ModelsEnumsTierType  `json:"type,omitempty" bson:"type"`
+	User            *HelloAssoApiV5ModelsStatisticsUser `json:"user,omitempty" bson:"user"`
 }
 
 // HelloAssoApiV5ModelsStatisticsItemDiscount defines model for HelloAsso.Api.V5.Models.Statistics.ItemDiscount.
 type HelloAssoApiV5ModelsStatisticsItemDiscount struct {
 	// Amount The discount amount in cents
-	Amount *int32 `json:"amount,omitempty"`
+	Amount *int32 `json:"amount,omitempty" bson:"amount"`
 
 	// Code The discount code applied on the item
-	Code *string `json:"code"`
+	Code *string `json:"code" bson:"code"`
 }
 
 // HelloAssoApiV5ModelsStatisticsItemOption ItemOption class
 type HelloAssoApiV5ModelsStatisticsItemOption struct {
 	// Amount Amount of the option in cents
-	Amount *int32 `json:"amount,omitempty"`
+	Amount *int32 `json:"amount,omitempty" bson:"amount"`
 
 	// CustomFields Custom fields related to this option
-	CustomFields *[]HelloAssoApiV5ModelsStatisticsItemCustomField `json:"customFields"`
+	CustomFields *[]HelloAssoApiV5ModelsStatisticsItemCustomField `json:"customFields" bson:"custom_fields"`
 
 	// IsRequired Option is required or optional
-	IsRequired *bool `json:"isRequired,omitempty"`
+	IsRequired *bool `json:"isRequired,omitempty" bson:"is_required"`
 
 	// Name Name of the option
-	Name          *string                                 `json:"name"`
-	OptionId      *int32                                  `json:"optionId,omitempty"`
-	PriceCategory *HelloAssoApiV5ModelsEnumsPriceCategory `json:"priceCategory,omitempty"`
+	Name          *string                                 `json:"name" bson:"name"`
+	OptionId      *int32                                  `json:"optionId,omitempty" bson:"option_id"`
+	PriceCategory *HelloAssoApiV5ModelsEnumsPriceCategory `json:"priceCategory,omitempty" bson:"price_category"`
 }
 
 // HelloAssoApiV5ModelsStatisticsItemPayment Payment linked to the item
 type HelloAssoApiV5ModelsStatisticsItemPayment struct {
 	// Amount Total Amount of the payment (in cents)
-	Amount *int32 `json:"amount,omitempty"`
+	Amount *int32 `json:"amount,omitempty" bson:"amount"`
 
 	// AmountTip Tip Amount of the payment (in cents)
-	AmountTip    *int32                                        `json:"amountTip"`
-	CashOutState *HelloAssoApiV5ModelsEnumsPaymentCashOutState `json:"cashOutState,omitempty"`
+	AmountTip    *int32                                        `json:"amountTip" bson:"amount_tip"`
+	CashOutState *HelloAssoApiV5ModelsEnumsPaymentCashOutState `json:"cashOutState,omitempty" bson:"cash_out_state"`
 
 	// Date Date of the payment
-	Date *time.Time `json:"date,omitempty"`
+	Date *time.Time `json:"date,omitempty" bson:"date"`
 
 	// Id The ID of the payment
-	Id *int32 `json:"id,omitempty"`
+	Id *int32 `json:"id,omitempty" bson:"id"`
 
 	// InstallmentNumber Indicates the payment number (useful in the case of an order comprising payments with installments)
-	InstallmentNumber *int32 `json:"installmentNumber"`
+	InstallmentNumber *int32 `json:"installmentNumber" bson:"installment_number"`
 
 	// Meta MetaModel class
-	Meta               *HelloAssoApiV5ModelsCommonMetaModel   `json:"meta,omitempty"`
-	PaymentMeans       *HelloAssoApiV5ModelsEnumsPaymentMeans `json:"paymentMeans,omitempty"`
-	PaymentOffLineMean *HelloAssoApiV5ModelsEnumsPaymentMeans `json:"paymentOffLineMean,omitempty"`
+	Meta               *HelloAssoApiV5ModelsCommonMetaModel   `json:"meta,omitempty" bson:"meta"`
+	PaymentMeans       *HelloAssoApiV5ModelsEnumsPaymentMeans `json:"paymentMeans,omitempty" bson:"payment_means"`
+	PaymentOffLineMean *HelloAssoApiV5ModelsEnumsPaymentMeans `json:"paymentOffLineMean,omitempty" bson:"payment_off_line_mean"`
 
 	// RefundOperations The refund operations information for the specific payment.
-	RefundOperations *[]HelloAssoApiV5ModelsStatisticsRefundOperationLightModel `json:"refundOperations"`
+	RefundOperations *[]HelloAssoApiV5ModelsStatisticsRefundOperationLightModel `json:"refundOperations" bson:"refund_operations"`
 
 	// ShareAmount Amount of the item and extra options payed on this payment term (in cents)
-	ShareAmount *int32                                 `json:"shareAmount,omitempty"`
-	State       *HelloAssoApiV5ModelsEnumsPaymentState `json:"state,omitempty"`
-	Type        *HelloAssoApiV5ModelsEnumsPaymentType  `json:"type,omitempty"`
+	ShareAmount *int32                                 `json:"shareAmount,omitempty" bson:"share_amount"`
+	State       *HelloAssoApiV5ModelsEnumsPaymentState `json:"state,omitempty" bson:"state"`
+	Type        *HelloAssoApiV5ModelsEnumsPaymentType  `json:"type,omitempty" bson:"type"`
 }
 
 // HelloAssoApiV5ModelsStatisticsOrder defines model for HelloAsso.Api.V5.Models.Statistics.Order.
 type HelloAssoApiV5ModelsStatisticsOrder struct {
-	Amount *HelloAssoApiV5ModelsStatisticsOrderAmountModel `json:"amount,omitempty"`
+	Amount *HelloAssoApiV5ModelsStatisticsOrderAmountModel `json:"amount,omitempty" bson:"amount"`
 
 	// CheckoutIntentId Checkout intent Id if available
-	CheckoutIntentId *int32 `json:"checkoutIntentId"`
+	CheckoutIntentId *int32 `json:"checkoutIntentId" bson:"checkout_intent_id"`
 
 	// Date Order creation date
-	Date *time.Time `json:"date,omitempty"`
+	Date *time.Time `json:"date,omitempty" bson:"date"`
 
 	// FormSlug FormSlug (lowercase name of the form without special characters)
-	FormSlug *string                            `json:"formSlug"`
-	FormType *HelloAssoApiV5ModelsEnumsFormType `json:"formType,omitempty"`
+	FormSlug *string                            `json:"formSlug" bson:"form_slug"`
+	FormType *HelloAssoApiV5ModelsEnumsFormType `json:"formType,omitempty" bson:"form_type"`
 
 	// Id The ID of the Order
-	Id *int32 `json:"id,omitempty"`
+	Id *int32 `json:"id,omitempty" bson:"id"`
 
 	// Items All items of the order
-	Items *[]HelloAssoApiV5ModelsStatisticsOrderItem `json:"items"`
+	Items *[]HelloAssoApiV5ModelsStatisticsOrderItem `json:"items" bson:"items"`
 
 	// Meta MetaModel class
-	Meta *HelloAssoApiV5ModelsCommonMetaModel `json:"meta,omitempty"`
+	Meta *HelloAssoApiV5ModelsCommonMetaModel `json:"meta,omitempty" bson:"meta"`
 
 	// OrganizationIsUnderColucheLaw Whether or not the organization is subject to the coluche law
-	OrganizationIsUnderColucheLaw *bool `json:"organizationIsUnderColucheLaw,omitempty"`
+	OrganizationIsUnderColucheLaw *bool `json:"organizationIsUnderColucheLaw,omitempty" bson:"organization_is_under_coluche_law"`
 
 	// OrganizationName The organization name.
-	OrganizationName *string `json:"organizationName"`
+	OrganizationName *string `json:"organizationName" bson:"organization_name"`
 
 	// OrganizationSlug OrganizationSlug (lowercase name of the organization without special characters)
-	OrganizationSlug *string                                    `json:"organizationSlug"`
-	OrganizationType *HelloAssoApiV5ModelsEnumsOrganizationType `json:"organizationType,omitempty"`
-	Payer            *HelloAssoApiV5ModelsStatisticsPayer       `json:"payer,omitempty"`
+	OrganizationSlug *string                                    `json:"organizationSlug" bson:"organization_slug"`
+	OrganizationType *HelloAssoApiV5ModelsEnumsOrganizationType `json:"organizationType,omitempty" bson:"organization_type"`
+	Payer            *HelloAssoApiV5ModelsStatisticsPayer       `json:"payer,omitempty" bson:"payer"`
 
 	// Payments All payments of the order
-	Payments *[]HelloAssoApiV5ModelsStatisticsOrderPayment `json:"payments"`
+	Payments *[]HelloAssoApiV5ModelsStatisticsOrderPayment `json:"payments" bson:"payments"`
 }
 
 // HelloAssoApiV5ModelsStatisticsOrderAmountModel defines model for HelloAsso.Api.V5.Models.Statistics.OrderAmountModel.
 type HelloAssoApiV5ModelsStatisticsOrderAmountModel struct {
 	// Discount Discount amount in cents
-	Discount *int32 `json:"discount,omitempty"`
+	Discount *int32 `json:"discount,omitempty" bson:"discount"`
 
 	// Total Total amount in cents
-	Total *int32 `json:"total,omitempty"`
+	Total *int32 `json:"total,omitempty" bson:"total"`
 
 	// Vat Vat amount in cents
-	Vat *int32 `json:"vat,omitempty"`
+	Vat *int32 `json:"vat,omitempty" bson:"vat"`
 }
 
 // HelloAssoApiV5ModelsStatisticsOrderDetail defines model for HelloAsso.Api.V5.Models.Statistics.OrderDetail.
 type HelloAssoApiV5ModelsStatisticsOrderDetail struct {
-	Amount *HelloAssoApiV5ModelsStatisticsOrderAmountModel `json:"amount,omitempty"`
+	Amount *HelloAssoApiV5ModelsStatisticsOrderAmountModel `json:"amount,omitempty" bson:"amount"`
 
 	// CheckoutIntentId Checkout intent Id if available
-	CheckoutIntentId *int32 `json:"checkoutIntentId"`
+	CheckoutIntentId *int32 `json:"checkoutIntentId" bson:"checkout_intent_id"`
 
 	// Date Order creation date
-	Date *time.Time `json:"date,omitempty"`
+	Date *time.Time `json:"date,omitempty" bson:"date"`
 
 	// FormSlug FormSlug (lowercase name of the form without special characters)
-	FormSlug *string                            `json:"formSlug"`
-	FormType *HelloAssoApiV5ModelsEnumsFormType `json:"formType,omitempty"`
+	FormSlug *string                            `json:"formSlug" bson:"form_slug"`
+	FormType *HelloAssoApiV5ModelsEnumsFormType `json:"formType,omitempty" bson:"form_type"`
 
 	// Id The ID of the Order
-	Id *int32 `json:"id,omitempty"`
+	Id *int32 `json:"id,omitempty" bson:"id"`
 
 	// Items All items of the order
-	Items *[]HelloAssoApiV5ModelsStatisticsOrderItem `json:"items"`
+	Items *[]HelloAssoApiV5ModelsStatisticsOrderItem `json:"items" bson:"items"`
 
 	// Meta MetaModel class
-	Meta *HelloAssoApiV5ModelsCommonMetaModel `json:"meta,omitempty"`
+	Meta *HelloAssoApiV5ModelsCommonMetaModel `json:"meta,omitempty" bson:"meta"`
 
 	// OrganizationIsUnderColucheLaw Whether or not the organization is subject to the coluche law
-	OrganizationIsUnderColucheLaw *bool `json:"organizationIsUnderColucheLaw,omitempty"`
+	OrganizationIsUnderColucheLaw *bool `json:"organizationIsUnderColucheLaw,omitempty" bson:"organization_is_under_coluche_law"`
 
 	// OrganizationName The organization name.
-	OrganizationName *string `json:"organizationName"`
+	OrganizationName *string `json:"organizationName" bson:"organization_name"`
 
 	// OrganizationSlug OrganizationSlug (lowercase name of the organization without special characters)
-	OrganizationSlug *string                                    `json:"organizationSlug"`
-	OrganizationType *HelloAssoApiV5ModelsEnumsOrganizationType `json:"organizationType,omitempty"`
-	Payer            *HelloAssoApiV5ModelsStatisticsPayer       `json:"payer,omitempty"`
+	OrganizationSlug *string                                    `json:"organizationSlug" bson:"organization_slug"`
+	OrganizationType *HelloAssoApiV5ModelsEnumsOrganizationType `json:"organizationType,omitempty" bson:"organization_type"`
+	Payer            *HelloAssoApiV5ModelsStatisticsPayer       `json:"payer,omitempty" bson:"payer"`
 
 	// Payments All payments of the order
-	Payments *[]HelloAssoApiV5ModelsStatisticsOrderPayment `json:"payments"`
+	Payments *[]HelloAssoApiV5ModelsStatisticsOrderPayment `json:"payments" bson:"payments"`
 }
 
 // HelloAssoApiV5ModelsStatisticsOrderItem Item on the order
 type HelloAssoApiV5ModelsStatisticsOrderItem struct {
 	// Amount Total item Price in cents (after discount without extra options)
-	Amount  *int32  `json:"amount,omitempty"`
-	Comment *string `json:"comment"`
+	Amount  *int32  `json:"amount,omitempty" bson:"amount"`
+	Comment *string `json:"comment" bson:"comment"`
 
 	// CustomFields Custom fields related to this item
-	CustomFields *[]HelloAssoApiV5ModelsStatisticsItemCustomField `json:"customFields"`
+	CustomFields *[]HelloAssoApiV5ModelsStatisticsItemCustomField `json:"customFields" bson:"custom_fields"`
 
 	// DayOfLevy The day of levy for monthly donation only
-	DayOfLevy *int32                                      `json:"dayOfLevy"`
-	Discount  *HelloAssoApiV5ModelsStatisticsItemDiscount `json:"discount,omitempty"`
+	DayOfLevy *int32                                      `json:"dayOfLevy" bson:"day_of_levy"`
+	Discount  *HelloAssoApiV5ModelsStatisticsItemDiscount `json:"discount,omitempty" bson:"discount"`
 
 	// Id ID of the Item
-	Id *int32 `json:"id,omitempty"`
+	Id *int32 `json:"id,omitempty" bson:"id"`
 
 	// InitialAmount The raw amount (without reduction)
-	InitialAmount *int32 `json:"initialAmount"`
+	InitialAmount *int32 `json:"initialAmount" bson:"initial_amount"`
 
 	// MembershipCardUrl The Membership Card Url
-	MembershipCardUrl *string `json:"membershipCardUrl"`
+	MembershipCardUrl *string `json:"membershipCardUrl" bson:"membership_card_url"`
 
 	// MinAmount Minimum amount that was specified on the tier (in cents)
-	MinAmount *int32  `json:"minAmount"`
-	Name      *string `json:"name"`
+	MinAmount *int32  `json:"minAmount" bson:"min_amount"`
+	Name      *string `json:"name" bson:"name"`
 
 	// Options Extra options taken with this item
-	Options *[]HelloAssoApiV5ModelsStatisticsItemOption `json:"options"`
+	Options *[]HelloAssoApiV5ModelsStatisticsItemOption `json:"options" bson:"options"`
 
 	// Payments Payments linked to this item and each share between the item and the payment
-	Payments      *[]HelloAssoApiV5ModelsStatisticsSharePayment `json:"payments"`
-	PriceCategory *HelloAssoApiV5ModelsEnumsPriceCategory       `json:"priceCategory,omitempty"`
+	Payments      *[]HelloAssoApiV5ModelsStatisticsSharePayment `json:"payments" bson:"payments"`
+	PriceCategory *HelloAssoApiV5ModelsEnumsPriceCategory       `json:"priceCategory,omitempty" bson:"price_category"`
 
 	// QrCode The item QrCode (for ticket scanning only)
-	QrCode *string                             `json:"qrCode"`
-	State  *HelloAssoApiV5ModelsEnumsItemState `json:"state,omitempty"`
+	QrCode *string                             `json:"qrCode" bson:"qr_code"`
+	State  *HelloAssoApiV5ModelsEnumsItemState `json:"state,omitempty" bson:"state"`
 
 	// TicketUrl The Ticket Url
-	TicketUrl *string `json:"ticketUrl"`
+	TicketUrl *string `json:"ticketUrl" bson:"ticket_url"`
 
 	// TierDescription Tier description
-	TierDescription *string                             `json:"tierDescription"`
-	TierId          *int32                              `json:"tierId"`
-	Type            *HelloAssoApiV5ModelsEnumsTierType  `json:"type,omitempty"`
-	User            *HelloAssoApiV5ModelsStatisticsUser `json:"user,omitempty"`
+	TierDescription *string                             `json:"tierDescription" bson:"tier_description"`
+	TierId          *int32                              `json:"tierId" bson:"tier_id"`
+	Type            *HelloAssoApiV5ModelsEnumsTierType  `json:"type,omitempty" bson:"type"`
+	User            *HelloAssoApiV5ModelsStatisticsUser `json:"user,omitempty" bson:"user"`
 }
 
 // HelloAssoApiV5ModelsStatisticsOrderLight defines model for HelloAsso.Api.V5.Models.Statistics.OrderLight.
 type HelloAssoApiV5ModelsStatisticsOrderLight struct {
 	// CheckoutIntentId Checkout intent Id if available
-	CheckoutIntentId *int32 `json:"checkoutIntentId"`
+	CheckoutIntentId *int32 `json:"checkoutIntentId" bson:"checkout_intent_id"`
 
 	// Date Order creation date
-	Date *time.Time `json:"date,omitempty"`
+	Date *time.Time `json:"date,omitempty" bson:"date"`
 
 	// FormSlug FormSlug (lowercase name of the form without special characters)
-	FormSlug *string                            `json:"formSlug"`
-	FormType *HelloAssoApiV5ModelsEnumsFormType `json:"formType,omitempty"`
+	FormSlug *string                            `json:"formSlug" bson:"form_slug"`
+	FormType *HelloAssoApiV5ModelsEnumsFormType `json:"formType,omitempty" bson:"form_type"`
 
 	// Id The ID of the Order
-	Id *int32 `json:"id,omitempty"`
+	Id *int32 `json:"id,omitempty" bson:"id"`
 
 	// Meta MetaModel class
-	Meta *HelloAssoApiV5ModelsCommonMetaModel `json:"meta,omitempty"`
+	Meta *HelloAssoApiV5ModelsCommonMetaModel `json:"meta,omitempty" bson:"meta"`
 
 	// OrganizationIsUnderColucheLaw Whether or not the organization is subject to the coluche law
-	OrganizationIsUnderColucheLaw *bool `json:"organizationIsUnderColucheLaw,omitempty"`
+	OrganizationIsUnderColucheLaw *bool `json:"organizationIsUnderColucheLaw,omitempty" bson:"organization_is_under_coluche_law"`
 
 	// OrganizationName The organization name.
-	OrganizationName *string `json:"organizationName"`
+	OrganizationName *string `json:"organizationName" bson:"organization_name"`
 
 	// OrganizationSlug OrganizationSlug (lowercase name of the organization without special characters)
-	OrganizationSlug *string                                    `json:"organizationSlug"`
-	OrganizationType *HelloAssoApiV5ModelsEnumsOrganizationType `json:"organizationType,omitempty"`
+	OrganizationSlug *string                                    `json:"organizationSlug" bson:"organization_slug"`
+	OrganizationType *HelloAssoApiV5ModelsEnumsOrganizationType `json:"organizationType,omitempty" bson:"organization_type"`
 }
 
 // HelloAssoApiV5ModelsStatisticsOrderPayment Payment on the order
 type HelloAssoApiV5ModelsStatisticsOrderPayment struct {
 	// Amount Total Amount of the payment (in cents)
-	Amount *int32 `json:"amount,omitempty"`
+	Amount *int32 `json:"amount,omitempty" bson:"amount"`
 
 	// AmountTip Tip Amount of the payment (in cents)
-	AmountTip *int32 `json:"amountTip"`
+	AmountTip *int32 `json:"amountTip" bson:"amount_tip"`
 
 	// CashOutDate The date of the cash out
-	CashOutDate  *time.Time                                    `json:"cashOutDate"`
-	CashOutState *HelloAssoApiV5ModelsEnumsPaymentCashOutState `json:"cashOutState,omitempty"`
+	CashOutDate  *time.Time                                    `json:"cashOutDate" bson:"cash_out_date"`
+	CashOutState *HelloAssoApiV5ModelsEnumsPaymentCashOutState `json:"cashOutState,omitempty" bson:"cash_out_state"`
 
 	// Date Date of the payment
-	Date *time.Time `json:"date,omitempty"`
+	Date *time.Time `json:"date,omitempty" bson:"date"`
 
 	// FiscalReceiptUrl The Fiscal Receipt Url
-	FiscalReceiptUrl *string `json:"fiscalReceiptUrl"`
+	FiscalReceiptUrl *string `json:"fiscalReceiptUrl" bson:"fiscal_receipt_url"`
 
 	// Id The ID of the payment
-	Id *int32 `json:"id,omitempty"`
+	Id *int32 `json:"id,omitempty" bson:"id"`
 
 	// InstallmentNumber Indicates the payment number (useful in the case of an order comprising payments with installments)
-	InstallmentNumber *int32 `json:"installmentNumber"`
+	InstallmentNumber *int32 `json:"installmentNumber" bson:"installment_number"`
 
 	// Items Items linked to this payment and each share between the item and the payment
-	Items *[]HelloAssoApiV5ModelsStatisticsShareItem `json:"items"`
+	Items *[]HelloAssoApiV5ModelsStatisticsShareItem `json:"items" bson:"items"`
 
 	// Meta MetaModel class
-	Meta               *HelloAssoApiV5ModelsCommonMetaModel   `json:"meta,omitempty"`
-	PaymentMeans       *HelloAssoApiV5ModelsEnumsPaymentMeans `json:"paymentMeans,omitempty"`
-	PaymentOffLineMean *HelloAssoApiV5ModelsEnumsPaymentMeans `json:"paymentOffLineMean,omitempty"`
+	Meta               *HelloAssoApiV5ModelsCommonMetaModel   `json:"meta,omitempty" bson:"meta"`
+	PaymentMeans       *HelloAssoApiV5ModelsEnumsPaymentMeans `json:"paymentMeans,omitempty" bson:"payment_means"`
+	PaymentOffLineMean *HelloAssoApiV5ModelsEnumsPaymentMeans `json:"paymentOffLineMean,omitempty" bson:"payment_off_line_mean"`
 
 	// PaymentReceiptUrl The Payment Receipt Url
-	PaymentReceiptUrl *string `json:"paymentReceiptUrl"`
+	PaymentReceiptUrl *string `json:"paymentReceiptUrl" bson:"payment_receipt_url"`
 
 	// RefundOperations The refund operations information for the specific payment.
-	RefundOperations *[]HelloAssoApiV5ModelsStatisticsRefundOperationLightModel `json:"refundOperations"`
-	State            *HelloAssoApiV5ModelsEnumsPaymentState                     `json:"state,omitempty"`
-	Type             *HelloAssoApiV5ModelsEnumsPaymentType                      `json:"type,omitempty"`
+	RefundOperations *[]HelloAssoApiV5ModelsStatisticsRefundOperationLightModel `json:"refundOperations" bson:"refund_operations"`
+	State            *HelloAssoApiV5ModelsEnumsPaymentState                     `json:"state,omitempty" bson:"state"`
+	Type             *HelloAssoApiV5ModelsEnumsPaymentType                      `json:"type,omitempty" bson:"type"`
 }
 
 // HelloAssoApiV5ModelsStatisticsPayer defines model for HelloAsso.Api.V5.Models.Statistics.Payer.
 type HelloAssoApiV5ModelsStatisticsPayer struct {
 	// Address Gets or Sets Address
-	Address *string `json:"address"`
+	Address *string `json:"address" bson:"address"`
 
 	// City Gets or Sets City
-	City *string `json:"city"`
+	City *string `json:"city" bson:"city"`
 
 	// Company Gets or Sets Company
-	Company *string `json:"company"`
+	Company *string `json:"company" bson:"company"`
 
 	// Country Gets or Sets Country
-	Country *string `json:"country"`
+	Country *string `json:"country" bson:"country"`
 
 	// DateOfBirth Gets or Sets date of birth
-	DateOfBirth *time.Time `json:"dateOfBirth"`
-	Email       *string    `json:"email"`
-	FirstName   *string    `json:"firstName"`
-	LastName    *string    `json:"lastName"`
+	DateOfBirth *time.Time `json:"dateOfBirth" bson:"date_of_birth"`
+	Email       *string    `json:"email" bson:"email"`
+	FirstName   *string    `json:"firstName" bson:"first_name"`
+	LastName    *string    `json:"lastName" bson:"last_name"`
 
 	// ZipCode Gets or Sets ZipCode
-	ZipCode *string `json:"zipCode"`
+	ZipCode *string `json:"zipCode" bson:"zip_code"`
 }
 
 // HelloAssoApiV5ModelsStatisticsPayment defines model for HelloAsso.Api.V5.Models.Statistics.Payment.
 type HelloAssoApiV5ModelsStatisticsPayment struct {
 	// Amount Total Amount of the payment (in cents)
-	Amount *int32 `json:"amount,omitempty"`
+	Amount *int32 `json:"amount,omitempty" bson:"amount"`
 
 	// AmountTip Tip Amount of the payment (in cents)
-	AmountTip *int32 `json:"amountTip"`
+	AmountTip *int32 `json:"amountTip" bson:"amount_tip"`
 
 	// CashOutDate The date of the cash out
-	CashOutDate  *time.Time                                    `json:"cashOutDate"`
-	CashOutState *HelloAssoApiV5ModelsEnumsPaymentCashOutState `json:"cashOutState,omitempty"`
+	CashOutDate  *time.Time                                    `json:"cashOutDate" bson:"cash_out_date"`
+	CashOutState *HelloAssoApiV5ModelsEnumsPaymentCashOutState `json:"cashOutState,omitempty" bson:"cash_out_state"`
 
 	// Date Date of the payment
-	Date *time.Time `json:"date,omitempty"`
+	Date *time.Time `json:"date,omitempty" bson:"date"`
 
 	// FiscalReceiptUrl The Fiscal Receipt Url
-	FiscalReceiptUrl *string `json:"fiscalReceiptUrl"`
+	FiscalReceiptUrl *string `json:"fiscalReceiptUrl" bson:"fiscal_receipt_url"`
 
 	// Id The ID of the payment
-	Id *int32 `json:"id,omitempty"`
+	Id *int32 `json:"id,omitempty" bson:"id"`
 
 	// InstallmentNumber Indicates the payment number (useful in the case of an order comprising payments with installments)
-	InstallmentNumber *int32 `json:"installmentNumber"`
+	InstallmentNumber *int32 `json:"installmentNumber" bson:"installment_number"`
 
 	// Items Items linked to this payment
-	Items *[]HelloAssoApiV5ModelsStatisticsPaymentItem `json:"items"`
+	Items *[]HelloAssoApiV5ModelsStatisticsPaymentItem `json:"items" bson:"items"`
 
 	// Meta MetaModel class
-	Meta               *HelloAssoApiV5ModelsCommonMetaModel      `json:"meta,omitempty"`
-	Order              *HelloAssoApiV5ModelsStatisticsOrderLight `json:"order,omitempty"`
-	Payer              *HelloAssoApiV5ModelsStatisticsPayer      `json:"payer,omitempty"`
-	PaymentMeans       *HelloAssoApiV5ModelsEnumsPaymentMeans    `json:"paymentMeans,omitempty"`
-	PaymentOffLineMean *HelloAssoApiV5ModelsEnumsPaymentMeans    `json:"paymentOffLineMean,omitempty"`
+	Meta               *HelloAssoApiV5ModelsCommonMetaModel      `json:"meta,omitempty" bson:"meta"`
+	Order              *HelloAssoApiV5ModelsStatisticsOrderLight `json:"order,omitempty" bson:"order"`
+	Payer              *HelloAssoApiV5ModelsStatisticsPayer      `json:"payer,omitempty" bson:"payer"`
+	PaymentMeans       *HelloAssoApiV5ModelsEnumsPaymentMeans    `json:"paymentMeans,omitempty" bson:"payment_means"`
+	PaymentOffLineMean *HelloAssoApiV5ModelsEnumsPaymentMeans    `json:"paymentOffLineMean,omitempty" bson:"payment_off_line_mean"`
 
 	// PaymentReceiptUrl The Payment Receipt Url
-	PaymentReceiptUrl *string `json:"paymentReceiptUrl"`
+	PaymentReceiptUrl *string `json:"paymentReceiptUrl" bson:"payment_receipt_url"`
 
 	// RefundOperations The refund operations information for the specific payment.
-	RefundOperations *[]HelloAssoApiV5ModelsStatisticsRefundOperationLightModel `json:"refundOperations"`
-	State            *HelloAssoApiV5ModelsEnumsPaymentState                     `json:"state,omitempty"`
-	Type             *HelloAssoApiV5ModelsEnumsPaymentType                      `json:"type,omitempty"`
+	RefundOperations *[]HelloAssoApiV5ModelsStatisticsRefundOperationLightModel `json:"refundOperations" bson:"refund_operations"`
+	State            *HelloAssoApiV5ModelsEnumsPaymentState                     `json:"state,omitempty" bson:"state"`
+	Type             *HelloAssoApiV5ModelsEnumsPaymentType                      `json:"type,omitempty" bson:"type"`
 }
 
 // HelloAssoApiV5ModelsStatisticsPaymentDetail defines model for HelloAsso.Api.V5.Models.Statistics.PaymentDetail.
 type HelloAssoApiV5ModelsStatisticsPaymentDetail struct {
 	// Amount Total Amount of the payment (in cents)
-	Amount *int32 `json:"amount,omitempty"`
+	Amount *int32 `json:"amount,omitempty" bson:"amount"`
 
 	// AmountTip Tip Amount of the payment (in cents)
-	AmountTip *int32 `json:"amountTip"`
+	AmountTip *int32 `json:"amountTip" bson:"amount_tip"`
 
 	// CashOutDate The date of the cash out
-	CashOutDate  *time.Time                                    `json:"cashOutDate"`
-	CashOutState *HelloAssoApiV5ModelsEnumsPaymentCashOutState `json:"cashOutState,omitempty"`
+	CashOutDate  *time.Time                                    `json:"cashOutDate" bson:"cash_out_date"`
+	CashOutState *HelloAssoApiV5ModelsEnumsPaymentCashOutState `json:"cashOutState,omitempty" bson:"cash_out_state"`
 
 	// Date Date of the payment
-	Date *time.Time `json:"date,omitempty"`
+	Date *time.Time `json:"date,omitempty" bson:"date"`
 
 	// FiscalReceiptUrl The Fiscal Receipt Url
-	FiscalReceiptUrl *string `json:"fiscalReceiptUrl"`
+	FiscalReceiptUrl *string `json:"fiscalReceiptUrl" bson:"fiscal_receipt_url"`
 
 	// Id The ID of the payment
-	Id *int32 `json:"id,omitempty"`
+	Id *int32 `json:"id,omitempty" bson:"id"`
 
 	// InstallmentNumber Indicates the payment number (useful in the case of an order comprising payments with installments)
-	InstallmentNumber *int32 `json:"installmentNumber"`
+	InstallmentNumber *int32 `json:"installmentNumber" bson:"installment_number"`
 
 	// Items Items linked to this payment
-	Items *[]HelloAssoApiV5ModelsStatisticsPaymentItem `json:"items"`
+	Items *[]HelloAssoApiV5ModelsStatisticsPaymentItem `json:"items" bson:"items"`
 
 	// Meta MetaModel class
-	Meta               *HelloAssoApiV5ModelsCommonMetaModel      `json:"meta,omitempty"`
-	Order              *HelloAssoApiV5ModelsStatisticsOrderLight `json:"order,omitempty"`
-	Payer              *HelloAssoApiV5ModelsStatisticsPayer      `json:"payer,omitempty"`
-	PaymentMeans       *HelloAssoApiV5ModelsEnumsPaymentMeans    `json:"paymentMeans,omitempty"`
-	PaymentOffLineMean *HelloAssoApiV5ModelsEnumsPaymentMeans    `json:"paymentOffLineMean,omitempty"`
+	Meta               *HelloAssoApiV5ModelsCommonMetaModel      `json:"meta,omitempty" bson:"meta"`
+	Order              *HelloAssoApiV5ModelsStatisticsOrderLight `json:"order,omitempty" bson:"order"`
+	Payer              *HelloAssoApiV5ModelsStatisticsPayer      `json:"payer,omitempty" bson:"payer"`
+	PaymentMeans       *HelloAssoApiV5ModelsEnumsPaymentMeans    `json:"paymentMeans,omitempty" bson:"payment_means"`
+	PaymentOffLineMean *HelloAssoApiV5ModelsEnumsPaymentMeans    `json:"paymentOffLineMean,omitempty" bson:"payment_off_line_mean"`
 
 	// PaymentReceiptUrl The Payment Receipt Url
-	PaymentReceiptUrl *string `json:"paymentReceiptUrl"`
+	PaymentReceiptUrl *string `json:"paymentReceiptUrl" bson:"payment_receipt_url"`
 
 	// RefundOperations The refund operations information for the specific payment.
-	RefundOperations *[]HelloAssoApiV5ModelsStatisticsRefundOperationLightModel `json:"refundOperations"`
-	State            *HelloAssoApiV5ModelsEnumsPaymentState                     `json:"state,omitempty"`
-	Type             *HelloAssoApiV5ModelsEnumsPaymentType                      `json:"type,omitempty"`
+	RefundOperations *[]HelloAssoApiV5ModelsStatisticsRefundOperationLightModel `json:"refundOperations" bson:"refund_operations"`
+	State            *HelloAssoApiV5ModelsEnumsPaymentState                     `json:"state,omitempty" bson:"state"`
+	Type             *HelloAssoApiV5ModelsEnumsPaymentType                      `json:"type,omitempty" bson:"type"`
 }
 
 // HelloAssoApiV5ModelsStatisticsPaymentItem Item linked to a payment
 type HelloAssoApiV5ModelsStatisticsPaymentItem struct {
 	// Amount Total item Price in cents (after discount without extra options)
-	Amount *int32 `json:"amount,omitempty"`
+	Amount *int32 `json:"amount,omitempty" bson:"amount"`
 
 	// Id ID of the Item
-	Id *int32 `json:"id,omitempty"`
+	Id *int32 `json:"id,omitempty" bson:"id"`
 
 	// InitialAmount The raw amount (without reduction)
-	InitialAmount *int32 `json:"initialAmount"`
+	InitialAmount *int32 `json:"initialAmount" bson:"initial_amount"`
 
 	// Name Name of the item paid (relevant for checkout forms)
-	Name *string `json:"name"`
+	Name *string `json:"name" bson:"name"`
 
 	// ShareAmount Amount of the payment assigned to the item and its options (in cents)
-	ShareAmount *int32 `json:"shareAmount,omitempty"`
+	ShareAmount *int32 `json:"shareAmount,omitempty" bson:"share_amount"`
 
 	// ShareItemAmount Amount of the item payed on this payment term (in cents)
-	ShareItemAmount *int32 `json:"shareItemAmount,omitempty"`
+	ShareItemAmount *int32 `json:"shareItemAmount,omitempty" bson:"share_item_amount"`
 
 	// ShareOptionsAmount Amount of all extra options linked to this item and payed on this payment (in cents)
-	ShareOptionsAmount *int32                              `json:"shareOptionsAmount"`
-	State              *HelloAssoApiV5ModelsEnumsItemState `json:"state,omitempty"`
-	Type               *HelloAssoApiV5ModelsEnumsTierType  `json:"type,omitempty"`
+	ShareOptionsAmount *int32                              `json:"shareOptionsAmount" bson:"share_options_amount"`
+	State              *HelloAssoApiV5ModelsEnumsItemState `json:"state,omitempty" bson:"state"`
+	Type               *HelloAssoApiV5ModelsEnumsTierType  `json:"type,omitempty" bson:"type"`
 }
 
 // HelloAssoApiV5ModelsStatisticsRefundOperationLightModel The refund operation with the Id, amount, amount tip and the status.
 type HelloAssoApiV5ModelsStatisticsRefundOperationLightModel struct {
 	// Amount The amount for this refund.
-	Amount *int32 `json:"amount,omitempty"`
+	Amount *int32 `json:"amount,omitempty" bson:"amount"`
 
 	// AmountTip The amount tip for this refund.
-	AmountTip *int32 `json:"amountTip,omitempty"`
+	AmountTip *int32 `json:"amountTip,omitempty" bson:"amount_tip"`
 
 	// Id The refund operation identifier.
-	Id *int32 `json:"id,omitempty"`
+	Id *int32 `json:"id,omitempty" bson:"id"`
 
 	// Meta MetaModel class
-	Meta   *HelloAssoApiV5ModelsCommonMetaModel     `json:"meta,omitempty"`
-	Status *HelloAssoApiV5ModelsEnumsOperationState `json:"status,omitempty"`
+	Meta   *HelloAssoApiV5ModelsCommonMetaModel     `json:"meta,omitempty" bson:"meta"`
+	Status *HelloAssoApiV5ModelsEnumsOperationState `json:"status,omitempty" bson:"status"`
 }
 
 // HelloAssoApiV5ModelsStatisticsShareItem defines model for HelloAsso.Api.V5.Models.Statistics.ShareItem.
 type HelloAssoApiV5ModelsStatisticsShareItem struct {
 	// Id Id of the order item
-	Id *int32 `json:"id,omitempty"`
+	Id *int32 `json:"id,omitempty" bson:"id"`
 
 	// ShareAmount Amount of the payment assigned to the item and its options (in cents)
-	ShareAmount *int32 `json:"shareAmount,omitempty"`
+	ShareAmount *int32 `json:"shareAmount,omitempty" bson:"share_amount"`
 
 	// ShareItemAmount Amount of the item payed on this payment term (in cents)
-	ShareItemAmount *int32 `json:"shareItemAmount,omitempty"`
+	ShareItemAmount *int32 `json:"shareItemAmount,omitempty" bson:"share_item_amount"`
 
 	// ShareOptionsAmount Amount of all extra options linked to this item and payed on this payment (in cents)
-	ShareOptionsAmount *int32 `json:"shareOptionsAmount"`
+	ShareOptionsAmount *int32 `json:"shareOptionsAmount" bson:"share_options_amount"`
 }
 
 // HelloAssoApiV5ModelsStatisticsSharePayment defines model for HelloAsso.Api.V5.Models.Statistics.SharePayment.
 type HelloAssoApiV5ModelsStatisticsSharePayment struct {
 	// Id Id of the payment
-	Id *int32 `json:"id,omitempty"`
+	Id *int32 `json:"id,omitempty" bson:"id"`
 
 	// ShareAmount Amount of the item payed on this payment term (in cents)
-	ShareAmount *int32 `json:"shareAmount,omitempty"`
+	ShareAmount *int32 `json:"shareAmount,omitempty" bson:"share_amount"`
 }
 
 // HelloAssoApiV5ModelsStatisticsUser defines model for HelloAsso.Api.V5.Models.Statistics.User.
 type HelloAssoApiV5ModelsStatisticsUser struct {
-	FirstName *string `json:"firstName"`
-	LastName  *string `json:"lastName"`
+	FirstName *string `json:"firstName" bson:"first_name"`
+	LastName  *string `json:"lastName" bson:"last_name"`
 }
 
 // HelloAssoApiV5ModelsTagsInternalTagModel InternalTagModel class
 type HelloAssoApiV5ModelsTagsInternalTagModel struct {
 	// AmountCollected Amount collected by all forms linked to this tag (in cents)
-	AmountCollected *int64 `json:"amountCollected"`
+	AmountCollected *int64 `json:"amountCollected" bson:"amount_collected"`
 
 	// FormCount Count of times Tag is used by forms
-	FormCount *int32 `json:"formCount"`
+	FormCount *int32 `json:"formCount" bson:"form_count"`
 
 	// Id Tag Id
-	Id *int32 `json:"id,omitempty"`
+	Id *int32 `json:"id,omitempty" bson:"id"`
 
 	// Name Name tag
-	Name *string `json:"name"`
+	Name *string `json:"name" bson:"name"`
 
 	// OrganizationCount Count of times Tag is used by Organizations
-	OrganizationCount *int32 `json:"organizationCount"`
+	OrganizationCount *int32 `json:"organizationCount" bson:"organization_count"`
 
 	// TagParent InternalTagModel class
-	TagParent *HelloAssoApiV5ModelsTagsInternalTagModel `json:"tagParent,omitempty"`
-	TagType   *HelloAssoApiV5ModelsEnumsTagType         `json:"tagType,omitempty"`
+	TagParent *HelloAssoApiV5ModelsTagsInternalTagModel `json:"tagParent,omitempty" bson:"tag_parent"`
+	TagType   *HelloAssoApiV5ModelsEnumsTagType         `json:"tagType,omitempty" bson:"tag_type"`
 }
 
 // HelloAssoApiV5ModelsTagsPublicTagModel PublicNameTagModel class
 type HelloAssoApiV5ModelsTagsPublicTagModel struct {
 	// Name Name tag
-	Name *string `json:"name"`
+	Name *string `json:"name" bson:"name"`
 
 	// Score Tag score : measure tag relevance
-	Score *float64 `json:"score,omitempty"`
+	Score *float64 `json:"score,omitempty" bson:"score"`
 }
 
 // HelloAssoCoreAccountsTaxReceiptsOrganizationFiscalReceiptOptionsConfiguration defines model for HelloAsso.Core.Accounts.TaxReceipts.OrganizationFiscalReceiptOptionsConfiguration.
 type HelloAssoCoreAccountsTaxReceiptsOrganizationFiscalReceiptOptionsConfiguration struct {
-	AddressModel      *HaTrustContractLegalInformationAddressAddressDto                                `json:"addressModel,omitempty"`
-	CerfaTypeId       *int32                                                                           `json:"cerfaTypeId"`
-	FormatOptionModel *HelloAssoModelsPaymentsCashInFiscalReceiptFiscalReceiptFormatOption             `json:"formatOptionModel,omitempty"`
-	JoCategoryId      *int32                                                                           `json:"joCategoryId"`
-	Purpose           *string                                                                          `json:"purpose"`
-	SignatoryModel    *HelloAssoModelsAccountsOrganizationLegalInformationsFiscalReceiptSignatoryModel `json:"signatoryModel,omitempty"`
+	AddressModel      *HaTrustContractLegalInformationAddressAddressDto                                `json:"addressModel,omitempty" bson:"address_model"`
+	CerfaTypeId       *int32                                                                           `json:"cerfaTypeId" bson:"cerfa_type_id"`
+	FormatOptionModel *HelloAssoModelsPaymentsCashInFiscalReceiptFiscalReceiptFormatOption             `json:"formatOptionModel,omitempty" bson:"format_option_model"`
+	JoCategoryId      *int32                                                                           `json:"joCategoryId" bson:"jo_category_id"`
+	Purpose           *string                                                                          `json:"purpose" bson:"purpose"`
+	SignatoryModel    *HelloAssoModelsAccountsOrganizationLegalInformationsFiscalReceiptSignatoryModel `json:"signatoryModel,omitempty" bson:"signatory_model"`
 }
 
 // HelloAssoModelsAccountsOrganizationLegalInformationsFiscalReceiptSignatoryModel defines model for HelloAsso.Models.Accounts.OrganizationLegalInformations.FiscalReceiptSignatoryModel.
 type HelloAssoModelsAccountsOrganizationLegalInformationsFiscalReceiptSignatoryModel struct {
-	FileUrl   *string `json:"fileUrl"`
-	FirstName *string `json:"firstName"`
-	Function  *string `json:"function"`
-	LastName  *string `json:"lastName"`
+	FileUrl   *string `json:"fileUrl" bson:"file_url"`
+	FirstName *string `json:"firstName" bson:"first_name"`
+	Function  *string `json:"function" bson:"function"`
+	LastName  *string `json:"lastName" bson:"last_name"`
 }
 
 // HelloAssoModelsAccountsOrganizationLegalInformationsOrganizationLegalInformationConfiguration defines model for HelloAsso.Models.Accounts.OrganizationLegalInformations.OrganizationLegalInformationConfiguration.
 type HelloAssoModelsAccountsOrganizationLegalInformationsOrganizationLegalInformationConfiguration struct {
-	IsColucheLawEnabled                 *bool  `json:"isColucheLawEnabled,omitempty"`
-	IsHelloAssoFiscalReceiptTransmitter *bool  `json:"isHelloAssoFiscalReceiptTransmitter"`
-	IsIfiEnabled                        *bool  `json:"isIfiEnabled,omitempty"`
-	LegalStructureId                    *int32 `json:"legalStructureId,omitempty"`
+	IsColucheLawEnabled                 *bool  `json:"isColucheLawEnabled,omitempty" bson:"is_coluche_law_enabled"`
+	IsHelloAssoFiscalReceiptTransmitter *bool  `json:"isHelloAssoFiscalReceiptTransmitter" bson:"is_hello_asso_fiscal_receipt_transmitter"`
+	IsIfiEnabled                        *bool  `json:"isIfiEnabled,omitempty" bson:"is_ifi_enabled"`
+	LegalStructureId                    *int32 `json:"legalStructureId,omitempty" bson:"legal_structure_id"`
 }
 
 // HelloAssoModelsAccountsOrganizationLegalInformationsTaxInformationText defines model for HelloAsso.Models.Accounts.OrganizationLegalInformations.TaxInformationText.
 type HelloAssoModelsAccountsOrganizationLegalInformationsTaxInformationText struct {
-	CompanyText         *string `json:"companyText"`
-	IndividualText      *string `json:"individualText"`
-	IsColucheLawEnabled *bool   `json:"isColucheLawEnabled,omitempty"`
-	IsIfiEnabled        *bool   `json:"isIfiEnabled,omitempty"`
+	CompanyText         *string `json:"companyText" bson:"company_text"`
+	IndividualText      *string `json:"individualText" bson:"individual_text"`
+	IsColucheLawEnabled *bool   `json:"isColucheLawEnabled,omitempty" bson:"is_coluche_law_enabled"`
+	IsIfiEnabled        *bool   `json:"isIfiEnabled,omitempty" bson:"is_ifi_enabled"`
 }
 
 // HelloAssoModelsEnumsGlobalRole defines model for HelloAsso.Models.Enums.GlobalRole.
@@ -1968,113 +1968,113 @@ type HelloAssoModelsEnumsGlobalRole string
 
 // HelloAssoModelsPaymentsCashInFiscalReceiptFiscalReceiptFormatOption defines model for HelloAsso.Models.Payments.CashIn.FiscalReceipt.FiscalReceiptFormatOption.
 type HelloAssoModelsPaymentsCashInFiscalReceiptFiscalReceiptFormatOption struct {
-	Date      *string `json:"date"`
-	Order     *string `json:"order"`
-	Root      *string `json:"root"`
-	Separator *string `json:"separator"`
+	Date      *string `json:"date" bson:"date"`
+	Order     *string `json:"order" bson:"order"`
+	Root      *string `json:"root" bson:"root"`
+	Separator *string `json:"separator" bson:"separator"`
 }
 
 // HelloAssoModelsSharedGeoLocation defines model for HelloAsso.Models.Shared.GeoLocation.
 type HelloAssoModelsSharedGeoLocation struct {
-	Latitude  *float64 `json:"latitude,omitempty"`
-	Longitude *float64 `json:"longitude,omitempty"`
+	Latitude  *float64 `json:"latitude,omitempty" bson:"latitude"`
+	Longitude *float64 `json:"longitude,omitempty" bson:"longitude"`
 }
 
 // ResultsWithPaginationModelFormLightModel ResultsWithPaginationModel class
 type ResultsWithPaginationModelFormLightModel struct {
 	// Data Data property
-	Data *[]HelloAssoApiV5ModelsFormsFormLightModel `json:"data"`
+	Data *[]HelloAssoApiV5ModelsFormsFormLightModel `json:"data" bson:"data"`
 
 	// Pagination Pagination model class
-	Pagination *HelloAssoApiV5ModelsCommonPaginationModel `json:"pagination,omitempty"`
+	Pagination *HelloAssoApiV5ModelsCommonPaginationModel `json:"pagination,omitempty" bson:"pagination"`
 }
 
 // ResultsWithPaginationModelOrder ResultsWithPaginationModel class
 type ResultsWithPaginationModelOrder struct {
 	// Data Data property
-	Data *[]HelloAssoApiV5ModelsStatisticsOrder `json:"data"`
+	Data *[]HelloAssoApiV5ModelsStatisticsOrder `json:"data" bson:"data"`
 
 	// Pagination Pagination model class
-	Pagination *HelloAssoApiV5ModelsCommonPaginationModel `json:"pagination,omitempty"`
+	Pagination *HelloAssoApiV5ModelsCommonPaginationModel `json:"pagination,omitempty" bson:"pagination"`
 }
 
 // ResultsWithPaginationModelPartnerOrganizationModel ResultsWithPaginationModel class
 type ResultsWithPaginationModelPartnerOrganizationModel struct {
 	// Data Data property
-	Data *[]HelloAssoApiV5ModelsDirectoryPartnerOrganizationModel `json:"data"`
+	Data *[]HelloAssoApiV5ModelsDirectoryPartnerOrganizationModel `json:"data" bson:"data"`
 
 	// Pagination Pagination model class
-	Pagination *HelloAssoApiV5ModelsCommonPaginationModel `json:"pagination,omitempty"`
+	Pagination *HelloAssoApiV5ModelsCommonPaginationModel `json:"pagination,omitempty" bson:"pagination"`
 }
 
 // ResultsWithPaginationModelPayment ResultsWithPaginationModel class
 type ResultsWithPaginationModelPayment struct {
 	// Data Data property
-	Data *[]HelloAssoApiV5ModelsStatisticsPayment `json:"data"`
+	Data *[]HelloAssoApiV5ModelsStatisticsPayment `json:"data" bson:"data"`
 
 	// Pagination Pagination model class
-	Pagination *HelloAssoApiV5ModelsCommonPaginationModel `json:"pagination,omitempty"`
+	Pagination *HelloAssoApiV5ModelsCommonPaginationModel `json:"pagination,omitempty" bson:"pagination"`
 }
 
 // ResultsWithPaginationModelPublicPaymentModel ResultsWithPaginationModel class
 type ResultsWithPaginationModelPublicPaymentModel struct {
 	// Data Data property
-	Data *[]HelloAssoApiV5ModelsPaymentPublicPaymentModel `json:"data"`
+	Data *[]HelloAssoApiV5ModelsPaymentPublicPaymentModel `json:"data" bson:"data"`
 
 	// Pagination Pagination model class
-	Pagination *HelloAssoApiV5ModelsCommonPaginationModel `json:"pagination,omitempty"`
+	Pagination *HelloAssoApiV5ModelsCommonPaginationModel `json:"pagination,omitempty" bson:"pagination"`
 }
 
 // ResultsWithPaginationModelSynchronizableFormModel ResultsWithPaginationModel class
 type ResultsWithPaginationModelSynchronizableFormModel struct {
 	// Data Data property
-	Data *[]HelloAssoApiV5ModelsDirectorySynchronizableFormModel `json:"data"`
+	Data *[]HelloAssoApiV5ModelsDirectorySynchronizableFormModel `json:"data" bson:"data"`
 
 	// Pagination Pagination model class
-	Pagination *HelloAssoApiV5ModelsCommonPaginationModel `json:"pagination,omitempty"`
+	Pagination *HelloAssoApiV5ModelsCommonPaginationModel `json:"pagination,omitempty" bson:"pagination"`
 }
 
 // ResultsWithPaginationModelSynchronizableOrganizationModel ResultsWithPaginationModel class
 type ResultsWithPaginationModelSynchronizableOrganizationModel struct {
 	// Data Data property
-	Data *[]HelloAssoApiV5ModelsDirectorySynchronizableOrganizationModel `json:"data"`
+	Data *[]HelloAssoApiV5ModelsDirectorySynchronizableOrganizationModel `json:"data" bson:"data"`
 
 	// Pagination Pagination model class
-	Pagination *HelloAssoApiV5ModelsCommonPaginationModel `json:"pagination,omitempty"`
+	Pagination *HelloAssoApiV5ModelsCommonPaginationModel `json:"pagination,omitempty" bson:"pagination"`
 }
 
 // PostDirectoryFormsParams defines parameters for PostDirectoryForms.
 type PostDirectoryFormsParams struct {
 	// PageSize The number of items per page
-	PageSize *int32 `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+	PageSize *int32 `form:"pageSize,omitempty" json:"pageSize,omitempty" bson:"page_size"`
 
 	// ContinuationToken Continuation Token from which we wish to retrieve results
-	ContinuationToken *string `form:"continuationToken,omitempty" json:"continuationToken,omitempty"`
+	ContinuationToken *string `form:"continuationToken,omitempty" json:"continuationToken,omitempty" bson:"continuation_token"`
 }
 
 // PostDirectoryOrganizationsParams defines parameters for PostDirectoryOrganizations.
 type PostDirectoryOrganizationsParams struct {
 	// PageSize The number of items per page
-	PageSize *int32 `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+	PageSize *int32 `form:"pageSize,omitempty" json:"pageSize,omitempty" bson:"page_size"`
 
 	// ContinuationToken Continuation Token from which we wish to retrieve results
-	ContinuationToken *string `form:"continuationToken,omitempty" json:"continuationToken,omitempty"`
+	ContinuationToken *string `form:"continuationToken,omitempty" json:"continuationToken,omitempty" bson:"continuation_token"`
 }
 
 // GetItemsItemIdParams defines parameters for GetItemsItemId.
 type GetItemsItemIdParams struct {
 	// WithDetails Set to true to return CustomFields and Options
-	WithDetails *bool `form:"withDetails,omitempty" json:"withDetails,omitempty"`
+	WithDetails *bool `form:"withDetails,omitempty" json:"withDetails,omitempty" bson:"with_details"`
 }
 
 // GetOrganizationsLegalInformationsTaxInformationTextsParams defines parameters for GetOrganizationsLegalInformationsTaxInformationTexts.
 type GetOrganizationsLegalInformationsTaxInformationTextsParams struct {
-	OrganizationSlug *string `form:"organizationSlug,omitempty" json:"organizationSlug,omitempty"`
+	OrganizationSlug *string `form:"organizationSlug,omitempty" json:"organizationSlug,omitempty" bson:"organization_slug"`
 }
 
 // GetOrganizationsOrganizationSlugCheckoutIntentsCheckoutIntentIdParams defines parameters for GetOrganizationsOrganizationSlugCheckoutIntentsCheckoutIntentId.
 type GetOrganizationsOrganizationSlugCheckoutIntentsCheckoutIntentIdParams struct {
-	WithFailedRefundOperation *bool `form:"withFailedRefundOperation,omitempty" json:"withFailedRefundOperation,omitempty"`
+	WithFailedRefundOperation *bool `form:"withFailedRefundOperation,omitempty" json:"withFailedRefundOperation,omitempty" bson:"with_failed_refund_operation"`
 }
 
 // GetOrganizationsOrganizationSlugFormTypesParams defines parameters for GetOrganizationsOrganizationSlugFormTypes.
@@ -2086,7 +2086,7 @@ type GetOrganizationsOrganizationSlugFormTypesParams struct {
 	// * `Private` - The form is visible only with the URL, you cannot find it on search engines
 	// * `Draft` - The form is not yet published but visible if you have admin rights
 	// * `Disabled` - The form is disabled and can be reenabled by changing state to public or private
-	States *[]HelloAssoApiV5ModelsEnumsFormState `form:"states,omitempty" json:"states,omitempty"`
+	States *[]HelloAssoApiV5ModelsEnumsFormState `form:"states,omitempty" json:"states,omitempty" bson:"states"`
 }
 
 // GetOrganizationsOrganizationSlugFormsParams defines parameters for GetOrganizationsOrganizationSlugForms.
@@ -2098,43 +2098,43 @@ type GetOrganizationsOrganizationSlugFormsParams struct {
 	// * `Private` - The form is visible only with the URL, you cannot find it on search engines
 	// * `Draft` - The form is not yet published but visible if you have admin rights
 	// * `Disabled` - The form is disabled and can be reenabled by changing state to public or private
-	States *[]HelloAssoApiV5ModelsEnumsFormState `form:"states,omitempty" json:"states,omitempty"`
+	States *[]HelloAssoApiV5ModelsEnumsFormState `form:"states,omitempty" json:"states,omitempty" bson:"states"`
 
 	// FormTypes Types to filter
-	FormTypes *[]HelloAssoApiV5ModelsEnumsFormType `form:"formTypes,omitempty" json:"formTypes,omitempty"`
+	FormTypes *[]HelloAssoApiV5ModelsEnumsFormType `form:"formTypes,omitempty" json:"formTypes,omitempty" bson:"form_types"`
 
 	// PageIndex The page of results to retrieve
-	PageIndex *int32 `form:"pageIndex,omitempty" json:"pageIndex,omitempty"`
+	PageIndex *int32 `form:"pageIndex,omitempty" json:"pageIndex,omitempty" bson:"page_index"`
 
 	// PageSize The number of items per page
-	PageSize *int32 `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+	PageSize *int32 `form:"pageSize,omitempty" json:"pageSize,omitempty" bson:"page_size"`
 
 	// ContinuationToken Continuation Token from which we wish to retrieve results
-	ContinuationToken *string `form:"continuationToken,omitempty" json:"continuationToken,omitempty"`
+	ContinuationToken *string `form:"continuationToken,omitempty" json:"continuationToken,omitempty" bson:"continuation_token"`
 }
 
 // GetOrganizationsOrganizationSlugFormsFormTypeFormSlugItemsParams defines parameters for GetOrganizationsOrganizationSlugFormsFormTypeFormSlugItems.
 type GetOrganizationsOrganizationSlugFormsFormTypeFormSlugItemsParams struct {
 	// From First Date Filter
-	From *time.Time `form:"from,omitempty" json:"from,omitempty"`
+	From *time.Time `form:"from,omitempty" json:"from,omitempty" bson:"from"`
 
 	// To End Date Filter (exclusive)
-	To *time.Time `form:"to,omitempty" json:"to,omitempty"`
+	To *time.Time `form:"to,omitempty" json:"to,omitempty" bson:"to"`
 
 	// UserSearchKey Filter results on user or payer first name, last name or email
-	UserSearchKey *string `form:"userSearchKey,omitempty" json:"userSearchKey,omitempty"`
+	UserSearchKey *string `form:"userSearchKey,omitempty" json:"userSearchKey,omitempty" bson:"user_search_key"`
 
 	// PageIndex The page of results to retrieve
-	PageIndex *int32 `form:"pageIndex,omitempty" json:"pageIndex,omitempty"`
+	PageIndex *int32 `form:"pageIndex,omitempty" json:"pageIndex,omitempty" bson:"page_index"`
 
 	// PageSize The number of items per page
-	PageSize *int32 `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+	PageSize *int32 `form:"pageSize,omitempty" json:"pageSize,omitempty" bson:"page_size"`
 
 	// ContinuationToken Continuation Token from which we wish to retrieve results
-	ContinuationToken *string `form:"continuationToken,omitempty" json:"continuationToken,omitempty"`
+	ContinuationToken *string `form:"continuationToken,omitempty" json:"continuationToken,omitempty" bson:"continuation_token"`
 
 	// TierTypes The type of tiers
-	TierTypes *[]HelloAssoApiV5ModelsEnumsTierType `form:"tierTypes,omitempty" json:"tierTypes,omitempty"`
+	TierTypes *[]HelloAssoApiV5ModelsEnumsTierType `form:"tierTypes,omitempty" json:"tierTypes,omitempty" bson:"tier_types"`
 
 	// ItemStates The item states
 	//
@@ -2143,73 +2143,73 @@ type GetOrganizationsOrganizationSlugFormsFormTypeFormSlugItemsParams struct {
 	// * `Registered` - The item has been registered manually by the organization and is valid
 	// * `Unknown`
 	// * `Canceled` - The item has been canceled, and is no longer valid
-	ItemStates *[]HelloAssoApiV5ModelsEnumsItemState `form:"itemStates,omitempty" json:"itemStates,omitempty"`
+	ItemStates *[]HelloAssoApiV5ModelsEnumsItemState `form:"itemStates,omitempty" json:"itemStates,omitempty" bson:"item_states"`
 
 	// TierName The name of a tier
-	TierName *string `form:"tierName,omitempty" json:"tierName,omitempty"`
+	TierName *string `form:"tierName,omitempty" json:"tierName,omitempty" bson:"tier_name"`
 
 	// WithDetails Set to true to return CustomFields and Options
-	WithDetails *bool `form:"withDetails,omitempty" json:"withDetails,omitempty"`
+	WithDetails *bool `form:"withDetails,omitempty" json:"withDetails,omitempty" bson:"with_details"`
 
 	// SortOrder Sort forms items by ascending or descending order. Default is descending
-	SortOrder *HelloAssoApiV5ModelsEnumsSortOrder `form:"sortOrder,omitempty" json:"sortOrder,omitempty"`
+	SortOrder *HelloAssoApiV5ModelsEnumsSortOrder `form:"sortOrder,omitempty" json:"sortOrder,omitempty" bson:"sort_order"`
 
 	// SortField Sort forms items by a specific field (Date or UpdateDate). Default is date
-	SortField *HelloAssoApiV5ModelsEnumsSortField `form:"sortField,omitempty" json:"sortField,omitempty"`
+	SortField *HelloAssoApiV5ModelsEnumsSortField `form:"sortField,omitempty" json:"sortField,omitempty" bson:"sort_field"`
 
 	// WithCount Whether the pagination should include totalCount and totalPages.
-	WithCount *bool `form:"withCount,omitempty" json:"withCount,omitempty"`
+	WithCount *bool `form:"withCount,omitempty" json:"withCount,omitempty" bson:"with_count"`
 }
 
 // GetOrganizationsOrganizationSlugFormsFormTypeFormSlugOrdersParams defines parameters for GetOrganizationsOrganizationSlugFormsFormTypeFormSlugOrders.
 type GetOrganizationsOrganizationSlugFormsFormTypeFormSlugOrdersParams struct {
 	// From First Date Filter
-	From *time.Time `form:"from,omitempty" json:"from,omitempty"`
+	From *time.Time `form:"from,omitempty" json:"from,omitempty" bson:"from"`
 
 	// To End Date Filter (exclusive)
-	To *time.Time `form:"to,omitempty" json:"to,omitempty"`
+	To *time.Time `form:"to,omitempty" json:"to,omitempty" bson:"to"`
 
 	// UserSearchKey Filter results on user or payer first name, last name or email
-	UserSearchKey *string `form:"userSearchKey,omitempty" json:"userSearchKey,omitempty"`
+	UserSearchKey *string `form:"userSearchKey,omitempty" json:"userSearchKey,omitempty" bson:"user_search_key"`
 
 	// PageIndex The page of results to retrieve
-	PageIndex *int32 `form:"pageIndex,omitempty" json:"pageIndex,omitempty"`
+	PageIndex *int32 `form:"pageIndex,omitempty" json:"pageIndex,omitempty" bson:"page_index"`
 
 	// PageSize The number of items per page
-	PageSize *int32 `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+	PageSize *int32 `form:"pageSize,omitempty" json:"pageSize,omitempty" bson:"page_size"`
 
 	// ContinuationToken Continuation Token from which we wish to retrieve results
-	ContinuationToken *string `form:"continuationToken,omitempty" json:"continuationToken,omitempty"`
+	ContinuationToken *string `form:"continuationToken,omitempty" json:"continuationToken,omitempty" bson:"continuation_token"`
 
 	// WithDetails Set to true to return CustomFields
-	WithDetails *bool `form:"withDetails,omitempty" json:"withDetails,omitempty"`
+	WithDetails *bool `form:"withDetails,omitempty" json:"withDetails,omitempty" bson:"with_details"`
 
 	// SortOrder Sort forms orders by ascending or descending order. Default is descending
-	SortOrder *HelloAssoApiV5ModelsEnumsSortOrder `form:"sortOrder,omitempty" json:"sortOrder,omitempty"`
+	SortOrder *HelloAssoApiV5ModelsEnumsSortOrder `form:"sortOrder,omitempty" json:"sortOrder,omitempty" bson:"sort_order"`
 
 	// WithCount Whether the pagination should include totalCount and totalPages.
-	WithCount *bool `form:"withCount,omitempty" json:"withCount,omitempty"`
+	WithCount *bool `form:"withCount,omitempty" json:"withCount,omitempty" bson:"with_count"`
 }
 
 // GetOrganizationsOrganizationSlugFormsFormTypeFormSlugPaymentsParams defines parameters for GetOrganizationsOrganizationSlugFormsFormTypeFormSlugPayments.
 type GetOrganizationsOrganizationSlugFormsFormTypeFormSlugPaymentsParams struct {
 	// From First Date Filter
-	From *time.Time `form:"from,omitempty" json:"from,omitempty"`
+	From *time.Time `form:"from,omitempty" json:"from,omitempty" bson:"from"`
 
 	// To End Date Filter (exclusive)
-	To *time.Time `form:"to,omitempty" json:"to,omitempty"`
+	To *time.Time `form:"to,omitempty" json:"to,omitempty" bson:"to"`
 
 	// UserSearchKey Filter results on user or payer first name, last name or email
-	UserSearchKey *string `form:"userSearchKey,omitempty" json:"userSearchKey,omitempty"`
+	UserSearchKey *string `form:"userSearchKey,omitempty" json:"userSearchKey,omitempty" bson:"user_search_key"`
 
 	// PageIndex The page of results to retrieve
-	PageIndex *int32 `form:"pageIndex,omitempty" json:"pageIndex,omitempty"`
+	PageIndex *int32 `form:"pageIndex,omitempty" json:"pageIndex,omitempty" bson:"page_index"`
 
 	// PageSize The number of items per page
-	PageSize *int32 `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+	PageSize *int32 `form:"pageSize,omitempty" json:"pageSize,omitempty" bson:"page_size"`
 
 	// ContinuationToken Continuation Token from which we wish to retrieve results
-	ContinuationToken *string `form:"continuationToken,omitempty" json:"continuationToken,omitempty"`
+	ContinuationToken *string `form:"continuationToken,omitempty" json:"continuationToken,omitempty" bson:"continuation_token"`
 
 	// States Filter results by states of payments
 	//
@@ -2223,40 +2223,40 @@ type GetOrganizationsOrganizationSlugFormsFormTypeFormSlugPaymentsParams struct 
 	// * `Refunded` - The payment has been refunded.
 	// * `Refunding` - The payment is being refunded.
 	// * `Contested` - Payment has been contested by the contributor
-	States *[]HelloAssoApiV5ModelsEnumsPaymentState `form:"states,omitempty" json:"states,omitempty"`
+	States *[]HelloAssoApiV5ModelsEnumsPaymentState `form:"states,omitempty" json:"states,omitempty" bson:"states"`
 
 	// SortOrder Sort payments by ascending or descending order. Default is descending
-	SortOrder *HelloAssoApiV5ModelsEnumsSortOrder `form:"sortOrder,omitempty" json:"sortOrder,omitempty"`
+	SortOrder *HelloAssoApiV5ModelsEnumsSortOrder `form:"sortOrder,omitempty" json:"sortOrder,omitempty" bson:"sort_order"`
 
 	// SortField Sort payments by a specific field (Date or UpdateDate). Default is date
-	SortField *HelloAssoApiV5ModelsEnumsSortField `form:"sortField,omitempty" json:"sortField,omitempty"`
+	SortField *HelloAssoApiV5ModelsEnumsSortField `form:"sortField,omitempty" json:"sortField,omitempty" bson:"sort_field"`
 
 	// WithCount Whether the pagination should include totalCount and totalPages.
-	WithCount *bool `form:"withCount,omitempty" json:"withCount,omitempty"`
+	WithCount *bool `form:"withCount,omitempty" json:"withCount,omitempty" bson:"with_count"`
 }
 
 // GetOrganizationsOrganizationSlugItemsParams defines parameters for GetOrganizationsOrganizationSlugItems.
 type GetOrganizationsOrganizationSlugItemsParams struct {
 	// From First Date Filter
-	From *time.Time `form:"from,omitempty" json:"from,omitempty"`
+	From *time.Time `form:"from,omitempty" json:"from,omitempty" bson:"from"`
 
 	// To End Date Filter (exclusive)
-	To *time.Time `form:"to,omitempty" json:"to,omitempty"`
+	To *time.Time `form:"to,omitempty" json:"to,omitempty" bson:"to"`
 
 	// UserSearchKey Filter results on user or payer first name, last name or email
-	UserSearchKey *string `form:"userSearchKey,omitempty" json:"userSearchKey,omitempty"`
+	UserSearchKey *string `form:"userSearchKey,omitempty" json:"userSearchKey,omitempty" bson:"user_search_key"`
 
 	// PageIndex The page of results to retrieve
-	PageIndex *int32 `form:"pageIndex,omitempty" json:"pageIndex,omitempty"`
+	PageIndex *int32 `form:"pageIndex,omitempty" json:"pageIndex,omitempty" bson:"page_index"`
 
 	// PageSize The number of items per page
-	PageSize *int32 `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+	PageSize *int32 `form:"pageSize,omitempty" json:"pageSize,omitempty" bson:"page_size"`
 
 	// ContinuationToken Continuation Token from which we wish to retrieve results
-	ContinuationToken *string `form:"continuationToken,omitempty" json:"continuationToken,omitempty"`
+	ContinuationToken *string `form:"continuationToken,omitempty" json:"continuationToken,omitempty" bson:"continuation_token"`
 
 	// TierTypes The type of tiers Donation, Payment, Registration, Membership, MonthlyDonation, MonthlyPayment, OfflineDonation, Contribution, Bonus
-	TierTypes *[]HelloAssoApiV5ModelsEnumsTierType `form:"tierTypes,omitempty" json:"tierTypes,omitempty"`
+	TierTypes *[]HelloAssoApiV5ModelsEnumsTierType `form:"tierTypes,omitempty" json:"tierTypes,omitempty" bson:"tier_types"`
 
 	// ItemStates The item states
 	//
@@ -2265,76 +2265,76 @@ type GetOrganizationsOrganizationSlugItemsParams struct {
 	// * `Registered` - The item has been registered manually by the organization and is valid
 	// * `Unknown`
 	// * `Canceled` - The item has been canceled, and is no longer valid
-	ItemStates *[]HelloAssoApiV5ModelsEnumsItemState `form:"itemStates,omitempty" json:"itemStates,omitempty"`
+	ItemStates *[]HelloAssoApiV5ModelsEnumsItemState `form:"itemStates,omitempty" json:"itemStates,omitempty" bson:"item_states"`
 
 	// TierName The name of a tier
-	TierName *string `form:"tierName,omitempty" json:"tierName,omitempty"`
+	TierName *string `form:"tierName,omitempty" json:"tierName,omitempty" bson:"tier_name"`
 
 	// WithDetails Set to true to return CustomFields and Options
-	WithDetails *bool `form:"withDetails,omitempty" json:"withDetails,omitempty"`
+	WithDetails *bool `form:"withDetails,omitempty" json:"withDetails,omitempty" bson:"with_details"`
 
 	// SortOrder Sort organizations items by ascending or descending order. Default is descending
-	SortOrder *HelloAssoApiV5ModelsEnumsSortOrder `form:"sortOrder,omitempty" json:"sortOrder,omitempty"`
+	SortOrder *HelloAssoApiV5ModelsEnumsSortOrder `form:"sortOrder,omitempty" json:"sortOrder,omitempty" bson:"sort_order"`
 
 	// SortField Sort organizations items by a specific field (Date or UpdateDate). Default is date
-	SortField *HelloAssoApiV5ModelsEnumsSortField `form:"sortField,omitempty" json:"sortField,omitempty"`
+	SortField *HelloAssoApiV5ModelsEnumsSortField `form:"sortField,omitempty" json:"sortField,omitempty" bson:"sort_field"`
 
 	// WithCount Whether the pagination should include totalCount and totalPages.
-	WithCount *bool `form:"withCount,omitempty" json:"withCount,omitempty"`
+	WithCount *bool `form:"withCount,omitempty" json:"withCount,omitempty" bson:"with_count"`
 }
 
 // GetOrganizationsOrganizationSlugOrdersParams defines parameters for GetOrganizationsOrganizationSlugOrders.
 type GetOrganizationsOrganizationSlugOrdersParams struct {
 	// From First Date Filter
-	From *time.Time `form:"from,omitempty" json:"from,omitempty"`
+	From *time.Time `form:"from,omitempty" json:"from,omitempty" bson:"from"`
 
 	// To End Date Filter (exclusive)
-	To *time.Time `form:"to,omitempty" json:"to,omitempty"`
+	To *time.Time `form:"to,omitempty" json:"to,omitempty" bson:"to"`
 
 	// UserSearchKey Filter results on user or payer first name, last name or email
-	UserSearchKey *string `form:"userSearchKey,omitempty" json:"userSearchKey,omitempty"`
+	UserSearchKey *string `form:"userSearchKey,omitempty" json:"userSearchKey,omitempty" bson:"user_search_key"`
 
 	// PageIndex The page of results to retrieve
-	PageIndex *int32 `form:"pageIndex,omitempty" json:"pageIndex,omitempty"`
+	PageIndex *int32 `form:"pageIndex,omitempty" json:"pageIndex,omitempty" bson:"page_index"`
 
 	// PageSize The number of items per page
-	PageSize *int32 `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+	PageSize *int32 `form:"pageSize,omitempty" json:"pageSize,omitempty" bson:"page_size"`
 
 	// ContinuationToken Continuation Token from which we wish to retrieve results
-	ContinuationToken *string `form:"continuationToken,omitempty" json:"continuationToken,omitempty"`
+	ContinuationToken *string `form:"continuationToken,omitempty" json:"continuationToken,omitempty" bson:"continuation_token"`
 
 	// FormTypes The type of the form CrowdFunding, Membership, Event, Donation, PaymentForm, Checkout, Shop
-	FormTypes *[]HelloAssoApiV5ModelsEnumsFormType `form:"formTypes,omitempty" json:"formTypes,omitempty"`
+	FormTypes *[]HelloAssoApiV5ModelsEnumsFormType `form:"formTypes,omitempty" json:"formTypes,omitempty" bson:"form_types"`
 
 	// WithDetails Set to true to return CustomFields
-	WithDetails *bool `form:"withDetails,omitempty" json:"withDetails,omitempty"`
+	WithDetails *bool `form:"withDetails,omitempty" json:"withDetails,omitempty" bson:"with_details"`
 
 	// SortOrder Sort organizations orders by ascending or descending order. Default is descending
-	SortOrder *HelloAssoApiV5ModelsEnumsSortOrder `form:"sortOrder,omitempty" json:"sortOrder,omitempty"`
+	SortOrder *HelloAssoApiV5ModelsEnumsSortOrder `form:"sortOrder,omitempty" json:"sortOrder,omitempty" bson:"sort_order"`
 
 	// WithCount Whether the pagination should include totalCount and totalPages.
-	WithCount *bool `form:"withCount,omitempty" json:"withCount,omitempty"`
+	WithCount *bool `form:"withCount,omitempty" json:"withCount,omitempty" bson:"with_count"`
 }
 
 // GetOrganizationsOrganizationSlugPaymentsParams defines parameters for GetOrganizationsOrganizationSlugPayments.
 type GetOrganizationsOrganizationSlugPaymentsParams struct {
 	// From First Date Filter
-	From *time.Time `form:"from,omitempty" json:"from,omitempty"`
+	From *time.Time `form:"from,omitempty" json:"from,omitempty" bson:"from"`
 
 	// To End Date Filter (exclusive)
-	To *time.Time `form:"to,omitempty" json:"to,omitempty"`
+	To *time.Time `form:"to,omitempty" json:"to,omitempty" bson:"to"`
 
 	// UserSearchKey Filter results on user or payer first name, last name or email
-	UserSearchKey *string `form:"userSearchKey,omitempty" json:"userSearchKey,omitempty"`
+	UserSearchKey *string `form:"userSearchKey,omitempty" json:"userSearchKey,omitempty" bson:"user_search_key"`
 
 	// PageIndex The page of results to retrieve
-	PageIndex *int32 `form:"pageIndex,omitempty" json:"pageIndex,omitempty"`
+	PageIndex *int32 `form:"pageIndex,omitempty" json:"pageIndex,omitempty" bson:"page_index"`
 
 	// PageSize The number of items per page
-	PageSize *int32 `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+	PageSize *int32 `form:"pageSize,omitempty" json:"pageSize,omitempty" bson:"page_size"`
 
 	// ContinuationToken Continuation Token from which we wish to retrieve results
-	ContinuationToken *string `form:"continuationToken,omitempty" json:"continuationToken,omitempty"`
+	ContinuationToken *string `form:"continuationToken,omitempty" json:"continuationToken,omitempty" bson:"continuation_token"`
 
 	// States The payment states
 	//
@@ -2348,37 +2348,37 @@ type GetOrganizationsOrganizationSlugPaymentsParams struct {
 	// * `Refunded` - The payment has been refunded.
 	// * `Refunding` - The payment is being refunded.
 	// * `Contested` - Payment has been contested by the contributor
-	States *[]HelloAssoApiV5ModelsEnumsPaymentState `form:"states,omitempty" json:"states,omitempty"`
+	States *[]HelloAssoApiV5ModelsEnumsPaymentState `form:"states,omitempty" json:"states,omitempty" bson:"states"`
 
 	// SortOrder Sort payments by ascending or descending order. Default is descending
-	SortOrder *HelloAssoApiV5ModelsEnumsSortOrder `form:"sortOrder,omitempty" json:"sortOrder,omitempty"`
+	SortOrder *HelloAssoApiV5ModelsEnumsSortOrder `form:"sortOrder,omitempty" json:"sortOrder,omitempty" bson:"sort_order"`
 
 	// SortField Sort payments by a specific field (Date or UpdateDate). Default is date
-	SortField *HelloAssoApiV5ModelsEnumsSortField `form:"sortField,omitempty" json:"sortField,omitempty"`
+	SortField *HelloAssoApiV5ModelsEnumsSortField `form:"sortField,omitempty" json:"sortField,omitempty" bson:"sort_field"`
 
 	// WithCount Whether the pagination should include totalCount and totalPages.
-	WithCount *bool `form:"withCount,omitempty" json:"withCount,omitempty"`
+	WithCount *bool `form:"withCount,omitempty" json:"withCount,omitempty" bson:"with_count"`
 }
 
 // GetOrganizationsOrganizationSlugPaymentsSearchParams defines parameters for GetOrganizationsOrganizationSlugPaymentsSearch.
 type GetOrganizationsOrganizationSlugPaymentsSearchParams struct {
 	// From First Date Filter
-	From *time.Time `form:"from,omitempty" json:"from,omitempty"`
+	From *time.Time `form:"from,omitempty" json:"from,omitempty" bson:"from"`
 
 	// To End Date Filter (exclusive)
-	To *time.Time `form:"to,omitempty" json:"to,omitempty"`
+	To *time.Time `form:"to,omitempty" json:"to,omitempty" bson:"to"`
 
 	// PageSize The number of items to retrieve
-	PageSize *int32 `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+	PageSize *int32 `form:"pageSize,omitempty" json:"pageSize,omitempty" bson:"page_size"`
 
 	// ContinuationToken Continuation Token from which we wish to retrieve results
-	ContinuationToken *string `form:"continuationToken,omitempty" json:"continuationToken,omitempty"`
+	ContinuationToken *string `form:"continuationToken,omitempty" json:"continuationToken,omitempty" bson:"continuation_token"`
 
 	// FormTypes The form type CrowdFunding, Membership, Event, Donation, PaymentForm, Checkout, Shop
-	FormTypes *[]HelloAssoApiV5ModelsEnumsFormType `form:"formTypes,omitempty" json:"formTypes,omitempty"`
+	FormTypes *[]HelloAssoApiV5ModelsEnumsFormType `form:"formTypes,omitempty" json:"formTypes,omitempty" bson:"form_types"`
 
 	// FormType The form type CrowdFunding, Membership, Event, Donation, PaymentForm, Checkout, Shop. This parameter must be used with the parameter formId.
-	FormType *HelloAssoApiV5ModelsEnumsFormType `form:"formType,omitempty" json:"formType,omitempty"`
+	FormType *HelloAssoApiV5ModelsEnumsFormType `form:"formType,omitempty" json:"formType,omitempty" bson:"form_type"`
 
 	// States Filter results by states of payments
 	//
@@ -2392,22 +2392,22 @@ type GetOrganizationsOrganizationSlugPaymentsSearchParams struct {
 	// * `Refunded` - The payment has been refunded.
 	// * `Refunding` - The payment is being refunded.
 	// * `Contested` - Payment has been contested by the contributor
-	States *[]HelloAssoApiV5ModelsEnumsPaymentState `form:"states,omitempty" json:"states,omitempty"`
+	States *[]HelloAssoApiV5ModelsEnumsPaymentState `form:"states,omitempty" json:"states,omitempty" bson:"states"`
 
 	// UserId The User identifier
-	UserId *int32 `form:"userId,omitempty" json:"userId,omitempty"`
+	UserId *int32 `form:"userId,omitempty" json:"userId,omitempty" bson:"user_id"`
 
 	// SearchKey Filter results on user or payer first name, last name or email.
-	SearchKey *string `form:"searchKey,omitempty" json:"searchKey,omitempty"`
+	SearchKey *string `form:"searchKey,omitempty" json:"searchKey,omitempty" bson:"search_key"`
 
 	// Amount Amount of the payment in cents. Filter payments with exact amount with or without the contribution.
-	Amount *int32 `form:"amount,omitempty" json:"amount,omitempty"`
+	Amount *int32 `form:"amount,omitempty" json:"amount,omitempty" bson:"amount"`
 
 	// SortOrder Sort payments by ascending or descending order. Default is descending
-	SortOrder *HelloAssoApiV5ModelsEnumsSortOrder `form:"sortOrder,omitempty" json:"sortOrder,omitempty"`
+	SortOrder *HelloAssoApiV5ModelsEnumsSortOrder `form:"sortOrder,omitempty" json:"sortOrder,omitempty" bson:"sort_order"`
 
 	// SortField Sort payments by a specific field (Date or UpdateDate). Default is date
-	SortField *HelloAssoApiV5ModelsEnumsSortField `form:"sortField,omitempty" json:"sortField,omitempty"`
+	SortField *HelloAssoApiV5ModelsEnumsSortField `form:"sortField,omitempty" json:"sortField,omitempty" bson:"sort_field"`
 }
 
 // PutOrganizationsOrganizationSlugTaxReceiptConfigurationMultipartBody defines parameters for PutOrganizationsOrganizationSlugTaxReceiptConfiguration.
@@ -2416,10 +2416,10 @@ type PutOrganizationsOrganizationSlugTaxReceiptConfigurationMultipartBody = map[
 // PutOrganizationsOrganizationSlugTaxReceiptConfigurationParams defines parameters for PutOrganizationsOrganizationSlugTaxReceiptConfiguration.
 type PutOrganizationsOrganizationSlugTaxReceiptConfigurationParams struct {
 	// File Upload File
-	File openapi_types.File `form:"file" json:"file"`
+	File openapi_types.File `form:"file" json:"file" bson:"file"`
 
 	// Config config
-	Config *string `form:"config,omitempty" json:"config,omitempty"`
+	Config *string `form:"config,omitempty" json:"config,omitempty" bson:"config"`
 }
 
 // PostOrganizationsOrganizationSlugTaxReceiptPreviewMultipartBody defines parameters for PostOrganizationsOrganizationSlugTaxReceiptPreview.
@@ -2428,61 +2428,61 @@ type PostOrganizationsOrganizationSlugTaxReceiptPreviewMultipartBody = map[strin
 // PostOrganizationsOrganizationSlugTaxReceiptPreviewParams defines parameters for PostOrganizationsOrganizationSlugTaxReceiptPreview.
 type PostOrganizationsOrganizationSlugTaxReceiptPreviewParams struct {
 	// File Upload File
-	File openapi_types.File `form:"file" json:"file"`
+	File openapi_types.File `form:"file" json:"file" bson:"file"`
 
 	// Config config
-	Config *string `form:"config,omitempty" json:"config,omitempty"`
+	Config *string `form:"config,omitempty" json:"config,omitempty" bson:"config"`
 }
 
 // DeletePartnersMeApiNotificationsParams defines parameters for DeletePartnersMeApiNotifications.
 type DeletePartnersMeApiNotificationsParams struct {
 	// NotificationType Do not specify a notification type to remove the main notification Url
-	NotificationType *HelloAssoApiV5ModelsApiNotificationsApiNotificationType `form:"notificationType,omitempty" json:"notificationType,omitempty"`
+	NotificationType *HelloAssoApiV5ModelsApiNotificationsApiNotificationType `form:"notificationType,omitempty" json:"notificationType,omitempty" bson:"notification_type"`
 }
 
 // DeletePartnersMeApiNotificationsOrganizationsOrganizationSlugParams defines parameters for DeletePartnersMeApiNotificationsOrganizationsOrganizationSlug.
 type DeletePartnersMeApiNotificationsOrganizationsOrganizationSlugParams struct {
 	// NotificationType Do not specify a notification type to remove the main notification Url
-	NotificationType *HelloAssoApiV5ModelsApiNotificationsApiNotificationType `form:"notificationType,omitempty" json:"notificationType,omitempty"`
+	NotificationType *HelloAssoApiV5ModelsApiNotificationsApiNotificationType `form:"notificationType,omitempty" json:"notificationType,omitempty" bson:"notification_type"`
 }
 
 // GetPartnersMeOrganizationsParams defines parameters for GetPartnersMeOrganizations.
 type GetPartnersMeOrganizationsParams struct {
 	// PageSize The number of items per page
-	PageSize *int32 `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+	PageSize *int32 `form:"pageSize,omitempty" json:"pageSize,omitempty" bson:"page_size"`
 
 	// ContinuationToken Continuation Token from which we wish to retrieve results
-	ContinuationToken *string `form:"continuationToken,omitempty" json:"continuationToken,omitempty"`
+	ContinuationToken *string `form:"continuationToken,omitempty" json:"continuationToken,omitempty" bson:"continuation_token"`
 }
 
 // GetPaymentsPaymentIdParams defines parameters for GetPaymentsPaymentId.
 type GetPaymentsPaymentIdParams struct {
 	// WithFailedRefundOperation True to retrieve the refund operation in the states 'ABORTED', 'CANCELED', 'ERROR', 'REFUSED'.
-	WithFailedRefundOperation *bool `form:"withFailedRefundOperation,omitempty" json:"withFailedRefundOperation,omitempty"`
+	WithFailedRefundOperation *bool `form:"withFailedRefundOperation,omitempty" json:"withFailedRefundOperation,omitempty" bson:"with_failed_refund_operation"`
 }
 
 // PostPaymentsPaymentIdRefundParams defines parameters for PostPaymentsPaymentIdRefund.
 type PostPaymentsPaymentIdRefundParams struct {
 	// Comment The comment about this refund.
-	Comment *string `form:"comment,omitempty" json:"comment,omitempty"`
+	Comment *string `form:"comment,omitempty" json:"comment,omitempty" bson:"comment"`
 
 	// CancelOrder Whether the future payments and linked items of this order must be canceled (possible only if the payment is fully refunded)
-	CancelOrder *bool `form:"cancelOrder,omitempty" json:"cancelOrder,omitempty"`
+	CancelOrder *bool `form:"cancelOrder,omitempty" json:"cancelOrder,omitempty" bson:"cancel_order"`
 
 	// SendRefundMail Whether a refund mail must be sent or not.
-	SendRefundMail *bool `form:"sendRefundMail,omitempty" json:"sendRefundMail,omitempty"`
+	SendRefundMail *bool `form:"sendRefundMail,omitempty" json:"sendRefundMail,omitempty" bson:"send_refund_mail"`
 
 	// Amount The amount in cents to refund. Enter this amount only for a partial refund for stripe. If not filled in then the entire payment is refunded
-	Amount *int32 `form:"amount,omitempty" json:"amount,omitempty"`
+	Amount *int32 `form:"amount,omitempty" json:"amount,omitempty" bson:"amount"`
 }
 
 // GetTagsTagNameParams defines parameters for GetTagsTagName.
 type GetTagsTagNameParams struct {
 	// WithCount If true : Count of times Tag is used
-	WithCount *bool `form:"withCount,omitempty" json:"withCount,omitempty"`
+	WithCount *bool `form:"withCount,omitempty" json:"withCount,omitempty" bson:"with_count"`
 
 	// WithAmount If true : Amount collected by all forms linked to this Tag
-	WithAmount *bool `form:"withAmount,omitempty" json:"withAmount,omitempty"`
+	WithAmount *bool `form:"withAmount,omitempty" json:"withAmount,omitempty" bson:"with_amount"`
 }
 
 // PostDirectoryFormsApplicationWildcardPlusJSONRequestBody defines body for PostDirectoryForms for application/*+json ContentType.
@@ -2588,15 +2588,15 @@ type Client struct {
 	// https://api.deepmap.com for example. This can contain a path relative
 	// to the server, such as https://api.deepmap.com/dev-test, and all the
 	// paths in the swagger spec will be appended to the server.
-	Server string
+	Server string `bson:"server"`
 
 	// Doer for performing requests, typically a *http.Client with any
 	// customized settings, such as certificate chains.
-	Client HttpRequestDoer
+	Client HttpRequestDoer `bson:"client"`
 
 	// A list of callbacks for modifying requests which are generated before sending over
 	// the network.
-	RequestEditors []RequestEditorFn
+	RequestEditors []RequestEditorFn `bson:"request_editors"`
 }
 
 // ClientOption allows setting custom parameters during construction
@@ -7151,7 +7151,7 @@ func (c *Client) applyEditors(ctx context.Context, req *http.Request, additional
 
 // ClientWithResponses builds on ClientInterface to offer response payloads
 type ClientWithResponses struct {
-	ClientInterface
+	ClientInterface `bson:"client_interface"`
 }
 
 // NewClientWithResponses creates a new ClientWithResponses, which wraps
@@ -7357,9 +7357,9 @@ type ClientWithResponsesInterface interface {
 }
 
 type PostDirectoryFormsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *ResultsWithPaginationModelSynchronizableFormModel
+	Body         []byte                                             `bson:"body"`
+	HTTPResponse *http.Response                                     `bson:"http_response"`
+	JSON200      *ResultsWithPaginationModelSynchronizableFormModel `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7379,9 +7379,9 @@ func (r PostDirectoryFormsResponse) StatusCode() int {
 }
 
 type PostDirectoryOrganizationsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *ResultsWithPaginationModelSynchronizableOrganizationModel
+	Body         []byte                                                     `bson:"body"`
+	HTTPResponse *http.Response                                             `bson:"http_response"`
+	JSON200      *ResultsWithPaginationModelSynchronizableOrganizationModel `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7401,9 +7401,9 @@ func (r PostDirectoryOrganizationsResponse) StatusCode() int {
 }
 
 type GetItemsItemIdResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *HelloAssoApiV5ModelsStatisticsItemDetail
+	Body         []byte                                    `bson:"body"`
+	HTTPResponse *http.Response                            `bson:"http_response"`
+	JSON200      *HelloAssoApiV5ModelsStatisticsItemDetail `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7423,9 +7423,9 @@ func (r GetItemsItemIdResponse) StatusCode() int {
 }
 
 type GetOrdersOrderIdResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *HelloAssoApiV5ModelsStatisticsOrderDetail
+	Body         []byte                                     `bson:"body"`
+	HTTPResponse *http.Response                             `bson:"http_response"`
+	JSON200      *HelloAssoApiV5ModelsStatisticsOrderDetail `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7445,8 +7445,8 @@ func (r GetOrdersOrderIdResponse) StatusCode() int {
 }
 
 type PostOrdersOrderIdCancelResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
+	Body         []byte         `bson:"body"`
+	HTTPResponse *http.Response `bson:"http_response"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7466,9 +7466,9 @@ func (r PostOrdersOrderIdCancelResponse) StatusCode() int {
 }
 
 type GetOrganizationsLegalInformationsLegalStructuresResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *[]HelloAssoApiV5ModelsOrganizationLegalInformationsOrganizationLegalStructuresModel
+	Body         []byte                                                                               `bson:"body"`
+	HTTPResponse *http.Response                                                                       `bson:"http_response"`
+	JSON200      *[]HelloAssoApiV5ModelsOrganizationLegalInformationsOrganizationLegalStructuresModel `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7488,9 +7488,9 @@ func (r GetOrganizationsLegalInformationsLegalStructuresResponse) StatusCode() i
 }
 
 type GetOrganizationsLegalInformationsTaxInformationTextsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *[]HelloAssoModelsAccountsOrganizationLegalInformationsTaxInformationText
+	Body         []byte                                                                    `bson:"body"`
+	HTTPResponse *http.Response                                                            `bson:"http_response"`
+	JSON200      *[]HelloAssoModelsAccountsOrganizationLegalInformationsTaxInformationText `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7510,9 +7510,9 @@ func (r GetOrganizationsLegalInformationsTaxInformationTextsResponse) StatusCode
 }
 
 type GetOrganizationsLegalInformationsOrganizationSlugConfigurationResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *HelloAssoModelsAccountsOrganizationLegalInformationsOrganizationLegalInformationConfiguration
+	Body         []byte                                                                                         `bson:"body"`
+	HTTPResponse *http.Response                                                                                 `bson:"http_response"`
+	JSON200      *HelloAssoModelsAccountsOrganizationLegalInformationsOrganizationLegalInformationConfiguration `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7532,8 +7532,8 @@ func (r GetOrganizationsLegalInformationsOrganizationSlugConfigurationResponse) 
 }
 
 type PutOrganizationsLegalInformationsOrganizationSlugConfigurationResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
+	Body         []byte         `bson:"body"`
+	HTTPResponse *http.Response `bson:"http_response"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7553,9 +7553,9 @@ func (r PutOrganizationsLegalInformationsOrganizationSlugConfigurationResponse) 
 }
 
 type GetOrganizationsOrganizationSlugResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *HelloAssoApiV5ModelsOrganizationOrganizationModel
+	Body         []byte                                             `bson:"body"`
+	HTTPResponse *http.Response                                     `bson:"http_response"`
+	JSON200      *HelloAssoApiV5ModelsOrganizationOrganizationModel `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7575,9 +7575,9 @@ func (r GetOrganizationsOrganizationSlugResponse) StatusCode() int {
 }
 
 type PostOrganizationsOrganizationSlugCheckoutIntentsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *HelloAssoApiV5ModelsCartsInitCheckoutResponse
+	Body         []byte                                         `bson:"body"`
+	HTTPResponse *http.Response                                 `bson:"http_response"`
+	JSON200      *HelloAssoApiV5ModelsCartsInitCheckoutResponse `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7597,9 +7597,9 @@ func (r PostOrganizationsOrganizationSlugCheckoutIntentsResponse) StatusCode() i
 }
 
 type GetOrganizationsOrganizationSlugCheckoutIntentsCheckoutIntentIdResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *HelloAssoApiV5ModelsCartsCheckoutIntentResponse
+	Body         []byte                                           `bson:"body"`
+	HTTPResponse *http.Response                                   `bson:"http_response"`
+	JSON200      *HelloAssoApiV5ModelsCartsCheckoutIntentResponse `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7619,9 +7619,9 @@ func (r GetOrganizationsOrganizationSlugCheckoutIntentsCheckoutIntentIdResponse)
 }
 
 type GetOrganizationsOrganizationSlugFormTypesResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *[]HelloAssoApiV5ModelsEnumsFormType
+	Body         []byte                               `bson:"body"`
+	HTTPResponse *http.Response                       `bson:"http_response"`
+	JSON200      *[]HelloAssoApiV5ModelsEnumsFormType `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7641,9 +7641,9 @@ func (r GetOrganizationsOrganizationSlugFormTypesResponse) StatusCode() int {
 }
 
 type GetOrganizationsOrganizationSlugFormsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *ResultsWithPaginationModelFormLightModel
+	Body         []byte                                    `bson:"body"`
+	HTTPResponse *http.Response                            `bson:"http_response"`
+	JSON200      *ResultsWithPaginationModelFormLightModel `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7663,9 +7663,9 @@ func (r GetOrganizationsOrganizationSlugFormsResponse) StatusCode() int {
 }
 
 type PostOrganizationsOrganizationSlugFormsFormTypeActionQuickCreateResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *HelloAssoApiV5ModelsFormsFormQuickCreateModel
+	Body         []byte                                         `bson:"body"`
+	HTTPResponse *http.Response                                 `bson:"http_response"`
+	JSON200      *HelloAssoApiV5ModelsFormsFormQuickCreateModel `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7685,8 +7685,8 @@ func (r PostOrganizationsOrganizationSlugFormsFormTypeActionQuickCreateResponse)
 }
 
 type GetOrganizationsOrganizationSlugFormsFormTypeFormSlugItemsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
+	Body         []byte         `bson:"body"`
+	HTTPResponse *http.Response `bson:"http_response"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7706,9 +7706,9 @@ func (r GetOrganizationsOrganizationSlugFormsFormTypeFormSlugItemsResponse) Stat
 }
 
 type GetOrganizationsOrganizationSlugFormsFormTypeFormSlugOrdersResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *ResultsWithPaginationModelOrder
+	Body         []byte                           `bson:"body"`
+	HTTPResponse *http.Response                   `bson:"http_response"`
+	JSON200      *ResultsWithPaginationModelOrder `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7728,9 +7728,9 @@ func (r GetOrganizationsOrganizationSlugFormsFormTypeFormSlugOrdersResponse) Sta
 }
 
 type GetOrganizationsOrganizationSlugFormsFormTypeFormSlugPaymentsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *ResultsWithPaginationModelPayment
+	Body         []byte                             `bson:"body"`
+	HTTPResponse *http.Response                     `bson:"http_response"`
+	JSON200      *ResultsWithPaginationModelPayment `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7750,9 +7750,9 @@ func (r GetOrganizationsOrganizationSlugFormsFormTypeFormSlugPaymentsResponse) S
 }
 
 type GetOrganizationsOrganizationSlugFormsFormTypeFormSlugPublicResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *HelloAssoApiV5ModelsFormsFormPublicModel
+	Body         []byte                                    `bson:"body"`
+	HTTPResponse *http.Response                            `bson:"http_response"`
+	JSON200      *HelloAssoApiV5ModelsFormsFormPublicModel `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7772,8 +7772,8 @@ func (r GetOrganizationsOrganizationSlugFormsFormTypeFormSlugPublicResponse) Sta
 }
 
 type GetOrganizationsOrganizationSlugItemsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
+	Body         []byte         `bson:"body"`
+	HTTPResponse *http.Response `bson:"http_response"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7793,9 +7793,9 @@ func (r GetOrganizationsOrganizationSlugItemsResponse) StatusCode() int {
 }
 
 type GetOrganizationsOrganizationSlugOrdersResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *ResultsWithPaginationModelOrder
+	Body         []byte                           `bson:"body"`
+	HTTPResponse *http.Response                   `bson:"http_response"`
+	JSON200      *ResultsWithPaginationModelOrder `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7815,8 +7815,8 @@ func (r GetOrganizationsOrganizationSlugOrdersResponse) StatusCode() int {
 }
 
 type GetOrganizationsOrganizationSlugPaymentsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
+	Body         []byte         `bson:"body"`
+	HTTPResponse *http.Response `bson:"http_response"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7836,9 +7836,9 @@ func (r GetOrganizationsOrganizationSlugPaymentsResponse) StatusCode() int {
 }
 
 type GetOrganizationsOrganizationSlugPaymentsSearchResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *ResultsWithPaginationModelPublicPaymentModel
+	Body         []byte                                        `bson:"body"`
+	HTTPResponse *http.Response                                `bson:"http_response"`
+	JSON200      *ResultsWithPaginationModelPublicPaymentModel `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7858,9 +7858,9 @@ func (r GetOrganizationsOrganizationSlugPaymentsSearchResponse) StatusCode() int
 }
 
 type GetOrganizationsOrganizationSlugTaxReceiptConfigurationResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *HelloAssoCoreAccountsTaxReceiptsOrganizationFiscalReceiptOptionsConfiguration
+	Body         []byte                                                                         `bson:"body"`
+	HTTPResponse *http.Response                                                                 `bson:"http_response"`
+	JSON200      *HelloAssoCoreAccountsTaxReceiptsOrganizationFiscalReceiptOptionsConfiguration `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7880,8 +7880,8 @@ func (r GetOrganizationsOrganizationSlugTaxReceiptConfigurationResponse) StatusC
 }
 
 type PutOrganizationsOrganizationSlugTaxReceiptConfigurationResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
+	Body         []byte         `bson:"body"`
+	HTTPResponse *http.Response `bson:"http_response"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7901,8 +7901,8 @@ func (r PutOrganizationsOrganizationSlugTaxReceiptConfigurationResponse) StatusC
 }
 
 type PutOrganizationsOrganizationSlugTaxReceiptFiscalReceiptTransmitterResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
+	Body         []byte         `bson:"body"`
+	HTTPResponse *http.Response `bson:"http_response"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7922,8 +7922,8 @@ func (r PutOrganizationsOrganizationSlugTaxReceiptFiscalReceiptTransmitterRespon
 }
 
 type PostOrganizationsOrganizationSlugTaxReceiptPreviewResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
+	Body         []byte         `bson:"body"`
+	HTTPResponse *http.Response `bson:"http_response"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7943,9 +7943,9 @@ func (r PostOrganizationsOrganizationSlugTaxReceiptPreviewResponse) StatusCode()
 }
 
 type GetPartnersMeResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *HelloAssoApiV5ModelsPartnersPartnerPublicModel
+	Body         []byte                                          `bson:"body"`
+	HTTPResponse *http.Response                                  `bson:"http_response"`
+	JSON200      *HelloAssoApiV5ModelsPartnersPartnerPublicModel `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7965,8 +7965,8 @@ func (r GetPartnersMeResponse) StatusCode() int {
 }
 
 type PutPartnersMeApiClientsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
+	Body         []byte         `bson:"body"`
+	HTTPResponse *http.Response `bson:"http_response"`
 }
 
 // Status returns HTTPResponse.Status
@@ -7986,8 +7986,8 @@ func (r PutPartnersMeApiClientsResponse) StatusCode() int {
 }
 
 type DeletePartnersMeApiNotificationsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
+	Body         []byte         `bson:"body"`
+	HTTPResponse *http.Response `bson:"http_response"`
 }
 
 // Status returns HTTPResponse.Status
@@ -8007,9 +8007,9 @@ func (r DeletePartnersMeApiNotificationsResponse) StatusCode() int {
 }
 
 type PutPartnersMeApiNotificationsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *HelloAssoApiV5ModelsApiNotificationsApiUrlNotificationModel
+	Body         []byte                                                       `bson:"body"`
+	HTTPResponse *http.Response                                               `bson:"http_response"`
+	JSON200      *HelloAssoApiV5ModelsApiNotificationsApiUrlNotificationModel `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -8029,8 +8029,8 @@ func (r PutPartnersMeApiNotificationsResponse) StatusCode() int {
 }
 
 type DeletePartnersMeApiNotificationsOrganizationsOrganizationSlugResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
+	Body         []byte         `bson:"body"`
+	HTTPResponse *http.Response `bson:"http_response"`
 }
 
 // Status returns HTTPResponse.Status
@@ -8050,9 +8050,9 @@ func (r DeletePartnersMeApiNotificationsOrganizationsOrganizationSlugResponse) S
 }
 
 type PutPartnersMeApiNotificationsOrganizationsOrganizationSlugResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *HelloAssoApiV5ModelsApiNotificationsApiUrlNotificationModel
+	Body         []byte                                                       `bson:"body"`
+	HTTPResponse *http.Response                                               `bson:"http_response"`
+	JSON200      *HelloAssoApiV5ModelsApiNotificationsApiUrlNotificationModel `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -8072,9 +8072,9 @@ func (r PutPartnersMeApiNotificationsOrganizationsOrganizationSlugResponse) Stat
 }
 
 type GetPartnersMeOrganizationsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *ResultsWithPaginationModelPartnerOrganizationModel
+	Body         []byte                                              `bson:"body"`
+	HTTPResponse *http.Response                                      `bson:"http_response"`
+	JSON200      *ResultsWithPaginationModelPartnerOrganizationModel `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -8094,9 +8094,9 @@ func (r GetPartnersMeOrganizationsResponse) StatusCode() int {
 }
 
 type GetPaymentsPaymentIdResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *HelloAssoApiV5ModelsStatisticsPaymentDetail
+	Body         []byte                                       `bson:"body"`
+	HTTPResponse *http.Response                               `bson:"http_response"`
+	JSON200      *HelloAssoApiV5ModelsStatisticsPaymentDetail `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -8116,9 +8116,9 @@ func (r GetPaymentsPaymentIdResponse) StatusCode() int {
 }
 
 type PostPaymentsPaymentIdRefundResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *HelloAssoApiV5ModelsPaymentRefundOperationModel
+	Body         []byte                                           `bson:"body"`
+	HTTPResponse *http.Response                                   `bson:"http_response"`
+	JSON200      *HelloAssoApiV5ModelsPaymentRefundOperationModel `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -8138,9 +8138,9 @@ func (r PostPaymentsPaymentIdRefundResponse) StatusCode() int {
 }
 
 type GetTagsTagNameResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *HelloAssoApiV5ModelsTagsInternalTagModel
+	Body         []byte                                    `bson:"body"`
+	HTTPResponse *http.Response                            `bson:"http_response"`
+	JSON200      *HelloAssoApiV5ModelsTagsInternalTagModel `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -8160,9 +8160,9 @@ func (r GetTagsTagNameResponse) StatusCode() int {
 }
 
 type GetUsersMeOrganizationsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *[]HelloAssoApiV5ModelsOrganizationOrganizationLightModel
+	Body         []byte                                                    `bson:"body"`
+	HTTPResponse *http.Response                                            `bson:"http_response"`
+	JSON200      *[]HelloAssoApiV5ModelsOrganizationOrganizationLightModel `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -8182,9 +8182,9 @@ func (r GetUsersMeOrganizationsResponse) StatusCode() int {
 }
 
 type GetValuesCompanyLegalStatusResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *[]HelloAssoApiV5ModelsAccountCompanyLegalStatusModel
+	Body         []byte                                                `bson:"body"`
+	HTTPResponse *http.Response                                        `bson:"http_response"`
+	JSON200      *[]HelloAssoApiV5ModelsAccountCompanyLegalStatusModel `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -8204,9 +8204,9 @@ func (r GetValuesCompanyLegalStatusResponse) StatusCode() int {
 }
 
 type GetValuesOrganizationCategoriesResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *[]HelloAssoApiV5ModelsAccountOrganismCategoryModel
+	Body         []byte                                              `bson:"body"`
+	HTTPResponse *http.Response                                      `bson:"http_response"`
+	JSON200      *[]HelloAssoApiV5ModelsAccountOrganismCategoryModel `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
@@ -8226,9 +8226,9 @@ func (r GetValuesOrganizationCategoriesResponse) StatusCode() int {
 }
 
 type GetValuesTagsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *[]HelloAssoApiV5ModelsTagsPublicTagModel
+	Body         []byte                                    `bson:"body"`
+	HTTPResponse *http.Response                            `bson:"http_response"`
+	JSON200      *[]HelloAssoApiV5ModelsTagsPublicTagModel `bson:"json_200"`
 }
 
 // Status returns HTTPResponse.Status
