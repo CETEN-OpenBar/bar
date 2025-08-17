@@ -2,6 +2,7 @@ package api
 
 import (
 	"bar/autogen"
+	"bar/autogen/helloasso"
 	"bar/internal/config"
 	"bar/internal/db"
 	"os"
@@ -13,15 +14,40 @@ import (
 	echoLog "github.com/labstack/gommon/log"
 	middlewareL "github.com/neko-neko/echo-logrus/v2"
 	"github.com/neko-neko/echo-logrus/v2/log"
+	"github.com/sirupsen/logrus"
 )
 
 type Server struct {
 	db.DBackend
+	HelloAssoClient *helloasso.ClientWithResponses
+}
+
+func NewHelloAssoClient() (*helloasso.ClientWithResponses, error) {
+	c := config.GetConfig()
+
+	client, err := helloasso.NewClient(c.HelloAssoConfig.URL + "/v5")
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = client.GetToken()
+	if err != nil {
+		return nil, err
+	}
+
+	return &helloasso.ClientWithResponses{ClientInterface: client}, nil
 }
 
 func NewServer(db db.DBackend) *Server {
+	
+	client, err := NewHelloAssoClient()
+	if err != nil {
+		logrus.Fatal("Error initializing HelloAsso client : ", err)
+	}
+	
 	s := &Server{
 		db,
+		client,
 	}
 	return s
 }

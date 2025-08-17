@@ -27,6 +27,13 @@ type Config struct {
 		GoogleClientSecret string `env:"GOOGLE_CLIENT_SECRET"`
 	} `envPrefix:"BAR_OAUTH_"`
 
+	HelloAssoConfig struct {
+		URL          string `env:"URL" envDefault:"https://api.helloasso.com"`
+		ClientID     string `env:"CLIENT_ID"`
+		ClientSecret string `env:"CLIENT_SECRET"`
+		Slug         string `env:"SLUG"`
+	} `envPrefix:"HELLOASSO_"`
+
 	StorageConfig struct {
 		StoragePath string `env:"STORAGE_PATH" envDefault:"./storage"`
 	} `envPrefix:"BAR_STORAGE_"`
