@@ -2125,6 +2125,97 @@ paths:
         - admin_auth: []
       tags:
         - refills
+  /remote-refills:
+    get:
+      description: Get all remote refills
+      operationId: getRemoteRefills
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            format: uint64
+        - name: limit
+          in: query
+          description: Number of transactions per page
+          required: false
+          schema:
+            type: integer
+            format: uint64
+        - name: start_date
+          in: query
+          description: Start date of the refill
+          required: false
+          schema:
+            type: string
+        - name: end_date
+          in: query
+          description: End date of the refill
+          required: false
+          schema:
+            type: string
+        - name: checkout_intent_id
+          in: query
+          required: false
+          description: HelloAsso Checkout Intent Id associated with the refill
+          schema:
+            type: integer
+        - name: order_id
+          in: query
+          required: false
+          description: HelloAsso Order ID associated with the refill
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  remote_refills:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/RemoteRefill"
+                  page:
+                    type: integer
+                    format: uint64
+                  limit:
+                    type: integer
+                    format: uint64
+                  max_page:
+                    type: integer
+                    format: uint64
+                required:
+                  - page
+                  - limit
+                  - max_page
+                  - remote_refills
+        "401":
+          description: "Not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - admin_auth: []
+      tags:
+        - refills
   /account/remote-refills/start:
     post:
       description: Start a remote refill
@@ -2136,7 +2227,7 @@ paths:
           required: true
           schema:
             type: integer
-            format: int64
+            format: int32
       responses:
         "200":
           description: ""
@@ -2166,6 +2257,43 @@ paths:
         - auth: []
       tags:
         - refills
+  /account/remote-refills/validate:
+    post:
+      description: Validate a remote refill
+      operationId: selfValidateRemoteRefill
+      parameters:
+        - name: checkout_intent_id
+          in: query
+          description: HelloAsso checkout intent id to validate
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: "Payment successfully verified, money has been added to the account"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Refill"
+        "409":
+          description: "Remote refill already validated"
+        "404":
+          description: "Checkout id unknown or not associated with this account"
+        "402":
+          description: "HelloAsso did not validate the payment yet"
+        "401":
+          description: "Not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
   /categories:
     get:
       description: Get all categories
@@ -5495,12 +5623,14 @@ components:
         - card
         - tranfer
         - check
+        - helloasso
         - other
       x-enum-varnames:
         - RefillCash
         - RefillCard
         - RefillTransfer
         - RefillCheck
+        - RefillHelloAsso
         - RefillOther
     Refill:
       type: object
@@ -5561,6 +5691,7 @@ components:
         order_id:
           description: HelloAsso order id, if the transaction suceeded
           type: integer
+          format: int32
         account_id:
           $ref: "#/components/schemas/UUID"
         account_name:
@@ -5568,7 +5699,7 @@ components:
           description: Name of the account
         amount:
           type: integer
-          format: int64
+          format: int32
           example: 1050 (10.50€)
         created_at:
           type: integer

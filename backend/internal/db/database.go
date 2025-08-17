@@ -106,6 +106,8 @@ type DBackend interface {
 	UpdateRemoteRefill(ctx context.Context, r *models.RemoteRefill) error
 	DeleteRemoteRefill(ctx context.Context, id string) error
 
+	FindRemoteRefillForAccount(ctx context.Context, accountId string, checkoutIntentId int32) (*models.RemoteRefill, error)
+
 	// Transaction's CRUD
 	CreateTransaction(ctx context.Context, t *models.Transaction) error
 	GetTransaction(ctx context.Context, id string) (*models.Transaction, error)
