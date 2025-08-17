@@ -11,6 +11,7 @@ var (
 	Collections = []string{
 		"transactions",
 		"refills",
+		"remote_refills",
 		"items",
 		"categories",
 		"carousel_texts",
@@ -44,6 +45,32 @@ var (
 			mongo.IndexModel{
 				Keys: bson.M{
 					"created_at": 1,
+				},
+			},
+			mongo.IndexModel{
+				Keys: bson.M{
+					"id": 1,
+				},
+				Options: options.Index().SetUnique(true).SetPartialFilterExpression(bson.M{
+					"id": bson.M{
+						"$exists": true,
+					},
+				}),
+			}},
+		"remote_refills": {
+			mongo.IndexModel{
+				Keys: bson.M{
+					"created_at": 1,
+				},
+			},
+			mongo.IndexModel{
+				Keys: bson.M{
+					"checkout_intent_id": 1,
+				},
+			},
+			mongo.IndexModel{
+				Keys: bson.M{
+					"order_id": 1,
 				},
 			},
 			mongo.IndexModel{
@@ -233,6 +260,7 @@ var (
 
 	TransactionsCollection   = "transactions"
 	RefillsCollection        = "refills"
+	RemoteRefillsCollection  = "remote_refills"
 	ItemsCollection          = "items"
 	CategoriesCollection     = "categories"
 	CarouselTextsCollection  = "carousel_texts"

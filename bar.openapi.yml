@@ -2125,6 +2125,47 @@ paths:
         - admin_auth: []
       tags:
         - refills
+  /account/remote-refills/start:
+    post:
+      description: Start a remote refill
+      operationId: startRemoteRefill
+      parameters:
+        - name: amount
+          in: query
+          description: Amount of the refill in cents
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  redirect_url:
+                    type: string
+                required:
+                  - redirect_url
+        "401":
+          description: "Not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+
+      security:
+        - auth: []
+      tags:
+        - refills
   /categories:
     get:
       description: Get all categories
@@ -5505,6 +5546,52 @@ components:
         - issued_by
         - issued_by_name
         - type
+    RemoteRefill:
+      description: A remote (HelloAsso) refill
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        state:
+          $ref: "#/components/schemas/RemoteRefillState"
+        checkout_intent_id:
+          description: HelloAsso checkout id
+          type: integer
+          format: int32
+        order_id:
+          description: HelloAsso order id, if the transaction suceeded
+          type: integer
+        account_id:
+          $ref: "#/components/schemas/UUID"
+        account_name:
+          type: string
+          description: Name of the account
+        amount:
+          type: integer
+          format: int64
+          example: 1050 (10.50€)
+        created_at:
+          type: integer
+          format: uint64
+        refill_id:
+          description: Id of the linked refill if the transaction suceeded
+          $ref: "#/components/schemas/UUID"
+      required:
+        - id
+        - state
+        - checkout_id
+        - account_id
+        - account_name
+        - amount
+        - created_at
+    RemoteRefillState:
+      type: string
+      enum:
+        - started
+        - processed
+      x-enum-varnames:
+        - RemoteRefillStarted
+        - RemoteRefillProcessed
     CarouselTextCreate:
       type: object
       properties:

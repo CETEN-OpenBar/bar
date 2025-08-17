@@ -100,6 +100,12 @@ type DBackend interface {
 	GetDeletedRefills(ctx context.Context, page uint64, size uint64) ([]*models.Refill, error)
 	CountDeletedRefills(ctx context.Context) (uint64, error)
 
+	// Remote refill's CRUD
+	CreateRemoteRefill(ctx context.Context, r *models.RemoteRefill) error
+	GetRemoteRefill(ctx context.Context, id string) (*models.RemoteRefill, error)
+	UpdateRemoteRefill(ctx context.Context, r *models.RemoteRefill) error
+	DeleteRemoteRefill(ctx context.Context, id string) error
+
 	// Transaction's CRUD
 	CreateTransaction(ctx context.Context, t *models.Transaction) error
 	GetTransaction(ctx context.Context, id string) (*models.Transaction, error)
