@@ -8,6 +8,7 @@
 	import Qr from '$lib/components/client/qr.svelte';
 	import Transactions from '$lib/components/client/transactions.svelte';
 	import Refills from '$lib/components/client/refills.svelte';
+	import { goto } from '$app/navigation';
 
 	let account: Account | undefined = undefined;
 	let unsub: () => void;
@@ -45,7 +46,17 @@
 
 
 {#if account !== undefined}
-	<div class="grid lg:grid-cols-3 grid-cols-1 gap-16 p-16 w-full">
+    <div class="flex justify-center">
+        <button 
+            class="bg-green-500 hover:bg-green-700 rounded p-2 m-3 text-lg font-bold text-white lg:w-1/2 lg:h-20"
+            on:click={() => {
+				goto('/client/index/refill');
+			}}
+        >
+            Recharger mon compte
+        </button>
+    </div>
+	<div class="grid lg:grid-cols-3 grid-cols-1 gap-16 p-5 w-full">
 		<!-- Previous orders column -->
 		<div
 			class="flex flex-col flex-grow transition-all ease-in-out"

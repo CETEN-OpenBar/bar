@@ -2228,6 +2228,7 @@ paths:
           schema:
             type: integer
             format: int32
+            minimum: 50
       responses:
         "200":
           description: ""
@@ -2240,6 +2241,8 @@ paths:
                     type: string
                 required:
                   - redirect_url
+        "400":
+          description: "Invalid amount"
         "401":
           description: "Not authorized"
           content:
@@ -2294,6 +2297,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPError"
+      security:
+        - admin_auth: []
+      tags:
+        - refills
   /categories:
     get:
       description: Get all categories

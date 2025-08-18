@@ -23,6 +23,10 @@ func (s *Server) StartRemoteRefill(c echo.Context, params autogen.StartRemoteRef
 		return nil
 	}
 
+	if params.Amount < 50 {
+		return autogen.StartRemoteRefill400Response{}.VisitStartRemoteRefillResponse(c.Response())
+	}
+
 	conf := config.GetConfig()
 
 	// Start a checkout for this user
@@ -36,9 +40,9 @@ func (s *Server) StartRemoteRefill(c echo.Context, params autogen.StartRemoteRef
 			c.Request().Context(),
 			conf.HelloAssoConfig.Slug,
 			helloasso.HelloAssoApiV5ModelsCartsInitCheckoutBody{
-				BackUrl:           conf.ApiConfig.FrontendBasePath + "/client/index",
-				ErrorUrl:          conf.ApiConfig.FrontendBasePath + "/remote-refill/error",
-				ReturnUrl:         conf.ApiConfig.FrontendBasePath + "/remote-refill/success",
+				BackUrl:           conf.ApiConfig.FrontendBasePath + "/client/index/refill",
+				ErrorUrl:          conf.ApiConfig.FrontendBasePath + "/client/index/refill/callback",
+				ReturnUrl:         conf.ApiConfig.FrontendBasePath + "/client/index/refill/callback",
 				InitialAmount:     int32(params.Amount),
 				TotalAmount:       int32(params.Amount),
 				ContainsDonation:  false,
@@ -48,10 +52,13 @@ func (s *Server) StartRemoteRefill(c echo.Context, params autogen.StartRemoteRef
 		)
 	
 	if err != nil {
+		logrus.Error(err)
 		return autogen.StartRemoteRefill500JSONResponse{}.VisitStartRemoteRefillResponse(c.Response())
 	}
 
 	if resp.StatusCode() != 200 || resp.JSON200 == nil {
+		logrus.Error("Invalid response code ", resp.StatusCode())
+		logrus.Debug(string(resp.Body))
 		return autogen.StartRemoteRefill500JSONResponse{}.VisitStartRemoteRefillResponse(c.Response())
 	}
 
@@ -80,11 +87,6 @@ func (s *Server) StartRemoteRefill(c echo.Context, params autogen.StartRemoteRef
 	return autogen.StartRemoteRefill200JSONResponse{
 		RedirectUrl: *resp.JSON200.RedirectUrl,
 	}.VisitStartRemoteRefillResponse(c.Response())
-}
-
-// Check if a payment has been processed yet
-func checkPaymentStatus(checkoutIntentId int32) (bool, error) {
-	return false, nil
 }
 
 // (POST /account/remote-refills/validate)
