@@ -15,7 +15,6 @@ func (b *Backend) CreateStarring(ctx context.Context, starring *models.Starring)
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
-	starring.CreatedAt = time.Now().Unix()
 
 	_, err := b.db.Collection(StarringCollection).InsertOne(ctx, starring)
 	if err != nil {

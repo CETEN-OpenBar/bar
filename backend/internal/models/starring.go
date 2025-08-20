@@ -11,8 +11,6 @@ type (
 	Starring struct {
 		PrivateID      primitive.ObjectID `bson:"_id,omitempty" json:"-"`
 		autogen.Starring `bson:",inline"`
-
-		CreatedAt int64 `bson:"created_at" json:"created_at"`
 	}
 )
 
