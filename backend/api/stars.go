@@ -38,7 +38,6 @@ func (s *Server) PostStarring(c echo.Context, accountId string, params autogen.P
 			AccountId:    account.Id,
 			AccountName:  account.Name(),
 			Amount:       params.Amount,
-			Type:         params.Type,
 			Id:           uuid.New(),
 			IssuedAt:     uint64(time.Now().Unix()),
 			IssuedBy:     admin.Id,
@@ -273,9 +272,6 @@ func (s *Server) PatchStarringId(c echo.Context, accountId autogen.UUID, starrin
 			}
 		}
 
-		if params.Type != nil {
-			starring.Type = *params.Type
-		}
 
 		err := s.DBackend.UpdateStarring(ctx, starring)
 		if err != nil {
