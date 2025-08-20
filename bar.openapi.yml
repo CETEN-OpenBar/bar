@@ -2397,13 +2397,6 @@ paths:
           schema:
             type: integer
             format: int64
-        - name: type
-          in: query
-          description: Type of the donation
-          required: true
-          schema:
-            type: string
-            $ref: "#/components/schemas/StarringReason"
       responses:
         "201":
           description: ""
@@ -2469,13 +2462,6 @@ paths:
           schema:
             type: string
             $ref: "#/components/schemas/StarringState"
-        - name: type
-          in: query
-          description: New type of the donation
-          required: false
-          schema:
-            type: string
-            $ref: "#/components/schemas/StarringReason"
       responses:
         "200":
           description: ""
@@ -6127,16 +6113,6 @@ components:
       enum:
         - valid
         - canceled 
-    StarringReason:
-      type: string
-      enum:
-        - refund
-        - staff
-        - other
-      x-enum-varnames:
-        - StarringRefund
-        - StarringStaff
-        - StarringOther
     Starring:
       type: object
       properties:
@@ -6164,8 +6140,6 @@ components:
           $ref: "#/components/schemas/UUID"
         canceled_by_name:
           type: string
-        type:
-          $ref: "#/components/schemas/StarringReason"
         deleted_at:
           type: integer
           format: uint64
