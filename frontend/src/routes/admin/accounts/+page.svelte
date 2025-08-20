@@ -314,7 +314,7 @@
 		<div class="-m-1.5 overflow-x-auto">
 			<div class="p-1.5 min-w-full inline-block align-middle">
 				<div
-					class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden dark:bg-slate-900 dark:border-gray-700"
+					class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-x-hidden overflow-y-visible dark:bg-slate-900 dark:border-gray-700"
 				>
 					<!-- Header -->
 					<div
@@ -639,7 +639,7 @@
 										</div>
 									</td>
 									<td class="h-px w-px whitespace-nowrap relative">
-										<div class="px-6 py-1.5">
+										<div class="px-6 py-1.5 relative">
 											<button
 												class="text-sm text-blue-600 dark:text-blue-400 font-medium hover:bg-gray-100 dark:hover:bg-slate-800 p-2 rounded-md flex items-center gap-2"
 												on:click={(e) => {
@@ -666,7 +666,7 @@
 
 											<!-- Dropdown menu -->
 											<div
-												class="hidden fixed mt-2 py-2 w-48 bg-white dark:bg-slate-900 rounded-md shadow-lg z-50 border border-gray-200 dark:border-gray-700 flex flex-col"
+												class="hidden absolute mt-2 py-2 w-48 bg-white dark:bg-slate-900 rounded-md shadow-lg z-20 border border-gray-200 dark:border-gray-700 flex flex-col right-0 "
 											>
 												{#if askForCard == false}
 													<button
