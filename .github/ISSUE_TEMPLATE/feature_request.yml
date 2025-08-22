@@ -3,7 +3,7 @@ description: Suggest an idea
 title: "<title>"
 labels: ["enhancement", "needs triage"]
 type: Feature
-assignees: ['aripot007']
+assignees: ['aripot007', 'BaptTF']
 body:
 - type: checkboxes
   attributes:
