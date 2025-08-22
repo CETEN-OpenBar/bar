@@ -1,22 +1,25 @@
-# flake.nix
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
-  outputs =
-    { nixpkgs, ... }:
+  outputs = { nixpkgs, ... }:
     let
-      system = "x86_64-linux";
-      #       ↑ Swap it for your system if needed
-      #       "aarch64-linux" / "x86_64-darwin" / "aarch64-darwin"
-
-      pkgs = nixpkgs.legacyPackages.${system};
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "x86_64-darwin"
+        "aarch64-darwin"
+      ];
+      forAllSystems = f: nixpkgs.lib.genAttrs systems f;
     in
     {
-      devShells.${system}.default =
-        pkgs.mkShell # .override { stdenv = pkgs.clangStdenv; } # for C dev
-          {
+      devShells = forAllSystems (system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        {
+          default = pkgs.mkShell {
             packages = with pkgs; [
               # svelte dev
               nodejs
@@ -25,7 +28,7 @@
               nodePackages_latest.svelte-language-server
               nodePackages_latest.svelte-check
 
-              #go dev
+              # go dev
               go
               gopls
               gofumpt
@@ -36,6 +39,7 @@
             ];
             shellHook = "";
           };
-
+        }
+      );
     };
 }
