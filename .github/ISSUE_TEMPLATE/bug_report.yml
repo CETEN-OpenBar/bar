@@ -3,7 +3,7 @@ description: Signalez un bug pour nous aider à nous améliorer
 title: "[BUG] <title>"
 labels: ["bug", "needs triage"]
 type: bug
-assignees: ['aripot007']
+assignees: ['aripot007', 'BaptTF']
 body:
 - type: checkboxes
   attributes:
