@@ -10,6 +10,7 @@ import {
 	CategoriesApiFactory,
 	TransactionsApiFactory,
 	CourseApiFactory,
+	StarsApiFactory
 } from '$lib/api';
 import { api, local_token } from '$lib/config/config';
 
@@ -134,33 +135,33 @@ export const transactionsApi = () => {
 };
 
 export const restocksApi = () => {
-    return RestocksApiFactory(
-        new Configuration({
-            basePath: api(),
-            apiKey: (name: string) => {
-                if (name == 'X-Local-Token') {
-                    return local_token();
-                } else {
-                    return '';
-                }
-            }
-        })
-    );
+	return RestocksApiFactory(
+		new Configuration({
+			basePath: api(),
+			apiKey: (name: string) => {
+				if (name == 'X-Local-Token') {
+					return local_token();
+				} else {
+					return '';
+				}
+			}
+		})
+	);
 };
 
 export const cashMovementsApi = () => {
-    return CashMovementsApiFactory(
-        new Configuration({
-            basePath: api(),
-            apiKey: (name: string) => {
-                if (name == 'X-Local-Token') {
-                    return local_token();
-                } else {
-                    return '';
-                }
-            }
-        })
-    );
+	return CashMovementsApiFactory(
+		new Configuration({
+			basePath: api(),
+			apiKey: (name: string) => {
+				if (name == 'X-Local-Token') {
+					return local_token();
+				} else {
+					return '';
+				}
+			}
+		})
+	);
 };
 
 export const CourseApi = () => {
@@ -176,4 +177,19 @@ export const CourseApi = () => {
 			}
 		})
 	);
-}
+};
+
+export const starsApi = () => {
+	return StarsApiFactory(
+		new Configuration({
+			basePath: api(),
+			apiKey: (name: string) => {
+				if (name == 'X-Local-Token') {
+					return local_token();
+				} else {
+					return '';
+				}
+			}
+		})
+	);
+};

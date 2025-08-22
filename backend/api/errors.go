@@ -113,6 +113,15 @@ func ErrorRefillNotFound(c echo.Context) error {
 	return nil
 }
 
+func ErrorStarringNotFound(c echo.Context) error {
+	resp := autogen.DeleteStarring404JSONResponse{
+		Message:   autogen.MsgStarringNotFound,
+		ErrorCode: autogen.ErrStarringNotFound,
+	}
+	resp.VisitDeleteStarringResponse(c.Response())
+	return nil
+}
+
 func ErrorTransactionNotFound(c echo.Context) error {
 	resp := autogen.DeleteTransaction404JSONResponse{
 		Message:   autogen.MsgRefillNotFound,

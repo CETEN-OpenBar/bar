@@ -1,10 +1,13 @@
 <script lang="ts">
 	import type { Account, NewAccount, NewCategory } from '$lib/api';
 	import Refills from '$lib/components/admin/refills.svelte';
+	import Stars from '$lib/components/admin/stars.svelte';
+	import NewRefill from '$lib/components/comptoir/newRefill.svelte';
 	import ConfirmationPopup from '$lib/components/confirmationPopup.svelte';
 	import { accountsApi } from '$lib/requests/requests';
 	import { formatPrice } from '$lib/utils';
 	import { onMount } from 'svelte';
+	import { browser } from '$app/environment';
 	import ReadCard from '$lib/components/readCard.svelte';
 
 	let accounts: Account[] = [];
@@ -35,6 +38,8 @@
 	};
 	let accounts_per_page = 10;
 	let shown_refill: Account | undefined = undefined;
+	let shown_stars: Account | undefined = undefined;
+	let recharging_account: Account | undefined = undefined;
 
 	let deletingAccount: boolean = false;
 	let confirmationMessage: string | undefined = undefined;
@@ -43,6 +48,18 @@
 	let askForCard = false;
 	onMount(() => {
 		reloadAccounts();
+
+		if (browser) {
+			// Close dropdown menus when clicking outside
+			document.addEventListener('click', () => {
+				const dropdownMenus = document.querySelectorAll('.fixed.mt-2');
+				dropdownMenus.forEach((menu) => {
+					if (!menu.classList.contains('hidden')) {
+						menu.classList.add('hidden');
+					}
+				});
+			});
+		}
 	});
 
 	function reloadAccounts() {
@@ -128,6 +145,25 @@
 	/>
 {/if}
 
+{#if shown_stars}
+	<Stars
+		account={shown_stars}
+		close={() => {
+			shown_stars = undefined;
+		}}
+	/>
+{/if}
+
+{#if recharging_account}
+	<NewRefill
+		close={() => {
+			recharging_account = undefined;
+			reloadAccounts();
+		}}
+		cardId={recharging_account.card_id}
+	/>
+{/if}
+
 {#if askForCard}
 	<!-- Popup overlay -->
 	<button
@@ -140,10 +176,10 @@
 
 	<div id="popup" class="absolute w-full h-full top-0 left-0 flex justify-center items-center">
 		<div
-			class="relative text-black flex flex-col justify-center items-center gap-4 p-10 h-96 bg-white rounded-xl shadow-xl z-20"
+			class="relative flex flex-col justify-center items-center gap-4 p-10 h-96 bg-white dark:bg-slate-900 text-black dark:text-white rounded-xl shadow-xl z-20"
 		>
 			<button
-				class="absolute top-0 right-0 p-2 text-xl font-bold m-2 rounded-full transition-all text-black"
+				class="absolute top-0 right-0 p-2 text-xl font-bold m-2 rounded-full transition-all text-black dark:text-white"
 				on:click={() => {
 					reset();
 				}}
@@ -278,7 +314,7 @@
 		<div class="-m-1.5 overflow-x-auto">
 			<div class="p-1.5 min-w-full inline-block align-middle">
 				<div
-					class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden dark:bg-slate-900 dark:border-gray-700"
+					class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-x-hidden overflow-y-visible dark:bg-slate-900 dark:border-gray-700"
 				>
 					<!-- Header -->
 					<div
@@ -430,6 +466,15 @@
 											class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
 										>
 											Prix
+										</span>
+									</div>
+								</th>
+								<th scope="col" class="px-6 py-3 text-left">
+									<div class="flex items-center gap-x-2">
+										<span
+											class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
+										>
+											Actions
 										</span>
 									</div>
 								</th>
@@ -593,43 +638,91 @@
 											</select>
 										</div>
 									</td>
-									<td class="h-px w-px whitespace-nowrap">
-										<div class="px-6 py-1.5">
-											{#if askForCard == false}
+									<td class="h-px w-px whitespace-nowrap relative">
+										<div class="px-6 py-1.5 relative">
 											<button
-												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
-												on:click={() => {
-													selectedAccount = account;
-													askForCard = true;
+												class="text-sm text-blue-600 dark:text-blue-400 font-medium hover:bg-gray-100 dark:hover:bg-slate-800 p-2 rounded-md flex items-center gap-2"
+												on:click={(e) => {
+													const menu = e.currentTarget.nextElementSibling;
+													menu?.classList.toggle('hidden');
+													e.stopPropagation();
 												}}
 											>
-												Nouvelle Carte
+												Actions
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													width="16"
+													height="16"
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													stroke-width="2"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+												>
+													<path d="m6 9 6 6 6-6" />
+												</svg>
 											</button>
-											{/if}
-											<button
-												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
-												on:click={() => (shown_refill = account)}
+
+											<!-- Dropdown menu -->
+											<div
+												class="hidden absolute mt-2 py-2 w-48 bg-white dark:bg-slate-900 rounded-md shadow-lg z-20 border border-gray-200 dark:border-gray-700 flex flex-col right-0 "
 											>
-												Transactions
-											</button>
-											<button
-												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
-												on:click={() => {
-													deleteAccountCallback = () => {
-														deletingAccount = false;
-														deleteAccount(account.id)
-													};
-													confirmationMessage =
-														'Supprimer le compte de ' +
-														account.first_name +
-														' ' +
-														account.last_name +
-														' ?';
-													deletingAccount = true;
-												}}
-											>
-												Supprimer
-											</button>
+												{#if askForCard == false}
+													<button
+														class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center gap-2"
+														on:click={() => {
+															selectedAccount = account;
+															askForCard = true;
+														}}
+													>
+														<iconify-icon icon="mdi:card-account-details" width="20" height="20" />
+														Nouvelle Carte
+													</button>
+												{/if}
+												<button
+													class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center gap-2"
+													on:click={() => (shown_refill = account)}
+												>
+													<iconify-icon icon="mdi:history" width="20" height="20" />
+													Transactions
+												</button>
+												<button
+													class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center gap-2"
+													on:click={() => (recharging_account = account)}
+												>
+													<iconify-icon icon="mdi:wallet-plus" width="20" height="20" />
+													Recharger
+												</button>
+												<button
+													class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center gap-2"
+													on:click={() => {
+														shown_stars = account;
+													}}
+												>
+													<iconify-icon icon="mdi:star-plus" width="20" height="20" />
+													Ajouter des étoiles
+												</button>
+												<button
+													class="w-full text-left px-4 py-2 text-sm text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-800 flex items-center gap-2"
+													on:click={() => {
+														deleteAccountCallback = () => {
+															deletingAccount = false;
+															deleteAccount(account.id);
+														};
+														confirmationMessage =
+															'Supprimer le compte de ' +
+															account.first_name +
+															' ' +
+															account.last_name +
+															' ?';
+														deletingAccount = true;
+													}}
+												>
+													<iconify-icon icon="mdi:delete" width="20" height="20" />
+													Supprimer
+												</button>
+											</div>
 										</div>
 									</td>
 								</tr>
