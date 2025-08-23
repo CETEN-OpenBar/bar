@@ -51,7 +51,7 @@
 
 	function reloadTransactions() {
 		transactionsApi()
-			.getTransactions(page, amount, st, !showRemoteTransactions, searchNameValue, { withCredentials: true })
+			.getTransactions(page, amount, st, !showRemoteTransactions, searchNameValue, undefined, undefined, undefined, { withCredentials: true })
 			.then((res) => {
 				page = res.data.page ?? 0;
 				maxPage = res.data.max_page ?? 0;
