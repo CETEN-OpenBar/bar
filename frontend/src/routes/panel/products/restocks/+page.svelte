@@ -15,6 +15,7 @@
 	import { onMount } from 'svelte';
 	import Time from 'svelte-time';
 	import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
+	import pdfjsWorker from "pdfjs-dist/build/pdf.worker?url";
 
 	let sure: boolean = false;
 	let items: Item[] = [];
@@ -140,9 +141,6 @@
 	}
 
 	async function applyRestock(state: RestockState) {
-		//if (!sure) return;
-		console.log("whyyy");
-		console.log("Request data:", newRestock);
 		newRestock.driver_id = undefined;
 		newRestock.total_cost_ttc = Math.round(newRestock.total_cost_ttc);
 		newRestock.total_cost_ht = Math.round(newRestock.total_cost_ht);
@@ -256,7 +254,7 @@
 	}
 
 	onMount(() => {
-    	GlobalWorkerOptions.workerSrc = './pdf.worker.mjs';
+    	GlobalWorkerOptions.workerSrc = pdfjsWorker;
   });
 
   let fileInput: HTMLInputElement;
@@ -843,9 +841,7 @@
 					<div class="flex flex-col">
 						<button
 							class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-							on:click={() => {
-								add_item_to_restock();
-							}}
+							on:click={add_item_to_restock}
 						>
 							Ajouter
 						</button>
