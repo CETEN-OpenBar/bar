@@ -6,6 +6,9 @@
 		type NewRestockItem,
 		type Restock
 	} from '$lib/api';
+	import type {
+		Fournisseur
+	} from '$lib/api';
 	import ConfirmationPopup from '$lib/components/confirmationPopup.svelte';
 	import { itemsApi, restocksApi } from '$lib/requests/requests';
 	import { formatPrice, parsePrice, restockTypeIterator } from '$lib/utils';
@@ -138,7 +141,6 @@
 	}
 
 	async function applyRestock(state: RestockState) {
-		//if (!sure) return;		
 		newRestock.driver_id = undefined;
 		newRestock.total_cost_ttc = Math.round(newRestock.total_cost_ttc);
 		newRestock.total_cost_ht = Math.round(newRestock.total_cost_ht);
