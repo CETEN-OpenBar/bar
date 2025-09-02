@@ -35,7 +35,7 @@ func (s *Server) ConnectCard(c echo.Context) error {
 				CardId:    autogen.OptionalString(param.CardId),
 				Id:        uuid.New(),
 				Role:      autogen.AccountStudent,
-				PriceRole: autogen.AccountPriceCeten,
+				PriceRole: autogen.AccountPriceExterne,
 				State:     autogen.AccountNotOnBoarded,
 			},
 		}
