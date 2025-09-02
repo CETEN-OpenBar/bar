@@ -307,7 +307,7 @@
 	/>
 {/if}
 
-<div class="h-[calc(100vh-80px)] grid grid-cols-1 grid-rows-[auto_1fr_80px] bg-gray-50 dark:bg-gray-900">
+<div class="h-[calc(100vh-69px)] grid grid-cols-1 grid-rows-[auto_1fr_80px] bg-gray-50 dark:bg-gray-900">
 	<div class="m-3 p-2">
 		<div class="flex flex-wrap items-center gap-6">
 			<div class="flex items-center gap-3">
