@@ -309,8 +309,8 @@
 
 <div class="h-[calc(100vh-69px)] grid grid-cols-1 grid-rows-[auto_1fr_80px] bg-gray-50 dark:bg-gray-900">
 	<div class="m-3 p-2">
-		<div class="flex flex-wrap items-center gap-6">
-			<div class="flex items-center gap-3">
+		<div class="flex flex-col lg:flex-row lg:flex-wrap lg:items-center gap-4 lg:gap-6">
+			<div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
 				<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Rechercher:</span>
 				<input
 					type="text"
@@ -320,10 +320,10 @@
 						page = 0;
 						reloadAccounts();
 					}}
-					class="px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+					class="px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 w-full sm:w-auto"
 				/>
 			</div>
-			<div class="flex items-center gap-3">
+			<div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
 				<!-- Import -->
 				<input
 					type="file"
@@ -334,17 +334,18 @@
 					on:change={(e) => importAccounts(e)}
 				/>
 				<button
-					class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
+					class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800 w-full sm:w-auto"
 					on:click={() => {
 						// @ts-ignore
 						document.getElementById('import').click();
 					}}
 				>
-					Importer des Comptes
+					<span class="lg:hidden">Importer</span>
+					<span class="hidden lg:inline">Importer des Comptes</span>
 				</button>
 
 				<button
-					class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
+					class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800 w-full sm:w-auto"
 					data-hs-overlay="#hs-modal-new-account"
 				>
 					<svg
@@ -362,14 +363,16 @@
 							stroke-linecap="round"
 						/>
 					</svg>
-					Ajouter un compte
+					<span class="lg:hidden">Ajouter</span>
+					<span class="hidden lg:inline">Ajouter un compte</span>
 				</button>
 			</div>
 		</div>
 	</div>
 
 	<div class="flex-grow w-full overflow-x-auto overflow-y-visible">
-		<div class="min-w-full bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-visible">
+		<!-- Desktop Table View -->
+		<div class="hidden lg:block min-w-full bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-visible">
 			<div class="grid grid-cols-[1fr_1fr_1.5fr_0.8fr_0.8fr_0.8fr_1fr] bg-gray-50 dark:bg-gray-700 divide-x divide-gray-200 dark:divide-gray-700">
 				<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
 					Nom
@@ -644,46 +647,275 @@
 				{/each}
 			</div>
 		</div>
+
+		<!-- Mobile Card View -->
+		<div class="lg:hidden space-y-4 px-2">
+			{#if accounts.length === 0}
+				<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center">
+					<p class="text-gray-500 dark:text-gray-400">Aucun compte trouvé</p>
+				</div>
+			{:else}
+				{#each accounts as account}
+					<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+						<div class="flex justify-between items-start mb-3">
+							<div class="flex-1">
+								<div class="grid grid-cols-2 gap-2 mb-2">
+									<div>
+										<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Nom</label>
+										<input
+											type="text"
+											class="w-full text-sm dark:text-white/[.8] bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
+											value={account.last_name}
+											on:input={(e) => {
+												// @ts-ignore
+												let name = e.target?.value;
+												accountsApi()
+													.patchAccountId(
+														account.id,
+														{
+															last_name: name
+														},
+														{ withCredentials: true }
+													)
+													.then((res) => {
+														account = res.data ?? account;
+													})
+													.catch((err) => {
+														account.last_name = account.last_name ?? '';
+													});
+											}}
+										/>
+									</div>
+									<div>
+										<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Prénom</label>
+										<input
+											type="text"
+											class="w-full text-sm dark:text-white/[.8] bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
+											value={account.first_name}
+											on:input={(e) => {
+												// @ts-ignore
+												let name = e.target?.value;
+												accountsApi()
+													.patchAccountId(
+														account.id,
+														{
+															first_name: name
+														},
+														{ withCredentials: true }
+													)
+													.then((res) => {
+														account = res.data ?? account;
+													})
+													.catch((err) => {
+														account.first_name = account.first_name ?? '';
+													});
+											}}
+										/>
+									</div>
+								</div>
+								<div class="mb-2">
+									<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">E-mail</label>
+									<input
+										type="text"
+										class="w-full text-sm dark:text-white/[.8] bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
+										value={account.email_address}
+										on:input={(e) => {
+											// @ts-ignore
+											let name = e.target?.value;
+											accountsApi()
+												.patchAccountId(
+													account.id,
+													{
+														email_address: name
+													},
+													{ withCredentials: true }
+												)
+												.then((res) => {
+													account = res.data ?? account;
+												})
+												.catch((err) => {
+													account.email_address = account.email_address ?? '';
+												});
+										}}
+									/>
+								</div>
+							</div>
+						</div>
+						<div class="grid grid-cols-3 gap-2 mb-3">
+							<div>
+								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Solde</label>
+								<div class="text-sm font-medium text-gray-900 dark:text-gray-300 py-2">
+									{formatPrice(account.balance)}
+								</div>
+							</div>
+							<div>
+								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Rôle</label>
+								<select
+									class="w-full text-sm dark:text-white/[.8] dark:bg-slate-900 bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
+									value={account.role}
+									on:change={(e) => {
+										// @ts-ignore
+										let role = e.target?.value;
+										accountsApi()
+											.patchAccountId(
+												account.id,
+												{
+													role: role
+												},
+												{ withCredentials: true }
+											)
+											.then((res) => {
+												account = res.data ?? account;
+											})
+											.catch((err) => {
+												account.role = account.role ?? '';
+											});
+									}}
+								>
+									<option value="student">Étudiant</option>
+									<option value="student_with_benefits">Avec avantages</option>
+									<option value="member">Membre</option>
+									<option value="admin">Admin</option>
+									<option value="ghost">Fantôme</option>
+									<option value="superadmin">Superadmin</option>
+								</select>
+							</div>
+							<div>
+								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Prix</label>
+								<select
+									class="w-full text-sm dark:text-white/[.8] dark:bg-slate-900 bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
+									value={account.price_role}
+									on:change={(e) => {
+										// @ts-ignore
+										let role = e.target?.value;
+										accountsApi()
+											.patchAccountId(
+												account.id,
+												{
+													price_role: role
+												},
+												{ withCredentials: true }
+											)
+											.then((res) => {
+												account = res.data ?? account;
+											})
+											.catch((err) => {
+												account.price_role = account.price_role ?? '';
+											});
+									}}
+								>
+									<option value="externe">Externe</option>
+									<option value="ceten">CETEN</option>
+									<option value="staff_bar">Staff</option>
+									<option value="coutant">Coutant</option>
+									<option value="privilegies">Privilégié</option>
+								</select>
+							</div>
+						</div>
+						<div class="flex flex-wrap gap-2">
+							{#if askForCard == false}
+								<button
+									class="flex-1 min-w-0 px-3 py-2 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors flex items-center justify-center gap-1"
+									on:click={() => {
+										selectedAccount = account;
+										askForCard = true;
+									}}
+								>
+									<iconify-icon icon="mdi:card-account-details" width="16" height="16" />
+									Carte
+								</button>
+							{/if}
+							<button
+								class="flex-1 min-w-0 px-3 py-2 text-xs bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors flex items-center justify-center gap-1"
+								on:click={() => (shown_refill = account)}
+							>
+								<iconify-icon icon="mdi:history" width="16" height="16" />
+								Transactions
+							</button>
+							<button
+								class="flex-1 min-w-0 px-3 py-2 text-xs bg-green-500 text-white rounded hover:bg-green-600 transition-colors flex items-center justify-center gap-1"
+								on:click={() => (recharging_account = account)}
+							>
+								<iconify-icon icon="mdi:wallet-plus" width="16" height="16" />
+								Recharger
+							</button>
+							<button
+								class="flex-1 min-w-0 px-3 py-2 text-xs bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors flex items-center justify-center gap-1"
+								on:click={() => {
+									shown_stars = account;
+								}}
+							>
+								<iconify-icon icon="mdi:star-plus" width="16" height="16" />
+								Étoiles
+							</button>
+							<button
+								class="flex-1 min-w-0 px-3 py-2 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors flex items-center justify-center gap-1"
+								on:click={() => {
+									deleteAccountCallback = () => {
+										deletingAccount = false;
+										deleteAccount(account.id);
+									};
+									confirmationMessage =
+										'Supprimer le compte de ' +
+										account.first_name +
+										' ' +
+										account.last_name +
+										' ?';
+									deletingAccount = true;
+								}}
+							>
+								<iconify-icon icon="mdi:delete" width="16" height="16" />
+								Supprimer
+							</button>
+						</div>
+					</div>
+				{/each}
+			{/if}
+		</div>
 	</div>
 
 	<!-- Pagination -->
-	<div class="h-20 px-6 py-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
-		<div>
-			<p class="text-sm text-gray-600 dark:text-gray-400">
+	<div class="min-h-[80px] px-3 sm:px-6 py-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
+		<div class="order-2 sm:order-1">
+			<p class="text-sm text-gray-600 dark:text-gray-400 text-center sm:text-left">
 				<span class="font-semibold text-gray-800 dark:text-gray-200">{accounts.length}</span> résultats
 			</p>
 		</div>
-		<div class="flex items-center gap-x-4">
-			<button
-				type="button"
-				class="py-2 px-4 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-800"
-				on:click={prevPage}
-				disabled={page === 0}
-			>
-				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						d="M15 19l-7-7 7-7"
-					/>
-				</svg>
-				Précédent
-			</button>
-			<p class="text-sm font-medium text-gray-700 dark:text-gray-300">
+		<div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 order-1 sm:order-2 w-full sm:w-auto">
+			<p class="text-sm font-medium text-gray-700 dark:text-gray-300 order-2 sm:order-1">
 				Page <span class="font-bold">{page}</span> sur <span class="font-bold">{maxPage}</span>
 			</p>
-			<button
-				type="button"
-				class="py-2 px-4 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-800"
-				on:click={nextPage}
-				disabled={page === maxPage}
-			>
-				Suivant
-				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-				</svg>
-			</button>
+			<div class="flex items-center gap-2 order-1 sm:order-2">
+				<button
+					type="button"
+					class="py-2 px-3 sm:px-4 inline-flex justify-center items-center gap-1 sm:gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-all text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-800 flex-1 sm:flex-none"
+					on:click={prevPage}
+					disabled={page === 0}
+				>
+					<svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M15 19l-7-7 7-7"
+						/>
+					</svg>
+					<span class="hidden xs:inline">Précédent</span>
+					<span class="xs:hidden">Prec.</span>
+				</button>
+				<button
+					type="button"
+					class="py-2 px-3 sm:px-4 inline-flex justify-center items-center gap-1 sm:gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-all text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-800 flex-1 sm:flex-none"
+					on:click={nextPage}
+					disabled={page === maxPage}
+				>
+					<span class="hidden xs:inline">Suivant</span>
+					<span class="xs:hidden">Suiv.</span>
+					<svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+					</svg>
+				</button>
+			</div>
 		</div>
 	</div>
 </div>
