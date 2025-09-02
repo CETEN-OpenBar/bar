@@ -152,6 +152,21 @@ func (s *Server) GetTransactions(c echo.Context, params autogen.GetTransactionsP
 		name = string(*params.Name)
 	}
 
+	var StartTime int
+	if params.StartTime != nil {
+		StartTime = int(*params.StartTime)
+	}
+
+	var EndTime int
+	if params.EndTime != nil {
+		EndTime = int(*params.EndTime)
+	}
+
+	var ItemId string
+	if params.ItemId != nil {
+		ItemId = string(*params.ItemId)
+	}
+
 	var hide_remotes bool
 	if params.HideRemote != nil {
 		hide_remotes = bool(*params.HideRemote)
@@ -159,7 +174,7 @@ func (s *Server) GetTransactions(c echo.Context, params autogen.GetTransactionsP
 		hide_remotes = true
 	}
 
-	count, err := s.DBackend.CountAllTransactions(c.Request().Context(), state, name, hide_remotes)
+	count, err := s.DBackend.CountAllTransactions(c.Request().Context(), state, name, hide_remotes, StartTime, EndTime, ItemId)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -168,7 +183,7 @@ func (s *Server) GetTransactions(c echo.Context, params autogen.GetTransactionsP
 	// Make sure the last page is not empty
 	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	data, err := s.DBackend.GetAllTransactions(c.Request().Context(), dbpage, limit, state, name, hide_remotes)
+	data, err := s.DBackend.GetAllTransactions(c.Request().Context(), dbpage, limit, state, name, hide_remotes, StartTime, EndTime, ItemId)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
