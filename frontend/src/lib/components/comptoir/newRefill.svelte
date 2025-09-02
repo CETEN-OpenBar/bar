@@ -18,11 +18,11 @@
 	let card: {
 		id: string;
 		amount: number;
-		type: RefillType;
+		type: RefillType | undefined;
 	} = {
 		id: '',
 		amount: 0,
-		type: RefillType.RefillOther
+		type: undefined
 	};
 </script>
 
@@ -61,7 +61,7 @@
 		<!-- prompt to scan the card -->
 		{#if card.id == ''}
 			<h1 class="text-3xl">Veuillez scanner la carte.</h1>
-		{:else if card.type === RefillType.RefillOther}
+		{:else if card.type === undefined}
 			<h1>Veuillez selectionner le moyen de paiement.</h1>
 			<div class="grid grid-cols-2 w-full gap-8 p-4">
 				<button
@@ -76,10 +76,6 @@
 				>
 					Liquide
 				</button>
-				<!-- <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" 
-			on:click={() => selectedRefillType = RefillType.RefillOther}>
-			Autre
-			</button> -->
 			</div>
 		{:else}
 			<h1 class="text-3xl">Veuillez entrer le montant de la recharge.</h1>
