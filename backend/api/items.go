@@ -47,7 +47,6 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 	if err != nil {
 		return Error500(c)
 	}
-	logrus.Info(data)
 
 	var items []autogen.Item
 
