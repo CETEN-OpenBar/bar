@@ -52,10 +52,12 @@
 		if (browser) {
 			// Close dropdown menus when clicking outside
 			document.addEventListener('click', () => {
-				const dropdownMenus = document.querySelectorAll('.fixed.mt-2');
+				const dropdownMenus = document.querySelectorAll('.dropdown-menu');
 				dropdownMenus.forEach((menu) => {
 					if (!menu.classList.contains('hidden')) {
 						menu.classList.add('hidden');
+						menu.classList.remove('flex');
+						menu.classList.remove('flex-col');
 					}
 				});
 			});
@@ -563,6 +565,8 @@
 										}
 										
 										menu.classList.toggle('hidden');
+										menu.classList.toggle('flex');
+										menu.classList.toggle('flex-col');
 									}
 									e.stopPropagation();
 								}}
@@ -585,7 +589,7 @@
 
 							<!-- Dropdown menu -->
 							<div
-								class="hidden fixed mt-2 py-2 w-48 bg-white dark:bg-slate-900 rounded-md shadow-lg z-[100] border border-gray-200 dark:border-gray-700 flex flex-col"
+								class="dropdown-menu hidden fixed mt-2 py-2 w-48 bg-white dark:bg-slate-900 rounded-md shadow-lg z-[100] border border-gray-200 dark:border-gray-700"
 							>
 								{#if askForCard == false}
 									<button
