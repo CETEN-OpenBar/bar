@@ -5,8 +5,8 @@ import (
 	"bar/autogen/helloasso"
 	"bar/internal/config"
 	"bar/internal/models"
+	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -14,6 +14,42 @@ import (
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 )
+
+// Returns true if an HelloAsso checkout has been payed.
+// The error returned can be displayed to the user directly
+func (s *Server) validateHelloAssoCheckout(ctx context.Context, checkoutIntentId int32, expectedAmount int32) (bool, *helloasso.HelloAssoApiV5ModelsStatisticsOrderDetail, error){
+	
+	// Get the checkout from HelloAsso
+	checkout, err := s.HelloAssoClient.GetOrganizationsOrganizationSlugCheckoutIntentsCheckoutIntentIdWithResponse(
+		ctx,
+		config.GetConfig().HelloAssoConfig.Slug,
+		checkoutIntentId,
+		nil,
+	)
+
+	if err != nil {
+		logrus.WithField("checkout_intent_id", checkoutIntentId).Error("Error getting checkout information", err)
+		return false, nil, errors.New(string(autogen.MsgInternalServerError))
+	}
+
+	if checkout.StatusCode() != 200 || checkout.JSON200 == nil {
+		logrus.WithField("checkout_intent_id", checkoutIntentId).Error("Error getting checkout information", checkout.Status(), checkout.Body)
+		return false, nil, errors.New(string(autogen.MsgInternalServerError))
+	}
+
+	// Payment not validated by helloasso yet, reject the refill
+	if checkout.JSON200.Order == nil {
+		return false, nil, nil
+	}
+
+	// Sanity check
+	if *checkout.JSON200.Order.Amount.Total != expectedAmount {
+		logrus.WithField("checkout_id", checkoutIntentId).Errorf("Order amount mismatch : expected %d, got %d", expectedAmount, *checkout.JSON200.Order.Amount.Total)
+		return false, checkout.JSON200.Order, errors.New("internal server error : refill amount does not match order amount")
+	}
+
+	return true, checkout.JSON200.Order, nil
+}
 
 // (POST /account/remote-refills/start)
 func (s *Server) StartRemoteRefill(c echo.Context, params autogen.StartRemoteRefillParams) error {
@@ -114,49 +150,25 @@ func (s *Server) SelfValidateRemoteRefill(c echo.Context, params autogen.SelfVal
 	}
 
 	// Check if the payment has been made
-	checkout, err := s.HelloAssoClient.GetOrganizationsOrganizationSlugCheckoutIntentsCheckoutIntentIdWithResponse(
-		c.Request().Context(),
-		config.GetConfig().HelloAssoConfig.Slug,
-		params.CheckoutIntentId,
-		nil,
-	)
+	valid, order, err := s.validateHelloAssoCheckout(c.Request().Context(), params.CheckoutIntentId, remote_refill.Amount)
+	
 	if err != nil {
 		autogen.SelfValidateRemoteRefill500JSONResponse{
 			ErrorCode: autogen.ErrInternalServerError,
-			Message: autogen.MsgInternalServerError,
+			Message: autogen.Messages(err.Error()),
 		}.VisitSelfValidateRemoteRefillResponse(c.Response())
 		return err
 	}
 
-	if checkout.StatusCode() != 200 || checkout.JSON200 == nil {
-		logrus.WithField("checkout_intent_id", params.CheckoutIntentId).Error("Error getting checkout information", checkout.Status(), checkout.Body)
-		autogen.SelfValidateRemoteRefill500JSONResponse{
-			ErrorCode: autogen.ErrInternalServerError,
-			Message: autogen.MsgInternalServerError,
-		}.VisitSelfValidateRemoteRefillResponse(c.Response())
-		return fmt.Errorf("error getting checkout info for id %d", params.CheckoutIntentId)
-	}
 
 	// Payment not validated by helloasso yet, reject the refill
-
-	if checkout.JSON200.Order == nil {
+	if !valid {
 		autogen.SelfValidateRemoteRefill402Response{}.VisitSelfValidateRemoteRefillResponse(c.Response())
 		logrus.WithField("account_id", user.Id).Errorf("Checkout %d not yet processed", params.CheckoutIntentId)
 		return nil
 	}
 
-	// Sanity check
-	if *checkout.JSON200.Order.Amount.Total != remote_refill.Amount {
-		autogen.SelfValidateRemoteRefill500JSONResponse{
-			ErrorCode: autogen.ErrInternalServerError,
-			Message: "Refill amount does not match order amount",
-		}.VisitSelfValidateRemoteRefillResponse(c.Response())
-		logrus.WithField("checkout_id", params.CheckoutIntentId).Errorf("Order amount mismatch : expected %d, got %d", remote_refill.Amount, *checkout.JSON200.Order.Amount.Total)
-		return errors.New("refill amount mismatch")
-	}
-
 	// Update the refill status and the account balance
-
 	refill := &models.Refill{
 		Refill: autogen.Refill{
 			AccountId:    user.Id,
@@ -173,7 +185,7 @@ func (s *Server) SelfValidateRemoteRefill(c echo.Context, params autogen.SelfVal
 
 	remote_refill.State = autogen.RemoteRefillProcessed
 	remote_refill.RefillId = &refill.Id
-	remote_refill.OrderId = checkout.JSON200.Order.Id
+	remote_refill.OrderId = order.Id
 
 	user.Balance += int64(remote_refill.Amount)
 
