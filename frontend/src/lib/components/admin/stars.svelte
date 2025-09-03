@@ -4,6 +4,7 @@ import { starsApi } from '$lib/requests/requests';
 
 export let account: Account;
 export let close: () => void;
+export let onStarsAdded: () => void = () => {};
 
 let amount: number = 0;
 
@@ -12,6 +13,7 @@ function sendStars() {
     starsApi()
       .postStarring(account.id, amount, "staff", { withCredentials: true })
       .then(() => {
+        onStarsAdded();
         close();
       });
   }
