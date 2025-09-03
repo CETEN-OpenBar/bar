@@ -88,7 +88,7 @@ func (s *Server) PostAccounts(c echo.Context) error {
 		cardId = *req.CardId
 	}
 
-	var priceRole = autogen.AccountPriceCeten
+	var priceRole = autogen.AccountPriceExterne
 	if req.PriceRole != nil {
 		priceRole = *req.PriceRole
 	}

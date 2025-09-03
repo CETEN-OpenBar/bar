@@ -7,6 +7,7 @@
 	import Success from '../success.svelte';
 
 	export let close: () => void;
+	export let cardId: string | undefined = undefined;
 
 	let success = '';
 	let error = '';
@@ -20,7 +21,7 @@
 		amount: number;
 		type: RefillType | undefined;
 	} = {
-		id: '',
+		id: cardId ?? '',
 		amount: 0,
 		type: undefined
 	};
@@ -34,7 +35,9 @@
 	<Error {error} />
 {/if}
 
-<ReadCard callback={cardCallback} />
+{#if !cardId}
+	<ReadCard callback={cardCallback} />
+{/if}
 
 <!-- Popup overlay -->
 <button
@@ -124,6 +127,23 @@
 							}, 1000);
 						}}
 					/>
+				</div>
+
+				<div class="flex flex-col">
+					<label for="refill-type" class="block text-xl mb-2 align-middle">Type :</label>
+					<select
+						id="refill-type"
+						name="refill-type"
+						class="text-sm bg-gray-200 rounded-md p-2 text-center"
+						on:change={(e) => {
+							// @ts-ignore
+							card.type = e.target?.value;
+						}}
+					>
+						<option value={RefillType.RefillCard}>Carte</option>
+						<option value={RefillType.RefillCash}>Liquide</option>
+						<option value={RefillType.RefillOther}>Autre</option>
+					</select>
 				</div>
 			</div>
 
