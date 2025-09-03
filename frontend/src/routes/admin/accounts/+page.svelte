@@ -405,81 +405,93 @@
 			<div class="divide-y divide-gray-200 dark:divide-gray-700">
 				{#each accounts as account}
 					<div class="grid grid-cols-[1fr_1fr_1.5fr_0.8fr_0.8fr_0.8fr_0.8fr_1fr] divide-x divide-gray-200 dark:divide-gray-700">
-						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-							<input
-								type="text"
-								class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent border-none outline-none w-full"
-								value={account.last_name}
-								on:input={(e) => {
-									// @ts-ignore
-									let name = e.target?.value;
-									accountsApi()
-										.patchAccountId(
-											account.id,
-											{
-												last_name: name
-											},
-											{ withCredentials: true }
-										)
-										.then((res) => {
-											account = res.data ?? account;
-										})
-										.catch((err) => {
-											account.last_name = account.last_name ?? '';
-										});
-								}}
-							/>
-						</td>
-						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-							<input
-								type="text"
-								class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent border-none outline-none w-full"
-								value={account.first_name}
-								on:input={(e) => {
-									// @ts-ignore
-									let name = e.target?.value;
-									accountsApi()
-										.patchAccountId(
-											account.id,
-											{
-												first_name: name
-											},
-											{ withCredentials: true }
-										)
-										.then((res) => {
-											account = res.data ?? account;
-										})
-										.catch((err) => {
-											account.first_name = account.first_name ?? '';
-										});
-								}}
-							/>
-						</td>
-						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-							<input
-								type="text"
-								class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent border-none outline-none w-full"
-								value={account.email_address}
-								on:input={(e) => {
-									// @ts-ignore
-									let name = e.target?.value;
-									accountsApi()
-										.patchAccountId(
-											account.id,
-											{
-												email_address: name
-											},
-											{ withCredentials: true }
-										)
-										.then((res) => {
-											account = res.data ?? account;
-										})
-										.catch((err) => {
-											account.email_address = account.email_address ?? '';
-										});
-								}}
-							/>
-						</td>
+					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300 flex items-center group relative">
+						<input
+							type="text"
+							class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent border-none outline-none flex-1"
+							value={account.last_name}
+							on:input={(e) => {
+								// @ts-ignore
+								let name = e.target?.value;
+								accountsApi()
+									.patchAccountId(
+										account.id,
+										{
+											last_name: name
+										},
+										{ withCredentials: true }
+									)
+									.then((res) => {
+										account = res.data ?? account;
+									})
+									.catch((err) => {
+										account.last_name = account.last_name ?? '';
+									});
+							}}
+						/>
+					<iconify-icon 
+						icon="mdi:pencil" 
+						class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+					/>
+					</td>
+					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300 flex items-center group relative">
+			            <input
+							type="text"
+							class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent border-none outline-none flex-1"
+							value={account.first_name}
+							on:input={(e) => {
+								// @ts-ignore
+								let name = e.target?.value;
+								accountsApi()
+									.patchAccountId(
+										account.id,
+										{
+											first_name: name
+										},
+										{ withCredentials: true }
+									)
+									.then((res) => {
+										account = res.data ?? account;
+									})
+									.catch((err) => {
+										account.first_name = account.first_name ?? '';
+        							});
+							}}
+						/>
+					<iconify-icon 
+						icon="mdi:pencil" 
+						class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+					/>
+					</td>
+					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300 flex items-center group relative">
+						<input
+							type="text"
+							class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent border-none outline-none flex-1"
+							value={account.email_address}
+							on:input={(e) => {
+								// @ts-ignore
+								let name = e.target?.value;
+								accountsApi()
+									.patchAccountId(
+										account.id,
+										{
+											email_address: name
+										},
+										{ withCredentials: true }
+									)
+									.then((res) => {
+										account = res.data ?? account;
+									})
+									.catch((err) => {
+										account.email_address = account.email_address ?? '';
+									});
+							}}
+						/>
+					<iconify-icon 
+						icon="mdi:pencil" 
+						class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+					/>
+					</td>
 					<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
 						{formatPrice(account.balance)}
 					</td>
