@@ -18,7 +18,7 @@
 		card_id: '',
 		balance: 0,
 		role: 'student',
-		price_role: 'ceten'
+		price_role: 'externe'
 	};
 
 	let searchQuery = '';
