@@ -90,13 +90,14 @@
 					if (e.key == 'Enter')
 						refillsApi()
 							.postRefill(card.id, card.amount, card.type, { withCredentials: true })
-							.then(() => {
-								success = 'Recharge effectuée avec succès.';
-								close();
-							})
-							.catch(() => {
-								error = 'Une erreur est survenue.';
-							});
+					.then(() => {
+						success = 'Recharge effectuée avec succès.';
+						setTimeout(() => close(), 2500);
+					})
+					.catch(() => {
+						error = 'Une erreur est survenue.';
+						setTimeout(() => close(), 4000);
+					});
 				}}
 			>
 				<div class="flex flex-col">
@@ -128,23 +129,6 @@
 						}}
 					/>
 				</div>
-
-				<div class="flex flex-col">
-					<label for="refill-type" class="block text-xl mb-2 align-middle">Type :</label>
-					<select
-						id="refill-type"
-						name="refill-type"
-						class="text-sm bg-gray-200 rounded-md p-2 text-center"
-						on:change={(e) => {
-							// @ts-ignore
-							card.type = e.target?.value;
-						}}
-					>
-						<option value={RefillType.RefillCard}>Carte</option>
-						<option value={RefillType.RefillCash}>Liquide</option>
-						<option value={RefillType.RefillOther}>Autre</option>
-					</select>
-				</div>
 			</div>
 
 			<button
@@ -155,10 +139,11 @@
 						.postRefill(card.id, card.amount, card.type, { withCredentials: true })
 						.then(() => {
 							success = 'Recharge effectuée avec succès.';
-							close();
+							setTimeout(() => close(), 4000);
 						})
 						.catch(() => {
 							error = 'Une erreur est survenue.';
+							setTimeout(() => close(), 4000);
 						});
 				}}
 			>
