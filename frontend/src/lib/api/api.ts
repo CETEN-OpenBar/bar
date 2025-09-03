@@ -515,6 +515,7 @@ export const ErrorCodes = {
     ErrCategoryNotFound: 'category_not_found',
     ErrItemNotFound: 'item_not_found',
     ErrRefillNotFound: 'refill_not_found',
+    ErrStarringNotFound: 'starring_not_found',
     ErrTransactionNotFound: 'transaction_not_found'
 } as const;
 
@@ -819,6 +820,37 @@ export interface GetDeletedCategories200Response {
 /**
  * 
  * @export
+ * @interface GetDeletedStarring200Response
+ */
+export interface GetDeletedStarring200Response {
+    /**
+     * 
+     * @type {Array<Starring>}
+     * @memberof GetDeletedStarring200Response
+     */
+    'starring': Array<Starring>;
+    /**
+     * 
+     * @type {number}
+     * @memberof GetDeletedStarring200Response
+     */
+    'page': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof GetDeletedStarring200Response
+     */
+    'limit': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof GetDeletedStarring200Response
+     */
+    'max_page': number;
+}
+/**
+ * 
+ * @export
  * @interface GetRefills200Response
  */
 export interface GetRefills200Response {
@@ -906,6 +938,37 @@ export interface GetRestocks200Response {
      * 
      * @type {number}
      * @memberof GetRestocks200Response
+     */
+    'max_page': number;
+}
+/**
+ * 
+ * @export
+ * @interface GetStarrings200Response
+ */
+export interface GetStarrings200Response {
+    /**
+     * 
+     * @type {Array<Starring>}
+     * @memberof GetStarrings200Response
+     */
+    'stars': Array<Starring>;
+    /**
+     * 
+     * @type {number}
+     * @memberof GetStarrings200Response
+     */
+    'page': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof GetStarrings200Response
+     */
+    'limit': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof GetStarrings200Response
      */
     'max_page': number;
 }
@@ -1282,6 +1345,7 @@ export const Messages = {
     MsgCategoryNotFound: 'Category does not exists',
     MsgItemNotFound: 'Item does not exists',
     MsgRefillNotFound: 'Refill does not exists',
+    MsgStarringNotFound: 'Starring does not exists',
     MsgTransactionNotFound: 'Transaction does not exists'
 } as const;
 
@@ -2050,6 +2114,101 @@ export const RestockType = {
 } as const;
 
 export type RestockType = typeof RestockType[keyof typeof RestockType];
+
+
+/**
+ * 
+ * @export
+ * @interface Starring
+ */
+export interface Starring {
+    /**
+     * 
+     * @type {string}
+     * @memberof Starring
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Starring
+     */
+    'account_id': string;
+    /**
+     * Name of the account
+     * @type {string}
+     * @memberof Starring
+     */
+    'account_name': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Starring
+     */
+    'amount': number;
+    /**
+     * 
+     * @type {StarringState}
+     * @memberof Starring
+     */
+    'state': StarringState;
+    /**
+     * 
+     * @type {number}
+     * @memberof Starring
+     */
+    'issued_at': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Starring
+     */
+    'issued_by': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Starring
+     */
+    'issued_by_name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Starring
+     */
+    'canceled_by'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Starring
+     */
+    'canceled_by_name'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Starring
+     */
+    'deleted_at'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Starring
+     */
+    'deleted_by'?: string;
+}
+
+
+/**
+ * 
+ * @export
+ * @enum {string}
+ */
+
+export const StarringState = {
+    Valid: 'valid',
+    Canceled: 'canceled'
+} as const;
+
+export type StarringState = typeof StarringState[keyof typeof StarringState];
 
 
 /**
@@ -5742,6 +5901,41 @@ export const DeletedApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
+         * Permanently deletes a starring (SUPERADMIN)
+         * @param {string} starringId ID of the starring
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteStarring: async (starringId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'starringId' is not null or undefined
+            assertParamExists('deleteStarring', 'starringId', starringId)
+            const localVarPath = `/deleted/stars/{starring_id}`
+                .replace(`{${"starring_id"}}`, encodeURIComponent(String(starringId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Permanently deletes a transaction (SUPERADMIN)
          * @param {string} transactionId ID of the transaction
          * @param {*} [options] Override http request option.
@@ -6028,6 +6222,47 @@ export const DeletedApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
+         * Get deleted starrings
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of accounts per page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getDeletedStarring: async (page?: number, limit?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/deleted/stars`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Get deleted transactions
          * @param {number} [page] Page number
          * @param {number} [limit] Number of accounts per page
@@ -6279,6 +6514,41 @@ export const DeletedApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
+         * Restore a deleted starring
+         * @param {string} starringId ID of the starring
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        restoreDeletedStarring: async (starringId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'starringId' is not null or undefined
+            assertParamExists('restoreDeletedStarring', 'starringId', starringId)
+            const localVarPath = `/deleted/stars/{starring_id}`
+                .replace(`{${"starring_id"}}`, encodeURIComponent(String(starringId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Restore a deleted transaction
          * @param {string} transactionId ID of the transaction
          * @param {*} [options] Override http request option.
@@ -6384,6 +6654,16 @@ export const DeletedApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
+         * Permanently deletes a starring (SUPERADMIN)
+         * @param {string} starringId ID of the starring
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteStarring(starringId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteStarring(starringId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * Permanently deletes a transaction (SUPERADMIN)
          * @param {string} transactionId ID of the transaction
          * @param {*} [options] Override http request option.
@@ -6461,6 +6741,17 @@ export const DeletedApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
+         * Get deleted starrings
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of accounts per page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getDeletedStarring(page?: number, limit?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetDeletedStarring200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getDeletedStarring(page, limit, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * Get deleted transactions
          * @param {number} [page] Page number
          * @param {number} [limit] Number of accounts per page
@@ -6529,6 +6820,16 @@ export const DeletedApiFp = function(configuration?: Configuration) {
          */
         async restoreDeletedRefill(refillId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.restoreDeletedRefill(refillId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Restore a deleted starring
+         * @param {string} starringId ID of the starring
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async restoreDeletedStarring(starringId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.restoreDeletedStarring(starringId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -6606,6 +6907,15 @@ export const DeletedApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.deleteRefill(refillId, options).then((request) => request(axios, basePath));
         },
         /**
+         * Permanently deletes a starring (SUPERADMIN)
+         * @param {string} starringId ID of the starring
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteStarring(starringId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteStarring(starringId, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Permanently deletes a transaction (SUPERADMIN)
          * @param {string} transactionId ID of the transaction
          * @param {*} [options] Override http request option.
@@ -6676,6 +6986,16 @@ export const DeletedApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.getDeletedRefills(page, limit, options).then((request) => request(axios, basePath));
         },
         /**
+         * Get deleted starrings
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of accounts per page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getDeletedStarring(page?: number, limit?: number, options?: any): AxiosPromise<GetDeletedStarring200Response> {
+            return localVarFp.getDeletedStarring(page, limit, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Get deleted transactions
          * @param {number} [page] Page number
          * @param {number} [limit] Number of accounts per page
@@ -6738,6 +7058,15 @@ export const DeletedApiFactory = function (configuration?: Configuration, basePa
          */
         restoreDeletedRefill(refillId: string, options?: any): AxiosPromise<void> {
             return localVarFp.restoreDeletedRefill(refillId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Restore a deleted starring
+         * @param {string} starringId ID of the starring
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        restoreDeletedStarring(starringId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.restoreDeletedStarring(starringId, options).then((request) => request(axios, basePath));
         },
         /**
          * Restore a deleted transaction
@@ -6825,6 +7154,17 @@ export class DeletedApi extends BaseAPI {
     }
 
     /**
+     * Permanently deletes a starring (SUPERADMIN)
+     * @param {string} starringId ID of the starring
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DeletedApi
+     */
+    public deleteStarring(starringId: string, options?: AxiosRequestConfig) {
+        return DeletedApiFp(this.configuration).deleteStarring(starringId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
      * Permanently deletes a transaction (SUPERADMIN)
      * @param {string} transactionId ID of the transaction
      * @param {*} [options] Override http request option.
@@ -6909,6 +7249,18 @@ export class DeletedApi extends BaseAPI {
     }
 
     /**
+     * Get deleted starrings
+     * @param {number} [page] Page number
+     * @param {number} [limit] Number of accounts per page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DeletedApi
+     */
+    public getDeletedStarring(page?: number, limit?: number, options?: AxiosRequestConfig) {
+        return DeletedApiFp(this.configuration).getDeletedStarring(page, limit, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
      * Get deleted transactions
      * @param {number} [page] Page number
      * @param {number} [limit] Number of accounts per page
@@ -6984,6 +7336,17 @@ export class DeletedApi extends BaseAPI {
      */
     public restoreDeletedRefill(refillId: string, options?: AxiosRequestConfig) {
         return DeletedApiFp(this.configuration).restoreDeletedRefill(refillId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Restore a deleted starring
+     * @param {string} starringId ID of the starring
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DeletedApi
+     */
+    public restoreDeletedStarring(starringId: string, options?: AxiosRequestConfig) {
+        return DeletedApiFp(this.configuration).restoreDeletedStarring(starringId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -8761,6 +9124,564 @@ export class RestocksApi extends BaseAPI {
      */
     public updateRestock(restockId: string, newRestock: NewRestock, options?: AxiosRequestConfig) {
         return RestocksApiFp(this.configuration).updateRestock(restockId, newRestock, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+/**
+ * StarsApi - axios parameter creator
+ * @export
+ */
+export const StarsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * Get all stars donations of an account
+         * @param {string} accountId ID or CardID of the account
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of donations per page
+         * @param {string} [startDate] Start date of the donation
+         * @param {string} [endDate] End date of the donation
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAccountStarring: async (accountId: string, page?: number, limit?: number, startDate?: string, endDate?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'accountId' is not null or undefined
+            assertParamExists('getAccountStarring', 'accountId', accountId)
+            const localVarPath = `/accounts/{account_id}/stars`
+                .replace(`{${"account_id"}}`, encodeURIComponent(String(accountId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+            if (startDate !== undefined) {
+                localVarQueryParameter['start_date'] = (startDate as any instanceof Date) ?
+                    (startDate as any).toISOString().substr(0,10) :
+                    startDate;
+            }
+
+            if (endDate !== undefined) {
+                localVarQueryParameter['end_date'] = (endDate as any instanceof Date) ?
+                    (endDate as any).toISOString().substr(0,10) :
+                    endDate;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get all stars donations
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of donations per page
+         * @param {string} [startDate] Start date of the donation
+         * @param {string} [endDate] End date of the donation
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getSelfStarring: async (page?: number, limit?: number, startDate?: string, endDate?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/account/stars`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication auth required
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+            if (startDate !== undefined) {
+                localVarQueryParameter['start_date'] = (startDate as any instanceof Date) ?
+                    (startDate as any).toISOString().substr(0,10) :
+                    startDate;
+            }
+
+            if (endDate !== undefined) {
+                localVarQueryParameter['end_date'] = (endDate as any instanceof Date) ?
+                    (endDate as any).toISOString().substr(0,10) :
+                    endDate;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get all stars donations
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of donations per page
+         * @param {string} [name] Filter by account name
+         * @param {string} [startDate] Start date of the donations
+         * @param {string} [endDate] End date of the donations
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getStarrings: async (page?: number, limit?: number, name?: string, startDate?: string, endDate?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/stars`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+            if (name !== undefined) {
+                localVarQueryParameter['name'] = name;
+            }
+
+            if (startDate !== undefined) {
+                localVarQueryParameter['start_date'] = startDate;
+            }
+
+            if (endDate !== undefined) {
+                localVarQueryParameter['end_date'] = endDate;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Cancels a donation
+         * @param {string} accountId ID of the account
+         * @param {string} starringId ID of the donation
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        markDeleteStarring: async (accountId: string, starringId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'accountId' is not null or undefined
+            assertParamExists('markDeleteStarring', 'accountId', accountId)
+            // verify required parameter 'starringId' is not null or undefined
+            assertParamExists('markDeleteStarring', 'starringId', starringId)
+            const localVarPath = `/accounts/{account_id}/stars/{starring_id}`
+                .replace(`{${"account_id"}}`, encodeURIComponent(String(accountId)))
+                .replace(`{${"starring_id"}}`, encodeURIComponent(String(starringId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Update donation\'s state
+         * @param {string} accountId ID of the account
+         * @param {string} starringId ID of the donation
+         * @param {StarringState} [state] New state of the donation
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        patchStarringId: async (accountId: string, starringId: string, state?: StarringState, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'accountId' is not null or undefined
+            assertParamExists('patchStarringId', 'accountId', accountId)
+            // verify required parameter 'starringId' is not null or undefined
+            assertParamExists('patchStarringId', 'starringId', starringId)
+            const localVarPath = `/accounts/{account_id}/stars/{starring_id}`
+                .replace(`{${"account_id"}}`, encodeURIComponent(String(accountId)))
+                .replace(`{${"starring_id"}}`, encodeURIComponent(String(starringId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication auth required
+
+            if (state !== undefined) {
+                localVarQueryParameter['state'] = state;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Create a new stars donations
+         * @param {string} accountId ID or CardID of the account
+         * @param {number} amount Amount of the starring
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postStarring: async (accountId: string, amount: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'accountId' is not null or undefined
+            assertParamExists('postStarring', 'accountId', accountId)
+            // verify required parameter 'amount' is not null or undefined
+            assertParamExists('postStarring', 'amount', amount)
+            const localVarPath = `/accounts/{account_id}/stars`
+                .replace(`{${"account_id"}}`, encodeURIComponent(String(accountId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
+
+            if (amount !== undefined) {
+                localVarQueryParameter['amount'] = amount;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * StarsApi - functional programming interface
+ * @export
+ */
+export const StarsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = StarsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * Get all stars donations of an account
+         * @param {string} accountId ID or CardID of the account
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of donations per page
+         * @param {string} [startDate] Start date of the donation
+         * @param {string} [endDate] End date of the donation
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getAccountStarring(accountId: string, page?: number, limit?: number, startDate?: string, endDate?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetStarrings200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAccountStarring(accountId, page, limit, startDate, endDate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Get all stars donations
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of donations per page
+         * @param {string} [startDate] Start date of the donation
+         * @param {string} [endDate] End date of the donation
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getSelfStarring(page?: number, limit?: number, startDate?: string, endDate?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetStarrings200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getSelfStarring(page, limit, startDate, endDate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Get all stars donations
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of donations per page
+         * @param {string} [name] Filter by account name
+         * @param {string} [startDate] Start date of the donations
+         * @param {string} [endDate] End date of the donations
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getStarrings(page?: number, limit?: number, name?: string, startDate?: string, endDate?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetStarrings200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getStarrings(page, limit, name, startDate, endDate, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Cancels a donation
+         * @param {string} accountId ID of the account
+         * @param {string} starringId ID of the donation
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async markDeleteStarring(accountId: string, starringId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.markDeleteStarring(accountId, starringId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Update donation\'s state
+         * @param {string} accountId ID of the account
+         * @param {string} starringId ID of the donation
+         * @param {StarringState} [state] New state of the donation
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async patchStarringId(accountId: string, starringId: string, state?: StarringState, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Starring>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.patchStarringId(accountId, starringId, state, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Create a new stars donations
+         * @param {string} accountId ID or CardID of the account
+         * @param {number} amount Amount of the starring
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postStarring(accountId: string, amount: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Starring>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postStarring(accountId, amount, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+    }
+};
+
+/**
+ * StarsApi - factory interface
+ * @export
+ */
+export const StarsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = StarsApiFp(configuration)
+    return {
+        /**
+         * Get all stars donations of an account
+         * @param {string} accountId ID or CardID of the account
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of donations per page
+         * @param {string} [startDate] Start date of the donation
+         * @param {string} [endDate] End date of the donation
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAccountStarring(accountId: string, page?: number, limit?: number, startDate?: string, endDate?: string, options?: any): AxiosPromise<GetStarrings200Response> {
+            return localVarFp.getAccountStarring(accountId, page, limit, startDate, endDate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get all stars donations
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of donations per page
+         * @param {string} [startDate] Start date of the donation
+         * @param {string} [endDate] End date of the donation
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getSelfStarring(page?: number, limit?: number, startDate?: string, endDate?: string, options?: any): AxiosPromise<GetStarrings200Response> {
+            return localVarFp.getSelfStarring(page, limit, startDate, endDate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get all stars donations
+         * @param {number} [page] Page number
+         * @param {number} [limit] Number of donations per page
+         * @param {string} [name] Filter by account name
+         * @param {string} [startDate] Start date of the donations
+         * @param {string} [endDate] End date of the donations
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getStarrings(page?: number, limit?: number, name?: string, startDate?: string, endDate?: string, options?: any): AxiosPromise<GetStarrings200Response> {
+            return localVarFp.getStarrings(page, limit, name, startDate, endDate, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Cancels a donation
+         * @param {string} accountId ID of the account
+         * @param {string} starringId ID of the donation
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        markDeleteStarring(accountId: string, starringId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.markDeleteStarring(accountId, starringId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Update donation\'s state
+         * @param {string} accountId ID of the account
+         * @param {string} starringId ID of the donation
+         * @param {StarringState} [state] New state of the donation
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        patchStarringId(accountId: string, starringId: string, state?: StarringState, options?: any): AxiosPromise<Starring> {
+            return localVarFp.patchStarringId(accountId, starringId, state, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Create a new stars donations
+         * @param {string} accountId ID or CardID of the account
+         * @param {number} amount Amount of the starring
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postStarring(accountId: string, amount: number, options?: any): AxiosPromise<Starring> {
+            return localVarFp.postStarring(accountId, amount, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * StarsApi - object-oriented interface
+ * @export
+ * @class StarsApi
+ * @extends {BaseAPI}
+ */
+export class StarsApi extends BaseAPI {
+    /**
+     * Get all stars donations of an account
+     * @param {string} accountId ID or CardID of the account
+     * @param {number} [page] Page number
+     * @param {number} [limit] Number of donations per page
+     * @param {string} [startDate] Start date of the donation
+     * @param {string} [endDate] End date of the donation
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof StarsApi
+     */
+    public getAccountStarring(accountId: string, page?: number, limit?: number, startDate?: string, endDate?: string, options?: AxiosRequestConfig) {
+        return StarsApiFp(this.configuration).getAccountStarring(accountId, page, limit, startDate, endDate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get all stars donations
+     * @param {number} [page] Page number
+     * @param {number} [limit] Number of donations per page
+     * @param {string} [startDate] Start date of the donation
+     * @param {string} [endDate] End date of the donation
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof StarsApi
+     */
+    public getSelfStarring(page?: number, limit?: number, startDate?: string, endDate?: string, options?: AxiosRequestConfig) {
+        return StarsApiFp(this.configuration).getSelfStarring(page, limit, startDate, endDate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get all stars donations
+     * @param {number} [page] Page number
+     * @param {number} [limit] Number of donations per page
+     * @param {string} [name] Filter by account name
+     * @param {string} [startDate] Start date of the donations
+     * @param {string} [endDate] End date of the donations
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof StarsApi
+     */
+    public getStarrings(page?: number, limit?: number, name?: string, startDate?: string, endDate?: string, options?: AxiosRequestConfig) {
+        return StarsApiFp(this.configuration).getStarrings(page, limit, name, startDate, endDate, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Cancels a donation
+     * @param {string} accountId ID of the account
+     * @param {string} starringId ID of the donation
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof StarsApi
+     */
+    public markDeleteStarring(accountId: string, starringId: string, options?: AxiosRequestConfig) {
+        return StarsApiFp(this.configuration).markDeleteStarring(accountId, starringId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Update donation\'s state
+     * @param {string} accountId ID of the account
+     * @param {string} starringId ID of the donation
+     * @param {StarringState} [state] New state of the donation
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof StarsApi
+     */
+    public patchStarringId(accountId: string, starringId: string, state?: StarringState, options?: AxiosRequestConfig) {
+        return StarsApiFp(this.configuration).patchStarringId(accountId, starringId, state, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Create a new stars donations
+     * @param {string} accountId ID or CardID of the account
+     * @param {number} amount Amount of the starring
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof StarsApi
+     */
+    public postStarring(accountId: string, amount: number, options?: AxiosRequestConfig) {
+        return StarsApiFp(this.configuration).postStarring(accountId, amount, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

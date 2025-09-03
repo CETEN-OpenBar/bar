@@ -107,6 +107,17 @@ type DBackend interface {
 	DeleteRemoteRefill(ctx context.Context, id string) error
 
 	FindRemoteRefillForAccount(ctx context.Context, accountId string, checkoutIntentId int32) (*models.RemoteRefill, error)
+	
+	// Starring's CRUD
+	CreateStarring(ctx context.Context, r *models.Starring) error
+	GetStarring(ctx context.Context, id string) (*models.Starring, error)
+	UpdateStarring(ctx context.Context, starring *models.Starring) error
+	MarkDeleteStarring(ctx context.Context, id, by string) error
+	UnMarkDeleteStarring(ctx context.Context, id string) error
+	DeleteStarring(ctx context.Context, id string) error
+	RestoreStarring(ctx context.Context, id string) error
+	GetDeletedStarrings(ctx context.Context, page uint64, size uint64) ([]*models.Starring, error)
+	CountDeletedStarrings(ctx context.Context) (uint64, error)
 
 	// Transaction's CRUD
 	CreateTransaction(ctx context.Context, t *models.Transaction) error
@@ -174,12 +185,15 @@ type DBackend interface {
 	GetIncoherentItems(ctx context.Context, page, size uint64, categoryID string, state string, name string) ([]*models.Item, error)
 	CountItems(ctx context.Context, categoryID string, state string, name string, fournisseur string) (uint64, error)
 	CountIncoherentItems(ctx context.Context, categoryID string, state string, name string) (uint64, error)
-
 	GetAllRefills(ctx context.Context, page uint64, size uint64, startAt, endAt uint64) ([]*models.Refill, error)
 	CountAllRefills(ctx context.Context, startAt, endAt uint64) (uint64, error)
 	GetAllCategories(ctx context.Context) ([]*models.Category, error)
 	GetAllCarouselImages(ctx context.Context) ([]*models.CarouselImage, error)
 	GetAllCarouselTexts(ctx context.Context) ([]*models.CarouselText, error)
+	GetStarrings(ctx context.Context, account string, page uint64, size uint64, startAt, endAt uint64) ([]*models.Starring, error)
+	CountStarrings(ctx context.Context, account string, startAt, endAt uint64) (uint64, error)
+	GetAllStarrings(ctx context.Context, page uint64, size uint64,  name string, startAt, endAt uint64) ([]*models.Starring, error)
+	CountAllStarrings(ctx context.Context, name string, startAt, endAt uint64) (uint64, error)
 
 	// Mongo transactions
 	WithTransaction(ctx context.Context, fn func(ctx mongo.SessionContext) (interface{}, error), opts ...*options.TransactionOptions) (interface{}, error)

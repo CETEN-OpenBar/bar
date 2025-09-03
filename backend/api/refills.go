@@ -21,7 +21,6 @@ func (s *Server) GetRefills(c echo.Context, params autogen.GetRefillsParams) err
 	if err != nil {
 		return nil
 	}
-
 	var startsAt uint64 = 0
 	if params.StartDate != nil {
 		startsAt, _ = strconv.ParseUint(*params.StartDate, 10, 64)
@@ -196,7 +195,7 @@ func (s *Server) PostRefill(c echo.Context, accountId string, params autogen.Pos
 			IssuedAt:     uint64(time.Now().Unix()),
 			IssuedBy:     admin.Id,
 			IssuedByName: admin.Name(),
-			State:        autogen.Valid,
+			State:        autogen.RefillStateValid,
 		},
 	}
 
@@ -264,7 +263,7 @@ func (s *Server) PatchRefillId(c echo.Context, accountId autogen.UUID, refillId 
 			oldState := refill.State
 			refill.State = *params.State
 
-			if oldState == autogen.Valid && *params.State == autogen.Canceled {
+			if oldState == autogen.RefillStateValid && *params.State == autogen.RefillStateCanceled {
 				account.Balance -= int64(refill.Amount)
 
 				name := admin.Name()
@@ -279,7 +278,7 @@ func (s *Server) PatchRefillId(c echo.Context, accountId autogen.UUID, refillId 
 						return nil, errors.New("failed to create cash movement")
 					}
 				}
-			} else if oldState == autogen.Canceled && *params.State == autogen.Valid {
+			} else if oldState == autogen.RefillStateCanceled && *params.State == autogen.RefillStateValid {
 				account.Balance += int64(refill.Amount)
 				refill.CanceledBy = nil
 				refill.CanceledByName = nil

@@ -167,7 +167,7 @@ func (s *Server) SelfValidateRemoteRefill(c echo.Context, params autogen.SelfVal
 			IssuedAt:     uint64(time.Now().Unix()),
 			IssuedBy:     user.Id,
 			IssuedByName: user.Name(),
-			State:        autogen.Valid,
+			State:        autogen.RefillStateValid,
 		},
 	}
 

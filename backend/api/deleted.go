@@ -553,6 +553,73 @@ func (s *Server) DeleteRefill(c echo.Context, refillId autogen.UUID) error {
 	return nil
 }
 
+// (GET /deleted/refills)
+func (s *Server) GetDeletedStarring(c echo.Context, params autogen.GetDeletedStarringParams) error {
+	// Get admin account from cookie
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
+
+	if account.Role != autogen.AccountSuperAdmin {
+		return ErrorNotAuthenticated(c)
+	}
+
+	count, err := s.DBackend.CountDeletedStarrings(c.Request().Context())
+	if err != nil {
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	// Make sure the last page is not empty
+	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
+
+	data, err := s.DBackend.GetDeletedStarrings(c.Request().Context(), dbpage, limit)
+	if err != nil {
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	var items []autogen.Starring
+
+	for _, acc := range data {
+		items = append(items, acc.Starring)
+	}
+
+	autogen.GetDeletedStarring200JSONResponse{
+		Starring: items,
+		Limit:   limit,
+		Page:    page,
+		MaxPage: maxPage,
+	}.VisitGetDeletedStarringResponse(c.Response())
+	return nil
+}
+
+// (DELETE /deleted/stars/{starring_id})
+func (s *Server) DeleteStarring(c echo.Context, starringId autogen.UUID) error {
+	// Get admin account from cookie
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
+
+	if account.Role != autogen.AccountSuperAdmin {
+		return ErrorNotAuthenticated(c)
+	}
+
+	err = s.DBackend.DeleteStarring(c.Request().Context(), starringId.String())
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorRefillNotFound(c)
+		}
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	logrus.WithField("starring", starringId.String()).WithField("by", account.Name()).Info("Starring deleted")
+	return nil
+}
+
 // (PATCH /deleted/refills/{refill_id})
 func (s *Server) RestoreDeletedRefill(c echo.Context, refillId autogen.UUID) error {
 	// Get admin account from cookie
@@ -574,6 +641,30 @@ func (s *Server) RestoreDeletedRefill(c echo.Context, refillId autogen.UUID) err
 		return Error500(c)
 	}
 	logrus.WithField("refill", refillId.String()).WithField("by", account.Name()).Info("Refill restored")
+	return nil
+}
+
+// (PATCH /deleted/refills/{refill_id})
+func (s *Server) RestoreDeletedStarring(c echo.Context, starringId autogen.UUID) error {
+	// Get admin account from cookie
+	account, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
+
+	if account.Role != autogen.AccountSuperAdmin {
+		return ErrorNotAuthenticated(c)
+	}
+
+	err = s.DBackend.UnMarkDeleteStarring(c.Request().Context(), starringId.String())
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorStarringNotFound(c)
+		}
+		logrus.Error(err)
+		return Error500(c)
+	}
+	logrus.WithField("starring", starringId.String()).WithField("by", account.Name()).Info("Starring restored")
 	return nil
 }
 
