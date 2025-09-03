@@ -2077,7 +2077,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/HTTPError"
       security:
-        - auth: []
+        - admin_auth: []
       tags:
         - refills
     delete:
@@ -2300,7 +2300,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/HTTPError"
       security:
-        - admin_auth: []
+        - auth: []
       tags:
         - refills
   /stars:
@@ -2682,7 +2682,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/HTTPError"
       security:
-        - auth: []
+        - admin_auth: []
       tags:
         - stars
     delete:
