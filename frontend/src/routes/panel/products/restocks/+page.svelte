@@ -20,7 +20,7 @@
 	let sure: boolean = false;
 	let items: Item[] = [];
 	// Array of items which are unkown by their reference for the automatic restock with the invoice
-	let unknownItems: Array<{name : string, reference : number}> = [];
+	let unknownItems: Array<{name : string, reference : number, unitPriceHT : number, quantity : number}> = [];
 
 	let restocks: Restock[] = [];
 	let newRestock: NewRestock = {
@@ -446,7 +446,7 @@
 			<div class="p-4 sm:p-7">
 				<div class="text-center">
 					<h2 class="block text-2xl font-bold text-gray-800 dark:text-gray-200">
-						Articles inconnus
+						Produits inconnus
 					</h2>
 				</div>
 
@@ -464,6 +464,12 @@
 											<p class="text-sm text-gray-600 dark:text-gray-400">
 												Référence : {item.reference}
 											</p>
+											<p class="text-sm text-gray-600 dark:text-gray-400">
+												Prix unitaire H.T. : <strong>{item.unitPriceHT}€</strong>
+											</p>
+											<p class="text-sm text-gray-800 dark:text-gray-200">
+												Quantité : {item.quantity}
+											</p>
 										</div>
 									</div>
 								</li>
@@ -471,7 +477,7 @@
 						</ul>
 					{:else}
 						<p class="text-sm text-gray-600 dark:text-gray-400">
-							Aucun article inconnu trouvé.
+							Aucun produit inconnu trouvé.
 						</p>
 					{/if}
 				</div>
@@ -576,7 +582,9 @@
 													else{
 														let name = item.name;
 														let reference = item.reference;
-														unknownItems = [...unknownItems, {name, reference}];
+														let unitPriceHT = item.unitPriceHT;
+														let quantity = item.quantity;
+														unknownItems = [...unknownItems, {name, reference, unitPriceHT, quantity}];
 														
 													}
 												});
@@ -620,6 +628,9 @@
 		<button
 			data-hs-overlay="#hs-modal-new-image"
 			id="reapproPdf" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded ml-4">PDF</button>
+		<button
+			data-hs-overlay="#hs-modal-unknown-items"
+			id="reapproPdf" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded ml-4">Produits inconnus</button>
 		{/if}
 	</div>
 	<div class="flex flex-col">
