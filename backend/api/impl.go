@@ -5,9 +5,11 @@ import (
 	"bar/autogen/helloasso"
 	"bar/internal/config"
 	"bar/internal/db"
+	"context"
 	"os"
+	"time"
 
-	"github.com/gorilla/context"
+	gorillaContext "github.com/gorilla/context"
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -78,7 +80,7 @@ func (s *Server) Serve(c *config.Config) error {
 	onBoardStore := sessions.NewCookieStore([]byte(c.ApiConfig.AdminSessionSecret))
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			defer context.Clear(c.Request())
+			defer gorillaContext.Clear(c.Request())
 			c.Set("userStore", userStore)
 			c.Set("adminStore", adminStore)
 			c.Set("onBoardStore", onBoardStore)
@@ -109,6 +111,18 @@ func (s *Server) Serve(c *config.Config) error {
 	e.Use(s.AuthMiddleware)
 
 	autogen.RegisterHandlers(e, s)
+
+	// Start the HelloAsso processing runner
+	go func() {
+		ticker := time.NewTicker(c.HelloAssoConfig.CheckoutProcessingInterval)
+		defer ticker.Stop()
+		
+		ctx := context.Background()
+
+		for range ticker.C {
+			s.ProcessStartedRefills(ctx)
+		}
+	}()
 
 	if err := e.Start(c.ApiConfig.Port); err != nil {
 		return err
