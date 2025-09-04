@@ -1937,7 +1937,8 @@ export interface RemoteRefill {
 
 export const RemoteRefillState = {
     RemoteRefillStarted: 'started',
-    RemoteRefillProcessed: 'processed'
+    RemoteRefillProcessed: 'processed',
+    RemoteRefillAbandoned: 'abandoned'
 } as const;
 
 export type RemoteRefillState = typeof RemoteRefillState[keyof typeof RemoteRefillState];
@@ -8132,8 +8133,6 @@ export const RefillsApiAxiosParamCreator = function (configuration?: Configurati
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication admin_auth required
-
             if (page !== undefined) {
                 localVarQueryParameter['page'] = page;
             }
@@ -8291,7 +8290,7 @@ export const RefillsApiAxiosParamCreator = function (configuration?: Configurati
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication auth required
+            // authentication admin_auth required
 
             if (state !== undefined) {
                 localVarQueryParameter['state'] = state;
@@ -8362,6 +8361,37 @@ export const RefillsApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
+         * Trigger the processing of all started refills
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        processRemoteRefills: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/remote-refills/process`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Validate a remote refill
          * @param {number} checkoutIntentId HelloAsso checkout intent id to validate
          * @param {*} [options] Override http request option.
@@ -8382,7 +8412,7 @@ export const RefillsApiAxiosParamCreator = function (configuration?: Configurati
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication admin_auth required
+            // authentication auth required
 
             if (checkoutIntentId !== undefined) {
                 localVarQueryParameter['checkout_intent_id'] = checkoutIntentId;
@@ -8539,6 +8569,15 @@ export const RefillsApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
+         * Trigger the processing of all started refills
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async processRemoteRefills(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.processRemoteRefills(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * Validate a remote refill
          * @param {number} checkoutIntentId HelloAsso checkout intent id to validate
          * @param {*} [options] Override http request option.
@@ -8651,6 +8690,14 @@ export const RefillsApiFactory = function (configuration?: Configuration, basePa
          */
         postRefill(accountId: string, amount: number, type: RefillType, options?: any): AxiosPromise<Refill> {
             return localVarFp.postRefill(accountId, amount, type, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Trigger the processing of all started refills
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        processRemoteRefills(options?: any): AxiosPromise<void> {
+            return localVarFp.processRemoteRefills(options).then((request) => request(axios, basePath));
         },
         /**
          * Validate a remote refill
@@ -8776,6 +8823,16 @@ export class RefillsApi extends BaseAPI {
      */
     public postRefill(accountId: string, amount: number, type: RefillType, options?: AxiosRequestConfig) {
         return RefillsApiFp(this.configuration).postRefill(accountId, amount, type, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Trigger the processing of all started refills
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof RefillsApi
+     */
+    public processRemoteRefills(options?: AxiosRequestConfig) {
+        return RefillsApiFp(this.configuration).processRemoteRefills(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -9370,7 +9427,7 @@ export const StarsApiAxiosParamCreator = function (configuration?: Configuration
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication auth required
+            // authentication admin_auth required
 
             if (state !== undefined) {
                 localVarQueryParameter['state'] = state;

@@ -15,6 +15,139 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// Try to validate started refills that were not validated yet.
+// The payment might not have been validated yet when the user returns on the
+// callback page, or he might lose the connection and never trigger the callback.
+func (s *Server) ProcessStartedRefills(c context.Context) error {
+
+	// Get all started online refills
+	refills, err := s.DBackend.GetAllRemoteRefillsWithState(c, autogen.RemoteRefillStarted)
+	if err != nil {
+		return err
+	}
+
+	for _, refill := range refills {
+
+		expired := false
+
+		// Check if the payment has been made
+		valid, order, err := s.validateHelloAssoCheckout(c, *refill.CheckoutIntentId, refill.Amount)
+
+		// Cannot get checkout information from HelloAsso
+		// It might be expired if it was created more than 45 minutes ago
+		if err != nil {
+			logrus.WithField("refill_id", refill.Id).Warn("Could not get checkout information from HelloAsso")
+
+			if uint64(time.Now().Unix()) > refill.CreatedAt + 45*60 {
+				expired = true
+			}
+		}
+
+		// If the checkout cannot be validated after 45 minutes,
+		// it can be considered abandonned (https://dev.helloasso.com/docs/validation-de-vos-paiements)
+		if !valid && uint64(time.Now().Unix()) > refill.CreatedAt + 45*60 {
+			expired = true
+		}
+
+		if valid {
+
+			// Process the payment
+			_, err = s.processRefillPayment(c, refill, *order.Id)
+
+			if err != nil {
+				logrus.WithField("refill_id", refill.Id).Warn("Could not process payment")
+				continue
+			}
+
+		} else if expired {
+			// Abandon the refill
+			_, err := s.DBackend.UpdateRemoteRefillStateAtomic(c, refill, autogen.RemoteRefillAbandoned)
+
+			if err != nil {
+				logrus.WithField("refill_id", refill.Id).Warn("Could not update refill state to expired")
+				continue
+			}
+			// No need to check if the state was sucessfully updated, if it was not it means the refill
+			// has been validated in the meantime, although very unlikely
+		}
+
+	}
+
+	return nil
+}
+
+
+// Atomically process a validated refill and update the user's balance
+func (s *Server) processRefillPayment(c context.Context, r *models.RemoteRefill, orderId int32) (*models.Refill, error) {
+	
+	// Create refill transaction
+	refill := &models.Refill{
+		Refill: autogen.Refill{
+			AccountId:    r.AccountId,
+			AccountName:  r.AccountName,
+			Amount:       int64(r.Amount),
+			Type:         autogen.RefillHelloAsso,
+			Id:           uuid.New(),
+			IssuedAt:     uint64(time.Now().Unix()),
+			IssuedBy:     r.AccountId,
+			IssuedByName: r.AccountName,
+			State:        autogen.RefillStateValid,
+		},
+	}
+
+	_, err := s.DBackend.WithTransaction(c, func(ctx mongo.SessionContext) (interface{}, error) {
+		
+		// Update the remote refill atomically
+		updated, err := s.DBackend.UpdateRemoteRefillStateAtomic(ctx, r, autogen.RemoteRefillProcessed)
+
+		if err != nil {
+			return nil, errors.New("failed to update refill state")
+		} 
+
+		// The refill was already validated
+		if !updated {
+			return nil, errors.New("refill state changed during processing")
+		}
+
+		// If the state was updated, we can proceed to the transaction
+
+		// Update the rest of the refill
+		r.RefillId = &refill.Id
+		r.OrderId = &orderId
+		err = s.DBackend.UpdateRemoteRefill(ctx, r)
+		if err != nil {
+			return nil, errors.New("failed to update remote refill")
+		}
+
+		// Create the transaction
+		err = s.DBackend.CreateRefill(ctx, refill)
+		if err != nil {
+			return nil, errors.New("failed to create refill")
+		}
+
+		// Update user balance
+		user, err := s.DBackend.GetAccount(ctx, r.AccountId.String())
+		if err != nil {
+			return nil, errors.New("could not get user account")
+		}
+
+		user.Balance += int64(r.Amount)
+
+		err = s.DBackend.UpdateAccount(ctx, user)
+		if err != nil {
+			return nil, errors.New("failed to update account")
+		}
+
+		return nil, nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return refill, nil
+}
+
 // Returns true if an HelloAsso checkout has been payed.
 // The error returned can be displayed to the user directly
 func (s *Server) validateHelloAssoCheckout(ctx context.Context, checkoutIntentId int32, expectedAmount int32) (bool, *helloasso.HelloAssoApiV5ModelsStatisticsOrderDetail, error){
@@ -143,7 +276,8 @@ func (s *Server) SelfValidateRemoteRefill(c echo.Context, params autogen.SelfVal
 	}
 
 	// Prevent validating a refill twice
-	if remote_refill.State != autogen.RemoteRefillStarted {
+	// Abandonned refills can still be manually validated
+	if remote_refill.State != autogen.RemoteRefillStarted && remote_refill.State != autogen.RemoteRefillAbandoned {
 		logrus.Errorf("Trying to validate checkout %d more than once", params.CheckoutIntentId)
 		autogen.SelfValidateRemoteRefill409Response{}.VisitSelfValidateRemoteRefillResponse(c.Response())
 		return nil
@@ -167,46 +301,8 @@ func (s *Server) SelfValidateRemoteRefill(c echo.Context, params autogen.SelfVal
 		logrus.WithField("account_id", user.Id).Errorf("Checkout %d not yet processed", params.CheckoutIntentId)
 		return nil
 	}
-
-	// Update the refill status and the account balance
-	refill := &models.Refill{
-		Refill: autogen.Refill{
-			AccountId:    user.Id,
-			AccountName:  user.Name(),
-			Amount:       int64(remote_refill.Amount),
-			Type:         autogen.RefillHelloAsso,
-			Id:           uuid.New(),
-			IssuedAt:     uint64(time.Now().Unix()),
-			IssuedBy:     user.Id,
-			IssuedByName: user.Name(),
-			State:        autogen.RefillStateValid,
-		},
-	}
-
-	remote_refill.State = autogen.RemoteRefillProcessed
-	remote_refill.RefillId = &refill.Id
-	remote_refill.OrderId = order.Id
-
-	user.Balance += int64(remote_refill.Amount)
-
-	_, err = s.DBackend.WithTransaction(c.Request().Context(), func(ctx mongo.SessionContext) (interface{}, error) {
-		
-		err := s.DBackend.CreateRefill(ctx, refill)
-		if err != nil {
-			return nil, errors.New("failed to create refill")
-		}
-
-		err = s.DBackend.UpdateAccount(ctx, user)
-		if err != nil {
-			return nil, errors.New("failed to update account")
-		}
-
-		err = s.DBackend.UpdateRemoteRefill(ctx, remote_refill)
-		if err != nil {
-			return nil, errors.New("failed to update remote refill")
-		}
-		return nil, nil
-	})
+	// Process the payment
+	refill, err := s.processRefillPayment(c.Request().Context(), remote_refill, *order.Id)
 
 	if err != nil {
 		logrus.Error(err)
@@ -215,10 +311,6 @@ func (s *Server) SelfValidateRemoteRefill(c echo.Context, params autogen.SelfVal
 			Message: autogen.MsgInternalServerError,
 		}.VisitSelfValidateRemoteRefillResponse(c.Response())
 		return err
-	}
-
-	if c.Response().Committed {
-		return nil
 	}
 
 	autogen.SelfValidateRemoteRefill200JSONResponse(refill.Refill).VisitSelfValidateRemoteRefillResponse(c.Response())

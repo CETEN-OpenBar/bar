@@ -107,7 +107,13 @@ type DBackend interface {
 	DeleteRemoteRefill(ctx context.Context, id string) error
 
 	FindRemoteRefillForAccount(ctx context.Context, accountId string, checkoutIntentId int32) (*models.RemoteRefill, error)
-	
+	GetAllRemoteRefillsWithState(ctx context.Context, state autogen.RemoteRefillState) ([]*models.RemoteRefill, error)
+
+	// Update a remote refill state atomically.
+	// The refill passed as a parameter is also updated if it was updated in the database
+	// Returns true if the refill was updated
+	UpdateRemoteRefillStateAtomic(ctx context.Context, refill *models.RemoteRefill, newState autogen.RemoteRefillState) (bool, error)
+
 	// Starring's CRUD
 	CreateStarring(ctx context.Context, r *models.Starring) error
 	GetStarring(ctx context.Context, id string) (*models.Starring, error)

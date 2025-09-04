@@ -41,24 +41,6 @@ func (b *Backend) GetRemoteRefill(ctx context.Context, id string) (*models.Remot
 	return &refill, nil
 }
 
-func (b *Backend) FindRemoteRefillForAccount(ctx context.Context, accountId string, checkoutIntentId int32) (*models.RemoteRefill, error) {
-	ctx, cancel := b.TimeoutContext(ctx)
-	defer cancel()
-
-	var refill models.RemoteRefill
-	err := b.db.Collection(RemoteRefillsCollection).FindOne(ctx,
-		bson.M{
-			"checkout_intent_id": checkoutIntentId,
-			"account_id": uuid.MustParse(accountId),
-		},
-	).Decode(&refill)
-	if err != nil {
-		return nil, err
-	}
-
-	return &refill, nil
-}
-
 func (b *Backend) UpdateRemoteRefill(ctx context.Context, refill *models.RemoteRefill) error {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()

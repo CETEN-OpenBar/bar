@@ -6377,9 +6377,11 @@ components:
       enum:
         - started
         - processed
+        - abandoned
       x-enum-varnames:
         - RemoteRefillStarted
         - RemoteRefillProcessed
+        - RemoteRefillAbandoned
     CarouselTextCreate:
       type: object
       properties:
