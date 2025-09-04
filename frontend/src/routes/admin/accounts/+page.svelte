@@ -18,7 +18,7 @@
 		card_id: '',
 		balance: 0,
 		role: 'student',
-		price_role: 'ceten'
+		price_role: 'externe'
 	};
 
 	let searchQuery = '';
@@ -153,6 +153,7 @@
 		close={() => {
 			shown_stars = undefined;
 		}}
+		onStarsAdded={reloadAccounts}
 	/>
 {/if}
 
@@ -375,7 +376,7 @@
 	<div class="flex-grow w-full overflow-x-auto overflow-y-visible">
 		<!-- Desktop Table View -->
 		<div class="hidden lg:block min-w-full bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-visible">
-			<div class="grid grid-cols-[1fr_1fr_1.5fr_0.8fr_0.8fr_0.8fr_1fr] bg-gray-50 dark:bg-gray-700 divide-x divide-gray-200 dark:divide-gray-700">
+			<div class="grid grid-cols-[1fr_1fr_1.5fr_0.8fr_0.8fr_0.8fr_0.8fr_1fr] bg-gray-50 dark:bg-gray-700 divide-x divide-gray-200 dark:divide-gray-700">
 				<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
 					Nom
 				</th>
@@ -389,6 +390,9 @@
 					Solde
 				</th>
 				<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+					Étoiles
+				</th>
+				<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
 					Rôle
 				</th>
 				<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
@@ -400,86 +404,110 @@
 			</div>
 			<div class="divide-y divide-gray-200 dark:divide-gray-700">
 				{#each accounts as account}
-					<div class="grid grid-cols-[1fr_1fr_1.5fr_0.8fr_0.8fr_0.8fr_1fr] divide-x divide-gray-200 dark:divide-gray-700">
-						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-							<input
-								type="text"
-								class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent border-none outline-none w-full"
-								value={account.last_name}
-								on:input={(e) => {
-									// @ts-ignore
-									let name = e.target?.value;
-									accountsApi()
-										.patchAccountId(
-											account.id,
-											{
-												last_name: name
-											},
-											{ withCredentials: true }
-										)
-										.then((res) => {
-											account = res.data ?? account;
-										})
-										.catch((err) => {
-											account.last_name = account.last_name ?? '';
-										});
-								}}
-							/>
-						</td>
-						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-							<input
-								type="text"
-								class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent border-none outline-none w-full"
-								value={account.first_name}
-								on:input={(e) => {
-									// @ts-ignore
-									let name = e.target?.value;
-									accountsApi()
-										.patchAccountId(
-											account.id,
-											{
-												first_name: name
-											},
-											{ withCredentials: true }
-										)
-										.then((res) => {
-											account = res.data ?? account;
-										})
-										.catch((err) => {
-											account.first_name = account.first_name ?? '';
-										});
-								}}
-							/>
-						</td>
-						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-							<input
-								type="text"
-								class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent border-none outline-none w-full"
-								value={account.email_address}
-								on:input={(e) => {
-									// @ts-ignore
-									let name = e.target?.value;
-									accountsApi()
-										.patchAccountId(
-											account.id,
-											{
-												email_address: name
-											},
-											{ withCredentials: true }
-										)
-										.then((res) => {
-											account = res.data ?? account;
-										})
-										.catch((err) => {
-											account.email_address = account.email_address ?? '';
-										});
-								}}
-							/>
-						</td>
-						<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-							{formatPrice(account.balance)}
-						</td>
-						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
+					<div class="grid grid-cols-[1fr_1fr_1.5fr_0.8fr_0.8fr_0.8fr_0.8fr_1fr] divide-x divide-gray-200 dark:divide-gray-700">
+					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300 flex items-center group relative">
+						<input
+							type="text"
+							class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent border-none outline-none flex-1"
+							value={account.last_name}
+							on:input={(e) => {
+								// @ts-ignore
+								let name = e.target?.value;
+								accountsApi()
+									.patchAccountId(
+										account.id,
+										{
+											last_name: name
+										},
+										{ withCredentials: true }
+									)
+									.then((res) => {
+										account = res.data ?? account;
+									})
+									.catch((err) => {
+										account.last_name = account.last_name ?? '';
+									});
+							}}
+						/>
+					<iconify-icon 
+						icon="mdi:pencil" 
+						class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+					/>
+					</td>
+					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300 flex items-center group relative">
+			            <input
+							type="text"
+							class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent border-none outline-none flex-1"
+							value={account.first_name}
+							on:input={(e) => {
+								// @ts-ignore
+								let name = e.target?.value;
+								accountsApi()
+									.patchAccountId(
+										account.id,
+										{
+											first_name: name
+										},
+										{ withCredentials: true }
+									)
+									.then((res) => {
+										account = res.data ?? account;
+									})
+									.catch((err) => {
+										account.first_name = account.first_name ?? '';
+        							});
+							}}
+						/>
+					<iconify-icon 
+						icon="mdi:pencil" 
+						class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+					/>
+					</td>
+					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300 flex items-center group relative">
+						<input
+							type="text"
+							class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent border-none outline-none flex-1"
+							value={account.email_address}
+							on:input={(e) => {
+								// @ts-ignore
+								let name = e.target?.value;
+								accountsApi()
+									.patchAccountId(
+										account.id,
+										{
+											email_address: name
+										},
+										{ withCredentials: true }
+									)
+									.then((res) => {
+										account = res.data ?? account;
+									})
+									.catch((err) => {
+										account.email_address = account.email_address ?? '';
+									});
+							}}
+						/>
+					<iconify-icon 
+						icon="mdi:pencil" 
+						class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+					/>
+					</td>
+					<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
+						{formatPrice(account.balance)}
+					</td>
+					<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
+						{#if account.points >= 1000000000}
+							{(account.points / 1000000000).toFixed(account.points % 1000000000 === 0 ? 0 : 1)}G
+						{:else if account.points >= 1000000}
+							{(account.points / 1000000).toFixed(account.points % 1000000 === 0 ? 0 : 1)}M
+						{:else if account.points >= 1000}
+							{(account.points / 1000).toFixed(account.points % 1000 === 0 ? 0 : 1)}k
+						{:else}
+							{account.points}
+						{/if}
+						<iconify-icon icon="mdi:star" class="ml-1 text-yellow-500" />
+					</td>
+					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
 							<select
 								class="block text-sm dark:text-white/[.8] dark:bg-slate-900 break-words p-2 bg-transparent border-none outline-none w-full"
 								value={account.role}
@@ -745,16 +773,31 @@
 								</div>
 							</div>
 						</div>
-						<div class="grid grid-cols-3 gap-2 mb-3">
-							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Solde</label>
-								<div class="text-sm font-medium text-gray-900 dark:text-gray-300 py-2">
-									{formatPrice(account.balance)}
-								</div>
+						<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+						<div>
+							<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Solde</label>
+							<div class="text-sm font-medium text-gray-900 dark:text-gray-300 py-2">
+								{formatPrice(account.balance)}
 							</div>
-							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Rôle</label>
-								<select
+						</div>
+						<div>
+							<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Étoiles</label>
+							<div class="text-sm font-medium text-gray-900 dark:text-gray-300 py-2 flex items-center">
+								{#if account.points >= 1000000000}
+									{(account.points / 1000000000).toFixed(account.points % 1000000000 === 0 ? 0 : 1)}G
+								{:else if account.points >= 1000000}
+									{(account.points / 1000000).toFixed(account.points % 1000000 === 0 ? 0 : 1)}M
+								{:else if account.points >= 1000}
+									{(account.points / 1000).toFixed(account.points % 1000 === 0 ? 0 : 1)}k
+								{:else}
+									{account.points}
+								{/if}
+								<iconify-icon icon="mdi:star" class="ml-1 text-yellow-500" />
+							</div>
+						</div>
+						<div>
+							<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Rôle</label>
+							<select
 									class="w-full text-sm dark:text-white/[.8] dark:bg-slate-900 bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
 									value={account.role}
 									on:change={(e) => {
