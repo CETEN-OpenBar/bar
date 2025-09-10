@@ -7,6 +7,7 @@ import (
 	"bar/internal/models"
 	"context"
 	"errors"
+	"math"
 	"time"
 
 	"github.com/google/uuid"
@@ -324,8 +325,45 @@ func (s *Server) GetRemoteRefills(c echo.Context, params autogen.GetRemoteRefill
 		return nil
 	}
 
-	// TODO
-	logrus.Panic("Not implemented")
+	var startsAt uint64 = 0
+	if params.StartDate != nil {
+		t, err := time.Parse("2006-01-02", *params.StartDate) // 2006-01-02 is the reference time in Go
+		if err == nil {
+			startsAt = uint64(t.Unix())
+		}
+	}
+	var endsAt uint64 = math.MaxInt64
+	if params.EndDate != nil {
+		t, err := time.Parse("2006-01-02", *params.EndDate) // Putting the same date doesn't activate the date filter
+		if err == nil {
+			endsAt = uint64(t.Unix())
+		}
+	}
 
+	count, err := s.DBackend.CountAllRemoteRefills(c.Request().Context(), params.AccountName, params.State, startsAt, endsAt)
+	if err != nil {
+		return Error500(c)
+	}
+
+	// Make sure the last page is not empty
+	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
+
+	data, err := s.DBackend.GetAllRemoteRefills(c.Request().Context(), dbpage, limit, params.AccountName, params.State, startsAt, endsAt)
+	if err != nil {
+		return Error500(c)
+	}
+
+	var refills []autogen.RemoteRefill
+
+	for _, refill := range data {
+		refills = append(refills, refill.RemoteRefill)
+	}
+
+	autogen.GetRemoteRefills200JSONResponse{
+		RemoteRefills: refills,
+		Limit: limit,
+		Page: page,
+		MaxPage: maxPage,
+	}.VisitGetRemoteRefillsResponse(c.Response())
 	return nil
 }

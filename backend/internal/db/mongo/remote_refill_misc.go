@@ -7,6 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 
@@ -84,5 +85,70 @@ func (b *Backend) UpdateRemoteRefillStateAtomic(ctx context.Context, refill *mod
 
 	refill.State = newState
 	return true, nil
+}
+
+func (b *Backend) GetAllRemoteRefills(ctx context.Context, page uint64, size uint64, accountName *string, state *autogen.RemoteRefillState, startAt, endAt uint64) ([]*models.RemoteRefill, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
+	defer cancel()
+
+	var refills []*models.RemoteRefill
+	filter := bson.M{
+		"created_at": bson.M{
+			"$gte": startAt,
+			"$lte": endAt,
+		},
+	}
+
+	if accountName != nil {
+		filter["account_name"] = bson.M{"$regex": *accountName, "$options": "i"}
+	}
+
+	if state != nil {
+		filter["state"] = *state
+	}
+
+	cursor, err := b.db.Collection(RemoteRefillsCollection).Find(ctx, filter,
+		options.Find().
+			SetSkip(int64(page*size)).
+			SetLimit(int64(size)).
+			SetSort(bson.M{"created_at": -1}),
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := cursor.All(ctx, &refills); err != nil {
+		return nil, err
+	}
+
+	return refills, nil
+}
+
+func (b *Backend) CountAllRemoteRefills(ctx context.Context, accountName *string, state *autogen.RemoteRefillState, startAt, endAt uint64) (uint64, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
+	defer cancel()
+
+	filter := bson.M{
+		"created_at": bson.M{
+			"$gte": startAt,
+			"$lte": endAt,
+		},
+	}
+
+	if accountName != nil {
+		filter["account_name"] = bson.M{"$regex": *accountName, "$options": "i"}
+	}
+
+	if state != nil {
+		filter["state"] = *state
+	}
+
+	count, err := b.db.Collection(RemoteRefillsCollection).CountDocuments(ctx, filter)
+	if err != nil {
+		return 0, err
+	}
+
+	return uint64(count), nil
 }
 

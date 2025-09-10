@@ -109,6 +109,9 @@ type DBackend interface {
 	FindRemoteRefillForAccount(ctx context.Context, accountId string, checkoutIntentId int32) (*models.RemoteRefill, error)
 	GetAllRemoteRefillsWithState(ctx context.Context, state autogen.RemoteRefillState) ([]*models.RemoteRefill, error)
 
+	GetAllRemoteRefills(ctx context.Context, page uint64, size uint64, accountName *string, state *autogen.RemoteRefillState, startAt, endAt uint64) ([]*models.RemoteRefill, error)
+	CountAllRemoteRefills(ctx context.Context, accountName *string, state *autogen.RemoteRefillState, startAt, endAt uint64) (uint64, error)
+
 	// Update a remote refill state atomically.
 	// The refill passed as a parameter is also updated if it was updated in the database
 	// Returns true if the refill was updated

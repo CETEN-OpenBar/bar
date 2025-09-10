@@ -2158,18 +2158,18 @@ paths:
           required: false
           schema:
             type: string
-        - name: checkout_intent_id
+        - name: state
           in: query
+          description: State of the refill
           required: false
-          description: HelloAsso Checkout Intent Id associated with the refill
           schema:
-            type: integer
-        - name: order_id
+            $ref: "#/components/schemas/RemoteRefillState"
+        - name: account_name
           in: query
+          description: Filter by account name
           required: false
-          description: HelloAsso Order ID associated with the refill
           schema:
-            type: integer
+            type: string
       responses:
         "200":
           description: ""
