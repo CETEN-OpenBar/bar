@@ -92,11 +92,11 @@
 							.postRefill(card.id, card.amount, card.type, { withCredentials: true })
 					.then(() => {
 						success = 'Recharge effectuée avec succès.';
-						setTimeout(() => close(), 2500);
+						setTimeout(() => close(), 2000);
 					})
 					.catch(() => {
 						error = 'Une erreur est survenue.';
-						setTimeout(() => close(), 4000);
+						setTimeout(() => close(), 2000);
 					});
 				}}
 			>
@@ -139,11 +139,11 @@
 						.postRefill(card.id, card.amount, card.type, { withCredentials: true })
 						.then(() => {
 							success = 'Recharge effectuée avec succès.';
-							setTimeout(() => close(), 4000);
+							setTimeout(() => close(), 2000);
 						})
 						.catch(() => {
 							error = 'Une erreur est survenue.';
-							setTimeout(() => close(), 4000);
+							setTimeout(() => close(), 2000);
 						});
 				}}
 			>
