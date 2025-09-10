@@ -367,3 +367,60 @@ func (s *Server) GetRemoteRefills(c echo.Context, params autogen.GetRemoteRefill
 	}.VisitGetRemoteRefillsResponse(c.Response())
 	return nil
 }
+
+// (POST /remote-refills/validate)
+func (s *Server) VerifyRemoteRefill(c echo.Context, params autogen.VerifyRemoteRefillParams) error {
+	
+	user, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
+
+	logrus.WithField("account_id", user.Account.Id).WithField("remote_refill_id", params.Id.String()).Debug("Manually verifying remote refill")
+
+	// Get the remote refill to validate
+	remote_refill, err := s.DBackend.GetRemoteRefill(c.Request().Context(), params.Id.String())
+	if err != nil {
+		// No refill found
+		autogen.VerifyRemoteRefill404Response{}.VisitVerifyRemoteRefillResponse(c.Response())
+		return nil
+	}
+
+	// Prevent validating a refill twice
+	// Abandonned refills can still be manually validated
+	if remote_refill.State != autogen.RemoteRefillStarted && remote_refill.State != autogen.RemoteRefillAbandoned {
+		autogen.VerifyRemoteRefill409Response{}.VisitVerifyRemoteRefillResponse(c.Response())
+		return nil
+	}
+
+	// Check if the payment has been made
+	valid, order, err := s.validateHelloAssoCheckout(c.Request().Context(), *remote_refill.CheckoutIntentId, remote_refill.Amount)
+	
+	if err != nil {
+		autogen.VerifyRemoteRefill500JSONResponse{
+			ErrorCode: autogen.ErrInternalServerError,
+			Message: autogen.Messages(err.Error()),
+		}.VisitVerifyRemoteRefillResponse(c.Response())
+		return err
+	}
+
+	// Payment not validated by helloasso yet, reject the refill
+	if !valid {
+		autogen.VerifyRemoteRefill402Response{}.VisitVerifyRemoteRefillResponse(c.Response())
+		return nil
+	}
+	// Process the payment
+	refill, err := s.processRefillPayment(c.Request().Context(), remote_refill, *order.Id)
+
+	if err != nil {
+		logrus.Error(err)
+		autogen.VerifyRemoteRefill500JSONResponse{
+			ErrorCode: autogen.ErrInternalServerError,
+			Message: autogen.MsgInternalServerError,
+		}.VisitVerifyRemoteRefillResponse(c.Response())
+		return err
+	}
+
+	autogen.VerifyRemoteRefill200JSONResponse(refill.Refill).VisitVerifyRemoteRefillResponse(c.Response())
+	return nil
+}

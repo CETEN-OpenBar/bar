@@ -8438,6 +8438,44 @@ export const RefillsApiAxiosParamCreator = function (configuration?: Configurati
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * Verify a remote refill
+         * @param {string} id Remote Refill id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        verifyRemoteRefill: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('verifyRemoteRefill', 'id', id)
+            const localVarPath = `/remote-refills/verify`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication admin_auth required
+
+            if (id !== undefined) {
+                localVarQueryParameter['id'] = id;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -8559,6 +8597,16 @@ export const RefillsApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.startRemoteRefill(amount, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
+        /**
+         * Verify a remote refill
+         * @param {string} id Remote Refill id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async verifyRemoteRefill(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Refill>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.verifyRemoteRefill(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
     }
 };
 
@@ -8670,6 +8718,15 @@ export const RefillsApiFactory = function (configuration?: Configuration, basePa
          */
         startRemoteRefill(amount: number, options?: any): AxiosPromise<StartRemoteRefill200Response> {
             return localVarFp.startRemoteRefill(amount, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Verify a remote refill
+         * @param {string} id Remote Refill id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        verifyRemoteRefill(id: string, options?: any): AxiosPromise<Refill> {
+            return localVarFp.verifyRemoteRefill(id, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -8799,6 +8856,17 @@ export class RefillsApi extends BaseAPI {
      */
     public startRemoteRefill(amount: number, options?: AxiosRequestConfig) {
         return RefillsApiFp(this.configuration).startRemoteRefill(amount, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Verify a remote refill
+     * @param {string} id Remote Refill id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof RefillsApi
+     */
+    public verifyRemoteRefill(id: string, options?: AxiosRequestConfig) {
+        return RefillsApiFp(this.configuration).verifyRemoteRefill(id, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

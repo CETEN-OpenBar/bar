@@ -2218,6 +2218,52 @@ paths:
         - admin_auth: []
       tags:
         - refills
+  /remote-refills/verify:
+    post:
+      description: Verify a remote refill
+      operationId: verifyRemoteRefill
+      parameters:
+        - name: id
+          in: query
+          description: Remote Refill id
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: "Payment successfully verified, money has been added to the account"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Refill"
+        "409":
+          description: "Remote refill already validated"
+        "404":
+          description: "Refill id unknown"
+        "402":
+          description: "HelloAsso did not validate the payment yet"
+        "401":
+          description: "Not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - admin_auth: []
+      tags:
+        - refills
   /account/remote-refills/start:
     post:
       description: Start a remote refill
