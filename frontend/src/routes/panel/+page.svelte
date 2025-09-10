@@ -3,6 +3,6 @@
 </script>
 
 <!-- center modules -->
-<div class="flex flex-col items-center justify-center h-screen">
+<div class="flex flex-col items-center justify-center flex-1 p-4">
     <Modules />
 </div>
