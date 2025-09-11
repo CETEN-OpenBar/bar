@@ -16,10 +16,33 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// (GET /remote-refills/status)
+func (s *Server) GetRemoteRefillStatus(c echo.Context) error {
+
+	_, err := MustGetUser(c)
+	if err != nil {
+		return nil
+	}
+
+	
+	if s.remoteRefillsAvailable() {
+		autogen.GetRemoteRefillStatus200Response{}.VisitGetRemoteRefillStatusResponse(c.Response());
+	} else {
+		autogen.GetRemoteRefillStatus503Response{}.VisitGetRemoteRefillStatusResponse(c.Response());
+	}
+
+	return nil;
+}
+
 // Try to validate started refills that were not validated yet.
 // The payment might not have been validated yet when the user returns on the
 // callback page, or he might lose the connection and never trigger the callback.
 func (s *Server) ProcessStartedRefills(c context.Context) error {
+
+	// Prevent execution if helloasso client is not available
+	if !s.remoteRefillsAvailable() {
+		return errors.New("no available helloasso client");
+	}
 
 	// Get all started online refills
 	refills, err := s.DBackend.GetAllRemoteRefillsWithState(c, autogen.RemoteRefillStarted)
@@ -162,6 +185,11 @@ func (s *Server) processRefillPayment(c context.Context, r *models.RemoteRefill,
 // The error returned can be displayed to the user directly
 func (s *Server) validateHelloAssoCheckout(ctx context.Context, checkoutIntentId int32, expectedAmount int32) (bool, *helloasso.HelloAssoApiV5ModelsStatisticsOrderDetail, error){
 	
+	// Prevent execution if helloasso client is not available
+	if !s.remoteRefillsAvailable() {
+		return false, nil, errors.New("no available helloasso client");
+	}
+
 	// Get the checkout from HelloAsso
 	checkout, err := s.HelloAssoClient.GetOrganizationsOrganizationSlugCheckoutIntentsCheckoutIntentIdWithResponse(
 		ctx,
@@ -196,6 +224,16 @@ func (s *Server) validateHelloAssoCheckout(ctx context.Context, checkoutIntentId
 
 // (POST /account/remote-refills/start)
 func (s *Server) StartRemoteRefill(c echo.Context, params autogen.StartRemoteRefillParams) error {
+
+	// Prevent execution if helloasso client is not available
+	if !s.remoteRefillsAvailable() {
+		autogen.StartRemoteRefill500JSONResponse{
+			ErrorCode: autogen.ErrServiceUnavailable,
+			Message: autogen.Messages("Remote refills are currently unavailable"),
+		}.VisitStartRemoteRefillResponse(c.Response());
+		return errors.New("no available helloasso client");
+	}
+
 	// Get account from cookie
 	user, err := MustGetUser(c)
 	if err != nil {
@@ -275,6 +313,15 @@ func (s *Server) SelfValidateRemoteRefill(c echo.Context, params autogen.SelfVal
 	user, err := MustGetUser(c)
 	if err != nil {
 		return nil
+	}
+
+	// Prevent execution if helloasso client is not available
+	if !s.remoteRefillsAvailable() {
+		autogen.SelfValidateRemoteRefill500JSONResponse{
+			ErrorCode: autogen.ErrServiceUnavailable,
+			Message: autogen.Messages("Remote refills are currently unavailable"),
+		}.VisitSelfValidateRemoteRefillResponse(c.Response());
+		return errors.New("no available helloasso client");
 	}
 
 	// Get the remote refill to validate
@@ -409,6 +456,15 @@ func (s *Server) VerifyRemoteRefill(c echo.Context, params autogen.VerifyRemoteR
 	user, err := MustGetAdmin(c)
 	if err != nil {
 		return nil
+	}
+
+	// Prevent execution if helloasso client is not available
+	if !s.remoteRefillsAvailable() {
+		autogen.VerifyRemoteRefill500JSONResponse{
+			ErrorCode: autogen.ErrServiceUnavailable,
+			Message: autogen.Messages("Remote refills are currently unavailable"),
+		}.VisitVerifyRemoteRefillResponse(c.Response());
+		return errors.New("no available helloasso client");
 	}
 
 	logrus.WithField("account_id", user.Account.Id).WithField("remote_refill_id", params.Id.String()).Debug("Manually verifying remote refill")

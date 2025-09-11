@@ -2218,6 +2218,25 @@ paths:
         - admin_auth: []
       tags:
         - refills
+  /remote-refills/status:
+    get:
+      description: Get the status of the remote refill system
+      operationId: getRemoteRefillStatus
+      responses:
+        "200":
+          description: "The remote refill subsystem is working"
+        "401":
+          description: "Not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "503":
+          description: "Remote refills are not available"
+      security:
+        - auth: []
+      tags:
+        - refills
   /remote-refills/verify:
     post:
       description: Verify a remote refill
@@ -5554,6 +5573,7 @@ components:
         - account_not_found
         - qr_invalid
         - internal_server_error
+        - service_unavailable
         - not_authenticated
         - image_not_found
         - text_not_found
@@ -5568,6 +5588,7 @@ components:
         - ErrAccountNotFound
         - ErrQRInvalid
         - ErrInternalServerError
+        - ErrServiceUnavailable
         - ErrNotAuthenticated
         - ErrImageNotFound
         - ErrTextNotFound
@@ -5588,6 +5609,7 @@ components:
         - Account cannot use ressource at the time being
         - Invalid QR Code nonce
         - Internal server error
+        - Service Unavailable
         - You are not authenticated
         - Image does not exists
         - Text does not exists
@@ -5606,6 +5628,7 @@ components:
         - MsgAccountNotAvailable
         - MsgQRInvalid
         - MsgInternalServerError
+        - MsgServiceUnavailable
         - MsgNotAuthenticated
         - MsgImageNotFound
         - MsgTextNotFound

@@ -40,17 +40,47 @@ func NewHelloAssoClient() (*helloasso.ClientWithResponses, error) {
 	return &helloasso.ClientWithResponses{ClientInterface: client}, nil
 }
 
-func NewServer(db db.DBackend) *Server {
-	
+// Try to setup the helloasso client for the given server
+func (s *Server) SetupHelloAsso() error {
 	client, err := NewHelloAssoClient()
-	if err != nil {
-		logrus.Fatal("Error initializing HelloAsso client : ", err)
+	if err != nil || client == nil {
+		logrus.Error("Error initializing HelloAsso client : ", err);
+		return err;
 	}
-	
+	s.HelloAssoClient = client;
+	logrus.Info("HelloAsso client initialized successfully !")
+	return nil;
+}
+
+func NewServer(db db.DBackend) *Server {
+
 	s := &Server{
 		db,
-		client,
+		nil,
 	}
+
+	err := s.SetupHelloAsso();
+	if err != nil {
+		// Retry HelloAsso setup later and run without remote refills
+		logrus.Info("Could not initialize HelloAsso client, trying again every 2 minutes")
+		go func() {
+			// API rate limits for authentication endpoints are 
+    		// 10 calls per 10 seconds
+    		// 20 calls per 10 minutes
+    		// 50 calls per hour
+			ticker := time.NewTicker(2 * time.Minute)
+			defer ticker.Stop()
+			
+			for range ticker.C {
+				err := s.SetupHelloAsso()
+				if err == nil {
+					// Setup was successful, stop the task
+					return;
+				}
+			}
+		}()
+	}
+
 	return s
 }
 
@@ -63,6 +93,11 @@ func (s *Server) getAdminSess(c echo.Context) *sessions.Session {
 }
 func (s *Server) getOnboardSess(c echo.Context) *sessions.Session {
 	return c.Get("onBoardSess").(*sessions.Session)
+}
+
+// The remote refill subsystem can only be used if the helloasso client is available
+func (s *Server) remoteRefillsAvailable() bool {
+	return s.HelloAssoClient != nil;
 }
 
 func (s *Server) Serve(c *config.Config) error {
@@ -120,7 +155,9 @@ func (s *Server) Serve(c *config.Config) error {
 		ctx := context.Background()
 
 		for range ticker.C {
-			s.ProcessStartedRefills(ctx)
+			if s.remoteRefillsAvailable() {
+				s.ProcessStartedRefills(ctx)
+			}	
 		}
 	}()
 
