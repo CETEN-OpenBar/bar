@@ -3,8 +3,20 @@
 	import Habutton from '$lib/components/client/habutton.svelte';
 	import Spinner from '$lib/components/spinner.svelte';
 	import { refillsApi } from '$lib/requests/requests';
+	import { onMount } from 'svelte';
 
 	let value: string = '';
+
+    let remote_refills_available: boolean = false;
+    onMount(() => {
+        refillsApi().getRemoteRefillStatus({withCredentials: true})
+        .then((resp) => {
+            remote_refills_available = resp.status == 200;
+        })
+        .catch((_) => {
+            remote_refills_available = false;
+        });
+    })
 
 	let isValid: boolean = false;
 	let loading: boolean = false;
@@ -18,6 +30,7 @@
 	}
 
 	function startRemoteRefill(): void {
+        if (!remote_refills_available) return;
 		if (!isValid) return;
 
 		loading = true;
@@ -49,11 +62,25 @@
 	</a>
 </div>
 
+{#if !remote_refills_available}
+<div class="w-full flex flex-col items-center px-5 mb-5">
+    <div class="bg-red-200 border-red-400 border-4 rounded-lg p-3">
+        <div class="font-bold text-center text-lg">Les rechargements en ligne sont actuellement indisponibles</div>
+        <div class="text-center">
+            Merci de réessayer plus tard
+        </div>
+    </div>
+</div>
+{/if}
+
 <div class="flex justify-center">
 	<form
-		class="w-[90%] lg:max-w-3xl bg-gray-200 rounded py-3 px-5 grid gap-5 items-center justify-items-center"
+		class="w-[90%] lg:max-w-3xl bg-gray-200 rounded py-3 px-5 grid gap-5 items-center justify-items-center relative"
 		on:submit|preventDefault={startRemoteRefill}
 	>
+        {#if !remote_refills_available}
+            <div class="absolute w-full h-full top-0 left-0 bg-gray-700 rounded opacity-50"></div>
+        {/if}
 		<h1 class="text-xl font-bold text-center">Recharger</h1>
 
 		<label class="flex flex-col lg:flex-row justify-center lg:gap-3 lg:items-center">
@@ -67,6 +94,7 @@
 					step="0.01"
 					min="0.50"
 					placeholder="10.0"
+                    disabled={!remote_refills_available}
 				/>
 				<div>€</div>
 			</div>

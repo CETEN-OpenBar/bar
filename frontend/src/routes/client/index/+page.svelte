@@ -13,6 +13,7 @@
 
 	let account: Account | undefined = undefined;
     let pending_refills: RemoteRefill[] = [];
+    let remote_refills_available: boolean = false;
 	let unsub: () => void;
 
 	onMount(() => {
@@ -22,6 +23,13 @@
         refillsApi().getPendingRemoteRefills({withCredentials: true})
         .then((resp) => {
             pending_refills = resp.data.remote_refills ?? [];
+        })
+        refillsApi().getRemoteRefillStatus({withCredentials: true})
+        .then((resp) => {
+            remote_refills_available = resp.status == 200;
+        })
+        .catch((_) => {
+            remote_refills_available = false;
         })
 	});
 
@@ -54,14 +62,25 @@
 {#if account !== undefined}
     <div class="flex justify-center">
         <button 
-            class="bg-green-500 hover:bg-green-700 rounded p-2 m-3 text-lg font-bold text-white lg:w-1/2 lg:h-20"
+            class="bg-green-500 hover:bg-green-700 rounded p-2 m-3 text-lg font-bold text-white lg:w-1/2 lg:h-20 disabled:bg-gray-400 disabled:text-gray-700"
             on:click={() => {
 				goto('/client/index/refill');
 			}}
+            disabled={!remote_refills_available}
         >
             Recharger mon compte
         </button>
     </div>
+    {#if !remote_refills_available}
+    <div class="w-full flex flex-col items-center px-5">
+        <div class="bg-red-200 border-red-400 border-4 rounded-lg p-3">
+            <div class="font-bold text-center text-lg">Les rechargements en ligne sont actuellement indisponibles</div>
+            <div class="text-center">
+                Merci de réessayer plus tard
+            </div>
+        </div>
+    </div>
+    {/if}
 
     {#if pending_refills.length > 0}
     <div class="w-full flex flex-col items-center px-5">

@@ -97,7 +97,17 @@
         })
     }
 
-	onMount(fetchRefills);
+    let remote_refills_available: boolean = false;
+    onMount(() => {
+        fetchRefills();
+        refillsApi().getRemoteRefillStatus({withCredentials: true})
+        .then((resp) => {
+            remote_refills_available = resp.status == 200;
+        })
+        .catch((_) => {
+            remote_refills_available = false;
+        });
+    })
 
 </script>
 
@@ -108,6 +118,15 @@
 {#if error}
 <Error {error} close={() => {error = undefined}}/>
 {/if}
+
+{#if !remote_refills_available}
+<div class="w-full">
+    <div class="bg-red-500 p-3">
+        <div class="font-bold text-center text-lg">Les rechargements en ligne sont actuellement indisponibles</div>
+    </div>
+</div>
+{/if}
+
 
 <div class="flex-grow grid grid-cols-1 grid-rows-[auto_1fr_auto] bg-gray-50 dark:bg-gray-900 min-w-full">
 	<div class="m-3 p-2">
@@ -210,10 +229,13 @@
                     <button 
                         class="relative rounded-sm bg-green-500 hover:bg-green-600 disabled:hover:bg-green-500 text-white dark:text-white p-2 text-left flex items-center gap-2"
                         on:click={() => {verifyRefill(refill.id)}}
-                        disabled={loading}
+                        disabled={loading || !remote_refills_available}
                     >
                         <iconify-icon icon="mdi:refresh" width="20" height="20" />
                         <div class="align-middle">Vérifier</div>
+                        {#if !remote_refills_available}
+                        <div class="absolute w-full h-full top-0 left-0 flex justify-center items-center bg-gray-600 bg-opacity-50 rounded-sm"></div>
+                        {/if}
                         {#if loading}
                         <div class="absolute w-full h-full top-0 left-0 flex justify-center items-center bg-gray-600 bg-opacity-50 rounded-sm">
                             <Spinner size="23px"/>
