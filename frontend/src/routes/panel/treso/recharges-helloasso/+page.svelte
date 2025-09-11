@@ -97,7 +97,7 @@
         })
     }
 
-    let remote_refills_available: boolean = false;
+    let remote_refills_available: boolean = true;
     onMount(() => {
         fetchRefills();
         refillsApi().getRemoteRefillStatus({withCredentials: true})

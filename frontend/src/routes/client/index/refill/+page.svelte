@@ -7,7 +7,7 @@
 
 	let value: string = '';
 
-    let remote_refills_available: boolean = false;
+    let remote_refills_available: boolean = true;
     onMount(() => {
         refillsApi().getRemoteRefillStatus({withCredentials: true})
         .then((resp) => {
