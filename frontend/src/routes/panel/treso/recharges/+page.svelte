@@ -51,7 +51,6 @@
 
 	onMount(() => {
 		reloadItems();
-		console.log();
 	});
 
 	let types = [RefillType.RefillCash, RefillType.RefillCard, RefillType.RefillHelloAsso, RefillType.RefillOther];

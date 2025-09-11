@@ -42,11 +42,9 @@
         // Get redirect url
         refillsApi().startRemoteRefill(amount, {withCredentials: true}).then(
             (resp) => {
-                console.log(resp)
                 goto(resp.data.redirect_url);
             }
         ).catch((reason) => {
-            console.log(reason.message);
             error = reason.message;
             loading = false;
         })

@@ -113,7 +113,6 @@
 						on:input={(e) => {
 							// @ts-ignore
 							card.amount = parsePrice(e.target?.value);
-							console.log(card.amount);
 
 							// rebounce update
 							clearTimeout(rebounce);
@@ -134,7 +133,6 @@
 			<button
 				class="text-3xl bg-green-500 p-4 rounded-xl hover:bg-green-700 transition-all text-white"
 				on:click={() => {
-					console.log(card);
 					refillsApi()
 						.postRefill(card.id, card.amount, card.type, { withCredentials: true })
 						.then(() => {
