@@ -146,6 +146,15 @@ func (s *Server) processRefillPayment(c context.Context, r *models.RemoteRefill,
 		return nil, err
 	}
 
+	logrus.WithFields(logrus.Fields{
+		"account_id": r.AccountId,
+		"amount": r.Amount,
+		"refill_id": r.RefillId,
+		"remote_refill_id": r.Id,
+		"order_id": r.OrderId,
+
+	}).Info("HelloAsso refill processed successfully")
+
 	return refill, nil
 }
 
