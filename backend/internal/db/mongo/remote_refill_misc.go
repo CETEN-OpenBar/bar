@@ -54,6 +54,29 @@ func (b *Backend) FindRemoteRefillForAccount(ctx context.Context, accountId stri
 	return &refill, nil
 }
 
+func (b *Backend) GetAllPendingRemoteRefillsForAccount(ctx context.Context, accountId string) ([]*models.RemoteRefill, error) {
+	ctx, cancel := b.TimeoutContext(ctx)
+	defer cancel()
+
+	cursor, err := b.db.Collection(RemoteRefillsCollection).Find(ctx,
+		bson.M{
+			"account_id": uuid.MustParse(accountId),
+			"state": autogen.RemoteRefillStarted,
+		},
+	);
+
+	if err != nil {
+		return nil, err
+	}
+
+	var refills []*models.RemoteRefill
+	if err := cursor.All(ctx, &refills); err != nil {
+		return nil, err
+	}
+
+	return refills, nil
+}
+
 // Update a remote refill state atomically.
 // The refill passed as a parameter is also updated if it was updated in the database
 // Returns true if the refill was updated

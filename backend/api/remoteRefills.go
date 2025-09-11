@@ -368,6 +368,32 @@ func (s *Server) GetRemoteRefills(c echo.Context, params autogen.GetRemoteRefill
 	return nil
 }
 
+
+// (GET /account/remote-refills/pending)
+func (s *Server) GetPendingRemoteRefills(c echo.Context) error {
+	// Get account from cookie
+	user, err := MustGetUser(c)
+	if err != nil {
+		return nil
+	}
+
+	data, err := s.DBackend.GetAllPendingRemoteRefillsForAccount(c.Request().Context(), user.Id.String())
+	if err != nil {
+		return Error500(c);
+	}
+
+	var refills []autogen.RemoteRefill = make([]autogen.RemoteRefill, 0);
+
+	for _, refill := range data {
+		refills = append(refills, refill.RemoteRefill)
+	}
+
+	autogen.GetPendingRemoteRefills200JSONResponse{
+		RemoteRefills: refills,
+	}.VisitGetPendingRemoteRefillsResponse(c.Response());
+	return nil;
+}
+
 // (POST /remote-refills/validate)
 func (s *Server) VerifyRemoteRefill(c echo.Context, params autogen.VerifyRemoteRefillParams) error {
 	

@@ -2349,6 +2349,40 @@ paths:
         - auth: []
       tags:
         - refills
+  /account/remote-refills/pending:
+    get:
+      description: Get all pending remote refills for your account
+      operationId: getPendingRemoteRefills
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  remote_refills:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/RemoteRefill"
+                required:
+                  - remote_refills
+        "401":
+          description: "Not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - auth: []
+      tags:
+        - refills
   /stars:
     get:
       description: Get all stars donations
