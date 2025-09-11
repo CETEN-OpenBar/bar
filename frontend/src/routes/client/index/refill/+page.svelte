@@ -79,7 +79,9 @@
 		<Habutton disabled={!isValid || loading} type="submit" />
 
 		{#if loading}
-			<Spinner />
+            <div class="mb-3">
+                <Spinner />
+            </div>
 		{/if}
 
 		{#if error}
