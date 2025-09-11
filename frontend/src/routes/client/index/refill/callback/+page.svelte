@@ -12,6 +12,7 @@
     let loading: boolean = false;
     let success: boolean = false;
     let error: string | null = $page.url.searchParams.get('error');
+    let show_disclaimer: boolean = false;
 
     // Try to validate the payment on load
     onMount(() => {
@@ -33,31 +34,29 @@
         loading = true;
         refillsApi().selfValidateRemoteRefill(parseInt(checkoutIntentId), {withCredentials: true}).then(
             (res) => {
-
-                switch (res.status) {
-                    case 200:
-                        success = true;
-                        break;
-                    case 409:
-                        error = "Ce rechargement a déjà été validé"
-                        break;
-                    case 404:
-                        error = "Rechargement introuvable"
-                        break;
-                    case 402:
-                        error = "Le paiment n'a pas encore été validé, merci de réessayer plus tard"
-                        break;
-                    default:
-                        error = "Une erreur innatendue est survenue"
-                        break;
+                if (res.status != 200) {
+                    throw res;
                 }
-
-                loading = false;
+                success = true;
             }
         ).catch((err) => {
-            loading = false;
-            error = "Une erreur innatendue est survenue";
+            switch (err.status) {
+                case 409:
+                    error = "Ce rechargement a déjà été validé"
+                    break;
+                case 404:
+                    error = "Rechargement introuvable"
+                    break;
+                case 402:
+                    error = "Le paiment n'a pas encore été validé."
+                    show_disclaimer = true
+                    break;
+                default:
+                    error = "Une erreur innatendue est survenue"
+                    break;
+            }
         })
+        .finally(() => {loading = false;})
     });
 </script>
 
@@ -79,7 +78,15 @@
         <div
             class="rounded p-5 border-2 border-red-500 bg-red-400 text-white text-lg font-bold text-center max-w-[75%]"
         >
-            <span class="font-extrabold">Erreur : </span>{error}
+            <div>
+                <span class="font-extrabold">Erreur : </span>{error}
+            </div>
+            {#if show_disclaimer}    
+                <div class="font-normal italic mt-2">
+                    Remarque : le paiement sera revérifié automatiquement.<br/>
+                    HelloAsso peut mettre jusqu'à 30 minutes pour valider un paiement, au delà de ce délai, contactez un membre du bar.
+                </div>
+            {/if}
         </div>
     {/if}
     
