@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import Spinner from '$lib/components/spinner.svelte';
-	import { refillsApi } from '$lib/requests/requests';
+	import { accountsApi, refillsApi } from '$lib/requests/requests';
+	import { store } from '$lib/store/store';
 	import { onMount } from 'svelte';
-	import { derived } from 'svelte/store';
 
 	// derive orderId and code from the query parameters
 	const checkoutIntentId = $page.url.searchParams.get('checkoutIntentId');
@@ -38,6 +38,16 @@
                     throw res;
                 }
                 success = true;
+                
+                // Refresh account data in layout
+                accountsApi()
+                    .getAccount({
+                        withCredentials: true
+                    })
+                    .then((res) => {
+                        store.set({ account: res.data.account });
+                    })
+                    .catch((_) => {})
             }
         ).catch((err) => {
             switch (err.status) {
