@@ -188,7 +188,6 @@
 
 	async function saveEditRestock() {
 		if (!selectedEditRestock) return;
-		console.log(newRestock);
 		restocksApi()
 			.updateRestock(selectedEditRestock.id, newRestock, { withCredentials: true })
 			.then((res) => {

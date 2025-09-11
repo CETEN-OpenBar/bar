@@ -11,7 +11,7 @@ let amount: number = 0;
 function sendStars() {
   if (amount >= 0) {
     starsApi()
-      .postStarring(account.id, amount, "staff", { withCredentials: true })
+      .postStarring(account.id, amount, { withCredentials: true })
       .then(() => {
         onStarsAdded();
         close();
