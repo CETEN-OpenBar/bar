@@ -58,21 +58,52 @@
 
 <div class="w-full p-5 mt-4 justify-center">
 	<div class="flex flex-row justify-between p-5">
-		<div class="flex flex-row bg-blue-200 p-4 rounded-lg">
-			<h1 class="text-md font-semibold self-center">Jour:</h1>
+		<div class="flex flex-row items-center bg-blue-200 p-4 rounded-lg gap-3">
+			<h1 class="text-md font-semibold">Jour :</h1>
+			<button
+				class="p-2 rounded-full bg-blue-300 hover:bg-blue-400 transition shadow"
+				on:click={() => {
+				let d = new Date(today);
+				d.setDate(d.getDate() - 1);
+				today = d;
+				let s = time2Utc(d.getTime() / 1000);
+				startDate = s.toString();
+				endDate = (s + 24 * 60 * 60).toString();
+				reloadItems();
+				}}
+			>
+				◀
+			</button>
 			<input
-				class="rounded-md bg-blue-200"
 				type="date"
 				value={today.toISOString().split('T')[0]}
 				on:change={(e) => {
-					// @ts-ignore
-					let s = time2Utc(new Date(e.target.value).getTime() / 1000);
-					startDate = s.toString();
-					endDate = (s + 24 * 60 * 60).toString();
-					reloadItems();
+				// @ts-ignore
+				let s = time2Utc(new Date(e.target.value).getTime() / 1000);
+				startDate = s.toString();
+				endDate = (s + 24 * 60 * 60).toString();
+				reloadItems();
 				}}
+				class="rounded-md bg-white px-3 py-2 text-blue-900 font-medium shadow-sm 
+					focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500"
 			/>
+
+			<button
+				class="p-2 rounded-full bg-blue-300 hover:bg-blue-400 transition shadow"
+				on:click={() => {
+				let d = new Date(today);
+				d.setDate(d.getDate() + 1);
+				today = d;
+				let s = time2Utc(d.getTime() / 1000);
+				startDate = s.toString();
+				endDate = (s + 24 * 60 * 60).toString();
+				reloadItems();
+				}}
+			>
+				▶
+			</button>
 		</div>
+
 	</div>
 	<div class="flex flex-row mt-5 gap-4 justify-center">
 		{#each types as t}
