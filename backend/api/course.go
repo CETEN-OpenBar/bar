@@ -20,7 +20,7 @@ func (s *Server) GetCourse(c echo.Context, params autogen.GetCourseParams) error
 	}
 	var course []autogen.CourseItem
 
-	data, err := s.DBackend.GetItems(c.Request().Context(), "", 0, 0, "", "", search, false)
+	data, err := s.DBackend.GetItems(c.Request().Context(), "", 0, 1000, "", "", search, false)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
