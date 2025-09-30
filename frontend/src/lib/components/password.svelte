@@ -6,7 +6,6 @@
 	// onEnter
 	function onEnter(e: KeyboardEvent) {
 		if (e.key === 'Enter') {
-			// console.log('a' + password);
 			callback(password);
 			password = '';
 		}
@@ -28,7 +27,6 @@
 	on:click={() => {
 		password = '';
 		callback('');
-		console.log('click');
 	}}
 />
 
@@ -54,7 +52,6 @@
 			<button
 				class="w-36 h-12 text-xl rounded-xl text-white bg-green-600 active:bg-green-800"
 				on:click={() => {
-					console.log('g' + password);
 					callback(password);
 					password = '';
 				}}
