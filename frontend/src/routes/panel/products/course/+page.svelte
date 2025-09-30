@@ -1,16 +1,20 @@
 <script lang="ts">
-	import { CourseApi, restocksApi } from '$lib/requests/requests';
+	import { CourseApi, restocksApi, categoriesApi } from '$lib/requests/requests';
 	import {
 		type CourseItem,
 		type NewRestock,
 		type NewRestockItem,
+		type Category,
 		RestockState,
 		RestockType
 	} from '$lib/api';
 	import { formatPrice, fournisseurIterator } from '$lib/utils';
 	import { goto } from '$app/navigation';
 	import { api } from '$lib/config/config';
+	import { onMount } from 'svelte';
 	let items: CourseItem[] = [];
+	let categories: Category[] = [];
+	let groupedItems: { [categoryId: string]: CourseItem[] } = {};
 	let fournisseur = RestockType.RestockPromocash;
 	let newRestock: NewRestock = {
 		items: [],
@@ -37,12 +41,47 @@
 			.then((res) => {
 				if (res.data.items != null) {
 					items = res.data.items.sort((a, b) => a.item.name.localeCompare(b.item.name));
+					groupItemsByCategory();
 				} else {
 					items = [];
+					groupedItems = {};
 				}
 			});
 	}
-	reloadCourse();
+	function loadCategories() {
+		categoriesApi()
+			.getCategories(true, { withCredentials: true })
+			.then((res) => {
+				categories = res.data ?? [];
+				groupItemsByCategory();
+			})
+			.catch((error) => {
+				console.error('Failed to load categories:', error);
+			});
+	}
+	function groupItemsByCategory() {
+		if (items.length === 0 || categories.length === 0) return;
+		
+		groupedItems = {};
+		
+		// Group items by category
+		items.forEach(item => {
+			const categoryId = item.item.category_id;
+			if (!groupedItems[categoryId]) {
+				groupedItems[categoryId] = [];
+			}
+			groupedItems[categoryId].push(item);
+		});
+		
+		// Sort items within each category alphabetically
+		Object.keys(groupedItems).forEach(categoryId => {
+			groupedItems[categoryId].sort((a, b) => a.item.name.localeCompare(b.item.name));
+		});
+	}
+	onMount(() => {
+		reloadCourse();
+		loadCategories();
+	});
 	function addNewRestockItem(courseItem: CourseItem) : CourseItem {
 		if (courseItem.amountToBuy <= 0) {
 			courseItem.amountToBuy = 0;
@@ -107,12 +146,13 @@
 				class="py-3 px-4 w-64 border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
 				required
 				aria-describedby="text-error"
-				on:change={(e) => {
-					// @ts-ignore
-					let val = e.target?.value;
-					fournisseur = val;
-					reloadCourse();
-				}}
+							on:change={(e) => {
+								// @ts-ignore
+								let val = e.target?.value;
+								fournisseur = val;
+								reloadCourse();
+								loadCategories();
+							}}
 			>
 			{#each fournisseurIterator as [val, name]}
 				<option value="{val}" selected={val === RestockType.RestockPromocash}>{name}</option>
@@ -122,67 +162,74 @@
 	</div>
 
 	<div class="flex-1 overflow-y-auto px-6 py-4">
-		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-4">
-			{#each items as item}
-				<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-4">
-					<div class="flex items-center mb-3">
-						{#if item.item.picture_uri}
-							<img 
-								src="{api() + item.item.picture_uri}" 
-								alt="{item.item.name}"
-								class="w-16 h-16 object-cover rounded-md mr-3"
-							/>
-						{:else}
-							<div class="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-md mr-3 flex items-center justify-center">
-								<svg class="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-									<path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
-								</svg>
+		{#each Object.entries(groupedItems) as [categoryId, categoryItems]}
+			{#if categories.find(c => c.id === categoryId)}
+				<div class="mb-6">
+					<h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">{categories.find(c => c.id === categoryId).name}</h2>
+					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+						{#each categoryItems as item}
+							<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-4">
+								<div class="flex items-center mb-3">
+									{#if item.item.picture_uri}
+										<img 
+											src="{api() + item.item.picture_uri}" 
+											alt="{item.item.name}"
+											class="w-16 h-16 object-cover rounded-md mr-3"
+										/>
+									{:else}
+										<div class="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-md mr-3 flex items-center justify-center">
+											<svg class="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+												<path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+											</svg>
+										</div>
+									{/if}
+									<div class="flex-1">
+										<h3 class="font-semibold text-gray-800 dark:text-gray-200 text-sm truncate">{item.item.name}</h3>
+										<div class="text-xs text-gray-600 dark:text-gray-400 mt-1">
+											<div>Stock: {item.item.amount_left}</div>
+											<div>Optimal: {item.item.optimal_amount}</div>
+										</div>
+									</div>
+								</div>
+								
+								<div class="flex items-center justify-between mt-3">
+									<div class="flex items-center">
+										<input
+											class="w-20 py-2 px-2 border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+											type="number"
+											min="0"
+											bind:value={item.amountToBuy}
+											on:input={() => {
+												if (newRestock.items.some((restockItem) => restockItem.item_id === item.item.id)) {
+													if (item.amountToBuy !== null) {
+														removeNewRestockItem(item);
+														item = addNewRestockItem(item);
+													}
+												}
+											}}
+											placeholder="0"
+										/>
+										<span class="ml-2 text-sm text-gray-600 dark:text-gray-400">packs</span>
+									</div>
+									<input
+										class="w-6 h-6 border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+										type="checkbox"
+										on:change={(event) => {
+											// @ts-ignore
+											if (event.target?.checked) {
+												item = addNewRestockItem(item);
+											} else {
+												removeNewRestockItem(item);
+											}
+										}}
+									/>
+								</div>
 							</div>
-						{/if}
-						<div class="flex-1">
-							<h3 class="font-semibold text-gray-800 dark:text-gray-200 text-sm truncate">{item.item.name}</h3>
-							<div class="text-xs text-gray-600 dark:text-gray-400 mt-1">
-								<div>Stock: {item.item.amount_left}</div>
-								<div>Optimal: {item.item.optimal_amount}</div>
-							</div>
-						</div>
-					</div>
-					
-					<div class="flex items-center justify-between mt-3">
-						<div class="flex items-center">
-							<input
-								class="w-20 py-2 px-2 border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-								type="number"
-								min="0"
-								bind:value={item.amountToBuy}
-								on:input={() => {
-									if (newRestock.items.some((restockItem) => restockItem.item_id === item.item.id)) {
-										if (item.amountToBuy !== null) {
-											removeNewRestockItem(item);
-											item = addNewRestockItem(item);
-										}
-									}
-								}}
-								placeholder="0"
-							/>
-							<span class="ml-2 text-sm text-gray-600 dark:text-gray-400">packs</span>
-						</div>
-						<input
-							class="w-6 h-6 border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-							type="checkbox"
-							on:change={(event) => {
-								// @ts-ignore
-								if (event.target?.checked) {
-									item = addNewRestockItem(item);
-								} else {
-									removeNewRestockItem(item);
-								}
-							}}
-						/>
+						{/each}
 					</div>
 				</div>
-			{/each}
-		</div>
+			{/if}
+		{/each}
 	</div>
 
 	<div class="flex-none bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 px-6 py-4">
