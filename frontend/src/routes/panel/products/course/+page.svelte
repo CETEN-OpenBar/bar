@@ -9,6 +9,7 @@
 	} from '$lib/api';
 	import { formatPrice, fournisseurIterator } from '$lib/utils';
 	import { goto } from '$app/navigation';
+	import { api } from '$lib/config/config';
 	let items: CourseItem[] = [];
 	let fournisseur = RestockType.RestockPromocash;
 	let newRestock: NewRestock = {
@@ -92,105 +93,112 @@
 	}
 </script>
 
-<div class="relative mt-4 w-96 md:mt-0">
-	<!-- filter by state -->
-	<select
-		id="fournisseur"
-		name="fournisseur"
-		class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-		required
-		aria-describedby="text-error"
-		on:change={(e) => {
-			// @ts-ignore
-			let val = e.target?.value;
-			fournisseur = val;
-			reloadCourse();
-		}}
-	>
-	{#each fournisseurIterator as [val, name]}
-		<option value="{val}">{name}</option>
-	{/each}
-	</select>
-</div>
+<div class="fixed inset-0 flex flex-col bg-white dark:bg-gray-900">
+	<div class="flex-none bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+		<h1 class="text-2xl font-semibold text-gray-800 dark:text-white">Réapprovisionnement</h1>
+	</div>
 
-<table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-	<thead class="bg-gray-50 dark:bg-slate-800">
-		<tr>
-			<th scope="col" class="px-6 py-3">
-				<span
-					class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
-				>
-					Nom
-				</span>
-			</th>
-			<th scope="col" class="px-6 py-3">
-				<span
-					class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
-				>
-					Nombre à acheter
-				</span>
-			</th>
-			<th scope="col" class="px-3">
-				<span
-					class="text-center text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
-				>
-					Checkbox
-				</span>
-			</th>
-		</tr>
-	</thead>
-	<tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-		{#each items as item}
-			<tr>
-				<td class="px-6 py-4">
-					<p
-						class="py-3 px-2 block border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-					>
-						{item.item.name}
-					</p>
-				</td>
-				<td class="px-6 py-4">
-					<input
-						class="w-full py-3 px-2 block border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-						type="number"
-						min="0"
-						bind:value={item.amountToBuy}
-						on:input={() => {
-							if (newRestock.items.some((restockItem) => restockItem.item_id === item.item.id)) {
-								if (item.amountToBuy !== null) {
-									removeNewRestockItem(item);
+	<div class="flex-none px-6 py-3 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+		<div class="flex items-center gap-3">
+			<label for="fournisseur" class="text-gray-800 dark:text-white text-sm font-medium">Fournisseur :</label>
+			<select
+				id="fournisseur"
+				name="fournisseur"
+				class="py-3 px-4 w-64 border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+				required
+				aria-describedby="text-error"
+				on:change={(e) => {
+					// @ts-ignore
+					let val = e.target?.value;
+					fournisseur = val;
+					reloadCourse();
+				}}
+			>
+			{#each fournisseurIterator as [val, name]}
+				<option value="{val}" selected={val === RestockType.RestockPromocash}>{name}</option>
+			{/each}
+			</select>
+		</div>
+	</div>
+
+	<div class="flex-1 overflow-y-auto px-6 py-4">
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-4">
+			{#each items as item}
+				<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-4">
+					<div class="flex items-center mb-3">
+						{#if item.item.picture_uri}
+							<img 
+								src="{api() + item.item.picture_uri}" 
+								alt="{item.item.name}"
+								class="w-16 h-16 object-cover rounded-md mr-3"
+							/>
+						{:else}
+							<div class="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-md mr-3 flex items-center justify-center">
+								<svg class="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+									<path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+								</svg>
+							</div>
+						{/if}
+						<div class="flex-1">
+							<h3 class="font-semibold text-gray-800 dark:text-gray-200 text-sm truncate">{item.item.name}</h3>
+							<div class="text-xs text-gray-600 dark:text-gray-400 mt-1">
+								<div>Stock: {item.item.amount_left}</div>
+								<div>Optimal: {item.item.optimal_amount}</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="flex items-center justify-between mt-3">
+						<div class="flex items-center">
+							<input
+								class="w-20 py-2 px-2 border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+								type="number"
+								min="0"
+								bind:value={item.amountToBuy}
+								on:input={() => {
+									if (newRestock.items.some((restockItem) => restockItem.item_id === item.item.id)) {
+										if (item.amountToBuy !== null) {
+											removeNewRestockItem(item);
+											item = addNewRestockItem(item);
+										}
+									}
+								}}
+								placeholder="0"
+							/>
+							<span class="ml-2 text-sm text-gray-600 dark:text-gray-400">packs</span>
+						</div>
+						<input
+							class="w-6 h-6 border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+							type="checkbox"
+							on:change={(event) => {
+								// @ts-ignore
+								if (event.target?.checked) {
 									item = addNewRestockItem(item);
+								} else {
+									removeNewRestockItem(item);
 								}
-						}}}
-					>
-				</td>
-				<td class="text-center px-3">
-					<input
-						class="w-12 h-12 block border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 mx-auto"
-						type="checkbox"
-						on:change={(event) => {
-							// @ts-ignore
-							if (event.target?.checked) {
-								item = addNewRestockItem(item);
-							} else {
-								removeNewRestockItem(item);
-							}
-						}}
-					/>
-				</td>
-			</tr>
-		{/each}
-	</tbody>
-</table>
-<div class="flex justify-center items-center w-full mt-4 px-6 space-x-8">
-	<p class="text-2xl text-white">Total HT: {formatPrice(newRestock.total_cost_ht)}</p>
-	<p class="text-2xl text-white">Total TTC: {formatPrice(newRestock.total_cost_ttc)}</p>
-	<button
-		class="text-xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
-		on:click={() => {
-			generateRestock();
-		}}
-	>
-		Générer la réappro
-	</button>
+							}}
+						/>
+					</div>
+				</div>
+			{/each}
+		</div>
+	</div>
+
+	<div class="flex-none bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 px-6 py-4">
+		<div class="flex flex-col md:flex-row justify-between items-center gap-3 md:gap-4">
+			<div class="flex gap-4 md:gap-8">
+				<p class="text-base md:text-xl text-gray-800 dark:text-white">Total HT: {formatPrice(newRestock.total_cost_ht)}</p>
+				<p class="text-base md:text-xl text-gray-800 dark:text-white">Total TTC: {formatPrice(newRestock.total_cost_ttc)}</p>
+			</div>
+			<button
+				class="text-base md:text-xl bg-blue-700 px-6 py-2 rounded-xl hover:bg-blue-900 transition-all text-white w-full md:w-auto"
+				on:click={() => {
+					generateRestock();
+				}}
+			>
+				Générer la réappro
+			</button>
+		</div>
+	</div>
 </div>
