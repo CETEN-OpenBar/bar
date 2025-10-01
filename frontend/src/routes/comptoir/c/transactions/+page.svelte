@@ -8,7 +8,6 @@
 	import ChangePassword from '$lib/components/comptoir/changePassword.svelte';
 	import Password from '$lib/components/password.svelte';
 	import type { ConnectPasswordRequest } from '$lib/api';
-
 	import TransactionsItems from '$lib/components/comptoir/transactionsItems.svelte';
 
 	function reset() {
@@ -27,6 +26,8 @@
 	let newRefill = false;
 	let changePassword = false;
 	let info: ConnectPasswordRequest;
+	let mobileMenuOpen = false;
+	
 	function close() {
 		newRefill = false;
 	}
@@ -57,34 +58,318 @@
 	};
 
 	let showTransactionItems = false;
+	let transactionAmount = 6;
+	let contentElement: HTMLElement;
+
+	function calculateTransactionAmount() {
+		if (contentElement) {
+			const contentHeight = contentElement.clientHeight;
+			const estimatedTransactionHeight = 120;
+			transactionAmount = Math.max(3, Math.floor(contentHeight / estimatedTransactionHeight));
+		}
+	}
+
+	if (typeof window !== 'undefined') {
+		$: if (contentElement) {
+			calculateTransactionAmount();
+		}
+		window.addEventListener('resize', calculateTransactionAmount);
+	}
 </script>
 
-{#if askForCard}
-	<!-- Popup overlay -->
-	<button
-		id="overlay"
-		class="absolute w-full h-full top-0 left-0 bg-black bg-opacity-50 flex justify-center items-center z-10 hover:cursor-default"
-		on:click={() => {
-			reset();
-		}}
-	/>
+<style>
+	:root {
+		--bg-primary: #000000;
+		--bg-secondary: #1a1a1a;
+		--bg-tertiary: #2d2d2d;
+		--text-primary: #ffffff;
+		--text-secondary: #b0b0b0;
+		--accent-primary: #2563eb;
+		--accent-hover: #1d4ed8;
+		--border-color: #404040;
+		--shadow-color: rgba(0, 0, 0, 0.3);
+		--overlay-bg: rgba(0, 0, 0, 0.5);
+	}
 
-	<div id="popup" class="absolute w-full h-full top-0 left-0 flex justify-center items-center">
-		<div
-			class="relative text-black flex flex-col justify-center items-center gap-4 p-10 h-96 bg-white rounded-xl shadow-xl z-20"
-		>
-			<button
-				class="absolute top-0 right-0 p-2 text-xl font-bold m-2 rounded-full transition-all text-black"
-				on:click={() => {
-					reset();
-				}}
-			>
-				<iconify-icon icon="mdi:close" />
+	@media (prefers-color-scheme: light) {
+		:root {
+			--bg-primary: #ffffff;
+			--bg-secondary: #f8fafc;
+			--bg-tertiary: #e2e8f0;
+			--text-primary: #1a1a1a;
+			--text-secondary: #64748b;
+			--accent-primary: #2563eb;
+			--accent-hover: #1d4ed8;
+			--border-color: #e2e8f0;
+			--shadow-color: rgba(0, 0, 0, 0.1);
+			--overlay-bg: rgba(0, 0, 0, 0.3);
+		}
+	}
+
+	.transactions-container {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		gap: 1rem;
+	}
+
+	.header-section {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 1rem;
+		background-color: var(--bg-secondary);
+		border-radius: 0.75rem;
+		border: 1px solid var(--border-color);
+	}
+
+	.actions-group {
+		display: flex;
+		gap: 0.5rem;
+		flex-wrap: wrap;
+		align-items: center;
+	}
+
+	.nav-group {
+		display: flex;
+		gap: 0.5rem;
+		align-items: center;
+	}
+
+	.mobile-menu-btn {
+		display: none;
+		background: none;
+		border: none;
+		color: var(--text-primary);
+		cursor: pointer;
+		padding: 0.5rem;
+		border-radius: 0.5rem;
+		transition: all 0.2s ease;
+	}
+
+	.mobile-menu-btn:hover {
+		background-color: var(--bg-tertiary);
+	}
+
+	.mobile-menu {
+		display: none;
+		position: absolute;
+		top: 100%;
+		left: 0;
+		right: 0;
+		background-color: var(--bg-tertiary);
+		border-radius: 0.75rem;
+		border: 1px solid var(--border-color);
+		padding: 1rem;
+		margin-top: 0.5rem;
+		z-index: 100;
+		box-shadow: 0 10px 15px -3px var(--shadow-color);
+	}
+
+	.mobile-menu.open {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.btn-small {
+		padding: 0.5rem 0.75rem;
+		font-size: 0.875rem;
+	}
+
+	.pagination-container {
+		position: sticky;
+		bottom: 0;
+		background-color: var(--bg-secondary);
+		border-top: 1px solid var(--border-color);
+		padding: 1rem;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 1rem;
+		z-index: 50;
+	}
+
+	.pagination-btn {
+		padding: 0.5rem 1rem;
+		border-radius: 0.5rem;
+		background-color: var(--accent-primary);
+		color: white;
+		border: none;
+		cursor: pointer;
+		font-size: 1rem;
+		font-weight: 500;
+		transition: all 0.2s ease;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.pagination-btn:hover {
+		background-color: var(--accent-hover);
+	}
+
+	.pagination-btn:disabled {
+		background-color: var(--bg-tertiary);
+		color: var(--text-secondary);
+		cursor: not-allowed;
+	}
+
+	.pagination-info {
+		font-size: 1rem;
+		font-weight: 500;
+		color: var(--text-primary);
+	}
+
+	@media (max-width: 768px) {
+		.mobile-menu-btn {
+			display: block;
+		}
+
+		.nav-group {
+			display: none;
+		}
+
+		.actions-group {
+			flex-wrap: nowrap;
+			gap: 0.25rem;
+		}
+
+		.btn {
+			padding: 0.5rem 0.75rem;
+			font-size: 0.875rem;
+		}
+
+		.btn-large {
+			display: none;
+		}
+
+		.btn-small {
+			display: none;
+		}
+
+		.pagination-container {
+			padding: 0.75rem;
+			gap: 0.5rem;
+		}
+
+		.pagination-btn {
+			padding: 0.4rem 0.8rem;
+			font-size: 0.875rem;
+		}
+
+		.pagination-info {
+			font-size: 0.875rem;
+		}
+	}
+
+	.btn {
+		padding: 0.75rem 1rem;
+		border-radius: 0.5rem;
+		background-color: var(--accent-primary);
+		color: white;
+		border: none;
+		cursor: pointer;
+		font-size: 1rem;
+		font-weight: 500;
+		transition: all 0.2s ease;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.btn:hover {
+		background-color: var(--accent-hover);
+		transform: translateY(-1px);
+	}
+
+	.btn-large {
+		font-size: 1.25rem;
+		padding: 1rem 1.5rem;
+	}
+
+	.btn-danger {
+		background-color: #dc2626;
+	}
+
+	.btn-danger:hover {
+		background-color: #b91c1c;
+	}
+
+	.content-area {
+		flex: 1;
+		background-color: var(--bg-secondary);
+		border-radius: 0.75rem;
+		border: 1px solid var(--border-color);
+		overflow: hidden;
+	}
+
+	.modal-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: var(--overlay-bg);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		z-index: 1000;
+		cursor: pointer;
+	}
+
+	.modal-content {
+		background-color: var(--bg-tertiary);
+		padding: 2rem;
+		border-radius: 1rem;
+		box-shadow: 0 20px 25px -5px var(--shadow-color);
+		position: relative;
+		min-width: 300px;
+		text-align: center;
+		cursor: default;
+	}
+
+	.modal-close {
+		position: absolute;
+		top: 1rem;
+		right: 1rem;
+		background: none;
+		border: none;
+		color: var(--text-secondary);
+		cursor: pointer;
+		padding: 0.5rem;
+		border-radius: 50%;
+		transition: all 0.2s ease;
+	}
+
+	.modal-close:hover {
+		background-color: var(--bg-secondary);
+		color: var(--text-primary);
+	}
+
+	.modal-title {
+		font-size: 1.5rem;
+		font-weight: 600;
+		color: var(--text-primary);
+		margin-bottom: 1rem;
+	}
+
+	.divider {
+		height: 1px;
+		background-color: var(--border-color);
+		margin: 0.5rem 0;
+	}
+</style>
+
+{#if askForCard}
+	<div class="modal-overlay" on:click={reset}>
+		<div class="modal-content" on:click|stopPropagation>
+			<button class="modal-close" on:click={reset}>
+				<iconify-icon icon="mdi:close" width="24" height="24" />
 			</button>
-			<h1 class="text-3xl">Veuillez scanner la carte.</h1>
+			<h2 class="modal-title">Veuillez scanner la carte</h2>
 		</div>
 	</div>
-
 	<ReadCard
 		callback={(id) => {
 			infos.card_id = id;
@@ -107,80 +392,138 @@
 {#if changePassword}
 	<ChangePassword onEnd={() => (changePassword = false)} />
 {:else}
-	<div class="p-5 w-full h-full text-white flex flex-col">
-		<div class="flex flex-row justify-between gap-16 p-2 w-full text-white">
-			<div class="flex flex-row">
-				<button
-					class="text-xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all ml-2"
-					on:click={() => {
-						changePassword = true;
-					}}>changer mdp</button
-				>
-				<button
-					class="text-xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all ml-2"
-					on:click={() => {
-						to_call = open_door;
-						askForCard = true;
-					}}>porte</button
-				>
-				<button
-					class="text-xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all ml-2"
-					on:click={() => {
-						to_call = open_ventilo;
-						askForCard = true;
-					}}>ventilo</button
-				>
-				<button
-					class="text-xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all ml-2"
-					on:click={() => {
-						to_call = open_caisse;
-						askForCard = true;
-					}}>caisse</button
-				>
-				<button
-					class="text-xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all ml-2"
-					on:click={() => {
-						to_call = go_admin_panel;
-						askForCard = true;
-					}}>Admin panel</button
-				>
+	<div class="transactions-container">
+		<header class="header-section">
+			<div class="actions-group">
+				<button class="btn btn-small" on:click={() => goto('/comptoir/c/refills')}>
+					<iconify-icon icon="mdi:history" width="16" height="16" />
+					Historique
+				</button>
+				
+				{#if showTransactionItems}
+					<button class="btn btn-small" on:click={() => showTransactionItems = false}>
+						<iconify-icon icon="mdi:format-list-bulleted" width="16" height="16" />
+						Liste
+					</button>
+				{:else}
+					<button class="btn btn-small" on:click={() => showTransactionItems = true}>
+						<iconify-icon icon="mdi:chart-box" width="16" height="16" />
+						Résumé
+					</button>
+				{/if}
+
+				<button class="btn btn-small" on:click={() => newRefill = true}>
+					<iconify-icon icon="mdi:plus-circle" width="16" height="16" />
+					Recharge
+				</button>
+
+				<button class="btn" on:click={() => changePassword = true}>
+					<iconify-icon icon="mdi:key-change" width="20" height="20" />
+					Changer MDP
+				</button>
+				<button class="btn" on:click={() => { to_call = open_door; askForCard = true; }}>
+					<iconify-icon icon="mdi:door-open" width="20" height="20" />
+					Porte
+				</button>
+				<button class="btn" on:click={() => { to_call = open_ventilo; askForCard = true; }}>
+					<iconify-icon icon="mdi:fan" width="20" height="20" />
+					Ventilo
+				</button>
+				<button class="btn" on:click={() => { to_call = open_caisse; askForCard = true; }}>
+					<iconify-icon icon="mdi:cash-register" width="20" height="20" />
+					Caisse
+				</button>
+				<button class="btn" on:click={() => { to_call = go_admin_panel; askForCard = true; }}>
+					<iconify-icon icon="mdi:shield-crown" width="20" height="20" />
+					Admin Panel
+				</button>
+
+				<button class="mobile-menu-btn" on:click={() => mobileMenuOpen = !mobileMenuOpen}>
+					<iconify-icon icon="mdi:menu" width="24" height="24" />
+				</button>
 			</div>
 
-			<button
-				class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
-				on:click={() => goto('/comptoir/c/refills')}>Historique rechargements</button
-			>
+			<div class="nav-group">
+				<button class="btn btn-large btn-danger" on:click={logoutAccount}>
+					<iconify-icon icon="mdi:logout" width="24" height="24" />
+					Déconnexion
+				</button>
+			</div>
+
+			<div class="mobile-menu" class:open={mobileMenuOpen}>
+				<button class="btn btn-small" on:click={() => goto('/comptoir/c/refills')}>
+					<iconify-icon icon="mdi:history" width="16" height="16" />
+					Historique
+				</button>
+				
+				{#if showTransactionItems}
+					<button class="btn btn-small" on:click={() => { showTransactionItems = false; mobileMenuOpen = false; }}>
+						<iconify-icon icon="mdi:format-list-bulleted" width="16" height="16" />
+						Liste
+					</button>
+				{:else}
+					<button class="btn btn-small" on:click={() => { showTransactionItems = true; mobileMenuOpen = false; }}>
+						<iconify-icon icon="mdi:chart-box" width="16" height="16" />
+						Résumé
+					</button>
+				{/if}
+
+				<button class="btn btn-small" on:click={() => { newRefill = true; mobileMenuOpen = false; }}>
+					<iconify-icon icon="mdi:plus-circle" width="16" height="16" />
+					Recharge
+				</button>
+
+				<button class="btn" on:click={() => { changePassword = true; mobileMenuOpen = false; }}>
+					<iconify-icon icon="mdi:key-change" width="20" height="20" />
+					Changer MDP
+				</button>
+				<button class="btn" on:click={() => { to_call = open_door; askForCard = true; mobileMenuOpen = false; }}>
+					<iconify-icon icon="mdi:door-open" width="20" height="20" />
+					Porte
+				</button>
+				<button class="btn" on:click={() => { to_call = open_ventilo; askForCard = true; mobileMenuOpen = false; }}>
+					<iconify-icon icon="mdi:fan" width="20" height="20" />
+					Ventilo
+				</button>
+				<button class="btn" on:click={() => { to_call = open_caisse; askForCard = true; mobileMenuOpen = false; }}>
+					<iconify-icon icon="mdi:cash-register" width="20" height="20" />
+					Caisse
+				</button>
+				<button class="btn" on:click={() => { to_call = go_admin_panel; askForCard = true; mobileMenuOpen = false; }}>
+					<iconify-icon icon="mdi:shield-crown" width="20" height="20" />
+					Admin Panel
+				</button>
+				
+				<button class="btn btn-large btn-danger" on:click={logoutAccount}>
+					<iconify-icon icon="mdi:logout" width="24" height="24" />
+					Déconnexion
+				</button>
+			</div>
+		</header>
+
+		<div class="divider"></div>
+
+		<main bind:this={contentElement} class="content-area">
 			{#if showTransactionItems}
-				<button
-					class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
-					on:click={() => (showTransactionItems = false)}>Liste des commandes</button
-				>
+				<TransactionsItems />
 			{:else}
-				<button
-					class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
-					on:click={() => (showTransactionItems = true)}>Résumé des commandes</button
-				>
+				<Transactions amount={transactionAmount} />
 			{/if}
+		</main>
 
-			<button
-				class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all mr-2"
-				on:click={() => (newRefill = true)}>Nouvelle Recharge</button
-			>
-			<!-- disconnection button -->
-			<button
-				class="text-3xl bg-blue-700 p-2 rounded-xl hover:bg-blue-900 transition-all"
-				on:click={() => logoutAccount()}
-			>
-				Deconnexion
-			</button>
-		</div>
-		<hr class="col-span-3" />
-
-		{#if showTransactionItems}
-			<TransactionsItems />
-		{:else}
-			<div class="flex-1">
-				<Transactions amount={6} />
+		{#if !showTransactionItems}
+			<div class="pagination-container">
+				<button class="pagination-btn" on:click={() => document.querySelector('button[onclick*="prevPage"]')?.click()}>
+					<iconify-icon icon="mdi:chevron-left" width="20" height="20" />
+					Précédent
+				</button>
+				<div class="pagination-info">
+					Page <span id="current-page">1</span> / <span id="max-pages">1</span>
+				</div>
+				<button class="pagination-btn" on:click={() => document.querySelector('button[onclick*="nextPage"]')?.click()}>
+					Suivant
+					<iconify-icon icon="mdi:chevron-right" width="20" height="20" />
+				</button>
 			</div>
 		{/if}
 
