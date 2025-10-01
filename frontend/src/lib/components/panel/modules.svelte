@@ -10,7 +10,6 @@
 
 	// Array of modules
 	let modules = [] as Module[];
-	let currentPage = 0;
 
 	// Add modules to array (append more when editing modules)
 	// TODO: make sure all modules are here
@@ -86,52 +85,66 @@
 	modules.sort((a, b) => a.name.localeCompare(b.name));
 </script>
 
-<div class="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">
-	{#each modules as module, i}
-		<!-- only display modules that are in the current page -->
-		{#if i >= currentPage * 12 && i < (currentPage + 1) * 12}
+<style>
+	.modules-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+		gap: 1rem;
+		justify-content: center;
+		justify-items: center;
+		padding: 0.5rem;
+		width: 100%;
+		max-width: 1200px;
+		margin: 0 auto;
+	}
+
+	.module-card {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		height: 8rem;
+		width: 16rem;
+		word-wrap: break-word;
+		text-align: center;
+		border-radius: 0.5rem;
+		box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+		cursor: pointer;
+	}
+
+	.module-title {
+		font-size: 1.5rem;
+		font-weight: 700;
+		color: white;
+		padding: 1.25rem;
+	}
+
+	/* Color classes */
+	.bg-green-600 {
+		background-color: rgb(22, 163, 74);
+	}
+
+	.bg-red-600 {
+		background-color: rgb(220, 38, 38);
+	}
+
+	.bg-blue-600 {
+		background-color: rgb(37, 99, 235);
+	}
+
+	.bg-yellow-600 {
+		background-color: rgb(202, 138, 4);
+	}
+</style>
+
+<div class="modules-grid">
+	{#each modules as module}
 			<a href={module.link}>
 				<div
-					class="flex flex-col items-center justify-center h-32 w-64 break-words flex-wrap text-center rounded-lg shadow-lg cursor-pointer {module.color}"
+					class="module-card {module.color}"
 				>
-					<p class="text-2xl font-bold text-white p-5">{module.name}</p>
+					<p class="module-title">{module.name}</p>
 				</div>
 			</a>
-		{/if}
-	{/each}
-
-	<!-- if page is not whole, fill it with invisible modules -->
-	{#if currentPage == modules.length % 12 && modules.length % 12 != 0}
-		{#each Array(12 - (modules.length % 12)) as _}
-			<div
-				class="flex flex-col items-center justify-center h-32 w-64 break-words flex-wrap text-center rounded-lg shadow-lg"
-			>
-				<p class="text-2xl font-bold text-white p-5" />
-			</div>
 		{/each}
-	{/if}
-</div>
-
-<!-- arrows for navigation -->
-<div id="pagination" class="mt-5">
-	<button
-		class=" text-white font-bold py-2 px-4 rounded-l {currentPage == 0
-			? 'bg-gray-400 pointer-events-none'
-			: 'bg-blue-600 hover:bg-blue-700'}"
-		on:click={() => {
-			if (currentPage > 0) currentPage--;
-		}}
-	>
-		Précédent
-	</button>
-	<button
-		class="text-white font-bold py-2 px-4 rounded-r {(currentPage + 1) * 12 < modules.length
-			? 'bg-blue-600 hover:bg-blue-700'
-			: 'bg-gray-400 pointer-events-none'}"
-		on:click={() => {
-			if ((currentPage + 1) * 12 < modules.length) currentPage++;
-		}}
-	>
-		Suivant
-	</button>
 </div>
