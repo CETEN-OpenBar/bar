@@ -19,9 +19,9 @@
 
 <!-- svelte-ignore a11y-invalid-attribute -->
 
-<div class="min-h-screen dark:bg-slate-950 flex flex-col">
+<div class="min-h-screen dark:bg-slate-950 flex flex-col pt-16">
 	<header
-		class="flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full bg-blue-600 dark:bg-blue-900 text-sm py-3 sm:py-0"
+		class="flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full bg-blue-600 dark:bg-blue-900 text-sm py-3 sm:py-0 fixed top-0 left-0"
 	>
 		<nav
 			class="relative max-w-[85rem] w-full mx-auto px-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8"
@@ -201,5 +201,7 @@
 			</div>
 		</nav>
 	</header>
-	<slot />
+	<main class="flex-1">
+		<slot />
+	</main>
 </div>
