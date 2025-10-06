@@ -136,6 +136,12 @@
 		align-items: center;
 	}
 
+	.right-section {
+		display: flex;
+		gap: 0.5rem;
+		align-items: center;
+	}
+
 	.mobile-menu-btn {
 		display: none;
 		background: none;
@@ -238,11 +244,14 @@
 			position: relative;
 		}
 
+		.right-section {
+			margin-left: auto;
+		}
+
 		.mobile-menu {
 			display: none;
 			position: absolute;
 			top: 100%;
-			left: 0;
 			right: 0;
 			background-color: var(--bg-tertiary);
 			border-radius: 0.75rem;
@@ -251,6 +260,7 @@
 			margin-top: 0.5rem;
 			z-index: 100;
 			box-shadow: 0 10px 15px -3px var(--shadow-color);
+			min-width: 200px;
 		}
 
 		.mobile-menu.open {
@@ -455,16 +465,18 @@
 				</button>
 			</div>
 
-			<div class="nav-group">
-				<button class="btn btn-large btn-danger" on:click={logoutAccount}>
-					<iconify-icon icon="mdi:logout" width="24" height="24" />
-					Déconnexion
+			<div class="right-section">
+				<div class="nav-group">
+					<button class="btn btn-large btn-danger" on:click={logoutAccount}>
+						<iconify-icon icon="mdi:logout" width="24" height="24" />
+						Déconnexion
+					</button>
+				</div>
+
+				<button class="mobile-menu-btn" on:click={() => mobileMenuOpen = !mobileMenuOpen}>
+					<iconify-icon icon="mdi:menu" width="24" height="24" />
 				</button>
 			</div>
-
-			<button class="mobile-menu-btn" on:click={() => mobileMenuOpen = !mobileMenuOpen}>
-				<iconify-icon icon="mdi:menu" width="24" height="24" />
-			</button>
 
 			<div class="mobile-menu" class:open={mobileMenuOpen}>
 				<button class="btn btn-small" on:click={() => { goto('/comptoir/c/refills'); mobileMenuOpen = false; }}>
