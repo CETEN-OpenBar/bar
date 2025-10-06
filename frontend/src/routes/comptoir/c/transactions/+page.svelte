@@ -231,21 +231,37 @@
 		}
 
 		.actions-group {
-			flex-wrap: nowrap;
-			gap: 0.25rem;
-		}
-
-		.btn {
-			padding: 0.5rem 0.75rem;
-			font-size: 0.875rem;
-		}
-
-		.btn-large {
 			display: none;
 		}
 
-		.btn-small {
+		.header-section {
+			position: relative;
+		}
+
+		.mobile-menu {
 			display: none;
+			position: absolute;
+			top: 100%;
+			left: 0;
+			right: 0;
+			background-color: var(--bg-tertiary);
+			border-radius: 0.75rem;
+			border: 1px solid var(--border-color);
+			padding: 1rem;
+			margin-top: 0.5rem;
+			z-index: 100;
+			box-shadow: 0 10px 15px -3px var(--shadow-color);
+		}
+
+		.mobile-menu.open {
+			display: flex;
+			flex-direction: column;
+			gap: 0.5rem;
+		}
+
+		.mobile-menu .btn {
+			width: 100%;
+			justify-content: flex-start;
 		}
 
 		.pagination-container {
@@ -437,10 +453,6 @@
 					<iconify-icon icon="mdi:shield-crown" width="20" height="20" />
 					Admin Panel
 				</button>
-
-				<button class="mobile-menu-btn" on:click={() => mobileMenuOpen = !mobileMenuOpen}>
-					<iconify-icon icon="mdi:menu" width="24" height="24" />
-				</button>
 			</div>
 
 			<div class="nav-group">
@@ -450,8 +462,12 @@
 				</button>
 			</div>
 
+			<button class="mobile-menu-btn" on:click={() => mobileMenuOpen = !mobileMenuOpen}>
+				<iconify-icon icon="mdi:menu" width="24" height="24" />
+			</button>
+
 			<div class="mobile-menu" class:open={mobileMenuOpen}>
-				<button class="btn btn-small" on:click={() => goto('/comptoir/c/refills')}>
+				<button class="btn btn-small" on:click={() => { goto('/comptoir/c/refills'); mobileMenuOpen = false; }}>
 					<iconify-icon icon="mdi:history" width="16" height="16" />
 					Historique
 				</button>
