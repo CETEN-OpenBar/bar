@@ -423,7 +423,8 @@
 									unknownItems = [];
 									let items;
 									if (newRestock.type == "auchan") {
-										items = restockAuchan(pdfText);										
+										items = restockAuchan(pdfText);
+										console.log(items);									
 									}
 									if (newRestock.type == "auchan_drive"){
 										items = restockAuchanDrive(pdfText);
@@ -431,7 +432,7 @@
 									if (items != undefined){
 										items.forEach(item => {
 											itemsApi()
-											.getAllItems(undefined, undefined, undefined, undefined, undefined, undefined, {
+											.getAllItems(undefined, 10000, undefined, undefined, undefined, undefined, {
 												withCredentials: true
 											})
 											.then((res) => {
