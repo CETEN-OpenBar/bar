@@ -2837,6 +2837,12 @@ paths:
           required: false
           schema:
             $ref: "#/components/schemas/Fournisseur"
+        - name: ref_bundle
+          in: query
+          description: Filter by reference
+          required: false
+          schema:
+            type: string
       responses:
         "200":
           description: ""

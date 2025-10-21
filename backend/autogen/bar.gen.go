@@ -989,6 +989,9 @@ type GetAllItemsParams struct {
 
 	// Fournisseur Filter by fournisseur
 	Fournisseur *Fournisseur `form:"fournisseur,omitempty" json:"fournisseur,omitempty" bson:"fournisseur"`
+
+	// RefBundle Filter by reference
+	RefBundle *string `form:"ref_bundle,omitempty" json:"ref_bundle,omitempty" bson:"ref_bundle"`
 }
 
 // GetAllIncoherentItemsParams defines parameters for GetAllIncoherentItems.
@@ -3342,6 +3345,13 @@ func (w *ServerInterfaceWrapper) GetAllItems(ctx echo.Context) error {
 	err = runtime.BindQueryParameter("form", true, false, "fournisseur", ctx.QueryParams(), &params.Fournisseur)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter fournisseur: %s", err))
+	}
+
+	// ------------- Optional query parameter "ref_bundle" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "ref_bundle", ctx.QueryParams(), &params.RefBundle)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter ref_bundle: %s", err))
 	}
 
 	// Invoke the callback with all the unmarshaled arguments

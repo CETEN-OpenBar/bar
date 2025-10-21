@@ -117,7 +117,7 @@
 
 	function reloadItems() {
 		itemsApi()
-			.getAllItems(page, itemsPerPage, undefined, undefined, searchName, undefined, {
+			.getAllItems(page, itemsPerPage, undefined, undefined, searchName, undefined, undefined, {
 				withCredentials: true
 			})
 			.then((res) => {
@@ -331,23 +331,29 @@
 		if (items != undefined) {
 			items.forEach((item) => {
 				itemsApi()
-					.getAllItems(undefined, 10000, undefined, undefined, undefined, undefined, {
-						withCredentials: true
-					})
+					.getAllItems(
+						undefined,
+						1,
+						undefined,
+						undefined,
+						undefined,
+						undefined,
+						String(item.reference),
+						{
+							withCredentials: true
+						}
+					)
 					.then((res) => {
+						// console.log(String(item.reference));
 						let nameItem = undefined;
 						let idItem = '';
 						let amountPerBundle = 0;
 						let searchItems = res.data.items ?? [];
-						for (let i = 0; i < searchItems.length; i++) {
-							let searchItem = searchItems[i];
-							if (searchItem.ref_bundle == item.reference.toString()) {
-								nameItem = searchItem.name;
-								idItem = searchItem.id;
-								if (searchItem.amount_per_bundle != undefined) {
-									amountPerBundle = searchItem.amount_per_bundle;
-								}
-								break;
+						if (searchItems.length > 0) {
+							nameItem = searchItems[0].name;
+							idItem = searchItems[0].id;
+							if (searchItems[0].amount_per_bundle != undefined) {
+								amountPerBundle = searchItems[0].amount_per_bundle;
 							}
 						}
 						if (nameItem != undefined) {

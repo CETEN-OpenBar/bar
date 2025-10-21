@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (b *Backend) GetItems(ctx context.Context, categoryID string, page, size uint64, state string, name string, fournisseur string, sort bool) ([]*models.Item, error) {
+func (b *Backend) GetItems(ctx context.Context, categoryID string, page, size uint64, state string, name string, fournisseur string, refBundle string, sort bool) ([]*models.Item, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
@@ -74,6 +74,9 @@ func (b *Backend) GetItems(ctx context.Context, categoryID string, page, size ui
 	}
 	if fournisseur != "" {
 		matchFilter["fournisseur"] = fournisseur
+	}
+	if refBundle != "" {
+		matchFilter["ref_bundle"] = refBundle
 	}
 
 	pipeline := []bson.M{
@@ -214,7 +217,7 @@ func (b *Backend) GetIncoherentItems(ctx context.Context, page, size uint64, cat
 	return items, nil
 }
 
-func (b *Backend) CountItems(ctx context.Context, categoryID string, state string, name string, fournisseur string) (uint64, error) {
+func (b *Backend) CountItems(ctx context.Context, categoryID string, state string, name string, fournisseur string, refBundle string) (uint64, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
@@ -273,6 +276,9 @@ func (b *Backend) CountItems(ctx context.Context, categoryID string, state strin
 	}
 	if fournisseur != "" {
 		filter["fournisseur"] = fournisseur
+	}
+	if refBundle != "" {
+		filter["ref_bundle"] = refBundle
 	}
 
 	count, err := b.db.Collection(ItemsCollection).CountDocuments(ctx, filter)

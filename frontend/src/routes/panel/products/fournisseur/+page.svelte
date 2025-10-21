@@ -81,7 +81,7 @@
 
 	function reloadItems() {
 		itemsApi()
-			.getAllItems(page, itemsPerPage, undefined, searchCategory, searchName, searchFournisseur, {
+			.getAllItems(page, itemsPerPage, undefined, searchCategory, searchName, searchFournisseur, undefined, {
 				withCredentials: true
 			})
 			.then((res) => {
