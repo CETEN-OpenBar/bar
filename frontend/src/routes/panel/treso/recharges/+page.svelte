@@ -76,10 +76,16 @@
 			</button>
 			<input
 				type="date"
-				value={today.toISOString().split('T')[0]}
+				value={today.toLocaleString('default', { year: 'numeric' }) +
+					'-' +
+					today.toLocaleString('default', { month: '2-digit' }) +
+					'-' +
+					today.toLocaleString('default', { day: '2-digit' })}
+
 				on:change={(e) => {
 				// @ts-ignore
 				let s = time2Utc(new Date(e.target.value).getTime() / 1000);
+				today = new Date(e.target.value);
 				startDate = s.toString();
 				endDate = (s + 24 * 60 * 60).toString();
 				reloadItems();
