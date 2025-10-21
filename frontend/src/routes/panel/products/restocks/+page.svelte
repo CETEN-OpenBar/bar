@@ -344,7 +344,6 @@
 						}
 					)
 					.then((res) => {
-						// console.log(String(item.reference));
 						let nameItem = undefined;
 						let idItem = '';
 						let amountPerBundle = 0;
