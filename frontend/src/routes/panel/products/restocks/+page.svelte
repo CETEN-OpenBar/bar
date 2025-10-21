@@ -1,10 +1,11 @@
 <script lang="ts">
-	import {		
+	import {
 		RestockState,
 		type Item,
 		type NewRestock,
 		type NewRestockItem,
-		type Restock
+		type Restock,
+		RestockType
 	} from '$lib/api';
 	import ConfirmationPopup from '$lib/components/confirmationPopup.svelte';
 	import { restockAuchan, restockAuchanDrive } from '$lib/components/random/invoiceParser.svelte';
@@ -13,12 +14,17 @@
 	import { onMount } from 'svelte';
 	import Time from 'svelte-time';
 	import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
-	import pdfjsWorker from "pdfjs-dist/build/pdf.worker?url";
+	import pdfjsWorker from 'pdfjs-dist/build/pdf.worker?url';
 
 	let sure: boolean = false;
 	let items: Item[] = [];
 	// Array of items which are unkown by their reference for the automatic restock with the invoice
-	let unknownItems: Array<{name : string, reference : number, unitPriceHT : number, quantity : number}> = [];
+	let unknownItems: Array<{
+		name: string;
+		reference: number;
+		unitPriceHT: number;
+		quantity: number;
+	}> = [];
 
 	let restocks: Restock[] = [];
 	let newRestock: NewRestock = {
@@ -59,7 +65,7 @@
 		bundle_cost_float_ttc: 0,
 		tva: 0
 	};
-	let searchName: string = '';	
+	let searchName: string = '';
 
 	type dV = {
 		name: string;
@@ -191,7 +197,7 @@
 	}
 
 	async function saveEditRestock() {
-		if (!selectedEditRestock) return;		
+		if (!selectedEditRestock) return;
 		restocksApi()
 			.updateRestock(selectedEditRestock.id, newRestock, { withCredentials: true })
 			.then((res) => {
@@ -246,46 +252,46 @@
 	function calculateTtc(item: NewRestockItem) {
 		return Math.round(item.bundle_cost_ht * (1 + item.tva / 10000));
 	}
-	
+
 	function calculateHt(item: NewRestockItem) {
 		return Math.round(item.bundle_cost_ttc / (1 + item.tva / 10000));
 	}
 
 	onMount(() => {
-    	GlobalWorkerOptions.workerSrc = pdfjsWorker;
-  });
+		GlobalWorkerOptions.workerSrc = pdfjsWorker;
+	});
 
-  let fileInput: HTMLInputElement;
-  let pdfText = '';
+	let fileInput: HTMLInputElement;
+	let pdfText = '';
 
-  const handleFileChange = async (event: Event) => {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
-      const fileReader = new FileReader();
+	const handleFileChange = async (event: Event) => {
+		const input = event.target as HTMLInputElement;
+		if (input.files && input.files[0]) {
+			const file = input.files[0];
+			const fileReader = new FileReader();
 
-      fileReader.onload = async (event) => {
-        const arrayBuffer = event.target?.result as ArrayBuffer;
-        if (arrayBuffer) {
-          const pdf = await getDocument(arrayBuffer).promise;
-          let fullText = '';
+			fileReader.onload = async (event) => {
+				const arrayBuffer = event.target?.result as ArrayBuffer;
+				if (arrayBuffer) {
+					const pdf = await getDocument(arrayBuffer).promise;
+					let fullText = '';
 
-          for (let i = 1; i <= pdf.numPages; i++) {
-            const page = await pdf.getPage(i);
-            const textContent = await page.getTextContent();
-            const text = textContent.items.map((item: any) => item.str).join(' ');
-            fullText += text + ' ';
-          }
+					for (let i = 1; i <= pdf.numPages; i++) {
+						const page = await pdf.getPage(i);
+						const textContent = await page.getTextContent();
+						const text = textContent.items.map((item: any) => item.str).join(' ');
+						fullText += text + ' ';
+					}
 
-          pdfText = fullText;          
-        }
-      };
+					pdfText = fullText;
+				}
+			};
 
-      fileReader.readAsArrayBuffer(file);
-    }
-  };	
+			fileReader.readAsArrayBuffer(file);
+		}
+	};
 
-	function add_item_to_restock(): void{
+	function add_item_to_restock(): void {
 		let t = newRestock.items;
 		t.unshift(newItem);
 		newRestock.items = t;
@@ -311,6 +317,61 @@
 			tva: 0
 		};
 		updateTotalHTandTTC();
+	}
+
+	function restockInvoice() {
+		unknownItems = [];
+		let items;
+		if (newRestock.type == RestockType.RestockAuchan) {
+			items = restockAuchan(pdfText);
+		}
+		if (newRestock.type == RestockType.RestockAuchanDrive) {
+			items = restockAuchanDrive(pdfText);
+		}
+		if (items != undefined) {
+			items.forEach((item) => {
+				itemsApi()
+					.getAllItems(undefined, 10000, undefined, undefined, undefined, undefined, {
+						withCredentials: true
+					})
+					.then((res) => {
+						let nameItem = undefined;
+						let idItem = '';
+						let amountPerBundle = 0;
+						let searchItems = res.data.items ?? [];
+						for (let i = 0; i < searchItems.length; i++) {
+							let searchItem = searchItems[i];
+							if (searchItem.ref_bundle == item.reference.toString()) {
+								nameItem = searchItem.name;
+								idItem = searchItem.id;
+								if (searchItem.amount_per_bundle != undefined) {
+									amountPerBundle = searchItem.amount_per_bundle;
+								}
+								break;
+							}
+						}
+						if (nameItem != undefined) {
+							newItem.item_id = idItem;
+							newItem.item_name = nameItem;
+							newItem.amount_of_bundle = item.quantity;
+							newItem.amount_per_bundle = amountPerBundle;
+							newItem.bundle_cost_ht = Math.round(item.unitPriceHT * 100);
+							newItem.tva = item.tvaRate * 100;
+							newItem.bundle_cost_float_ttc = newItem.bundle_cost_ht * (1 + newItem.tva / 10000);
+							newItem.bundle_cost_ttc = Math.round(
+								newItem.bundle_cost_ht * (1 + newItem.tva / 10000)
+							);
+							add_item_to_restock();
+						} else {
+							let name = item.name;
+							let reference = item.reference;
+							let unitPriceHT = item.unitPriceHT;
+							let quantity = item.quantity;
+							unknownItems = [...unknownItems, { name, reference, unitPriceHT, quantity }];
+						}
+					});
+			});
+		}
 	}
 </script>
 
@@ -358,9 +419,7 @@
 							{/each}
 						</ul>
 					{:else}
-						<p class="text-sm text-gray-600 dark:text-gray-400">
-							Aucun produit inconnu trouvé.
-						</p>
+						<p class="text-sm text-gray-600 dark:text-gray-400">Aucun produit inconnu trouvé.</p>
 					{/if}
 				</div>
 
@@ -400,7 +459,7 @@
 					<!-- Form -->
 					<div class="grid gap-y-4">
 						<!-- Form Group -->
-						<div>							
+						<div>
 							<label for="invoice" class="block text-sm mb-2 dark:text-white">Facture</label>
 							<div class="relative">
 								<input
@@ -413,69 +472,13 @@
 									class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
 									required
 									aria-describedby="text-error"
-									/>
+								/>
 							</div>
 
 							<button
 								type="submit"
 								class="mt-4 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
-								on:click={() => {
-									unknownItems = [];
-									let items;
-									if (newRestock.type == "auchan") {
-										items = restockAuchan(pdfText);
-										console.log(items);									
-									}
-									if (newRestock.type == "auchan_drive"){
-										items = restockAuchanDrive(pdfText);
-									}									
-									if (items != undefined){
-										items.forEach(item => {
-											itemsApi()
-											.getAllItems(undefined, 10000, undefined, undefined, undefined, undefined, {
-												withCredentials: true
-											})
-											.then((res) => {
-													let nameItem = undefined;
-													let idItem="";
-													let amountPerBundle = 0;
-													let searchItems = res.data.items ?? [];
-													for (let i=0;i<searchItems.length;i++){
-														let searchItem = searchItems[i];														
-														if (searchItem.ref_bundle == item.reference.toString()){
-															nameItem = searchItem.name;
-															idItem = searchItem.id;
-															if (searchItem.amount_per_bundle != undefined){
-																amountPerBundle = searchItem.amount_per_bundle;
-															}
-															break;
-														}
-													}
-													if (nameItem != undefined){
-														newItem.item_id = idItem;
-														newItem.item_name = nameItem;
-														newItem.amount_of_bundle = item.quantity;
-														newItem.amount_per_bundle = amountPerBundle;
-														newItem.bundle_cost_ht = Math.round(item.unitPriceHT*100);
-														newItem.tva = item.tvaRate*100;
-														newItem.bundle_cost_float_ttc = newItem.bundle_cost_ht * (1 + newItem.tva / 10000); 
-														newItem.bundle_cost_ttc = Math.round(newItem.bundle_cost_ht * (1 + newItem.tva / 10000));
-														add_item_to_restock();		
-													}
-													else{
-														let name = item.name;
-														let reference = item.reference;
-														let unitPriceHT = item.unitPriceHT;
-														let quantity = item.quantity;
-														unknownItems = [...unknownItems, {name, reference, unitPriceHT, quantity}];
-														
-													}
-												});
-									
-										});
-									}
-								}}
-								
+								on:click={restockInvoice}
 								data-hs-overlay="#hs-modal-unknown-items">Réappro</button
 							>
 						</div>
@@ -487,7 +490,6 @@
 	</div>
 </div>
 
-
 <div class="max-w-[95%] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
 	<div class="py-3 px-2 w-1.0 flex m-auto">
 		<select
@@ -496,7 +498,7 @@
 			bind:value={newRestock.type}
 		>
 			{#each restockTypeIterator as [val, name]}
-				<option value="{val}">{name}</option>
+				<option value={val}>{name}</option>
 			{/each}
 		</select>
 		<div>
@@ -507,13 +509,19 @@
 				Total TTC : {formatPrice(newRestock.total_cost_ttc)}
 			</p>
 		</div>
-		{#if newRestock.type=='auchan' || newRestock.type == 'auchan_drive'}
-		<button
-			data-hs-overlay="#hs-modal-new-image"
-			id="reapproPdf" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded ml-4">PDF</button>
-		<button
-			data-hs-overlay="#hs-modal-unknown-items"
-			id="reapproPdf" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded ml-4">Produits inconnus</button>
+		{#if newRestock.type == RestockType.RestockAuchan || newRestock.type == RestockType.RestockAuchanDrive}
+			<button
+				data-hs-overlay="#hs-modal-new-image"
+				id="reapproPdf"
+				class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded ml-4"
+				>PDF</button
+			>
+			<button
+				data-hs-overlay="#hs-modal-unknown-items"
+				id="reapproPdf"
+				class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded ml-4"
+				>Produits inconnus</button
+			>
 		{/if}
 	</div>
 	<div class="flex flex-col">
@@ -1081,7 +1089,7 @@
 								}}
 							>
 								{#if selectedViewRestock == restock}
-								 	Fermer
+									Fermer
 								{:else}
 									Voir
 								{/if}
