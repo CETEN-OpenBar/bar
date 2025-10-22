@@ -6,7 +6,7 @@ tasks:
   setup: 
     cmds:
       - go mod download
-      - go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest
+      - go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
       - go install github.com/fatih/gomodifytags@latest
   regen:
     cmds:
