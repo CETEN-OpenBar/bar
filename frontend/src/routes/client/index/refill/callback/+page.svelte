@@ -58,11 +58,11 @@
                     error = "Rechargement introuvable"
                     break;
                 case 402:
-                    error = "Le paiment n'a pas encore été validé."
+                    error = "Le paiement n'a pas encore été validé"
                     show_disclaimer = true
                     break;
                 default:
-                    error = "Une erreur innatendue est survenue"
+                    error = "Une erreur inattendue est survenue, merci de réessayer plus tard"
                     break;
             }
         })
@@ -94,7 +94,7 @@
             {#if show_disclaimer}    
                 <div class="font-normal italic mt-2">
                     Remarque : le paiement sera revérifié automatiquement.<br/>
-                    HelloAsso peut mettre jusqu'à 30 minutes pour valider un paiement, au delà de ce délai, contactez un membre du bar.
+                    HelloAsso peut mettre jusqu'à 30 minutes pour valider un paiement, au-delà de ce délai, contactez un membre du bar.
                 </div>
             {/if}
         </div>
