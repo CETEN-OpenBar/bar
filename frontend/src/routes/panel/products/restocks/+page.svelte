@@ -18,13 +18,15 @@
 
 	let sure: boolean = false;
 	let items: Item[] = [];
-	// Array of items which are unkown by their reference for the automatic restock with the invoice
+	// Array of items which are unknown by their reference for the automatic restock with the invoice
 	let unknownItems: Array<{
 		name: string;
 		reference: number;
 		unitPriceHT: number;
 		quantity: number;
 	}> = [];
+	// Store if a reference is associate with multiple ites
+	let multipleItemsReference: Record<string, string[]> = {};
 
 	let restocks: Restock[] = [];
 	let newRestock: NewRestock = {
@@ -321,6 +323,7 @@
 
 	function restockInvoice() {
 		unknownItems = [];
+		multipleItemsReference = {};
 		let items;
 		if (newRestock.type == RestockType.RestockAuchan) {
 			items = restockAuchan(pdfText);
@@ -333,7 +336,7 @@
 				itemsApi()
 					.getAllItems(
 						undefined,
-						1,
+						100,
 						undefined,
 						undefined,
 						undefined,
@@ -348,14 +351,12 @@
 						let idItem = '';
 						let amountPerBundle = 0;
 						let searchItems = res.data.items ?? [];
-						if (searchItems.length > 0) {
+						if (searchItems.length == 1) {
 							nameItem = searchItems[0].name;
 							idItem = searchItems[0].id;
 							if (searchItems[0].amount_per_bundle != undefined) {
 								amountPerBundle = searchItems[0].amount_per_bundle;
 							}
-						}
-						if (nameItem != undefined) {
 							newItem.item_id = idItem;
 							newItem.item_name = nameItem;
 							newItem.amount_of_bundle = item.quantity;
@@ -367,7 +368,15 @@
 								newItem.bundle_cost_ht * (1 + newItem.tva / 10000)
 							);
 							add_item_to_restock();
-						} else {
+						}
+						if (searchItems.length > 1) {
+							let nameItems: string[] = [];
+							searchItems.forEach((itemFound) => {
+								nameItems.push(itemFound.name);
+							});
+							multipleItemsReference[item.reference] = nameItems;
+						}
+						if (searchItems.length == 0) {
 							let name = item.name;
 							let reference = item.reference;
 							let unitPriceHT = item.unitPriceHT;
@@ -394,12 +403,34 @@
 			<div class="p-4 sm:p-7">
 				<div class="text-center">
 					<h2 class="block text-2xl font-bold text-gray-800 dark:text-gray-200">
-						Produits inconnus
+						Produits inconnus et réferences multiples
 					</h2>
 				</div>
 
 				<div class="mt-5">
-					<!-- List of unknown items -->
+					<!-- List of unknown items and reference with multiple items -->
+					{#if Object.keys(multipleItemsReference).length > 0}
+						<ul class="divide-y divide-gray-200 dark:divide-gray-700">
+							{#each Object.entries(multipleItemsReference) as [reference, names]}
+								<li class="py-3">
+									<div class="flex flex-col">
+										<p class="text-sm font-medium text-gray-800 dark:text-gray-200">
+											Référence : {reference}
+										</p>
+										<p class="text-sm text-gray-600 dark:text-gray-400">Produits associés :</p>
+										<ul class="list-disc pl-5">
+											{#each names as name}
+												<li class="text-sm text-gray-600 dark:text-gray-400">{name}</li>
+											{/each}
+										</ul>
+									</div>
+								</li>
+							{/each}
+						</ul>
+					{:else}
+						<p class="text-sm text-gray-600 dark:text-gray-400">Aucune réference multiple.</p>
+					{/if}
+					<hr class="my-4 border-gray-300 dark:border-gray-600" />
 					{#if unknownItems.length > 0}
 						<ul class="divide-y divide-gray-200 dark:divide-gray-700">
 							{#each unknownItems as item}
@@ -525,7 +556,7 @@
 				data-hs-overlay="#hs-modal-unknown-items"
 				id="reapproPdf"
 				class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded ml-4"
-				>Produits inconnus</button
+				>Produits inconnus et réferences multiples</button
 			>
 		{/if}
 	</div>
