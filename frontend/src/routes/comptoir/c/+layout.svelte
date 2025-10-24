@@ -63,7 +63,6 @@
 		display: flex;
 		flex-direction: column;
 		height: 100vh;
-		padding: 1rem;
 		gap: 1rem;
 	}
 </style>

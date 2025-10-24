@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import Transactions from '$lib/components/comptoir/transactions.svelte';
+	import TransactionsItems from '$lib/components/comptoir/transactionsItems.svelte';
 	import ReadCard from '$lib/components/readCard.svelte';
 	import { open_caisse, open_door, open_ventilo } from '$lib/local/local';
 	import NewRefill from '$lib/components/comptoir/newRefill.svelte';
@@ -8,7 +8,6 @@
 	import ChangePassword from '$lib/components/comptoir/changePassword.svelte';
 	import Password from '$lib/components/password.svelte';
 	import type { ConnectPasswordRequest } from '$lib/api';
-	
 
 	function reset() {
 		askForCard = false;
@@ -56,8 +55,6 @@
 				goto('/panel');
 			});
 	};
-
-	
 </script>
 
 <style>
@@ -89,7 +86,7 @@
 		}
 	}
 
-	.transactions-container {
+	.resume-container {
 		display: flex;
 		flex-direction: column;
 		height: 100%;
@@ -332,17 +329,17 @@
 {#if changePassword}
 	<ChangePassword onEnd={() => (changePassword = false)} />
 {:else}
-	<div class="transactions-container">
+	<div class="resume-container">
 		<header class="header-section">
 			<div class="actions-group">
+				<button class="btn btn-small" on:click={() => goto('/comptoir/c/transactions')}>
+					<iconify-icon icon="mdi:format-list-bulleted" width="16" height="16" />
+					Transactions
+				</button>
+				
 				<button class="btn btn-small" on:click={() => goto('/comptoir/c/refills')}>
 					<iconify-icon icon="mdi:history" width="16" height="16" />
 					Historique
-				</button>
-				
-				<button class="btn btn-small" on:click={() => goto('/comptoir/c/resume')}>
-					<iconify-icon icon="mdi:chart-box" width="16" height="16" />
-					Résumé
 				</button>
 
 				<button class="btn btn-small" on:click={() => newRefill = true}>
@@ -386,14 +383,14 @@
 			</div>
 
 			<div class="mobile-menu" class:open={mobileMenuOpen}>
+				<button class="btn btn-small" on:click={() => { goto('/comptoir/c/transactions'); mobileMenuOpen = false; }}>
+					<iconify-icon icon="mdi:format-list-bulleted" width="16" height="16" />
+					Transactions
+				</button>
+				
 				<button class="btn btn-small" on:click={() => { goto('/comptoir/c/refills'); mobileMenuOpen = false; }}>
 					<iconify-icon icon="mdi:history" width="16" height="16" />
 					Historique
-				</button>
-				
-				<button class="btn btn-small" on:click={() => { goto('/comptoir/c/resume'); mobileMenuOpen = false; }}>
-					<iconify-icon icon="mdi:chart-box" width="16" height="16" />
-					Résumé
 				</button>
 
 				<button class="btn btn-small" on:click={() => { newRefill = true; mobileMenuOpen = false; }}>
@@ -430,10 +427,8 @@
 		</header>
 
 		<main class="content-area">
-			<Transactions />
+			<TransactionsItems />
 		</main>
-
-		
 
 		{#if newRefill}
 			<NewRefill {close} />
