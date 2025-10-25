@@ -1145,13 +1145,19 @@ paths:
           schema:
             type: integer
             format: uint64
-        - name: state
+        - name: transaction_state
           in: query
-          description: Filter by state
+          description: Filter transaction by state
           required: false
           schema:
             type: string
             $ref: "#/components/schemas/TransactionState"
+        - name: hide_canceled
+          in: query
+          description: Hide canceled items
+          required: false
+          schema:
+            type: boolean
         - name: hide_remote
           in: query
           description: Hide remote transactions
@@ -1161,6 +1167,24 @@ paths:
         - name: name
           in: query
           description: Filter by account name
+          required: false
+          schema:
+            type: string
+        - name: start_time
+          in: query
+          description: Filter by start_time
+          required: false
+          schema:
+            type: integer
+        - name: end_time
+          in: query
+          description: Filter by end_time
+          required: false
+          schema:
+            type: integer
+        - name: item_id
+          in: query
+          description: Filter by item
           required: false
           schema:
             type: string
