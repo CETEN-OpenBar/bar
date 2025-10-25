@@ -31,7 +31,7 @@
 				var itemID = undefined;
 			}
 		
-			let resp = await transactionsApi().getTransactions(1, undefined, "finished", !hide_remotes, undefined, startDate, endDate, itemID, {
+			let resp = await transactionsApi().getTransactions(1, undefined, "finished", true, !hide_remotes, undefined, startDate, endDate, itemID, {
 				withCredentials: true
 			});
 		

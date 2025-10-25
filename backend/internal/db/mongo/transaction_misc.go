@@ -58,14 +58,14 @@ func (b *Backend) CountTransactions(ctx context.Context, accountID string, state
 	return uint64(count), nil
 }
 
-func (b *Backend) GetAllTransactions(ctx context.Context, page uint64, size uint64, state string, name string, hide_remotes bool, StartTime int, EndTime int, ItemID string) ([]*models.Transaction, error) {
+func (b *Backend) GetAllTransactions(ctx context.Context, page uint64, size uint64, TransactionState string, hide_canceled bool, name string, hide_remotes bool, StartTime int, EndTime int, ItemID string) ([]*models.Transaction, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	filter := bson.M{}
 
-	if state != "" {
-        filter["state"] = state
+	if TransactionState != "" {
+        filter["state"] = TransactionState
     }
 
 
@@ -98,8 +98,8 @@ func (b *Backend) GetAllTransactions(ctx context.Context, page uint64, size uint
 	if ItemID != "" {
 		itemsElemMatch["item_id"] = uuid.MustParse(ItemID)
 	}
-	if state != "" {
-		itemsElemMatch["state"] = bson.M{"$ne": "canceled"} 
+	if hide_canceled {
+		itemsElemMatch["state"] = bson.M{"$ne": autogen.TransactionItemCanceled}
 	}
 	if len(itemsElemMatch) > 0 {
 		filter["items"] = bson.M{"$elemMatch": itemsElemMatch}
@@ -122,14 +122,14 @@ func (b *Backend) GetAllTransactions(ctx context.Context, page uint64, size uint
 }
 
 
-func (b *Backend) CountAllTransactions(ctx context.Context, state string, name string, hide_remotes bool, StartTime int, EndTime int, ItemID string) (uint64, error) {
+func (b *Backend) CountAllTransactions(ctx context.Context, TransactionState string, hide_canceled bool, name string, hide_remotes bool, StartTime int, EndTime int, ItemID string) (uint64, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
 
 	filter := bson.M{}
 
-	if state != "" {
-        filter["state"] = state
+	if TransactionState != "" {
+        filter["state"] = TransactionState
     }
 
 
@@ -162,8 +162,8 @@ func (b *Backend) CountAllTransactions(ctx context.Context, state string, name s
 	if ItemID != "" {
 		itemsElemMatch["item_id"] = uuid.MustParse(ItemID)
 	}
-	if state != "" {
-		itemsElemMatch["state"] = bson.M{"$ne": "canceled"} 
+	if hide_canceled {
+		itemsElemMatch["state"] = bson.M{"$ne": autogen.TransactionItemCanceled}
 	}
 	if len(itemsElemMatch) > 0 {
 		filter["items"] = bson.M{"$elemMatch": itemsElemMatch}

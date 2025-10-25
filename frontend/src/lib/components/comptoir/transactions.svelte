@@ -52,13 +52,14 @@
 	});
 
 	let st: TransactionState | undefined = 'started';
+
 	let showRemoteTransactions: boolean = true;
 
 	type TransactionItemWithFakeAmount = TransactionItem & { item_fake_amount?: number };
 
 	function reloadTransactions() {
 		transactionsApi()
-			.getTransactions(page, amount, st, !showRemoteTransactions, searchNameValue, undefined, undefined, undefined, { withCredentials: true })
+			.getTransactions(page, amount, st, false, !showRemoteTransactions, searchNameValue, undefined, undefined, undefined, { withCredentials: true })
 			.then((res) => {
 				page = res.data.page ?? 0;
 				maxPage = res.data.max_page ?? 0;

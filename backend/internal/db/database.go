@@ -126,8 +126,8 @@ type DBackend interface {
 	GetTransactions(ctx context.Context, account string, page uint64, size uint64, state string) ([]*models.Transaction, error)
 	CountTransactions(ctx context.Context, account string, state string) (uint64, error)
 
-	GetAllTransactions(ctx context.Context, page uint64, size uint64, state string, name string, hide_remotes bool, StartTime int, EndTime int, ItemId string) ([]*models.Transaction, error)
-	CountAllTransactions(ctx context.Context, state string, name string, hide_remotes bool, StartTime int, EndTime int, ItemId string) (uint64, error)
+	GetAllTransactions(ctx context.Context, page uint64, size uint64, TransactionState string, hide_canceled bool, name string, hide_remotes bool, StartTime int, EndTime int, ItemId string) ([]*models.Transaction, error)
+	CountAllTransactions(ctx context.Context, TransactionState string, hide_canceled bool, name string, hide_remotes bool, StartTime int, EndTime int, ItemId string) (uint64, error)
 	GetAllActiveTransactionsItems(ctx context.Context, name string) ([]autogen.TransactionItem, error)
 
 	// Restock's CRUD
