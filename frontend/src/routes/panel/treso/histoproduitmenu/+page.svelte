@@ -43,7 +43,8 @@
 		}
 	}
 
-	let todayMorning = new Date(new Date().toLocaleDateString());
+	let todayMorning = new Date();
+	todayMorning.setHours(0, 0, 0, 0);
 	let startDate = time2Utc(todayMorning.getTime() / 1000)
 	let endDate = time2Utc(todayMorning.getTime() / 1000 + 24 * 60 * 60);
 </script>
