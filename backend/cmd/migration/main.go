@@ -338,7 +338,7 @@ func part3(mongoDB db.DBackend, mariaDB *sql.DB) {
 				IssuedBy:     operatorId,
 				Type:         type_,
 				IssuedByName: op.Name(),
-				State:        autogen.Valid,
+				State:        autogen.RefillStateValid,
 				Amount:       int64(howMuch),
 				Id:           uuid.New(),
 			},
@@ -347,7 +347,7 @@ func part3(mongoDB db.DBackend, mariaDB *sql.DB) {
 		fmt.Println(refill)
 
 		if canceled {
-			refill.Refill.State = autogen.Canceled
+			refill.Refill.State = autogen.RefillStateCanceled
 		}
 
 		err = mongoDB.CreateRefill(context.Background(), refill)

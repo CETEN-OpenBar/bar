@@ -33,15 +33,24 @@ func (s *Server) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 
 		userSess, err := userStore.Get(c.Request(), "BAR_SESS")
 		if err != nil {
-			return echo.NewHTTPError(500, "session not found")
+			userSess.Options.MaxAge = -1
+			userSess.Save(c.Request(), c.Response())
+			return ErrorNotAuthenticated(c)
 		}
+
 		adminSess, err := adminStore.Get(c.Request(), "BAR_ADMIN_SESS")
 		if err != nil {
-			return echo.NewHTTPError(500, "session not found")
+			adminSess.Options.MaxAge = -1
+			adminSess.Save(c.Request(), c.Response())
+			return ErrorNotAuthenticated(c)
 		}
+
 		onBoardSess, err := onBoardStore.Get(c.Request(), "BAR_ONBOARD_SESS")
 		if err != nil {
-			return echo.NewHTTPError(500, "session not found")
+			onBoardSess.Options.MaxAge = -1
+			onBoardSess.Save(c.Request(), c.Response())
+			return ErrorNotAuthenticated(c)
+
 		}
 
 		c.Set("userSess", userSess)

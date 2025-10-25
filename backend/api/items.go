@@ -35,7 +35,7 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 		return Error500(c)
 	}
 
-	count, err := s.DBackend.CountItems(c.Request().Context(), categoryId.String(), state, "", "")
+	count, err := s.DBackend.CountItems(c.Request().Context(), categoryId.String(), state, "", "", "")
 	if err != nil {
 		return Error500(c)
 	}
@@ -43,7 +43,7 @@ func (s *Server) GetCategoryItems(c echo.Context, categoryId autogen.UUID, param
 	// Make sure the last page is not empty
 	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	data, err := s.DBackend.GetItems(c.Request().Context(), categoryId.String(), dbpage, limit, state, "", "")
+	data, err := s.DBackend.GetItems(c.Request().Context(), categoryId.String(), dbpage, limit, state, "", "", "", true)
 	if err != nil {
 		return Error500(c)
 	}
@@ -248,6 +248,7 @@ func (s *Server) GetAllItems(c echo.Context, params autogen.GetAllItemsParams) e
 	categoryId := ""
 	name := ""
 	fournisseur := ""
+	refBundle := ""
 	if params.State != nil {
 		state = string(*params.State)
 	}
@@ -260,8 +261,11 @@ func (s *Server) GetAllItems(c echo.Context, params autogen.GetAllItemsParams) e
 	if params.Fournisseur != nil {
 		fournisseur = string(*params.Fournisseur)
 	}
+	if params.RefBundle != nil {
+		refBundle = string(*params.RefBundle)
+	}
 
-	count, err := s.DBackend.CountItems(c.Request().Context(), categoryId, state, name, fournisseur)
+	count, err := s.DBackend.CountItems(c.Request().Context(), categoryId, state, name, fournisseur, refBundle)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -270,7 +274,7 @@ func (s *Server) GetAllItems(c echo.Context, params autogen.GetAllItemsParams) e
 	// Make sure the last page is not empty
 	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	data, err := s.DBackend.GetItems(c.Request().Context(), categoryId, dbpage, limit, state, name, fournisseur)
+	data, err := s.DBackend.GetItems(c.Request().Context(), categoryId, dbpage, limit, state, name, fournisseur, refBundle, false)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)

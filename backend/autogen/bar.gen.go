@@ -75,6 +75,7 @@ const (
 	ErrNotAuthenticated    ErrorCodes = "not_authenticated"
 	ErrQRInvalid           ErrorCodes = "qr_invalid"
 	ErrRefillNotFound      ErrorCodes = "refill_not_found"
+	ErrStarringNotFound    ErrorCodes = "starring_not_found"
 	ErrTextNotFound        ErrorCodes = "text_not_found"
 	ErrTransactionNotFound ErrorCodes = "transaction_not_found"
 )
@@ -110,14 +111,15 @@ const (
 	MsgNotConnected         Messages = "Not connected"
 	MsgQRInvalid            Messages = "Invalid QR Code nonce"
 	MsgRefillNotFound       Messages = "Refill does not exists"
+	MsgStarringNotFound     Messages = "Starring does not exists"
 	MsgTextNotFound         Messages = "Text does not exists"
 	MsgTransactionNotFound  Messages = "Transaction does not exists"
 )
 
 // Defines values for RefillState.
 const (
-	Canceled RefillState = "canceled"
-	Valid    RefillState = "valid"
+	RefillStateCanceled RefillState = "canceled"
+	RefillStateValid    RefillState = "valid"
 )
 
 // Defines values for RefillType.
@@ -142,6 +144,12 @@ const (
 	RestockHoly         RestockType = "holy"
 	RestockPromocash    RestockType = "promocash"
 	RestockViennoiserie RestockType = "viennoiserie"
+)
+
+// Defines values for StarringState.
+const (
+	StarringStateCanceled StarringState = "canceled"
+	StarringStateValid    StarringState = "valid"
 )
 
 // Defines values for TransactionItemState.
@@ -523,6 +531,27 @@ type RestockState string
 // RestockType defines model for RestockType.
 type RestockType string
 
+// Starring defines model for Starring.
+type Starring struct {
+	AccountId UUID `json:"account_id" bson:"account_id"`
+
+	// AccountName Name of the account
+	AccountName    string        `json:"account_name" bson:"account_name"`
+	Amount         int64         `json:"amount" bson:"amount"`
+	CanceledBy     *UUID         `json:"canceled_by,omitempty" bson:"canceled_by"`
+	CanceledByName *string       `json:"canceled_by_name,omitempty" bson:"canceled_by_name"`
+	DeletedAt      *uint64       `json:"deleted_at,omitempty" bson:"deleted_at"`
+	DeletedBy      *UUID         `json:"deleted_by,omitempty" bson:"deleted_by"`
+	Id             UUID          `json:"id" bson:"id"`
+	IssuedAt       uint64        `json:"issued_at" bson:"issued_at"`
+	IssuedBy       UUID          `json:"issued_by" bson:"issued_by"`
+	IssuedByName   string        `json:"issued_by_name" bson:"issued_by_name"`
+	State          StarringState `json:"state" bson:"state"`
+}
+
+// StarringState defines model for StarringState.
+type StarringState string
+
 // Transaction defines model for Transaction.
 type Transaction struct {
 	AccountId string `json:"account_id" bson:"account_id"`
@@ -664,6 +693,21 @@ type GetSelfRefillsParams struct {
 	EndDate *openapi_types.Date `form:"end_date,omitempty" json:"end_date,omitempty" bson:"end_date"`
 }
 
+// GetSelfStarringParams defines parameters for GetSelfStarring.
+type GetSelfStarringParams struct {
+	// Page Page number
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+
+	// Limit Number of donations per page
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+
+	// StartDate Start date of the donation
+	StartDate *openapi_types.Date `form:"start_date,omitempty" json:"start_date,omitempty" bson:"start_date"`
+
+	// EndDate End date of the donation
+	EndDate *openapi_types.Date `form:"end_date,omitempty" json:"end_date,omitempty" bson:"end_date"`
+}
+
 // GetCurrentAccountTransactionsParams defines parameters for GetCurrentAccountTransactions.
 type GetCurrentAccountTransactionsParams struct {
 	// Page Page number
@@ -719,6 +763,33 @@ type PatchRefillIdParams struct {
 
 	// Type New type of the refill
 	Type *RefillType `form:"type,omitempty" json:"type,omitempty" bson:"type"`
+}
+
+// GetAccountStarringParams defines parameters for GetAccountStarring.
+type GetAccountStarringParams struct {
+	// Page Page number
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+
+	// Limit Number of donations per page
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+
+	// StartDate Start date of the donation
+	StartDate *openapi_types.Date `form:"start_date,omitempty" json:"start_date,omitempty" bson:"start_date"`
+
+	// EndDate End date of the donation
+	EndDate *openapi_types.Date `form:"end_date,omitempty" json:"end_date,omitempty" bson:"end_date"`
+}
+
+// PostStarringParams defines parameters for PostStarring.
+type PostStarringParams struct {
+	// Amount Amount of the starring
+	Amount int64 `form:"amount" json:"amount" bson:"amount"`
+}
+
+// PatchStarringIdParams defines parameters for PatchStarringId.
+type PatchStarringIdParams struct {
+	// State New state of the donation
+	State *StarringState `form:"state,omitempty" json:"state,omitempty" bson:"state"`
 }
 
 // GetAccountTransactionsParams defines parameters for GetAccountTransactions.
@@ -876,6 +947,15 @@ type GetDeletedRefillsParams struct {
 	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
 }
 
+// GetDeletedStarringParams defines parameters for GetDeletedStarring.
+type GetDeletedStarringParams struct {
+	// Page Page number
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+
+	// Limit Number of accounts per page
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+}
+
 // GetDeletedTransactionsParams defines parameters for GetDeletedTransactions.
 type GetDeletedTransactionsParams struct {
 	// Page Page number
@@ -909,6 +989,9 @@ type GetAllItemsParams struct {
 
 	// Fournisseur Filter by fournisseur
 	Fournisseur *Fournisseur `form:"fournisseur,omitempty" json:"fournisseur,omitempty" bson:"fournisseur"`
+
+	// RefBundle Filter by reference
+	RefBundle *string `form:"ref_bundle,omitempty" json:"ref_bundle,omitempty" bson:"ref_bundle"`
 }
 
 // GetAllIncoherentItemsParams defines parameters for GetAllIncoherentItems.
@@ -954,6 +1037,24 @@ type GetRestocksParams struct {
 
 	// State search state
 	State *RestockState `form:"state,omitempty" json:"state,omitempty" bson:"state"`
+}
+
+// GetStarringsParams defines parameters for GetStarrings.
+type GetStarringsParams struct {
+	// Page Page number
+	Page *uint64 `form:"page,omitempty" json:"page,omitempty" bson:"page"`
+
+	// Limit Number of donations per page
+	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
+
+	// Name Filter by account name
+	Name *string `form:"name,omitempty" json:"name,omitempty" bson:"name"`
+
+	// StartDate Start date of the donations
+	StartDate *string `form:"start_date,omitempty" json:"start_date,omitempty" bson:"start_date"`
+
+	// EndDate End date of the donations
+	EndDate *string `form:"end_date,omitempty" json:"end_date,omitempty" bson:"end_date"`
 }
 
 // GetTransactionsParams defines parameters for GetTransactions.
@@ -1070,6 +1171,9 @@ type ServerInterface interface {
 	// (GET /account/refills)
 	GetSelfRefills(ctx echo.Context, params GetSelfRefillsParams) error
 
+	// (GET /account/stars)
+	GetSelfStarring(ctx echo.Context, params GetSelfStarringParams) error
+
 	// (GET /account/toggles/wants_to_staff)
 	ToggleAccountWantsToStaff(ctx echo.Context) error
 
@@ -1111,6 +1215,18 @@ type ServerInterface interface {
 
 	// (PATCH /accounts/{account_id}/refills/{refill_id})
 	PatchRefillId(ctx echo.Context, accountId UUID, refillId UUID, params PatchRefillIdParams) error
+
+	// (GET /accounts/{account_id}/stars)
+	GetAccountStarring(ctx echo.Context, accountId string, params GetAccountStarringParams) error
+
+	// (POST /accounts/{account_id}/stars)
+	PostStarring(ctx echo.Context, accountId string, params PostStarringParams) error
+
+	// (DELETE /accounts/{account_id}/stars/{starring_id})
+	MarkDeleteStarring(ctx echo.Context, accountId UUID, starringId UUID) error
+
+	// (PATCH /accounts/{account_id}/stars/{starring_id})
+	PatchStarringId(ctx echo.Context, accountId UUID, starringId UUID, params PatchStarringIdParams) error
 
 	// (GET /accounts/{account_id}/toggles/wants_to_staff)
 	AdminToggleAccountWantsToStaff(ctx echo.Context, accountId UUID) error
@@ -1271,6 +1387,15 @@ type ServerInterface interface {
 	// (PATCH /deleted/refills/{refill_id})
 	RestoreDeletedRefill(ctx echo.Context, refillId UUID) error
 
+	// (GET /deleted/stars)
+	GetDeletedStarring(ctx echo.Context, params GetDeletedStarringParams) error
+
+	// (DELETE /deleted/stars/{starring_id})
+	DeleteStarring(ctx echo.Context, starringId UUID) error
+
+	// (PATCH /deleted/stars/{starring_id})
+	RestoreDeletedStarring(ctx echo.Context, starringId UUID) error
+
 	// (GET /deleted/transactions)
 	GetDeletedTransactions(ctx echo.Context, params GetDeletedTransactionsParams) error
 
@@ -1306,6 +1431,9 @@ type ServerInterface interface {
 
 	// (PATCH /restocks/{restock_id})
 	UpdateRestock(ctx echo.Context, restockId UUID) error
+
+	// (GET /stars)
+	GetStarrings(ctx echo.Context, params GetStarringsParams) error
 
 	// (GET /transactions)
 	GetTransactions(ctx echo.Context, params GetTransactionsParams) error
@@ -1423,6 +1551,47 @@ func (w *ServerInterfaceWrapper) GetSelfRefills(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.GetSelfRefills(ctx, params)
+	return err
+}
+
+// GetSelfStarring converts echo context to params.
+func (w *ServerInterfaceWrapper) GetSelfStarring(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(AuthScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetSelfStarringParams
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page", ctx.QueryParams(), &params.Page)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter page: %s", err))
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "limit", ctx.QueryParams(), &params.Limit)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter limit: %s", err))
+	}
+
+	// ------------- Optional query parameter "start_date" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "start_date", ctx.QueryParams(), &params.StartDate)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter start_date: %s", err))
+	}
+
+	// ------------- Optional query parameter "end_date" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "end_date", ctx.QueryParams(), &params.EndDate)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter end_date: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetSelfStarring(ctx, params)
 	return err
 }
 
@@ -1757,6 +1926,142 @@ func (w *ServerInterfaceWrapper) PatchRefillId(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.PatchRefillId(ctx, accountId, refillId, params)
+	return err
+}
+
+// GetAccountStarring converts echo context to params.
+func (w *ServerInterfaceWrapper) GetAccountStarring(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "account_id" -------------
+	var accountId string
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "account_id", runtime.ParamLocationPath, ctx.Param("account_id"), &accountId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter account_id: %s", err))
+	}
+
+	ctx.Set(Admin_authScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetAccountStarringParams
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page", ctx.QueryParams(), &params.Page)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter page: %s", err))
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "limit", ctx.QueryParams(), &params.Limit)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter limit: %s", err))
+	}
+
+	// ------------- Optional query parameter "start_date" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "start_date", ctx.QueryParams(), &params.StartDate)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter start_date: %s", err))
+	}
+
+	// ------------- Optional query parameter "end_date" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "end_date", ctx.QueryParams(), &params.EndDate)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter end_date: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetAccountStarring(ctx, accountId, params)
+	return err
+}
+
+// PostStarring converts echo context to params.
+func (w *ServerInterfaceWrapper) PostStarring(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "account_id" -------------
+	var accountId string
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "account_id", runtime.ParamLocationPath, ctx.Param("account_id"), &accountId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter account_id: %s", err))
+	}
+
+	ctx.Set(Admin_authScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params PostStarringParams
+	// ------------- Required query parameter "amount" -------------
+
+	err = runtime.BindQueryParameter("form", true, true, "amount", ctx.QueryParams(), &params.Amount)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter amount: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.PostStarring(ctx, accountId, params)
+	return err
+}
+
+// MarkDeleteStarring converts echo context to params.
+func (w *ServerInterfaceWrapper) MarkDeleteStarring(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "account_id" -------------
+	var accountId UUID
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "account_id", runtime.ParamLocationPath, ctx.Param("account_id"), &accountId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter account_id: %s", err))
+	}
+
+	// ------------- Path parameter "starring_id" -------------
+	var starringId UUID
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "starring_id", runtime.ParamLocationPath, ctx.Param("starring_id"), &starringId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter starring_id: %s", err))
+	}
+
+	ctx.Set(Admin_authScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.MarkDeleteStarring(ctx, accountId, starringId)
+	return err
+}
+
+// PatchStarringId converts echo context to params.
+func (w *ServerInterfaceWrapper) PatchStarringId(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "account_id" -------------
+	var accountId UUID
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "account_id", runtime.ParamLocationPath, ctx.Param("account_id"), &accountId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter account_id: %s", err))
+	}
+
+	// ------------- Path parameter "starring_id" -------------
+	var starringId UUID
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "starring_id", runtime.ParamLocationPath, ctx.Param("starring_id"), &starringId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter starring_id: %s", err))
+	}
+
+	ctx.Set(AuthScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params PatchStarringIdParams
+	// ------------- Optional query parameter "state" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "state", ctx.QueryParams(), &params.State)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter state: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.PatchStarringId(ctx, accountId, starringId, params)
 	return err
 }
 
@@ -2864,6 +3169,69 @@ func (w *ServerInterfaceWrapper) RestoreDeletedRefill(ctx echo.Context) error {
 	return err
 }
 
+// GetDeletedStarring converts echo context to params.
+func (w *ServerInterfaceWrapper) GetDeletedStarring(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(Admin_authScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetDeletedStarringParams
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page", ctx.QueryParams(), &params.Page)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter page: %s", err))
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "limit", ctx.QueryParams(), &params.Limit)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter limit: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetDeletedStarring(ctx, params)
+	return err
+}
+
+// DeleteStarring converts echo context to params.
+func (w *ServerInterfaceWrapper) DeleteStarring(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "starring_id" -------------
+	var starringId UUID
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "starring_id", runtime.ParamLocationPath, ctx.Param("starring_id"), &starringId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter starring_id: %s", err))
+	}
+
+	ctx.Set(Admin_authScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.DeleteStarring(ctx, starringId)
+	return err
+}
+
+// RestoreDeletedStarring converts echo context to params.
+func (w *ServerInterfaceWrapper) RestoreDeletedStarring(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "starring_id" -------------
+	var starringId UUID
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "starring_id", runtime.ParamLocationPath, ctx.Param("starring_id"), &starringId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter starring_id: %s", err))
+	}
+
+	ctx.Set(Admin_authScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.RestoreDeletedStarring(ctx, starringId)
+	return err
+}
+
 // GetDeletedTransactions converts echo context to params.
 func (w *ServerInterfaceWrapper) GetDeletedTransactions(ctx echo.Context) error {
 	var err error
@@ -2986,6 +3354,13 @@ func (w *ServerInterfaceWrapper) GetAllItems(ctx echo.Context) error {
 	err = runtime.BindQueryParameter("form", true, false, "fournisseur", ctx.QueryParams(), &params.Fournisseur)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter fournisseur: %s", err))
+	}
+
+	// ------------- Optional query parameter "ref_bundle" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "ref_bundle", ctx.QueryParams(), &params.RefBundle)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter ref_bundle: %s", err))
 	}
 
 	// Invoke the callback with all the unmarshaled arguments
@@ -3176,6 +3551,54 @@ func (w *ServerInterfaceWrapper) UpdateRestock(ctx echo.Context) error {
 	return err
 }
 
+// GetStarrings converts echo context to params.
+func (w *ServerInterfaceWrapper) GetStarrings(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(Admin_authScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetStarringsParams
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page", ctx.QueryParams(), &params.Page)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter page: %s", err))
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "limit", ctx.QueryParams(), &params.Limit)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter limit: %s", err))
+	}
+
+	// ------------- Optional query parameter "name" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "name", ctx.QueryParams(), &params.Name)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter name: %s", err))
+	}
+
+	// ------------- Optional query parameter "start_date" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "start_date", ctx.QueryParams(), &params.StartDate)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter start_date: %s", err))
+	}
+
+	// ------------- Optional query parameter "end_date" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "end_date", ctx.QueryParams(), &params.EndDate)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter end_date: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetStarrings(ctx, params)
+	return err
+}
+
 // GetTransactions converts echo context to params.
 func (w *ServerInterfaceWrapper) GetTransactions(ctx echo.Context) error {
 	var err error
@@ -3300,6 +3723,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.GET(baseURL+"/account/qr", wrapper.GetAccountQRWebsocket)
 	router.POST(baseURL+"/account/qr", wrapper.GetAccountQR)
 	router.GET(baseURL+"/account/refills", wrapper.GetSelfRefills)
+	router.GET(baseURL+"/account/stars", wrapper.GetSelfStarring)
 	router.GET(baseURL+"/account/toggles/wants_to_staff", wrapper.ToggleAccountWantsToStaff)
 	router.GET(baseURL+"/account/transactions", wrapper.GetCurrentAccountTransactions)
 	router.POST(baseURL+"/account/transactions", wrapper.PostTransactions)
@@ -3314,6 +3738,10 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.POST(baseURL+"/accounts/:account_id/refills", wrapper.PostRefill)
 	router.DELETE(baseURL+"/accounts/:account_id/refills/:refill_id", wrapper.MarkDeleteRefill)
 	router.PATCH(baseURL+"/accounts/:account_id/refills/:refill_id", wrapper.PatchRefillId)
+	router.GET(baseURL+"/accounts/:account_id/stars", wrapper.GetAccountStarring)
+	router.POST(baseURL+"/accounts/:account_id/stars", wrapper.PostStarring)
+	router.DELETE(baseURL+"/accounts/:account_id/stars/:starring_id", wrapper.MarkDeleteStarring)
+	router.PATCH(baseURL+"/accounts/:account_id/stars/:starring_id", wrapper.PatchStarringId)
 	router.GET(baseURL+"/accounts/:account_id/toggles/wants_to_staff", wrapper.AdminToggleAccountWantsToStaff)
 	router.GET(baseURL+"/accounts/:account_id/transactions", wrapper.GetAccountTransactions)
 	router.DELETE(baseURL+"/accounts/:account_id/transactions/:transaction_id", wrapper.MarkDeleteTransactionId)
@@ -3367,6 +3795,9 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.GET(baseURL+"/deleted/refills", wrapper.GetDeletedRefills)
 	router.DELETE(baseURL+"/deleted/refills/:refill_id", wrapper.DeleteRefill)
 	router.PATCH(baseURL+"/deleted/refills/:refill_id", wrapper.RestoreDeletedRefill)
+	router.GET(baseURL+"/deleted/stars", wrapper.GetDeletedStarring)
+	router.DELETE(baseURL+"/deleted/stars/:starring_id", wrapper.DeleteStarring)
+	router.PATCH(baseURL+"/deleted/stars/:starring_id", wrapper.RestoreDeletedStarring)
 	router.GET(baseURL+"/deleted/transactions", wrapper.GetDeletedTransactions)
 	router.DELETE(baseURL+"/deleted/transactions/:transaction_id", wrapper.DeleteTransaction)
 	router.PATCH(baseURL+"/deleted/transactions/:transaction_id", wrapper.RestoreDeletedTransaction)
@@ -3379,6 +3810,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.POST(baseURL+"/restocks", wrapper.CreateRestock)
 	router.DELETE(baseURL+"/restocks/:restock_id", wrapper.DeleteRestock)
 	router.PATCH(baseURL+"/restocks/:restock_id", wrapper.UpdateRestock)
+	router.GET(baseURL+"/stars", wrapper.GetStarrings)
 	router.GET(baseURL+"/transactions", wrapper.GetTransactions)
 	router.GET(baseURL+"/transactions/items", wrapper.GetTransactionsItems)
 
@@ -3711,6 +4143,46 @@ func (response GetSelfRefills401JSONResponse) VisitGetSelfRefillsResponse(w http
 type GetSelfRefills500JSONResponse HTTPError
 
 func (response GetSelfRefills500JSONResponse) VisitGetSelfRefillsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetSelfStarringRequestObject struct {
+	Params GetSelfStarringParams `bson:"params"`
+}
+
+type GetSelfStarringResponseObject interface {
+	VisitGetSelfStarringResponse(w http.ResponseWriter) error
+}
+
+type GetSelfStarring200JSONResponse struct {
+	Limit   uint64     `json:"limit" bson:"limit"`
+	MaxPage uint64     `json:"max_page" bson:"max_page"`
+	Page    uint64     `json:"page" bson:"page"`
+	Stars   []Starring `json:"stars" bson:"stars"`
+}
+
+func (response GetSelfStarring200JSONResponse) VisitGetSelfStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetSelfStarring401JSONResponse HTTPError
+
+func (response GetSelfStarring401JSONResponse) VisitGetSelfStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetSelfStarring500JSONResponse HTTPError
+
+func (response GetSelfStarring500JSONResponse) VisitGetSelfStarringResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
@@ -4449,6 +4921,254 @@ func (response PatchRefillId409JSONResponse) VisitPatchRefillIdResponse(w http.R
 type PatchRefillId500JSONResponse HTTPError
 
 func (response PatchRefillId500JSONResponse) VisitPatchRefillIdResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetAccountStarringRequestObject struct {
+	AccountId string                   `json:"account_id" bson:"account_id"`
+	Params    GetAccountStarringParams `bson:"params"`
+}
+
+type GetAccountStarringResponseObject interface {
+	VisitGetAccountStarringResponse(w http.ResponseWriter) error
+}
+
+type GetAccountStarring200JSONResponse struct {
+	Limit   uint64     `json:"limit" bson:"limit"`
+	MaxPage uint64     `json:"max_page" bson:"max_page"`
+	Page    uint64     `json:"page" bson:"page"`
+	Stars   []Starring `json:"stars" bson:"stars"`
+}
+
+func (response GetAccountStarring200JSONResponse) VisitGetAccountStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetAccountStarring401JSONResponse HTTPError
+
+func (response GetAccountStarring401JSONResponse) VisitGetAccountStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetAccountStarring403JSONResponse HTTPError
+
+func (response GetAccountStarring403JSONResponse) VisitGetAccountStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetAccountStarring404JSONResponse HTTPError
+
+func (response GetAccountStarring404JSONResponse) VisitGetAccountStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetAccountStarring500JSONResponse HTTPError
+
+func (response GetAccountStarring500JSONResponse) VisitGetAccountStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostStarringRequestObject struct {
+	AccountId string             `json:"account_id" bson:"account_id"`
+	Params    PostStarringParams `bson:"params"`
+}
+
+type PostStarringResponseObject interface {
+	VisitPostStarringResponse(w http.ResponseWriter) error
+}
+
+type PostStarring201JSONResponse Starring
+
+func (response PostStarring201JSONResponse) VisitPostStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostStarring400JSONResponse HTTPError
+
+func (response PostStarring400JSONResponse) VisitPostStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostStarring401JSONResponse HTTPError
+
+func (response PostStarring401JSONResponse) VisitPostStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostStarring403JSONResponse HTTPError
+
+func (response PostStarring403JSONResponse) VisitPostStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostStarring404JSONResponse HTTPError
+
+func (response PostStarring404JSONResponse) VisitPostStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostStarring500JSONResponse HTTPError
+
+func (response PostStarring500JSONResponse) VisitPostStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type MarkDeleteStarringRequestObject struct {
+	AccountId  UUID `json:"account_id" bson:"account_id"`
+	StarringId UUID `json:"starring_id" bson:"starring_id"`
+}
+
+type MarkDeleteStarringResponseObject interface {
+	VisitMarkDeleteStarringResponse(w http.ResponseWriter) error
+}
+
+type MarkDeleteStarring204Response struct {
+}
+
+func (response MarkDeleteStarring204Response) VisitMarkDeleteStarringResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type MarkDeleteStarring401JSONResponse HTTPError
+
+func (response MarkDeleteStarring401JSONResponse) VisitMarkDeleteStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type MarkDeleteStarring403JSONResponse HTTPError
+
+func (response MarkDeleteStarring403JSONResponse) VisitMarkDeleteStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type MarkDeleteStarring404JSONResponse HTTPError
+
+func (response MarkDeleteStarring404JSONResponse) VisitMarkDeleteStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type MarkDeleteStarring500JSONResponse HTTPError
+
+func (response MarkDeleteStarring500JSONResponse) VisitMarkDeleteStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PatchStarringIdRequestObject struct {
+	AccountId  UUID                  `json:"account_id" bson:"account_id"`
+	StarringId UUID                  `json:"starring_id" bson:"starring_id"`
+	Params     PatchStarringIdParams `bson:"params"`
+}
+
+type PatchStarringIdResponseObject interface {
+	VisitPatchStarringIdResponse(w http.ResponseWriter) error
+}
+
+type PatchStarringId200JSONResponse Starring
+
+func (response PatchStarringId200JSONResponse) VisitPatchStarringIdResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PatchStarringId400JSONResponse HTTPError
+
+func (response PatchStarringId400JSONResponse) VisitPatchStarringIdResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PatchStarringId401JSONResponse HTTPError
+
+func (response PatchStarringId401JSONResponse) VisitPatchStarringIdResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PatchStarringId403JSONResponse HTTPError
+
+func (response PatchStarringId403JSONResponse) VisitPatchStarringIdResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PatchStarringId404JSONResponse HTTPError
+
+func (response PatchStarringId404JSONResponse) VisitPatchStarringIdResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PatchStarringId409JSONResponse HTTPError
+
+func (response PatchStarringId409JSONResponse) VisitPatchStarringIdResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PatchStarringId500JSONResponse HTTPError
+
+func (response PatchStarringId500JSONResponse) VisitPatchStarringIdResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
@@ -7193,6 +7913,186 @@ func (response RestoreDeletedRefill500JSONResponse) VisitRestoreDeletedRefillRes
 	return json.NewEncoder(w).Encode(response)
 }
 
+type GetDeletedStarringRequestObject struct {
+	Params GetDeletedStarringParams `bson:"params"`
+}
+
+type GetDeletedStarringResponseObject interface {
+	VisitGetDeletedStarringResponse(w http.ResponseWriter) error
+}
+
+type GetDeletedStarring200JSONResponse struct {
+	Limit    uint64     `json:"limit" bson:"limit"`
+	MaxPage  uint64     `json:"max_page" bson:"max_page"`
+	Page     uint64     `json:"page" bson:"page"`
+	Starring []Starring `json:"starring" bson:"starring"`
+}
+
+func (response GetDeletedStarring200JSONResponse) VisitGetDeletedStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDeletedStarring401JSONResponse HTTPError
+
+func (response GetDeletedStarring401JSONResponse) VisitGetDeletedStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDeletedStarring403JSONResponse HTTPError
+
+func (response GetDeletedStarring403JSONResponse) VisitGetDeletedStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetDeletedStarring500JSONResponse HTTPError
+
+func (response GetDeletedStarring500JSONResponse) VisitGetDeletedStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteStarringRequestObject struct {
+	StarringId UUID `json:"starring_id" bson:"starring_id"`
+}
+
+type DeleteStarringResponseObject interface {
+	VisitDeleteStarringResponse(w http.ResponseWriter) error
+}
+
+type DeleteStarring204Response struct {
+}
+
+func (response DeleteStarring204Response) VisitDeleteStarringResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type DeleteStarring401JSONResponse HTTPError
+
+func (response DeleteStarring401JSONResponse) VisitDeleteStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteStarring403JSONResponse HTTPError
+
+func (response DeleteStarring403JSONResponse) VisitDeleteStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteStarring404JSONResponse HTTPError
+
+func (response DeleteStarring404JSONResponse) VisitDeleteStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteStarring409JSONResponse HTTPError
+
+func (response DeleteStarring409JSONResponse) VisitDeleteStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteStarring500JSONResponse HTTPError
+
+func (response DeleteStarring500JSONResponse) VisitDeleteStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedStarringRequestObject struct {
+	StarringId UUID `json:"starring_id" bson:"starring_id"`
+}
+
+type RestoreDeletedStarringResponseObject interface {
+	VisitRestoreDeletedStarringResponse(w http.ResponseWriter) error
+}
+
+type RestoreDeletedStarring204Response struct {
+}
+
+func (response RestoreDeletedStarring204Response) VisitRestoreDeletedStarringResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type RestoreDeletedStarring400JSONResponse HTTPError
+
+func (response RestoreDeletedStarring400JSONResponse) VisitRestoreDeletedStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedStarring401JSONResponse HTTPError
+
+func (response RestoreDeletedStarring401JSONResponse) VisitRestoreDeletedStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedStarring403JSONResponse HTTPError
+
+func (response RestoreDeletedStarring403JSONResponse) VisitRestoreDeletedStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedStarring404JSONResponse HTTPError
+
+func (response RestoreDeletedStarring404JSONResponse) VisitRestoreDeletedStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedStarring409JSONResponse HTTPError
+
+func (response RestoreDeletedStarring409JSONResponse) VisitRestoreDeletedStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type RestoreDeletedStarring500JSONResponse HTTPError
+
+func (response RestoreDeletedStarring500JSONResponse) VisitRestoreDeletedStarringResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
 type GetDeletedTransactionsRequestObject struct {
 	Params GetDeletedTransactionsParams `bson:"params"`
 }
@@ -7834,6 +8734,55 @@ func (response UpdateRestock500JSONResponse) VisitUpdateRestockResponse(w http.R
 	return json.NewEncoder(w).Encode(response)
 }
 
+type GetStarringsRequestObject struct {
+	Params GetStarringsParams `bson:"params"`
+}
+
+type GetStarringsResponseObject interface {
+	VisitGetStarringsResponse(w http.ResponseWriter) error
+}
+
+type GetStarrings200JSONResponse struct {
+	Limit   uint64     `json:"limit" bson:"limit"`
+	MaxPage uint64     `json:"max_page" bson:"max_page"`
+	Page    uint64     `json:"page" bson:"page"`
+	Stars   []Starring `json:"stars" bson:"stars"`
+}
+
+func (response GetStarrings200JSONResponse) VisitGetStarringsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetStarrings401JSONResponse HTTPError
+
+func (response GetStarrings401JSONResponse) VisitGetStarringsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetStarrings403JSONResponse HTTPError
+
+func (response GetStarrings403JSONResponse) VisitGetStarringsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetStarrings500JSONResponse HTTPError
+
+func (response GetStarrings500JSONResponse) VisitGetStarringsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
 type GetTransactionsRequestObject struct {
 	Params GetTransactionsParams `bson:"params"`
 }
@@ -7951,6 +8900,9 @@ type StrictServerInterface interface {
 	// (GET /account/refills)
 	GetSelfRefills(ctx context.Context, request GetSelfRefillsRequestObject) (GetSelfRefillsResponseObject, error)
 
+	// (GET /account/stars)
+	GetSelfStarring(ctx context.Context, request GetSelfStarringRequestObject) (GetSelfStarringResponseObject, error)
+
 	// (GET /account/toggles/wants_to_staff)
 	ToggleAccountWantsToStaff(ctx context.Context, request ToggleAccountWantsToStaffRequestObject) (ToggleAccountWantsToStaffResponseObject, error)
 
@@ -7992,6 +8944,18 @@ type StrictServerInterface interface {
 
 	// (PATCH /accounts/{account_id}/refills/{refill_id})
 	PatchRefillId(ctx context.Context, request PatchRefillIdRequestObject) (PatchRefillIdResponseObject, error)
+
+	// (GET /accounts/{account_id}/stars)
+	GetAccountStarring(ctx context.Context, request GetAccountStarringRequestObject) (GetAccountStarringResponseObject, error)
+
+	// (POST /accounts/{account_id}/stars)
+	PostStarring(ctx context.Context, request PostStarringRequestObject) (PostStarringResponseObject, error)
+
+	// (DELETE /accounts/{account_id}/stars/{starring_id})
+	MarkDeleteStarring(ctx context.Context, request MarkDeleteStarringRequestObject) (MarkDeleteStarringResponseObject, error)
+
+	// (PATCH /accounts/{account_id}/stars/{starring_id})
+	PatchStarringId(ctx context.Context, request PatchStarringIdRequestObject) (PatchStarringIdResponseObject, error)
 
 	// (GET /accounts/{account_id}/toggles/wants_to_staff)
 	AdminToggleAccountWantsToStaff(ctx context.Context, request AdminToggleAccountWantsToStaffRequestObject) (AdminToggleAccountWantsToStaffResponseObject, error)
@@ -8152,6 +9116,15 @@ type StrictServerInterface interface {
 	// (PATCH /deleted/refills/{refill_id})
 	RestoreDeletedRefill(ctx context.Context, request RestoreDeletedRefillRequestObject) (RestoreDeletedRefillResponseObject, error)
 
+	// (GET /deleted/stars)
+	GetDeletedStarring(ctx context.Context, request GetDeletedStarringRequestObject) (GetDeletedStarringResponseObject, error)
+
+	// (DELETE /deleted/stars/{starring_id})
+	DeleteStarring(ctx context.Context, request DeleteStarringRequestObject) (DeleteStarringResponseObject, error)
+
+	// (PATCH /deleted/stars/{starring_id})
+	RestoreDeletedStarring(ctx context.Context, request RestoreDeletedStarringRequestObject) (RestoreDeletedStarringResponseObject, error)
+
 	// (GET /deleted/transactions)
 	GetDeletedTransactions(ctx context.Context, request GetDeletedTransactionsRequestObject) (GetDeletedTransactionsResponseObject, error)
 
@@ -8187,6 +9160,9 @@ type StrictServerInterface interface {
 
 	// (PATCH /restocks/{restock_id})
 	UpdateRestock(ctx context.Context, request UpdateRestockRequestObject) (UpdateRestockResponseObject, error)
+
+	// (GET /stars)
+	GetStarrings(ctx context.Context, request GetStarringsRequestObject) (GetStarringsResponseObject, error)
 
 	// (GET /transactions)
 	GetTransactions(ctx context.Context, request GetTransactionsRequestObject) (GetTransactionsResponseObject, error)
@@ -8382,6 +9358,31 @@ func (sh *strictHandler) GetSelfRefills(ctx echo.Context, params GetSelfRefillsP
 		return err
 	} else if validResponse, ok := response.(GetSelfRefillsResponseObject); ok {
 		return validResponse.VisitGetSelfRefillsResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// GetSelfStarring operation middleware
+func (sh *strictHandler) GetSelfStarring(ctx echo.Context, params GetSelfStarringParams) error {
+	var request GetSelfStarringRequestObject
+
+	request.Params = params
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetSelfStarring(ctx.Request().Context(), request.(GetSelfStarringRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetSelfStarring")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(GetSelfStarringResponseObject); ok {
+		return validResponse.VisitGetSelfStarringResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("unexpected response type: %T", response)
 	}
@@ -8747,6 +9748,111 @@ func (sh *strictHandler) PatchRefillId(ctx echo.Context, accountId UUID, refillI
 		return err
 	} else if validResponse, ok := response.(PatchRefillIdResponseObject); ok {
 		return validResponse.VisitPatchRefillIdResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// GetAccountStarring operation middleware
+func (sh *strictHandler) GetAccountStarring(ctx echo.Context, accountId string, params GetAccountStarringParams) error {
+	var request GetAccountStarringRequestObject
+
+	request.AccountId = accountId
+	request.Params = params
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetAccountStarring(ctx.Request().Context(), request.(GetAccountStarringRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetAccountStarring")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(GetAccountStarringResponseObject); ok {
+		return validResponse.VisitGetAccountStarringResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// PostStarring operation middleware
+func (sh *strictHandler) PostStarring(ctx echo.Context, accountId string, params PostStarringParams) error {
+	var request PostStarringRequestObject
+
+	request.AccountId = accountId
+	request.Params = params
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.PostStarring(ctx.Request().Context(), request.(PostStarringRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostStarring")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(PostStarringResponseObject); ok {
+		return validResponse.VisitPostStarringResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// MarkDeleteStarring operation middleware
+func (sh *strictHandler) MarkDeleteStarring(ctx echo.Context, accountId UUID, starringId UUID) error {
+	var request MarkDeleteStarringRequestObject
+
+	request.AccountId = accountId
+	request.StarringId = starringId
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.MarkDeleteStarring(ctx.Request().Context(), request.(MarkDeleteStarringRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "MarkDeleteStarring")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(MarkDeleteStarringResponseObject); ok {
+		return validResponse.VisitMarkDeleteStarringResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// PatchStarringId operation middleware
+func (sh *strictHandler) PatchStarringId(ctx echo.Context, accountId UUID, starringId UUID, params PatchStarringIdParams) error {
+	var request PatchStarringIdRequestObject
+
+	request.AccountId = accountId
+	request.StarringId = starringId
+	request.Params = params
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.PatchStarringId(ctx.Request().Context(), request.(PatchStarringIdRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PatchStarringId")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(PatchStarringIdResponseObject); ok {
+		return validResponse.VisitPatchStarringIdResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("unexpected response type: %T", response)
 	}
@@ -10130,6 +11236,81 @@ func (sh *strictHandler) RestoreDeletedRefill(ctx echo.Context, refillId UUID) e
 	return nil
 }
 
+// GetDeletedStarring operation middleware
+func (sh *strictHandler) GetDeletedStarring(ctx echo.Context, params GetDeletedStarringParams) error {
+	var request GetDeletedStarringRequestObject
+
+	request.Params = params
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetDeletedStarring(ctx.Request().Context(), request.(GetDeletedStarringRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetDeletedStarring")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(GetDeletedStarringResponseObject); ok {
+		return validResponse.VisitGetDeletedStarringResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// DeleteStarring operation middleware
+func (sh *strictHandler) DeleteStarring(ctx echo.Context, starringId UUID) error {
+	var request DeleteStarringRequestObject
+
+	request.StarringId = starringId
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteStarring(ctx.Request().Context(), request.(DeleteStarringRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteStarring")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(DeleteStarringResponseObject); ok {
+		return validResponse.VisitDeleteStarringResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// RestoreDeletedStarring operation middleware
+func (sh *strictHandler) RestoreDeletedStarring(ctx echo.Context, starringId UUID) error {
+	var request RestoreDeletedStarringRequestObject
+
+	request.StarringId = starringId
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.RestoreDeletedStarring(ctx.Request().Context(), request.(RestoreDeletedStarringRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "RestoreDeletedStarring")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(RestoreDeletedStarringResponseObject); ok {
+		return validResponse.VisitRestoreDeletedStarringResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
 // GetDeletedTransactions operation middleware
 func (sh *strictHandler) GetDeletedTransactions(ctx echo.Context, params GetDeletedTransactionsParams) error {
 	var request GetDeletedTransactionsRequestObject
@@ -10442,6 +11623,31 @@ func (sh *strictHandler) UpdateRestock(ctx echo.Context, restockId UUID) error {
 	return nil
 }
 
+// GetStarrings operation middleware
+func (sh *strictHandler) GetStarrings(ctx echo.Context, params GetStarringsParams) error {
+	var request GetStarringsRequestObject
+
+	request.Params = params
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetStarrings(ctx.Request().Context(), request.(GetStarringsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetStarrings")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(GetStarringsResponseObject); ok {
+		return validResponse.VisitGetStarringsResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
 // GetTransactions operation middleware
 func (sh *strictHandler) GetTransactions(ctx echo.Context, params GetTransactionsParams) error {
 	var request GetTransactionsRequestObject
@@ -10495,138 +11701,149 @@ func (sh *strictHandler) GetTransactionsItems(ctx echo.Context, params GetTransa
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
-	"SiFXzfM7xGUP+WWipy9P/xsAAP//s1bgJBGuAQA=",
+	"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",
+	"QH36+vTfAQAA//88Pyrcfd0BAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

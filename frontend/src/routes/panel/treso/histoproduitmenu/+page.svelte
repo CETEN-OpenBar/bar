@@ -11,7 +11,7 @@
 	let selectedItem: Item | undefined = undefined;
 	let hide_remotes = true;
 	async function reloadItems() {
-		let resp = await itemsApi().getAllItems(1, itemsPerPage, undefined, undefined, searchItem, undefined, {
+		let resp = await itemsApi().getAllItems(1, itemsPerPage, undefined, undefined, searchItem, undefined, undefined, {
 			withCredentials: true
 		});
 		items = resp.data.items ?? [];

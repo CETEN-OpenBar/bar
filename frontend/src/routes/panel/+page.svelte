@@ -3,6 +3,6 @@
 </script>
 
 <!-- center modules -->
-<div class="flex flex-col items-center justify-center h-screen">
+<div class="flex items-center justify-center min-h-[calc(100vh-4rem)] p-4 w-full">
     <Modules />
 </div>

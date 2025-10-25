@@ -18,6 +18,8 @@ tags:
     description: Related to user's transactions
   - name: refills
     description: Related to user's refills (real money)
+  - name: stars
+    description: Related to donnation (virtual money)
   - name: categories
     description: Categories of items in the shop
   - name: items
@@ -2143,6 +2145,435 @@ paths:
         - admin_auth: []
       tags:
         - refills
+  /stars:
+    get:
+      description: Get all stars donations
+      operationId: getStarrings
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            format: uint64
+        - name: limit
+          in: query
+          description: Number of donations per page
+          required: false
+          schema:
+            type: integer
+            format: uint64
+        - name: name
+          in: query
+          description: Filter by account name
+          required: false
+          schema:
+            type: string
+        - name: start_date
+          in: query
+          description: Start date of the donations
+          required: false
+          schema:
+            type: string
+        - name: end_date
+          in: query
+          description: End date of the donations
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  stars:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Starring"
+                  page:
+                    type: integer
+                    format: uint64
+                  limit:
+                    type: integer
+                    format: uint64
+                  max_page:
+                    type: integer
+                    format: uint64
+                required:
+                  - page
+                  - limit
+                  - max_page
+                  - stars
+        "401":
+          description: "Not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - admin_auth: []
+      tags:
+        - stars
+  /account/stars:
+    get:
+      description: Get all stars donations
+      operationId: getSelfStarring
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            format: uint64
+        - name: limit
+          in: query
+          description: Number of donations per page
+          required: false
+          schema:
+            type: integer
+            format: uint64
+        - name: start_date
+          in: query
+          description: Start date of the donation
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          description: End date of the donation
+          required: false
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  stars:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Starring"
+                  page:
+                    type: integer
+                    format: uint64
+                  limit:
+                    type: integer
+                    format: uint64
+                  max_page:
+                    type: integer
+                    format: uint64
+                required:
+                  - stars
+                  - page
+                  - limit
+                  - max_page
+        "401":
+          description: "Not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - auth: []
+      tags:
+        - stars
+  /accounts/{account_id}/stars:
+    get:
+      description: Get all stars donations of an account
+      operationId: getAccountStarring
+      parameters:
+        - name: account_id
+          in: path
+          description: ID or CardID of the account
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            format: uint64
+        - name: limit
+          in: query
+          description: Number of donations per page
+          required: false
+          schema:
+            type: integer
+            format: uint64
+        - name: start_date
+          in: query
+          description: Start date of the donation
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          description: End date of the donation
+          required: false
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  stars:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Starring"
+                  page:
+                    type: integer
+                    format: uint64
+                  limit:
+                    type: integer
+                    format: uint64
+                  max_page:
+                    type: integer
+                    format: uint64
+                required:
+                  - stars
+                  - page
+                  - limit
+                  - max_page
+        "401":
+          description: "Not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Account not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - admin_auth: []
+      tags:
+        - stars
+    post:
+      description: Create a new stars donations
+      operationId: postStarring
+      parameters:
+        - name: account_id
+          in: path
+          description: ID or CardID of the account
+          required: true
+          schema:
+            type: string
+        - name: amount
+          in: query
+          description: Amount of the starring
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Starring"
+        "400":
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Account not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - admin_auth: []
+      tags:
+        - stars
+  /accounts/{account_id}/stars/{starring_id}:
+    patch:
+      description: Update donation's state
+      operationId: patchStarringId
+      parameters:
+        - name: account_id
+          in: path
+          description: ID of the account
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+        - name: starring_id
+          in: path
+          description: ID of the donation
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+        - name: state
+          in: query
+          description: New state of the donation
+          required: false
+          schema:
+            type: string
+            $ref: "#/components/schemas/StarringState"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Starring"
+        "400":
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not connected"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Account or refill not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Conflict"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - auth: []
+      tags:
+        - stars
+    delete:
+      description: Cancels a donation
+      operationId: markDeleteStarring
+      parameters:
+        - name: account_id
+          in: path
+          description: ID of the account
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+        - name: starring_id
+          in: path
+          description: ID of the donation
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "204":
+          description: ""
+        "401":
+          description: "Not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Account or refill not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - admin_auth: []
+      tags:
+        - stars
   /categories:
     get:
       description: Get all categories
@@ -2424,6 +2855,12 @@ paths:
           required: false
           schema:
             $ref: "#/components/schemas/Fournisseur"
+        - name: ref_bundle
+          in: query
+          description: Filter by reference
+          required: false
+          schema:
+            type: string
       responses:
         "200":
           description: ""
@@ -3981,6 +4418,174 @@ paths:
         - admin_auth: []
       tags:
         - deleted
+  /deleted/stars:
+    get:
+      description: "Get deleted starrings"
+      operationId: getDeletedStarring
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            format: uint64
+        - name: limit
+          in: query
+          description: Number of accounts per page
+          required: false
+          schema:
+            type: integer
+            format: uint64
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  starring:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Starring"
+                  page:
+                    type: integer
+                    format: uint64
+                  limit:
+                    type: integer
+                    format: uint64
+                  max_page:
+                    type: integer
+                    format: uint64
+                required:
+                  - starring
+                  - page
+                  - limit
+                  - max_page
+        "401":
+          description: "Not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - admin_auth: []
+      tags:
+        - deleted
+  /deleted/stars/{starring_id}:
+    patch:
+      description: "Restore a deleted starring"
+      operationId: restoreDeletedStarring
+      parameters:
+        - name: starring_id
+          in: path
+          description: ID of the starring
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "204":
+          description: "Success"
+        "400":
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "401":
+          description: "Not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Starring not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Starring already exists"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - admin_auth: []
+      tags:
+        - deleted
+    delete:
+      description: "Permanently deletes a starring (SUPERADMIN)"
+      operationId: deleteStarring
+      parameters:
+        - name: starring_id
+          in: path
+          description: ID of the starring
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "204":
+          description: "Success"
+        "401":
+          description: "Not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "404":
+          description: "Starring not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "409":
+          description: "Starring already exists"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - admin_auth: []
+      tags:
+        - deleted
   /deleted/categories:
     get:
       description: "Get deleted categories"
@@ -4723,6 +5328,7 @@ components:
         - category_not_found
         - item_not_found
         - refill_not_found
+        - starring_not_found
         - transaction_not_found
       x-enum-varnames:
         - ErrBadRequest
@@ -4736,6 +5342,7 @@ components:
         - ErrCategoryNotFound
         - ErrItemNotFound
         - ErrRefillNotFound
+        - ErrStarringNotFound
         - ErrTransactionNotFound
     Messages:
       type: string
@@ -4755,6 +5362,7 @@ components:
         - Category does not exists
         - Item does not exists
         - Refill does not exists
+        - Starring does not exists
         - Transaction does not exists
       x-enum-varnames:
         - MsgBadRequest
@@ -4772,6 +5380,7 @@ components:
         - MsgCategoryNotFound
         - MsgItemNotFound
         - MsgRefillNotFound
+        - MsgStarringNotFound
         - MsgTransactionNotFound
     HTTPError:
       type: object
@@ -5508,6 +6117,53 @@ components:
           type: string
         type:
           $ref: "#/components/schemas/RefillType"
+        deleted_at:
+          type: integer
+          format: uint64
+        deleted_by:
+          $ref: "#/components/schemas/UUID"
+      required:
+        - id
+        - account_id
+        - account_name
+        - amount
+        - state
+        - issued_at
+        - issued_by
+        - issued_by_name
+        - type   
+    StarringState:
+      type: string
+      enum:
+        - valid
+        - canceled 
+    Starring:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        account_id:
+          $ref: "#/components/schemas/UUID"
+        account_name:
+          type: string
+          description: Name of the account
+        amount:
+          type: integer
+          format: int64
+          example: 100 
+        state:
+          $ref: "#/components/schemas/StarringState"
+        issued_at:
+          type: integer
+          format: uint64
+        issued_by:
+          $ref: "#/components/schemas/UUID"
+        issued_by_name:
+          type: string
+        canceled_by:
+          $ref: "#/components/schemas/UUID"
+        canceled_by_name:
+          type: string
         deleted_at:
           type: integer
           format: uint64
