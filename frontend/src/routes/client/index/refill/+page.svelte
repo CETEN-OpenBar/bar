@@ -51,14 +51,12 @@
 	}
 </script>
 
-<div class="text-center p-3">
-	<a
-		class="text-xl lg:text-2xl font-extrabold underline underline-offset-4 text-white hover:text-gray-400"
-		href="/client/index"
-	>
-		&lt&nbsp Retour&nbsp
-	</a>
-</div>
+<a 
+  class="block my-5 bg-red-500 hover:bg-red-400 mx-auto rounded-md p-3 w-fit text-xl lg:text-2xl text-white font-bold"
+  href="/client/index"
+>
+    &lt&nbsp Retour
+</a>
 
 {#if !remote_refills_available}
 <div class="w-full flex flex-col items-center px-5 mb-5">
@@ -91,7 +89,7 @@
 					type="number"
 					step="0.01"
 					min="0.50"
-					placeholder="10.0"
+					placeholder="0.00"
                     disabled={!remote_refills_available}
 				/>
 				<div>€</div>

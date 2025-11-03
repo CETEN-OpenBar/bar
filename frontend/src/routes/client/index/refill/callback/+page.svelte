@@ -100,5 +100,5 @@
         </div>
     {/if}
     
-	<a class="text-lg font-bold text-white underline" href="/client/index"> Retour </a>
+	<a class="bg-blue-500 hover:bg-blue-400 p-3 rounded-md text-lg font-bold text-white" href="/client/index">&lt&nbsp Retour </a>
 </div>
