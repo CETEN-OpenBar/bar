@@ -7448,10 +7448,11 @@ export const ItemsApiAxiosParamCreator = function (configuration?: Configuration
          * @param {string} [categoryId] Filter by category
          * @param {string} [name] Filter by name
          * @param {Fournisseur} [fournisseur] Filter by fournisseur
+         * @param {string} [refBundle] Filter by reference
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllItems: async (page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: Fournisseur, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getAllItems: async (page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: Fournisseur, refBundle?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/items`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -7488,6 +7489,10 @@ export const ItemsApiAxiosParamCreator = function (configuration?: Configuration
 
             if (fournisseur !== undefined) {
                 localVarQueryParameter['fournisseur'] = fournisseur;
+            }
+
+            if (refBundle !== undefined) {
+                localVarQueryParameter['ref_bundle'] = refBundle;
             }
 
 
@@ -7747,11 +7752,12 @@ export const ItemsApiFp = function(configuration?: Configuration) {
          * @param {string} [categoryId] Filter by category
          * @param {string} [name] Filter by name
          * @param {Fournisseur} [fournisseur] Filter by fournisseur
+         * @param {string} [refBundle] Filter by reference
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getAllItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: Fournisseur, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAllItems200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllItems(page, limit, state, categoryId, name, fournisseur, options);
+        async getAllItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: Fournisseur, refBundle?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAllItems200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllItems(page, limit, state, categoryId, name, fournisseur, refBundle, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -7843,11 +7849,12 @@ export const ItemsApiFactory = function (configuration?: Configuration, basePath
          * @param {string} [categoryId] Filter by category
          * @param {string} [name] Filter by name
          * @param {Fournisseur} [fournisseur] Filter by fournisseur
+         * @param {string} [refBundle] Filter by reference
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: Fournisseur, options?: any): AxiosPromise<GetAllItems200Response> {
-            return localVarFp.getAllItems(page, limit, state, categoryId, name, fournisseur, options).then((request) => request(axios, basePath));
+        getAllItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: Fournisseur, refBundle?: string, options?: any): AxiosPromise<GetAllItems200Response> {
+            return localVarFp.getAllItems(page, limit, state, categoryId, name, fournisseur, refBundle, options).then((request) => request(axios, basePath));
         },
         /**
          * Get all items of a category
@@ -7935,12 +7942,13 @@ export class ItemsApi extends BaseAPI {
      * @param {string} [categoryId] Filter by category
      * @param {string} [name] Filter by name
      * @param {Fournisseur} [fournisseur] Filter by fournisseur
+     * @param {string} [refBundle] Filter by reference
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ItemsApi
      */
-    public getAllItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: Fournisseur, options?: AxiosRequestConfig) {
-        return ItemsApiFp(this.configuration).getAllItems(page, limit, state, categoryId, name, fournisseur, options).then((request) => request(this.axios, this.basePath));
+    public getAllItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: Fournisseur, refBundle?: string, options?: AxiosRequestConfig) {
+        return ItemsApiFp(this.configuration).getAllItems(page, limit, state, categoryId, name, fournisseur, refBundle, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
