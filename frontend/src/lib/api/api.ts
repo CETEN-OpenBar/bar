@@ -23,133 +23,31 @@ import type { RequestArgs } from './base';
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError, operationServerMap } from './base';
 
-/**
- * 
- * @export
- * @interface Account
- */
 export interface Account {
-    /**
-     * 
-     * @type {string}
-     * @memberof Account
-     */
     'id': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Account
-     */
     'first_name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Account
-     */
     'last_name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Account
-     */
     'nickname'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Account
-     */
     'google_id'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Account
-     */
     'google_picture'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Account
-     */
     'email_address': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof Account
-     */
     'balance': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof Account
-     */
     'points': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof Account
-     */
     'card_id'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Account
-     */
     'card_pin': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Account
-     */
     'password'?: string;
-    /**
-     * 
-     * @type {AccountRole}
-     * @memberof Account
-     */
     'role': AccountRole;
-    /**
-     * 
-     * @type {AccountPriceRole}
-     * @memberof Account
-     */
     'price_role': AccountPriceRole;
-    /**
-     * 
-     * @type {Array<AccountRestrictions>}
-     * @memberof Account
-     */
     'restrictions': Array<AccountRestrictions>;
-    /**
-     * 
-     * @type {AccountState}
-     * @memberof Account
-     */
     'state': AccountState;
-    /**
-     * 
-     * @type {number}
-     * @memberof Account
-     */
     'deleted_at'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof Account
-     */
     'deleted_by'?: string;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof Account
-     */
     'wants_to_staff': boolean;
 }
 
 
 /**
  * Role of the account
- * @export
- * @enum {string}
  */
 
 export const AccountPriceRole = {
@@ -166,8 +64,6 @@ export type AccountPriceRole = typeof AccountPriceRole[keyof typeof AccountPrice
 
 /**
  * Restrictions of the account
- * @export
- * @enum {string}
  */
 
 export const AccountRestrictions = {
@@ -180,8 +76,6 @@ export type AccountRestrictions = typeof AccountRestrictions[keyof typeof Accoun
 
 /**
  * Role of the account
- * @export
- * @enum {string}
  */
 
 export const AccountRole = {
@@ -198,8 +92,6 @@ export type AccountRole = typeof AccountRole[keyof typeof AccountRole];
 
 /**
  * State of the account
- * @export
- * @enum {string}
  */
 
 export const AccountState = {
@@ -210,298 +102,84 @@ export const AccountState = {
 export type AccountState = typeof AccountState[keyof typeof AccountState];
 
 
-/**
- * 
- * @export
- * @interface CarouselImage
- */
 export interface CarouselImage {
-    /**
-     * 
-     * @type {string}
-     * @memberof CarouselImage
-     */
     'id': string;
     /**
      * Image to display
-     * @type {string}
-     * @memberof CarouselImage
      */
     'image_url': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof CarouselImage
-     */
     'deleted_at'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof CarouselImage
-     */
     'deleted_by'?: string;
 }
-/**
- * 
- * @export
- * @interface CarouselText
- */
 export interface CarouselText {
-    /**
-     * 
-     * @type {string}
-     * @memberof CarouselText
-     */
     'id': string;
     /**
      * Text to display
-     * @type {string}
-     * @memberof CarouselText
      */
     'text': string;
     /**
      * Color of the text
-     * @type {string}
-     * @memberof CarouselText
      */
     'color': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof CarouselText
-     */
     'deleted_at'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof CarouselText
-     */
     'deleted_by'?: string;
 }
-/**
- * 
- * @export
- * @interface CarouselTextCreate
- */
 export interface CarouselTextCreate {
     /**
      * Text to display
-     * @type {string}
-     * @memberof CarouselTextCreate
      */
     'text': string;
     /**
      * Color of the text
-     * @type {string}
-     * @memberof CarouselTextCreate
      */
     'color'?: string;
 }
-/**
- * 
- * @export
- * @interface CashMovement
- */
 export interface CashMovement {
-    /**
-     * 
-     * @type {string}
-     * @memberof CashMovement
-     */
     'id': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof CashMovement
-     */
     'amount': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof CashMovement
-     */
     'old_amount': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof CashMovement
-     */
     'reason': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof CashMovement
-     */
     'created_at': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof CashMovement
-     */
     'created_by': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof CashMovement
-     */
     'created_by_name': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof CashMovement
-     */
     'deleted_at'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof CashMovement
-     */
     'deleted_by'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof CashMovement
-     */
     'deleted_by_name'?: string;
 }
-/**
- * 
- * @export
- * @interface Category
- */
 export interface Category {
-    /**
-     * 
-     * @type {string}
-     * @memberof Category
-     */
     'id': string;
     /**
      * Name of the current category
-     * @type {string}
-     * @memberof Category
      */
     'name': string;
     /**
      * Link to picture of the current category
-     * @type {string}
-     * @memberof Category
      */
     'picture_uri': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof Category
-     */
     'position': number;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof Category
-     */
     'hidden': boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof Category
-     */
     'special_price': boolean;
-    /**
-     * 
-     * @type {number}
-     * @memberof Category
-     */
     'deleted_at'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof Category
-     */
     'deleted_by'?: string;
 }
-/**
- * 
- * @export
- * @interface ConnectCard200Response
- */
 export interface ConnectCard200Response {
-    /**
-     * 
-     * @type {Messages}
-     * @memberof ConnectCard200Response
-     */
     'message'?: Messages;
-    /**
-     * 
-     * @type {Account}
-     * @memberof ConnectCard200Response
-     */
     'account'?: Account;
 }
 
 
-/**
- * 
- * @export
- * @interface ConnectCardRequest
- */
 export interface ConnectCardRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof ConnectCardRequest
-     */
     'card_id': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ConnectCardRequest
-     */
     'card_pin': string;
 }
-/**
- * 
- * @export
- * @interface ConnectPasswordRequest
- */
 export interface ConnectPasswordRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof ConnectPasswordRequest
-     */
     'card_id': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ConnectPasswordRequest
-     */
     'password': string;
 }
-/**
- * 
- * @export
- * @interface CourseItem
- */
 export interface CourseItem {
-    /**
-     * 
-     * @type {number}
-     * @memberof CourseItem
-     */
     'amountToBuy': number;
-    /**
-     * 
-     * @type {Item}
-     * @memberof CourseItem
-     */
     'item': Item;
 }
-/**
- * 
- * @export
- * @enum {string}
- */
 
 export const ErrorCodes = {
     ErrBadRequest: 'bad_request',
@@ -522,11 +200,6 @@ export const ErrorCodes = {
 export type ErrorCodes = typeof ErrorCodes[keyof typeof ErrorCodes];
 
 
-/**
- * 
- * @export
- * @enum {string}
- */
 
 export const Fournisseur = {
     Auchan: 'auchan',
@@ -539,681 +212,153 @@ export const Fournisseur = {
 export type Fournisseur = typeof Fournisseur[keyof typeof Fournisseur];
 
 
-/**
- * 
- * @export
- * @interface GetAccountAdmin200Response
- */
 export interface GetAccountAdmin200Response {
-    /**
-     * 
-     * @type {Messages}
-     * @memberof GetAccountAdmin200Response
-     */
     'message'?: Messages;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof GetAccountAdmin200Response
-     */
     'is_allowed': boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof GetAccountAdmin200Response
-     */
     'can_restore': boolean;
 }
 
 
-/**
- * 
- * @export
- * @interface GetAccountQRRequest
- */
 export interface GetAccountQRRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof GetAccountQRRequest
-     */
     'card_pin': string;
 }
-/**
- * 
- * @export
- * @interface GetAccounts200Response
- */
 export interface GetAccounts200Response {
-    /**
-     * 
-     * @type {Messages}
-     * @memberof GetAccounts200Response
-     */
     'message'?: Messages;
-    /**
-     * 
-     * @type {Array<Account>}
-     * @memberof GetAccounts200Response
-     */
     'accounts': Array<Account>;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetAccounts200Response
-     */
     'page': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetAccounts200Response
-     */
     'limit': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetAccounts200Response
-     */
     'max_page': number;
 }
 
 
-/**
- * 
- * @export
- * @interface GetAllItems200Response
- */
 export interface GetAllItems200Response {
-    /**
-     * 
-     * @type {Array<Item>}
-     * @memberof GetAllItems200Response
-     */
     'items': Array<Item>;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetAllItems200Response
-     */
     'page': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetAllItems200Response
-     */
     'limit': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetAllItems200Response
-     */
     'max_page': number;
 }
-/**
- * 
- * @export
- * @interface GetCashMovements200Response
- */
 export interface GetCashMovements200Response {
-    /**
-     * 
-     * @type {Array<CashMovement>}
-     * @memberof GetCashMovements200Response
-     */
     'cash_movements': Array<CashMovement>;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetCashMovements200Response
-     */
     'page': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetCashMovements200Response
-     */
     'limit': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetCashMovements200Response
-     */
     'max_page': number;
 }
-/**
- * 
- * @export
- * @interface GetCourse200Response
- */
 export interface GetCourse200Response {
-    /**
-     * 
-     * @type {Array<CourseItem>}
-     * @memberof GetCourse200Response
-     */
     'items': Array<CourseItem>;
 }
-/**
- * 
- * @export
- * @interface GetDeletedAccounts200Response
- */
 export interface GetDeletedAccounts200Response {
-    /**
-     * 
-     * @type {Array<Account>}
-     * @memberof GetDeletedAccounts200Response
-     */
     'accounts': Array<Account>;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetDeletedAccounts200Response
-     */
     'page': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetDeletedAccounts200Response
-     */
     'limit': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetDeletedAccounts200Response
-     */
     'max_page': number;
 }
-/**
- * 
- * @export
- * @interface GetDeletedCarouselImages200Response
- */
 export interface GetDeletedCarouselImages200Response {
-    /**
-     * 
-     * @type {Array<CarouselImage>}
-     * @memberof GetDeletedCarouselImages200Response
-     */
     'items': Array<CarouselImage>;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetDeletedCarouselImages200Response
-     */
     'page': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetDeletedCarouselImages200Response
-     */
     'limit': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetDeletedCarouselImages200Response
-     */
     'max_page': number;
 }
-/**
- * 
- * @export
- * @interface GetDeletedCarouselTexts200Response
- */
 export interface GetDeletedCarouselTexts200Response {
-    /**
-     * 
-     * @type {Array<CarouselText>}
-     * @memberof GetDeletedCarouselTexts200Response
-     */
     'items': Array<CarouselText>;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetDeletedCarouselTexts200Response
-     */
     'page': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetDeletedCarouselTexts200Response
-     */
     'limit': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetDeletedCarouselTexts200Response
-     */
     'max_page': number;
 }
-/**
- * 
- * @export
- * @interface GetDeletedCategories200Response
- */
 export interface GetDeletedCategories200Response {
-    /**
-     * 
-     * @type {Array<Category>}
-     * @memberof GetDeletedCategories200Response
-     */
     'categories': Array<Category>;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetDeletedCategories200Response
-     */
     'page': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetDeletedCategories200Response
-     */
     'limit': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetDeletedCategories200Response
-     */
     'max_page': number;
 }
-/**
- * 
- * @export
- * @interface GetDeletedStarring200Response
- */
 export interface GetDeletedStarring200Response {
-    /**
-     * 
-     * @type {Array<Starring>}
-     * @memberof GetDeletedStarring200Response
-     */
     'starring': Array<Starring>;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetDeletedStarring200Response
-     */
     'page': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetDeletedStarring200Response
-     */
     'limit': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetDeletedStarring200Response
-     */
     'max_page': number;
 }
-/**
- * 
- * @export
- * @interface GetRefills200Response
- */
 export interface GetRefills200Response {
-    /**
-     * 
-     * @type {Array<Refill>}
-     * @memberof GetRefills200Response
-     */
     'refills': Array<Refill>;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetRefills200Response
-     */
     'page': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetRefills200Response
-     */
     'limit': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetRefills200Response
-     */
     'max_page': number;
 }
-/**
- * 
- * @export
- * @interface GetRestocks200Response
- */
 export interface GetRestocks200Response {
-    /**
-     * 
-     * @type {Array<Restock>}
-     * @memberof GetRestocks200Response
-     */
     'restocks': Array<Restock>;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetRestocks200Response
-     */
     'page': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetRestocks200Response
-     */
     'limit': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetRestocks200Response
-     */
     'max_page': number;
 }
-/**
- * 
- * @export
- * @interface GetStarrings200Response
- */
 export interface GetStarrings200Response {
-    /**
-     * 
-     * @type {Array<Starring>}
-     * @memberof GetStarrings200Response
-     */
     'stars': Array<Starring>;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetStarrings200Response
-     */
     'page': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetStarrings200Response
-     */
     'limit': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetStarrings200Response
-     */
     'max_page': number;
 }
-/**
- * 
- * @export
- * @interface GetTransactions200Response
- */
 export interface GetTransactions200Response {
-    /**
-     * 
-     * @type {Array<Transaction>}
-     * @memberof GetTransactions200Response
-     */
     'transactions': Array<Transaction>;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetTransactions200Response
-     */
     'page': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetTransactions200Response
-     */
     'limit': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetTransactions200Response
-     */
     'max_page': number;
 }
-/**
- * 
- * @export
- * @interface HTTPError
- */
 export interface HTTPError {
-    /**
-     * 
-     * @type {Messages}
-     * @memberof HTTPError
-     */
     'message': Messages;
-    /**
-     * 
-     * @type {ErrorCodes}
-     * @memberof HTTPError
-     */
     'error_code': ErrorCodes;
 }
 
 
-/**
- * 
- * @export
- * @interface ImportAccounts200Response
- */
 export interface ImportAccounts200Response {
-    /**
-     * 
-     * @type {Messages}
-     * @memberof ImportAccounts200Response
-     */
     'message'?: Messages;
-    /**
-     * 
-     * @type {Array<string>}
-     * @memberof ImportAccounts200Response
-     */
     'not_accepted'?: Array<string>;
 }
 
 
-/**
- * 
- * @export
- * @interface Item
- */
 export interface Item {
-    /**
-     * 
-     * @type {string}
-     * @memberof Item
-     */
     'id': string;
-    /**
-     * 
-     * @type {ItemPrices}
-     * @memberof Item
-     */
     'prices': ItemPrices;
-    /**
-     * 
-     * @type {ItemPrices}
-     * @memberof Item
-     */
     'display_prices'?: ItemPrices;
-    /**
-     * 
-     * @type {number}
-     * @memberof Item
-     */
     'display_price'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof Item
-     */
     'promotion'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof Item
-     */
     'promotion_ends_at'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof Item
-     */
     'amount_left': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof Item
-     */
     'optimal_amount': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof Item
-     */
     'buy_limit'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof Item
-     */
     'category_id': string;
     /**
      * Name of the current item
-     * @type {string}
-     * @memberof Item
      */
     'name': string;
     /**
      * Link to picture of the current item
-     * @type {string}
-     * @memberof Item
      */
     'picture_uri': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof Item
-     */
     'available_from'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof Item
-     */
     'available_until'?: number;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof Item
-     */
     'is_menu': boolean;
-    /**
-     * 
-     * @type {Array<MenuItem>}
-     * @memberof Item
-     */
     'menu_items'?: Array<MenuItem>;
-    /**
-     * 
-     * @type {Array<MenuCategory>}
-     * @memberof Item
-     */
     'menu_categories'?: Array<MenuCategory>;
-    /**
-     * 
-     * @type {ItemState}
-     * @memberof Item
-     */
     'state': ItemState;
-    /**
-     * 
-     * @type {number}
-     * @memberof Item
-     */
     'last_tva'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof Item
-     */
     'deleted_at'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof Item
-     */
     'deleted_by'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof Item
-     */
     'amount_per_bundle'?: number;
     /**
      * Referal code of the product in the Drive
-     * @type {string}
-     * @memberof Item
      */
     'ref_bundle'?: string;
-    /**
-     * 
-     * @type {Fournisseur}
-     * @memberof Item
-     */
     'fournisseur'?: Fournisseur;
 }
 
 
-/**
- * 
- * @export
- * @interface ItemPrices
- */
 export interface ItemPrices {
-    /**
-     * 
-     * @type {number}
-     * @memberof ItemPrices
-     */
     'coutant': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ItemPrices
-     */
     'staff_bar': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ItemPrices
-     */
     'privilegies': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ItemPrices
-     */
     'menu': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ItemPrices
-     */
     'ceten': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ItemPrices
-     */
     'externe': number;
 }
 /**
  * State of the item
- * @export
- * @enum {string}
  */
 
 export const ItemState = {
@@ -1224,79 +369,31 @@ export const ItemState = {
 export type ItemState = typeof ItemState[keyof typeof ItemState];
 
 
-/**
- * 
- * @export
- * @interface MenuCategory
- */
 export interface MenuCategory {
-    /**
-     * 
-     * @type {string}
-     * @memberof MenuCategory
-     */
     'id': string;
     /**
      * Name of the category
-     * @type {string}
-     * @memberof MenuCategory
      */
     'name': string;
     /**
      * Link to picture of the category
-     * @type {string}
-     * @memberof MenuCategory
      */
     'picture_uri': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof MenuCategory
-     */
     'amount': number;
 }
-/**
- * 
- * @export
- * @interface MenuItem
- */
 export interface MenuItem {
-    /**
-     * 
-     * @type {string}
-     * @memberof MenuItem
-     */
     'id': string;
     /**
      * Name of the current item
-     * @type {string}
-     * @memberof MenuItem
      */
     'name': string;
     /**
      * Link to picture of the current item
-     * @type {string}
-     * @memberof MenuItem
      */
     'picture_uri': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof MenuItem
-     */
     'promotion'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof MenuItem
-     */
     'amount': number;
 }
-/**
- * 
- * @export
- * @enum {string}
- */
 
 export const Messages = {
     MsgBadRequest: 'Bad request',
@@ -1321,493 +418,124 @@ export const Messages = {
 export type Messages = typeof Messages[keyof typeof Messages];
 
 
-/**
- * 
- * @export
- * @interface NewAccount
- */
 export interface NewAccount {
-    /**
-     * 
-     * @type {string}
-     * @memberof NewAccount
-     */
     'first_name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof NewAccount
-     */
     'last_name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof NewAccount
-     */
     'email_address': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof NewAccount
-     */
     'card_id'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof NewAccount
-     */
     'balance': number;
-    /**
-     * 
-     * @type {AccountRole}
-     * @memberof NewAccount
-     */
     'role': AccountRole;
-    /**
-     * 
-     * @type {AccountPriceRole}
-     * @memberof NewAccount
-     */
     'price_role'?: AccountPriceRole;
 }
 
 
-/**
- * 
- * @export
- * @interface NewCashMovement
- */
 export interface NewCashMovement {
-    /**
-     * 
-     * @type {number}
-     * @memberof NewCashMovement
-     */
     'amount': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof NewCashMovement
-     */
     'reason': string;
 }
-/**
- * 
- * @export
- * @interface NewCategory
- */
 export interface NewCategory {
     /**
      * Name of the current category
-     * @type {string}
-     * @memberof NewCategory
      */
     'name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof NewCategory
-     */
     'picture': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof NewCategory
-     */
     'position': number;
 }
-/**
- * 
- * @export
- * @interface NewItem
- */
 export interface NewItem {
-    /**
-     * 
-     * @type {ItemPrices}
-     * @memberof NewItem
-     */
     'prices': ItemPrices;
-    /**
-     * 
-     * @type {number}
-     * @memberof NewItem
-     */
     'promotion'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof NewItem
-     */
     'promotion_ends_at'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof NewItem
-     */
     'amount_left': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof NewItem
-     */
     'optimal_amount': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof NewItem
-     */
     'buy_limit'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof NewItem
-     */
     'available_from'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof NewItem
-     */
     'available_until'?: number;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof NewItem
-     */
     'is_menu'?: boolean;
-    /**
-     * 
-     * @type {Array<MenuItem>}
-     * @memberof NewItem
-     */
     'menu_items'?: Array<MenuItem>;
-    /**
-     * 
-     * @type {Array<MenuCategory>}
-     * @memberof NewItem
-     */
     'menu_categories'?: Array<MenuCategory>;
     /**
      * Name of the current item
-     * @type {string}
-     * @memberof NewItem
      */
     'name': string;
     /**
      * Picture of the current item
-     * @type {string}
-     * @memberof NewItem
      */
     'picture': string;
-    /**
-     * 
-     * @type {ItemState}
-     * @memberof NewItem
-     */
     'state': ItemState;
 }
 
 
-/**
- * 
- * @export
- * @interface NewRestock
- */
 export interface NewRestock {
-    /**
-     * 
-     * @type {Array<NewRestockItem>}
-     * @memberof NewRestock
-     */
     'items': Array<NewRestockItem>;
-    /**
-     * 
-     * @type {number}
-     * @memberof NewRestock
-     */
     'total_cost_ht': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof NewRestock
-     */
     'total_cost_ttc': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof NewRestock
-     */
     'driver_id'?: string;
-    /**
-     * 
-     * @type {RestockType}
-     * @memberof NewRestock
-     */
     'type': RestockType;
-    /**
-     * 
-     * @type {RestockState}
-     * @memberof NewRestock
-     */
     'state': RestockState;
 }
 
 
-/**
- * 
- * @export
- * @interface NewRestockItem
- */
 export interface NewRestockItem {
-    /**
-     * 
-     * @type {string}
-     * @memberof NewRestockItem
-     */
     'item_id': string;
     /**
      * Name of the current item
-     * @type {string}
-     * @memberof NewRestockItem
      */
     'item_name': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof NewRestockItem
-     */
     'amount_of_bundle': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof NewRestockItem
-     */
     'amount_per_bundle': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof NewRestockItem
-     */
     'bundle_cost_ht': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof NewRestockItem
-     */
     'bundle_cost_ttc': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof NewRestockItem
-     */
     'bundle_cost_float_ttc'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof NewRestockItem
-     */
     'tva': number;
 }
-/**
- * 
- * @export
- * @interface NewTransaction
- */
 export interface NewTransaction {
-    /**
-     * 
-     * @type {Array<NewTransactionItem>}
-     * @memberof NewTransaction
-     */
     'items': Array<NewTransactionItem>;
     /**
      * Pin of the card
-     * @type {string}
-     * @memberof NewTransaction
      */
     'card_pin': string;
     /**
      * True if the transaction was not created from a kiosk
-     * @type {boolean}
-     * @memberof NewTransaction
      */
     'is_remote'?: boolean;
 }
-/**
- * 
- * @export
- * @interface NewTransactionItem
- */
 export interface NewTransactionItem {
-    /**
-     * 
-     * @type {string}
-     * @memberof NewTransactionItem
-     */
     'item_id': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof NewTransactionItem
-     */
     'amount': number;
-    /**
-     * 
-     * @type {Array<NewTransactionItem>}
-     * @memberof NewTransactionItem
-     */
     'picked_categories_items'?: Array<NewTransactionItem>;
 }
-/**
- * 
- * @export
- * @interface PatchAccountPasswordRequest
- */
 export interface PatchAccountPasswordRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchAccountPasswordRequest
-     */
     'old_password': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchAccountPasswordRequest
-     */
     'new_password': string;
 }
-/**
- * 
- * @export
- * @interface PatchAccountPinRequest
- */
 export interface PatchAccountPinRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchAccountPinRequest
-     */
     'card_id'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchAccountPinRequest
-     */
     'old_card_pin': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchAccountPinRequest
-     */
     'new_card_pin': string;
 }
-/**
- * 
- * @export
- * @interface PostBorneAuthQRRequest
- */
 export interface PostBorneAuthQRRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof PostBorneAuthQRRequest
-     */
     'nonce': string;
 }
-/**
- * 
- * @export
- * @interface Refill
- */
 export interface Refill {
-    /**
-     * 
-     * @type {string}
-     * @memberof Refill
-     */
     'id': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Refill
-     */
     'account_id': string;
     /**
      * Name of the account
-     * @type {string}
-     * @memberof Refill
      */
     'account_name': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof Refill
-     */
     'amount': number;
-    /**
-     * 
-     * @type {RefillState}
-     * @memberof Refill
-     */
     'state': RefillState;
-    /**
-     * 
-     * @type {number}
-     * @memberof Refill
-     */
     'issued_at': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof Refill
-     */
     'issued_by': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Refill
-     */
     'issued_by_name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Refill
-     */
     'canceled_by'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Refill
-     */
     'canceled_by_name'?: string;
-    /**
-     * 
-     * @type {RefillType}
-     * @memberof Refill
-     */
     'type': RefillType;
-    /**
-     * 
-     * @type {number}
-     * @memberof Refill
-     */
     'deleted_at'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof Refill
-     */
     'deleted_by'?: string;
 }
 
 
-/**
- * 
- * @export
- * @enum {string}
- */
 
 export const RefillState = {
     Valid: 'valid',
@@ -1817,11 +545,6 @@ export const RefillState = {
 export type RefillState = typeof RefillState[keyof typeof RefillState];
 
 
-/**
- * 
- * @export
- * @enum {string}
- */
 
 export const RefillType = {
     RefillCash: 'cash',
@@ -1834,153 +557,42 @@ export const RefillType = {
 export type RefillType = typeof RefillType[keyof typeof RefillType];
 
 
-/**
- * 
- * @export
- * @interface Restock
- */
 export interface Restock {
-    /**
-     * 
-     * @type {Array<RestockItem>}
-     * @memberof Restock
-     */
     'items': Array<RestockItem>;
-    /**
-     * 
-     * @type {number}
-     * @memberof Restock
-     */
     'total_cost_ht': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof Restock
-     */
     'total_cost_ttc': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof Restock
-     */
     'driver_id'?: string;
     /**
      * Name of the driver
-     * @type {string}
-     * @memberof Restock
      */
     'driver_name'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Restock
-     */
     'id': string;
-    /**
-     * 
-     * @type {RestockType}
-     * @memberof Restock
-     */
     'type': RestockType;
-    /**
-     * 
-     * @type {number}
-     * @memberof Restock
-     */
     'created_at': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof Restock
-     */
     'created_by': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Restock
-     */
     'created_by_name': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof Restock
-     */
     'deleted_at'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof Restock
-     */
     'deleted_by'?: string;
-    /**
-     * 
-     * @type {RestockState}
-     * @memberof Restock
-     */
     'state': RestockState;
 }
 
 
-/**
- * 
- * @export
- * @interface RestockItem
- */
 export interface RestockItem {
-    /**
-     * 
-     * @type {string}
-     * @memberof RestockItem
-     */
     'item_id': string;
     /**
      * Name of the current item
-     * @type {string}
-     * @memberof RestockItem
      */
     'item_name': string;
     /**
      * Link to picture of the current item
-     * @type {string}
-     * @memberof RestockItem
      */
     'item_picture_uri': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof RestockItem
-     */
     'amount_of_bundle': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof RestockItem
-     */
     'amount_per_bundle': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof RestockItem
-     */
     'bundle_cost_ht': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof RestockItem
-     */
     'bundle_cost_ttc': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof RestockItem
-     */
     'tva': number;
 }
-/**
- * 
- * @export
- * @enum {string}
- */
 
 export const RestockState = {
     RestockFinished: 'finished',
@@ -1990,11 +602,6 @@ export const RestockState = {
 export type RestockState = typeof RestockState[keyof typeof RestockState];
 
 
-/**
- * 
- * @export
- * @enum {string}
- */
 
 export const RestockType = {
     RestockAuchan: 'auchan',
@@ -2007,113 +614,25 @@ export const RestockType = {
 export type RestockType = typeof RestockType[keyof typeof RestockType];
 
 
-/**
- * 
- * @export
- * @interface Starring
- */
 export interface Starring {
-    /**
-     * 
-     * @type {string}
-     * @memberof Starring
-     */
     'id': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Starring
-     */
     'account_id': string;
     /**
      * Name of the account
-     * @type {string}
-     * @memberof Starring
      */
     'account_name': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof Starring
-     */
     'amount': number;
-    /**
-     * 
-     * @type {StarringState}
-     * @memberof Starring
-     */
     'state': StarringState;
-    /**
-     * 
-     * @type {number}
-     * @memberof Starring
-     */
     'issued_at': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof Starring
-     */
     'issued_by': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Starring
-     */
     'issued_by_name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Starring
-     */
     'canceled_by'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Starring
-     */
     'canceled_by_name'?: string;
-    /**
-     * 
-     * @type {StarringReason}
-     * @memberof Starring
-     */
-    'type': StarringReason;
-    /**
-     * 
-     * @type {number}
-     * @memberof Starring
-     */
     'deleted_at'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof Starring
-     */
     'deleted_by'?: string;
 }
 
 
-/**
- * 
- * @export
- * @enum {string}
- */
-
-export const StarringReason = {
-    StarringRefund: 'refund',
-    StarringStaff: 'staff',
-    StarringOther: 'other'
-} as const;
-
-export type StarringReason = typeof StarringReason[keyof typeof StarringReason];
-
-
-/**
- * 
- * @export
- * @enum {string}
- */
 
 export const StarringState = {
     Valid: 'valid',
@@ -2123,188 +642,58 @@ export const StarringState = {
 export type StarringState = typeof StarringState[keyof typeof StarringState];
 
 
-/**
- * 
- * @export
- * @interface ToggleAccountWantsToStaff200Response
- */
 export interface ToggleAccountWantsToStaff200Response {
-    /**
-     * 
-     * @type {Messages}
-     * @memberof ToggleAccountWantsToStaff200Response
-     */
     'message'?: Messages;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ToggleAccountWantsToStaff200Response
-     */
     'wants_to_staff': boolean;
 }
 
 
-/**
- * 
- * @export
- * @interface Transaction
- */
 export interface Transaction {
-    /**
-     * 
-     * @type {string}
-     * @memberof Transaction
-     */
     'id': string;
-    /**
-     * 
-     * @type {Array<TransactionItem>}
-     * @memberof Transaction
-     */
     'items': Array<TransactionItem>;
-    /**
-     * 
-     * @type {string}
-     * @memberof Transaction
-     */
     'account_id': string;
     /**
      * Name of the account
-     * @type {string}
-     * @memberof Transaction
      */
     'account_name': string;
     /**
      * Nickname of the account
-     * @type {string}
-     * @memberof Transaction
      */
     'account_nick_name'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof Transaction
-     */
     'total_cost': number;
-    /**
-     * 
-     * @type {TransactionState}
-     * @memberof Transaction
-     */
     'state': TransactionState;
-    /**
-     * 
-     * @type {number}
-     * @memberof Transaction
-     */
     'deleted_at'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof Transaction
-     */
     'deleted_by'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof Transaction
-     */
     'created_at': number;
     /**
      * True if the transaction was not created from a kiosk
-     * @type {boolean}
-     * @memberof Transaction
      */
     'is_remote'?: boolean;
 }
 
 
-/**
- * 
- * @export
- * @interface TransactionItem
- */
 export interface TransactionItem {
-    /**
-     * 
-     * @type {string}
-     * @memberof TransactionItem
-     */
     'item_id': string;
     /**
      * Link to picture of the current item
-     * @type {string}
-     * @memberof TransactionItem
      */
     'picture_uri': string;
     /**
      * Name of the current item
-     * @type {string}
-     * @memberof TransactionItem
      */
     'item_name': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof TransactionItem
-     */
     'item_amount': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof TransactionItem
-     */
     'item_already_done': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof TransactionItem
-     */
     'unit_cost': number;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof TransactionItem
-     */
     'is_menu': boolean;
-    /**
-     * 
-     * @type {Array<MenuItem>}
-     * @memberof TransactionItem
-     */
     'menu_items'?: Array<MenuItem>;
-    /**
-     * 
-     * @type {Array<MenuCategory>}
-     * @memberof TransactionItem
-     */
     'menu_categories'?: Array<MenuCategory>;
-    /**
-     * 
-     * @type {Array<TransactionItem>}
-     * @memberof TransactionItem
-     */
     'picked_categories_items'?: Array<TransactionItem>;
-    /**
-     * 
-     * @type {number}
-     * @memberof TransactionItem
-     */
     'total_cost': number;
-    /**
-     * 
-     * @type {TransactionItemState}
-     * @memberof TransactionItem
-     */
     'state': TransactionItemState;
 }
 
 
-/**
- * 
- * @export
- * @enum {string}
- */
 
 export const TransactionItemState = {
     TransactionItemStarted: 'started',
@@ -2316,11 +705,6 @@ export const TransactionItemState = {
 export type TransactionItemState = typeof TransactionItemState[keyof typeof TransactionItemState];
 
 
-/**
- * 
- * @export
- * @enum {string}
- */
 
 export const TransactionState = {
     TransactionStarted: 'started',
@@ -2332,219 +716,53 @@ export const TransactionState = {
 export type TransactionState = typeof TransactionState[keyof typeof TransactionState];
 
 
-/**
- * 
- * @export
- * @interface UpdateAccountAdmin
- */
 export interface UpdateAccountAdmin {
-    /**
-     * 
-     * @type {string}
-     * @memberof UpdateAccountAdmin
-     */
     'first_name'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UpdateAccountAdmin
-     */
     'last_name'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UpdateAccountAdmin
-     */
     'nickname'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UpdateAccountAdmin
-     */
     'email_address'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UpdateAccountAdmin
-     */
     'card_id'?: string;
-    /**
-     * 
-     * @type {AccountRole}
-     * @memberof UpdateAccountAdmin
-     */
     'role'?: AccountRole;
-    /**
-     * 
-     * @type {AccountPriceRole}
-     * @memberof UpdateAccountAdmin
-     */
     'price_role'?: AccountPriceRole;
-    /**
-     * 
-     * @type {Array<AccountRestrictions>}
-     * @memberof UpdateAccountAdmin
-     */
     'restrictions'?: Array<AccountRestrictions>;
-    /**
-     * 
-     * @type {AccountState}
-     * @memberof UpdateAccountAdmin
-     */
     'state'?: AccountState;
 }
 
 
-/**
- * 
- * @export
- * @interface UpdateCategory
- */
 export interface UpdateCategory {
     /**
      * Name of the current category
-     * @type {string}
-     * @memberof UpdateCategory
      */
     'name'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UpdateCategory
-     */
     'picture'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof UpdateCategory
-     */
     'position'?: number;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof UpdateCategory
-     */
     'hidden'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof UpdateCategory
-     */
     'special_price'?: boolean;
 }
-/**
- * 
- * @export
- * @interface UpdateItem
- */
 export interface UpdateItem {
-    /**
-     * 
-     * @type {ItemPrices}
-     * @memberof UpdateItem
-     */
     'prices'?: ItemPrices;
-    /**
-     * 
-     * @type {number}
-     * @memberof UpdateItem
-     */
     'amount_left'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof UpdateItem
-     */
     'buy_limit'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof UpdateItem
-     */
     'optimal_amount'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof UpdateItem
-     */
     'category_id'?: string;
     /**
      * Name of the current item
-     * @type {string}
-     * @memberof UpdateItem
      */
     'name'?: string;
     /**
      * Picture of the current item
-     * @type {string}
-     * @memberof UpdateItem
      */
     'picture'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof UpdateItem
-     */
     'promotion'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof UpdateItem
-     */
     'promotion_ends_at'?: number;
-    /**
-     * 
-     * @type {ItemState}
-     * @memberof UpdateItem
-     */
     'state'?: ItemState;
-    /**
-     * 
-     * @type {number}
-     * @memberof UpdateItem
-     */
     'available_from'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof UpdateItem
-     */
     'available_until'?: number;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof UpdateItem
-     */
     'is_menu'?: boolean;
-    /**
-     * 
-     * @type {Array<MenuItem>}
-     * @memberof UpdateItem
-     */
     'menu_items'?: Array<MenuItem>;
-    /**
-     * 
-     * @type {Array<MenuCategory>}
-     * @memberof UpdateItem
-     */
     'menu_categories'?: Array<MenuCategory>;
-    /**
-     * 
-     * @type {number}
-     * @memberof UpdateItem
-     */
     'amount_per_bundle'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof UpdateItem
-     */
     'ref_bundle'?: string;
-    /**
-     * 
-     * @type {Fournisseur}
-     * @memberof UpdateItem
-     */
     'fournisseur'?: Fournisseur;
 }
 
@@ -2552,7 +770,6 @@ export interface UpdateItem {
 
 /**
  * AccountsApi - axios parameter creator
- * @export
  */
 export const AccountsApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -3067,7 +1284,6 @@ export const AccountsApiAxiosParamCreator = function (configuration?: Configurat
 
 /**
  * AccountsApi - functional programming interface
- * @export
  */
 export const AccountsApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = AccountsApiAxiosParamCreator(configuration)
@@ -3256,7 +1472,6 @@ export const AccountsApiFp = function(configuration?: Configuration) {
 
 /**
  * AccountsApi - factory interface
- * @export
  */
 export const AccountsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = AccountsApiFp(configuration)
@@ -3403,9 +1618,6 @@ export const AccountsApiFactory = function (configuration?: Configuration, baseP
 
 /**
  * AccountsApi - object-oriented interface
- * @export
- * @class AccountsApi
- * @extends {BaseAPI}
  */
 export class AccountsApi extends BaseAPI {
     /**
@@ -3414,7 +1626,6 @@ export class AccountsApi extends BaseAPI {
      * @param {string} accountId ID of the account
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AccountsApi
      */
     public adminToggleAccountWantsToStaff(accountId: string, options?: RawAxiosRequestConfig) {
         return AccountsApiFp(this.configuration).adminToggleAccountWantsToStaff(accountId, options).then((request) => request(this.axios, this.basePath));
@@ -3425,7 +1636,6 @@ export class AccountsApi extends BaseAPI {
      * @summary 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AccountsApi
      */
     public getAccount(options?: RawAxiosRequestConfig) {
         return AccountsApiFp(this.configuration).getAccount(options).then((request) => request(this.axios, this.basePath));
@@ -3436,7 +1646,6 @@ export class AccountsApi extends BaseAPI {
      * @summary 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AccountsApi
      */
     public getAccountAdmin(options?: RawAxiosRequestConfig) {
         return AccountsApiFp(this.configuration).getAccountAdmin(options).then((request) => request(this.axios, this.basePath));
@@ -3448,7 +1657,6 @@ export class AccountsApi extends BaseAPI {
      * @param {string} accountId ID of the account
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AccountsApi
      */
     public getAccountId(accountId: string, options?: RawAxiosRequestConfig) {
         return AccountsApiFp(this.configuration).getAccountId(accountId, options).then((request) => request(this.axios, this.basePath));
@@ -3462,7 +1670,6 @@ export class AccountsApi extends BaseAPI {
      * @param {string} [search] search string
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AccountsApi
      */
     public getAccounts(page?: number, limit?: number, search?: string, options?: RawAxiosRequestConfig) {
         return AccountsApiFp(this.configuration).getAccounts(page, limit, search, options).then((request) => request(this.axios, this.basePath));
@@ -3474,7 +1681,6 @@ export class AccountsApi extends BaseAPI {
      * @param {File} [file] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AccountsApi
      */
     public importAccounts(file?: File, options?: RawAxiosRequestConfig) {
         return AccountsApiFp(this.configuration).importAccounts(file, options).then((request) => request(this.axios, this.basePath));
@@ -3486,7 +1692,6 @@ export class AccountsApi extends BaseAPI {
      * @param {string} accountId ID of the account
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AccountsApi
      */
     public markDeleteAccountId(accountId: string, options?: RawAxiosRequestConfig) {
         return AccountsApiFp(this.configuration).markDeleteAccountId(accountId, options).then((request) => request(this.axios, this.basePath));
@@ -3499,7 +1704,6 @@ export class AccountsApi extends BaseAPI {
      * @param {UpdateAccountAdmin} [updateAccountAdmin] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AccountsApi
      */
     public patchAccountId(accountId: string, updateAccountAdmin?: UpdateAccountAdmin, options?: RawAxiosRequestConfig) {
         return AccountsApiFp(this.configuration).patchAccountId(accountId, updateAccountAdmin, options).then((request) => request(this.axios, this.basePath));
@@ -3510,7 +1714,6 @@ export class AccountsApi extends BaseAPI {
      * @param {PatchAccountPasswordRequest} [patchAccountPasswordRequest] Passwords
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AccountsApi
      */
     public patchAccountPassword(patchAccountPasswordRequest?: PatchAccountPasswordRequest, options?: RawAxiosRequestConfig) {
         return AccountsApiFp(this.configuration).patchAccountPassword(patchAccountPasswordRequest, options).then((request) => request(this.axios, this.basePath));
@@ -3521,7 +1724,6 @@ export class AccountsApi extends BaseAPI {
      * @param {PatchAccountPinRequest} [patchAccountPinRequest] Card pin / id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AccountsApi
      */
     public patchAccountPin(patchAccountPinRequest?: PatchAccountPinRequest, options?: RawAxiosRequestConfig) {
         return AccountsApiFp(this.configuration).patchAccountPin(patchAccountPinRequest, options).then((request) => request(this.axios, this.basePath));
@@ -3533,7 +1735,6 @@ export class AccountsApi extends BaseAPI {
      * @param {NewAccount} [newAccount] Add an account to the database
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AccountsApi
      */
     public postAccounts(newAccount?: NewAccount, options?: RawAxiosRequestConfig) {
         return AccountsApiFp(this.configuration).postAccounts(newAccount, options).then((request) => request(this.axios, this.basePath));
@@ -3545,7 +1746,6 @@ export class AccountsApi extends BaseAPI {
      * @param {string} accountId ID of the account
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AccountsApi
      */
     public resetAccountPin(accountId: string, options?: RawAxiosRequestConfig) {
         return AccountsApiFp(this.configuration).resetAccountPin(accountId, options).then((request) => request(this.axios, this.basePath));
@@ -3556,7 +1756,6 @@ export class AccountsApi extends BaseAPI {
      * @summary 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AccountsApi
      */
     public toggleAccountWantsToStaff(options?: RawAxiosRequestConfig) {
         return AccountsApiFp(this.configuration).toggleAccountWantsToStaff(options).then((request) => request(this.axios, this.basePath));
@@ -3567,7 +1766,6 @@ export class AccountsApi extends BaseAPI {
      * @summary 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AccountsApi
      */
     public watchAccount(options?: RawAxiosRequestConfig) {
         return AccountsApiFp(this.configuration).watchAccount(options).then((request) => request(this.axios, this.basePath));
@@ -3578,7 +1776,6 @@ export class AccountsApi extends BaseAPI {
 
 /**
  * AuthApi - axios parameter creator
- * @export
  */
 export const AuthApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -3848,7 +2045,6 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
 
 /**
  * AuthApi - functional programming interface
- * @export
  */
 export const AuthApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = AuthApiAxiosParamCreator(configuration)
@@ -3949,7 +2145,6 @@ export const AuthApiFp = function(configuration?: Configuration) {
 
 /**
  * AuthApi - factory interface
- * @export
  */
 export const AuthApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = AuthApiFp(configuration)
@@ -4029,9 +2224,6 @@ export const AuthApiFactory = function (configuration?: Configuration, basePath?
 
 /**
  * AuthApi - object-oriented interface
- * @export
- * @class AuthApi
- * @extends {BaseAPI}
  */
 export class AuthApi extends BaseAPI {
     /**
@@ -4041,7 +2233,6 @@ export class AuthApi extends BaseAPI {
      * @param {string} state Google OAuth state
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AuthApi
      */
     public callback(code: string, state: string, options?: RawAxiosRequestConfig) {
         return AuthApiFp(this.configuration).callback(code, state, options).then((request) => request(this.axios, this.basePath));
@@ -4053,7 +2244,6 @@ export class AuthApi extends BaseAPI {
      * @param {string} qrNonce QR nonce
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AuthApi
      */
     public connectAccount(qrNonce: string, options?: RawAxiosRequestConfig) {
         return AuthApiFp(this.configuration).connectAccount(qrNonce, options).then((request) => request(this.axios, this.basePath));
@@ -4065,7 +2255,6 @@ export class AuthApi extends BaseAPI {
      * @param {ConnectCardRequest} [connectCardRequest] Card id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AuthApi
      */
     public connectCard(connectCardRequest?: ConnectCardRequest, options?: RawAxiosRequestConfig) {
         return AuthApiFp(this.configuration).connectCard(connectCardRequest, options).then((request) => request(this.axios, this.basePath));
@@ -4077,7 +2266,6 @@ export class AuthApi extends BaseAPI {
      * @param {string} r Redirect to this url after connecting
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AuthApi
      */
     public connectGoogle(r: string, options?: RawAxiosRequestConfig) {
         return AuthApiFp(this.configuration).connectGoogle(r, options).then((request) => request(this.axios, this.basePath));
@@ -4089,7 +2277,6 @@ export class AuthApi extends BaseAPI {
      * @param {ConnectPasswordRequest} [connectPasswordRequest] Password
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AuthApi
      */
     public connectPassword(connectPasswordRequest?: ConnectPasswordRequest, options?: RawAxiosRequestConfig) {
         return AuthApiFp(this.configuration).connectPassword(connectPasswordRequest, options).then((request) => request(this.axios, this.basePath));
@@ -4101,7 +2288,6 @@ export class AuthApi extends BaseAPI {
      * @param {GetAccountQRRequest} [getAccountQRRequest] Card pin
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AuthApi
      */
     public getAccountQR(getAccountQRRequest?: GetAccountQRRequest, options?: RawAxiosRequestConfig) {
         return AuthApiFp(this.configuration).getAccountQR(getAccountQRRequest, options).then((request) => request(this.axios, this.basePath));
@@ -4112,7 +2298,6 @@ export class AuthApi extends BaseAPI {
      * @summary 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AuthApi
      */
     public logout(options?: RawAxiosRequestConfig) {
         return AuthApiFp(this.configuration).logout(options).then((request) => request(this.axios, this.basePath));
@@ -4123,7 +2308,6 @@ export class AuthApi extends BaseAPI {
 
 /**
  * CarouselApi - axios parameter creator
- * @export
  */
 export const CarouselApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -4372,7 +2556,6 @@ export const CarouselApiAxiosParamCreator = function (configuration?: Configurat
 
 /**
  * CarouselApi - functional programming interface
- * @export
  */
 export const CarouselApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = CarouselApiAxiosParamCreator(configuration)
@@ -4464,7 +2647,6 @@ export const CarouselApiFp = function(configuration?: Configuration) {
 
 /**
  * CarouselApi - factory interface
- * @export
  */
 export const CarouselApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = CarouselApiFp(configuration)
@@ -4535,9 +2717,6 @@ export const CarouselApiFactory = function (configuration?: Configuration, baseP
 
 /**
  * CarouselApi - object-oriented interface
- * @export
- * @class CarouselApi
- * @extends {BaseAPI}
  */
 export class CarouselApi extends BaseAPI {
     /**
@@ -4545,7 +2724,6 @@ export class CarouselApi extends BaseAPI {
      * @param {File} image Image to display
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof CarouselApi
      */
     public addCarouselImage(image: File, options?: RawAxiosRequestConfig) {
         return CarouselApiFp(this.configuration).addCarouselImage(image, options).then((request) => request(this.axios, this.basePath));
@@ -4556,7 +2734,6 @@ export class CarouselApi extends BaseAPI {
      * @param {CarouselTextCreate} carouselTextCreate Carousel text object
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof CarouselApi
      */
     public addCarouselText(carouselTextCreate: CarouselTextCreate, options?: RawAxiosRequestConfig) {
         return CarouselApiFp(this.configuration).addCarouselText(carouselTextCreate, options).then((request) => request(this.axios, this.basePath));
@@ -4567,7 +2744,6 @@ export class CarouselApi extends BaseAPI {
      * @param {string} imageId ID of the image
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof CarouselApi
      */
     public getCarouselImage(imageId: string, options?: RawAxiosRequestConfig) {
         return CarouselApiFp(this.configuration).getCarouselImage(imageId, options).then((request) => request(this.axios, this.basePath));
@@ -4577,7 +2753,6 @@ export class CarouselApi extends BaseAPI {
      * Get carousel images
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof CarouselApi
      */
     public getCarouselImages(options?: RawAxiosRequestConfig) {
         return CarouselApiFp(this.configuration).getCarouselImages(options).then((request) => request(this.axios, this.basePath));
@@ -4587,7 +2762,6 @@ export class CarouselApi extends BaseAPI {
      * Get carousel texts
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof CarouselApi
      */
     public getCarouselTexts(options?: RawAxiosRequestConfig) {
         return CarouselApiFp(this.configuration).getCarouselTexts(options).then((request) => request(this.axios, this.basePath));
@@ -4598,7 +2772,6 @@ export class CarouselApi extends BaseAPI {
      * @param {string} imageId ID of the image
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof CarouselApi
      */
     public markDeleteCarouselImage(imageId: string, options?: RawAxiosRequestConfig) {
         return CarouselApiFp(this.configuration).markDeleteCarouselImage(imageId, options).then((request) => request(this.axios, this.basePath));
@@ -4609,7 +2782,6 @@ export class CarouselApi extends BaseAPI {
      * @param {string} textId ID of the text
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof CarouselApi
      */
     public markDeleteCarouselText(textId: string, options?: RawAxiosRequestConfig) {
         return CarouselApiFp(this.configuration).markDeleteCarouselText(textId, options).then((request) => request(this.axios, this.basePath));
@@ -4620,7 +2792,6 @@ export class CarouselApi extends BaseAPI {
 
 /**
  * CashMovementsApi - axios parameter creator
- * @export
  */
 export const CashMovementsApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -4747,7 +2918,6 @@ export const CashMovementsApiAxiosParamCreator = function (configuration?: Confi
 
 /**
  * CashMovementsApi - functional programming interface
- * @export
  */
 export const CashMovementsApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = CashMovementsApiAxiosParamCreator(configuration)
@@ -4795,7 +2965,6 @@ export const CashMovementsApiFp = function(configuration?: Configuration) {
 
 /**
  * CashMovementsApi - factory interface
- * @export
  */
 export const CashMovementsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = CashMovementsApiFp(configuration)
@@ -4834,9 +3003,6 @@ export const CashMovementsApiFactory = function (configuration?: Configuration, 
 
 /**
  * CashMovementsApi - object-oriented interface
- * @export
- * @class CashMovementsApi
- * @extends {BaseAPI}
  */
 export class CashMovementsApi extends BaseAPI {
     /**
@@ -4844,7 +3010,6 @@ export class CashMovementsApi extends BaseAPI {
      * @param {NewCashMovement} newCashMovement Cash movement to create
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof CashMovementsApi
      */
     public createCashMovement(newCashMovement: NewCashMovement, options?: RawAxiosRequestConfig) {
         return CashMovementsApiFp(this.configuration).createCashMovement(newCashMovement, options).then((request) => request(this.axios, this.basePath));
@@ -4855,7 +3020,6 @@ export class CashMovementsApi extends BaseAPI {
      * @param {string} cashMovementId ID of the cash movement
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof CashMovementsApi
      */
     public deleteCashMovement(cashMovementId: string, options?: RawAxiosRequestConfig) {
         return CashMovementsApiFp(this.configuration).deleteCashMovement(cashMovementId, options).then((request) => request(this.axios, this.basePath));
@@ -4868,7 +3032,6 @@ export class CashMovementsApi extends BaseAPI {
      * @param {string} [search] search string
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof CashMovementsApi
      */
     public getCashMovements(page?: number, limit?: number, search?: string, options?: RawAxiosRequestConfig) {
         return CashMovementsApiFp(this.configuration).getCashMovements(page, limit, search, options).then((request) => request(this.axios, this.basePath));
@@ -4879,7 +3042,6 @@ export class CashMovementsApi extends BaseAPI {
 
 /**
  * CategoriesApi - axios parameter creator
- * @export
  */
 export const CategoriesApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -5107,7 +3269,6 @@ export const CategoriesApiAxiosParamCreator = function (configuration?: Configur
 
 /**
  * CategoriesApi - functional programming interface
- * @export
  */
 export const CategoriesApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = CategoriesApiAxiosParamCreator(configuration)
@@ -5190,7 +3351,6 @@ export const CategoriesApiFp = function(configuration?: Configuration) {
 
 /**
  * CategoriesApi - factory interface
- * @export
  */
 export const CategoriesApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = CategoriesApiFp(configuration)
@@ -5255,9 +3415,6 @@ export const CategoriesApiFactory = function (configuration?: Configuration, bas
 
 /**
  * CategoriesApi - object-oriented interface
- * @export
- * @class CategoriesApi
- * @extends {BaseAPI}
  */
 export class CategoriesApi extends BaseAPI {
     /**
@@ -5265,7 +3422,6 @@ export class CategoriesApi extends BaseAPI {
      * @param {boolean} [hidden] Show hidden categories (admin only)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof CategoriesApi
      */
     public getCategories(hidden?: boolean, options?: RawAxiosRequestConfig) {
         return CategoriesApiFp(this.configuration).getCategories(hidden, options).then((request) => request(this.axios, this.basePath));
@@ -5276,7 +3432,6 @@ export class CategoriesApi extends BaseAPI {
      * @param {string} categoryId ID of the category
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof CategoriesApi
      */
     public getCategory(categoryId: string, options?: RawAxiosRequestConfig) {
         return CategoriesApiFp(this.configuration).getCategory(categoryId, options).then((request) => request(this.axios, this.basePath));
@@ -5287,7 +3442,6 @@ export class CategoriesApi extends BaseAPI {
      * @param {string} categoryId ID of the category
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof CategoriesApi
      */
     public getCategoryPicture(categoryId: string, options?: RawAxiosRequestConfig) {
         return CategoriesApiFp(this.configuration).getCategoryPicture(categoryId, options).then((request) => request(this.axios, this.basePath));
@@ -5298,7 +3452,6 @@ export class CategoriesApi extends BaseAPI {
      * @param {string} categoryId ID of the category
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof CategoriesApi
      */
     public markDeleteCategory(categoryId: string, options?: RawAxiosRequestConfig) {
         return CategoriesApiFp(this.configuration).markDeleteCategory(categoryId, options).then((request) => request(this.axios, this.basePath));
@@ -5310,7 +3463,6 @@ export class CategoriesApi extends BaseAPI {
      * @param {UpdateCategory} updateCategory Category object
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof CategoriesApi
      */
     public patchCategory(categoryId: string, updateCategory: UpdateCategory, options?: RawAxiosRequestConfig) {
         return CategoriesApiFp(this.configuration).patchCategory(categoryId, updateCategory, options).then((request) => request(this.axios, this.basePath));
@@ -5321,7 +3473,6 @@ export class CategoriesApi extends BaseAPI {
      * @param {NewCategory} newCategory Category object
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof CategoriesApi
      */
     public postCategory(newCategory: NewCategory, options?: RawAxiosRequestConfig) {
         return CategoriesApiFp(this.configuration).postCategory(newCategory, options).then((request) => request(this.axios, this.basePath));
@@ -5332,7 +3483,6 @@ export class CategoriesApi extends BaseAPI {
 
 /**
  * CourseApi - axios parameter creator
- * @export
  */
 export const CourseApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -5377,7 +3527,6 @@ export const CourseApiAxiosParamCreator = function (configuration?: Configuratio
 
 /**
  * CourseApi - functional programming interface
- * @export
  */
 export const CourseApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = CourseApiAxiosParamCreator(configuration)
@@ -5399,7 +3548,6 @@ export const CourseApiFp = function(configuration?: Configuration) {
 
 /**
  * CourseApi - factory interface
- * @export
  */
 export const CourseApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = CourseApiFp(configuration)
@@ -5418,9 +3566,6 @@ export const CourseApiFactory = function (configuration?: Configuration, basePat
 
 /**
  * CourseApi - object-oriented interface
- * @export
- * @class CourseApi
- * @extends {BaseAPI}
  */
 export class CourseApi extends BaseAPI {
     /**
@@ -5428,7 +3573,6 @@ export class CourseApi extends BaseAPI {
      * @param {string} [fournisseur] Fournisseur name
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof CourseApi
      */
     public getCourse(fournisseur?: string, options?: RawAxiosRequestConfig) {
         return CourseApiFp(this.configuration).getCourse(fournisseur, options).then((request) => request(this.axios, this.basePath));
@@ -5439,7 +3583,6 @@ export class CourseApi extends BaseAPI {
 
 /**
  * DefaultApi - axios parameter creator
- * @export
  */
 export const DefaultApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -5545,7 +3688,6 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
 
 /**
  * DefaultApi - functional programming interface
- * @export
  */
 export const DefaultApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = DefaultApiAxiosParamCreator(configuration)
@@ -5592,7 +3734,6 @@ export const DefaultApiFp = function(configuration?: Configuration) {
 
 /**
  * DefaultApi - factory interface
- * @export
  */
 export const DefaultApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = DefaultApiFp(configuration)
@@ -5630,9 +3771,6 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
 
 /**
  * DefaultApi - object-oriented interface
- * @export
- * @class DefaultApi
- * @extends {BaseAPI}
  */
 export class DefaultApi extends BaseAPI {
     /**
@@ -5640,7 +3778,6 @@ export class DefaultApi extends BaseAPI {
      * @summary 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DefaultApi
      */
     public getAccountQRWebsocket(options?: RawAxiosRequestConfig) {
         return DefaultApiFp(this.configuration).getAccountQRWebsocket(options).then((request) => request(this.axios, this.basePath));
@@ -5651,7 +3788,6 @@ export class DefaultApi extends BaseAPI {
      * @summary 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DefaultApi
      */
     public getBorneAuthQRWebsocket(options?: RawAxiosRequestConfig) {
         return DefaultApiFp(this.configuration).getBorneAuthQRWebsocket(options).then((request) => request(this.axios, this.basePath));
@@ -5663,7 +3799,6 @@ export class DefaultApi extends BaseAPI {
      * @param {PostBorneAuthQRRequest} [postBorneAuthQRRequest] Nonce
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DefaultApi
      */
     public postBorneAuthQR(postBorneAuthQRRequest?: PostBorneAuthQRRequest, options?: RawAxiosRequestConfig) {
         return DefaultApiFp(this.configuration).postBorneAuthQR(postBorneAuthQRRequest, options).then((request) => request(this.axios, this.basePath));
@@ -5674,7 +3809,6 @@ export class DefaultApi extends BaseAPI {
 
 /**
  * DeletedApi - axios parameter creator
- * @export
  */
 export const DeletedApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -6576,7 +4710,6 @@ export const DeletedApiAxiosParamCreator = function (configuration?: Configurati
 
 /**
  * DeletedApi - functional programming interface
- * @export
  */
 export const DeletedApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = DeletedApiAxiosParamCreator(configuration)
@@ -6883,7 +5016,6 @@ export const DeletedApiFp = function(configuration?: Configuration) {
 
 /**
  * DeletedApi - factory interface
- * @export
  */
 export const DeletedApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = DeletedApiFp(configuration)
@@ -7118,9 +5250,6 @@ export const DeletedApiFactory = function (configuration?: Configuration, basePa
 
 /**
  * DeletedApi - object-oriented interface
- * @export
- * @class DeletedApi
- * @extends {BaseAPI}
  */
 export class DeletedApi extends BaseAPI {
     /**
@@ -7128,7 +5257,6 @@ export class DeletedApi extends BaseAPI {
      * @param {string} accountId ID of the account
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DeletedApi
      */
     public deleteAccount(accountId: string, options?: RawAxiosRequestConfig) {
         return DeletedApiFp(this.configuration).deleteAccount(accountId, options).then((request) => request(this.axios, this.basePath));
@@ -7139,7 +5267,6 @@ export class DeletedApi extends BaseAPI {
      * @param {string} imageId ID of the carousel image
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DeletedApi
      */
     public deleteCarouselImage(imageId: string, options?: RawAxiosRequestConfig) {
         return DeletedApiFp(this.configuration).deleteCarouselImage(imageId, options).then((request) => request(this.axios, this.basePath));
@@ -7150,7 +5277,6 @@ export class DeletedApi extends BaseAPI {
      * @param {string} textId ID of the carousel text
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DeletedApi
      */
     public deleteCarouselText(textId: string, options?: RawAxiosRequestConfig) {
         return DeletedApiFp(this.configuration).deleteCarouselText(textId, options).then((request) => request(this.axios, this.basePath));
@@ -7161,7 +5287,6 @@ export class DeletedApi extends BaseAPI {
      * @param {string} categoryId ID of the category
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DeletedApi
      */
     public deleteCategory(categoryId: string, options?: RawAxiosRequestConfig) {
         return DeletedApiFp(this.configuration).deleteCategory(categoryId, options).then((request) => request(this.axios, this.basePath));
@@ -7172,7 +5297,6 @@ export class DeletedApi extends BaseAPI {
      * @param {string} itemId ID of the item
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DeletedApi
      */
     public deleteItem(itemId: string, options?: RawAxiosRequestConfig) {
         return DeletedApiFp(this.configuration).deleteItem(itemId, options).then((request) => request(this.axios, this.basePath));
@@ -7183,7 +5307,6 @@ export class DeletedApi extends BaseAPI {
      * @param {string} refillId ID of the refill
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DeletedApi
      */
     public deleteRefill(refillId: string, options?: RawAxiosRequestConfig) {
         return DeletedApiFp(this.configuration).deleteRefill(refillId, options).then((request) => request(this.axios, this.basePath));
@@ -7194,7 +5317,6 @@ export class DeletedApi extends BaseAPI {
      * @param {string} starringId ID of the starring
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DeletedApi
      */
     public deleteStarring(starringId: string, options?: RawAxiosRequestConfig) {
         return DeletedApiFp(this.configuration).deleteStarring(starringId, options).then((request) => request(this.axios, this.basePath));
@@ -7205,7 +5327,6 @@ export class DeletedApi extends BaseAPI {
      * @param {string} transactionId ID of the transaction
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DeletedApi
      */
     public deleteTransaction(transactionId: string, options?: RawAxiosRequestConfig) {
         return DeletedApiFp(this.configuration).deleteTransaction(transactionId, options).then((request) => request(this.axios, this.basePath));
@@ -7218,7 +5339,6 @@ export class DeletedApi extends BaseAPI {
      * @param {string} [search] search string
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DeletedApi
      */
     public getDeletedAccounts(page?: number, limit?: number, search?: string, options?: RawAxiosRequestConfig) {
         return DeletedApiFp(this.configuration).getDeletedAccounts(page, limit, search, options).then((request) => request(this.axios, this.basePath));
@@ -7230,7 +5350,6 @@ export class DeletedApi extends BaseAPI {
      * @param {number} [limit] Number of accounts per page
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DeletedApi
      */
     public getDeletedCarouselImages(page?: number, limit?: number, options?: RawAxiosRequestConfig) {
         return DeletedApiFp(this.configuration).getDeletedCarouselImages(page, limit, options).then((request) => request(this.axios, this.basePath));
@@ -7242,7 +5361,6 @@ export class DeletedApi extends BaseAPI {
      * @param {number} [limit] Number of accounts per page
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DeletedApi
      */
     public getDeletedCarouselTexts(page?: number, limit?: number, options?: RawAxiosRequestConfig) {
         return DeletedApiFp(this.configuration).getDeletedCarouselTexts(page, limit, options).then((request) => request(this.axios, this.basePath));
@@ -7254,7 +5372,6 @@ export class DeletedApi extends BaseAPI {
      * @param {number} [limit] Number of categories per page
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DeletedApi
      */
     public getDeletedCategories(page?: number, limit?: number, options?: RawAxiosRequestConfig) {
         return DeletedApiFp(this.configuration).getDeletedCategories(page, limit, options).then((request) => request(this.axios, this.basePath));
@@ -7266,7 +5383,6 @@ export class DeletedApi extends BaseAPI {
      * @param {number} [limit] Number of accounts per page
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DeletedApi
      */
     public getDeletedItems(page?: number, limit?: number, options?: RawAxiosRequestConfig) {
         return DeletedApiFp(this.configuration).getDeletedItems(page, limit, options).then((request) => request(this.axios, this.basePath));
@@ -7278,7 +5394,6 @@ export class DeletedApi extends BaseAPI {
      * @param {number} [limit] Number of accounts per page
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DeletedApi
      */
     public getDeletedRefills(page?: number, limit?: number, options?: RawAxiosRequestConfig) {
         return DeletedApiFp(this.configuration).getDeletedRefills(page, limit, options).then((request) => request(this.axios, this.basePath));
@@ -7290,7 +5405,6 @@ export class DeletedApi extends BaseAPI {
      * @param {number} [limit] Number of accounts per page
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DeletedApi
      */
     public getDeletedStarring(page?: number, limit?: number, options?: RawAxiosRequestConfig) {
         return DeletedApiFp(this.configuration).getDeletedStarring(page, limit, options).then((request) => request(this.axios, this.basePath));
@@ -7302,7 +5416,6 @@ export class DeletedApi extends BaseAPI {
      * @param {number} [limit] Number of accounts per page
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DeletedApi
      */
     public getDeletedTransactions(page?: number, limit?: number, options?: RawAxiosRequestConfig) {
         return DeletedApiFp(this.configuration).getDeletedTransactions(page, limit, options).then((request) => request(this.axios, this.basePath));
@@ -7313,7 +5426,6 @@ export class DeletedApi extends BaseAPI {
      * @param {string} accountId ID of the account
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DeletedApi
      */
     public restoreDeletedAccount(accountId: string, options?: RawAxiosRequestConfig) {
         return DeletedApiFp(this.configuration).restoreDeletedAccount(accountId, options).then((request) => request(this.axios, this.basePath));
@@ -7324,7 +5436,6 @@ export class DeletedApi extends BaseAPI {
      * @param {string} imageId ID of the carousel image
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DeletedApi
      */
     public restoreDeletedCarouselImage(imageId: string, options?: RawAxiosRequestConfig) {
         return DeletedApiFp(this.configuration).restoreDeletedCarouselImage(imageId, options).then((request) => request(this.axios, this.basePath));
@@ -7335,7 +5446,6 @@ export class DeletedApi extends BaseAPI {
      * @param {string} textId ID of the carousel text
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DeletedApi
      */
     public restoreDeletedCarouselText(textId: string, options?: RawAxiosRequestConfig) {
         return DeletedApiFp(this.configuration).restoreDeletedCarouselText(textId, options).then((request) => request(this.axios, this.basePath));
@@ -7346,7 +5456,6 @@ export class DeletedApi extends BaseAPI {
      * @param {string} categoryId ID of the category
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DeletedApi
      */
     public restoreDeletedCategory(categoryId: string, options?: RawAxiosRequestConfig) {
         return DeletedApiFp(this.configuration).restoreDeletedCategory(categoryId, options).then((request) => request(this.axios, this.basePath));
@@ -7357,7 +5466,6 @@ export class DeletedApi extends BaseAPI {
      * @param {string} itemId ID of the item
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DeletedApi
      */
     public restoreDeletedItem(itemId: string, options?: RawAxiosRequestConfig) {
         return DeletedApiFp(this.configuration).restoreDeletedItem(itemId, options).then((request) => request(this.axios, this.basePath));
@@ -7368,7 +5476,6 @@ export class DeletedApi extends BaseAPI {
      * @param {string} refillId ID of the refill
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DeletedApi
      */
     public restoreDeletedRefill(refillId: string, options?: RawAxiosRequestConfig) {
         return DeletedApiFp(this.configuration).restoreDeletedRefill(refillId, options).then((request) => request(this.axios, this.basePath));
@@ -7379,7 +5486,6 @@ export class DeletedApi extends BaseAPI {
      * @param {string} starringId ID of the starring
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DeletedApi
      */
     public restoreDeletedStarring(starringId: string, options?: RawAxiosRequestConfig) {
         return DeletedApiFp(this.configuration).restoreDeletedStarring(starringId, options).then((request) => request(this.axios, this.basePath));
@@ -7390,7 +5496,6 @@ export class DeletedApi extends BaseAPI {
      * @param {string} transactionId ID of the transaction
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DeletedApi
      */
     public restoreDeletedTransaction(transactionId: string, options?: RawAxiosRequestConfig) {
         return DeletedApiFp(this.configuration).restoreDeletedTransaction(transactionId, options).then((request) => request(this.axios, this.basePath));
@@ -7401,7 +5506,6 @@ export class DeletedApi extends BaseAPI {
 
 /**
  * ItemsApi - axios parameter creator
- * @export
  */
 export const ItemsApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -7469,11 +5573,11 @@ export const ItemsApiAxiosParamCreator = function (configuration?: Configuration
          * @param {string} [categoryId] Filter by category
          * @param {string} [name] Filter by name
          * @param {Fournisseur} [fournisseur] Filter by fournisseur
-         * @param {string} [ref_bundle] Filter by reference
+         * @param {string} [refBundle] Filter by reference
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllItems: async (page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: Fournisseur, ref_bundle?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getAllItems: async (page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: Fournisseur, refBundle?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/items`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -7512,9 +5616,10 @@ export const ItemsApiAxiosParamCreator = function (configuration?: Configuration
                 localVarQueryParameter['fournisseur'] = fournisseur;
             }
 
-            if (ref_bundle !== undefined) {
-                localVarQueryParameter['ref_bundle'] = ref_bundle;
+            if (refBundle !== undefined) {
+                localVarQueryParameter['ref_bundle'] = refBundle;
             }
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -7745,7 +5850,6 @@ export const ItemsApiAxiosParamCreator = function (configuration?: Configuration
 
 /**
  * ItemsApi - functional programming interface
- * @export
  */
 export const ItemsApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = ItemsApiAxiosParamCreator(configuration)
@@ -7774,12 +5878,12 @@ export const ItemsApiFp = function(configuration?: Configuration) {
          * @param {string} [categoryId] Filter by category
          * @param {string} [name] Filter by name
          * @param {Fournisseur} [fournisseur] Filter by fournisseur
-         * @param {string} [ref_bundle] Filter by reference
+         * @param {string} [refBundle] Filter by reference
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getAllItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: Fournisseur, ref_bundle?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAllItems200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllItems(page, limit, state, categoryId, name, fournisseur, ref_bundle, options);
+        async getAllItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: Fournisseur, refBundle?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAllItems200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllItems(page, limit, state, categoryId, name, fournisseur, refBundle, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['ItemsApi.getAllItems']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -7857,7 +5961,6 @@ export const ItemsApiFp = function(configuration?: Configuration) {
 
 /**
  * ItemsApi - factory interface
- * @export
  */
 export const ItemsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = ItemsApiFp(configuration)
@@ -7883,12 +5986,12 @@ export const ItemsApiFactory = function (configuration?: Configuration, basePath
          * @param {string} [categoryId] Filter by category
          * @param {string} [name] Filter by name
          * @param {Fournisseur} [fournisseur] Filter by fournisseur
-         * @param {string} [ref_bundle] Filter by reference
+         * @param {string} [refBundle] Filter by reference
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: Fournisseur, ref_bundle?: string, options?: RawAxiosRequestConfig): AxiosPromise<GetAllItems200Response> {
-            return localVarFp.getAllItems(page, limit, state, categoryId, name, fournisseur, ref_bundle, options).then((request) => request(axios, basePath));
+        getAllItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: Fournisseur, refBundle?: string, options?: RawAxiosRequestConfig): AxiosPromise<GetAllItems200Response> {
+            return localVarFp.getAllItems(page, limit, state, categoryId, name, fournisseur, refBundle, options).then((request) => request(axios, basePath));
         },
         /**
          * Get all items of a category
@@ -7948,9 +6051,6 @@ export const ItemsApiFactory = function (configuration?: Configuration, basePath
 
 /**
  * ItemsApi - object-oriented interface
- * @export
- * @class ItemsApi
- * @extends {BaseAPI}
  */
 export class ItemsApi extends BaseAPI {
     /**
@@ -7962,7 +6062,6 @@ export class ItemsApi extends BaseAPI {
      * @param {string} [name] Filter by name
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ItemsApi
      */
     public getAllIncoherentItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, options?: RawAxiosRequestConfig) {
         return ItemsApiFp(this.configuration).getAllIncoherentItems(page, limit, state, categoryId, name, options).then((request) => request(this.axios, this.basePath));
@@ -7976,13 +6075,12 @@ export class ItemsApi extends BaseAPI {
      * @param {string} [categoryId] Filter by category
      * @param {string} [name] Filter by name
      * @param {Fournisseur} [fournisseur] Filter by fournisseur
-     * @param {string} [ref_bundle] Filter by reference
+     * @param {string} [refBundle] Filter by reference
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ItemsApi
      */
-    public getAllItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: Fournisseur, ref_bundle?: string, options?: RawAxiosRequestConfig) {
-        return ItemsApiFp(this.configuration).getAllItems(page, limit, state, categoryId, name, fournisseur, ref_bundle, options).then((request) => request(this.axios, this.basePath));
+    public getAllItems(page?: number, limit?: number, state?: ItemState, categoryId?: string, name?: string, fournisseur?: Fournisseur, refBundle?: string, options?: RawAxiosRequestConfig) {
+        return ItemsApiFp(this.configuration).getAllItems(page, limit, state, categoryId, name, fournisseur, refBundle, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -7993,7 +6091,6 @@ export class ItemsApi extends BaseAPI {
      * @param {ItemState} [state] Filter by state
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ItemsApi
      */
     public getCategoryItems(categoryId: string, page?: number, limit?: number, state?: ItemState, options?: RawAxiosRequestConfig) {
         return ItemsApiFp(this.configuration).getCategoryItems(categoryId, page, limit, state, options).then((request) => request(this.axios, this.basePath));
@@ -8005,7 +6102,6 @@ export class ItemsApi extends BaseAPI {
      * @param {string} itemId ID of the item
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ItemsApi
      */
     public getItemPicture(categoryId: string, itemId: string, options?: RawAxiosRequestConfig) {
         return ItemsApiFp(this.configuration).getItemPicture(categoryId, itemId, options).then((request) => request(this.axios, this.basePath));
@@ -8017,7 +6113,6 @@ export class ItemsApi extends BaseAPI {
      * @param {string} itemId ID of the item
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ItemsApi
      */
     public markDeleteItem(categoryId: string, itemId: string, options?: RawAxiosRequestConfig) {
         return ItemsApiFp(this.configuration).markDeleteItem(categoryId, itemId, options).then((request) => request(this.axios, this.basePath));
@@ -8030,7 +6125,6 @@ export class ItemsApi extends BaseAPI {
      * @param {UpdateItem} updateItem Item object
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ItemsApi
      */
     public patchItem(categoryId: string, itemId: string, updateItem: UpdateItem, options?: RawAxiosRequestConfig) {
         return ItemsApiFp(this.configuration).patchItem(categoryId, itemId, updateItem, options).then((request) => request(this.axios, this.basePath));
@@ -8042,7 +6136,6 @@ export class ItemsApi extends BaseAPI {
      * @param {NewItem} newItem Item object
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ItemsApi
      */
     public postItem(categoryId: string, newItem: NewItem, options?: RawAxiosRequestConfig) {
         return ItemsApiFp(this.configuration).postItem(categoryId, newItem, options).then((request) => request(this.axios, this.basePath));
@@ -8053,7 +6146,6 @@ export class ItemsApi extends BaseAPI {
 
 /**
  * RefillsApi - axios parameter creator
- * @export
  */
 export const RefillsApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -8364,7 +6456,6 @@ export const RefillsApiAxiosParamCreator = function (configuration?: Configurati
 
 /**
  * RefillsApi - functional programming interface
- * @export
  */
 export const RefillsApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = RefillsApiAxiosParamCreator(configuration)
@@ -8462,7 +6553,6 @@ export const RefillsApiFp = function(configuration?: Configuration) {
 
 /**
  * RefillsApi - factory interface
- * @export
  */
 export const RefillsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = RefillsApiFp(configuration)
@@ -8542,9 +6632,6 @@ export const RefillsApiFactory = function (configuration?: Configuration, basePa
 
 /**
  * RefillsApi - object-oriented interface
- * @export
- * @class RefillsApi
- * @extends {BaseAPI}
  */
 export class RefillsApi extends BaseAPI {
     /**
@@ -8556,7 +6643,6 @@ export class RefillsApi extends BaseAPI {
      * @param {string} [endDate] End date of the refill
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof RefillsApi
      */
     public getAccountRefills(accountId: string, page?: number, limit?: number, startDate?: string, endDate?: string, options?: RawAxiosRequestConfig) {
         return RefillsApiFp(this.configuration).getAccountRefills(accountId, page, limit, startDate, endDate, options).then((request) => request(this.axios, this.basePath));
@@ -8570,7 +6656,6 @@ export class RefillsApi extends BaseAPI {
      * @param {string} [endDate] End date of the refill
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof RefillsApi
      */
     public getRefills(page?: number, limit?: number, startDate?: string, endDate?: string, options?: RawAxiosRequestConfig) {
         return RefillsApiFp(this.configuration).getRefills(page, limit, startDate, endDate, options).then((request) => request(this.axios, this.basePath));
@@ -8584,7 +6669,6 @@ export class RefillsApi extends BaseAPI {
      * @param {string} [endDate] End date of the refill
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof RefillsApi
      */
     public getSelfRefills(page?: number, limit?: number, startDate?: string, endDate?: string, options?: RawAxiosRequestConfig) {
         return RefillsApiFp(this.configuration).getSelfRefills(page, limit, startDate, endDate, options).then((request) => request(this.axios, this.basePath));
@@ -8596,7 +6680,6 @@ export class RefillsApi extends BaseAPI {
      * @param {string} refillId ID of the refill
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof RefillsApi
      */
     public markDeleteRefill(accountId: string, refillId: string, options?: RawAxiosRequestConfig) {
         return RefillsApiFp(this.configuration).markDeleteRefill(accountId, refillId, options).then((request) => request(this.axios, this.basePath));
@@ -8610,7 +6693,6 @@ export class RefillsApi extends BaseAPI {
      * @param {RefillType} [type] New type of the refill
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof RefillsApi
      */
     public patchRefillId(accountId: string, refillId: string, state?: RefillState, type?: RefillType, options?: RawAxiosRequestConfig) {
         return RefillsApiFp(this.configuration).patchRefillId(accountId, refillId, state, type, options).then((request) => request(this.axios, this.basePath));
@@ -8623,7 +6705,6 @@ export class RefillsApi extends BaseAPI {
      * @param {RefillType} type Type of the refill
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof RefillsApi
      */
     public postRefill(accountId: string, amount: number, type: RefillType, options?: RawAxiosRequestConfig) {
         return RefillsApiFp(this.configuration).postRefill(accountId, amount, type, options).then((request) => request(this.axios, this.basePath));
@@ -8634,7 +6715,6 @@ export class RefillsApi extends BaseAPI {
 
 /**
  * RestocksApi - axios parameter creator
- * @export
  */
 export const RestocksApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -8802,7 +6882,6 @@ export const RestocksApiAxiosParamCreator = function (configuration?: Configurat
 
 /**
  * RestocksApi - functional programming interface
- * @export
  */
 export const RestocksApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = RestocksApiAxiosParamCreator(configuration)
@@ -8863,7 +6942,6 @@ export const RestocksApiFp = function(configuration?: Configuration) {
 
 /**
  * RestocksApi - factory interface
- * @export
  */
 export const RestocksApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = RestocksApiFp(configuration)
@@ -8912,9 +6990,6 @@ export const RestocksApiFactory = function (configuration?: Configuration, baseP
 
 /**
  * RestocksApi - object-oriented interface
- * @export
- * @class RestocksApi
- * @extends {BaseAPI}
  */
 export class RestocksApi extends BaseAPI {
     /**
@@ -8922,7 +6997,6 @@ export class RestocksApi extends BaseAPI {
      * @param {NewRestock} newRestock Restock to create
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof RestocksApi
      */
     public createRestock(newRestock: NewRestock, options?: RawAxiosRequestConfig) {
         return RestocksApiFp(this.configuration).createRestock(newRestock, options).then((request) => request(this.axios, this.basePath));
@@ -8933,7 +7007,6 @@ export class RestocksApi extends BaseAPI {
      * @param {string} restockId ID of the restock
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof RestocksApi
      */
     public deleteRestock(restockId: string, options?: RawAxiosRequestConfig) {
         return RestocksApiFp(this.configuration).deleteRestock(restockId, options).then((request) => request(this.axios, this.basePath));
@@ -8946,7 +7019,6 @@ export class RestocksApi extends BaseAPI {
      * @param {RestockState} [state] search state
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof RestocksApi
      */
     public getRestocks(page?: number, limit?: number, state?: RestockState, options?: RawAxiosRequestConfig) {
         return RestocksApiFp(this.configuration).getRestocks(page, limit, state, options).then((request) => request(this.axios, this.basePath));
@@ -8958,7 +7030,6 @@ export class RestocksApi extends BaseAPI {
      * @param {NewRestock} newRestock Restock to update
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof RestocksApi
      */
     public updateRestock(restockId: string, newRestock: NewRestock, options?: RawAxiosRequestConfig) {
         return RestocksApiFp(this.configuration).updateRestock(restockId, newRestock, options).then((request) => request(this.axios, this.basePath));
@@ -8969,7 +7040,6 @@ export class RestocksApi extends BaseAPI {
 
 /**
  * StarsApi - axios parameter creator
- * @export
  */
 export const StarsApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -9187,11 +7257,10 @@ export const StarsApiAxiosParamCreator = function (configuration?: Configuration
          * @param {string} accountId ID of the account
          * @param {string} starringId ID of the donation
          * @param {StarringState} [state] New state of the donation
-         * @param {StarringReason} [type] New type of the donation
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        patchStarringId: async (accountId: string, starringId: string, state?: StarringState, type?: StarringReason, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        patchStarringId: async (accountId: string, starringId: string, state?: StarringState, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'accountId' is not null or undefined
             assertParamExists('patchStarringId', 'accountId', accountId)
             // verify required parameter 'starringId' is not null or undefined
@@ -9216,10 +7285,6 @@ export const StarsApiAxiosParamCreator = function (configuration?: Configuration
                 localVarQueryParameter['state'] = state;
             }
 
-            if (type !== undefined) {
-                localVarQueryParameter['type'] = type;
-            }
-
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -9235,17 +7300,14 @@ export const StarsApiAxiosParamCreator = function (configuration?: Configuration
          * Create a new stars donations
          * @param {string} accountId ID or CardID of the account
          * @param {number} amount Amount of the starring
-         * @param {StarringReason} type Type of the donation
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        postStarring: async (accountId: string, amount: number, type: StarringReason, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        postStarring: async (accountId: string, amount: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'accountId' is not null or undefined
             assertParamExists('postStarring', 'accountId', accountId)
             // verify required parameter 'amount' is not null or undefined
             assertParamExists('postStarring', 'amount', amount)
-            // verify required parameter 'type' is not null or undefined
-            assertParamExists('postStarring', 'type', type)
             const localVarPath = `/accounts/{account_id}/stars`
                 .replace(`{${"account_id"}}`, encodeURIComponent(String(accountId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -9265,10 +7327,6 @@ export const StarsApiAxiosParamCreator = function (configuration?: Configuration
                 localVarQueryParameter['amount'] = amount;
             }
 
-            if (type !== undefined) {
-                localVarQueryParameter['type'] = type;
-            }
-
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -9285,7 +7343,6 @@ export const StarsApiAxiosParamCreator = function (configuration?: Configuration
 
 /**
  * StarsApi - functional programming interface
- * @export
  */
 export const StarsApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = StarsApiAxiosParamCreator(configuration)
@@ -9355,12 +7412,11 @@ export const StarsApiFp = function(configuration?: Configuration) {
          * @param {string} accountId ID of the account
          * @param {string} starringId ID of the donation
          * @param {StarringState} [state] New state of the donation
-         * @param {StarringReason} [type] New type of the donation
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async patchStarringId(accountId: string, starringId: string, state?: StarringState, type?: StarringReason, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Starring>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.patchStarringId(accountId, starringId, state, type, options);
+        async patchStarringId(accountId: string, starringId: string, state?: StarringState, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Starring>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.patchStarringId(accountId, starringId, state, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['StarsApi.patchStarringId']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -9369,12 +7425,11 @@ export const StarsApiFp = function(configuration?: Configuration) {
          * Create a new stars donations
          * @param {string} accountId ID or CardID of the account
          * @param {number} amount Amount of the starring
-         * @param {StarringReason} type Type of the donation
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async postStarring(accountId: string, amount: number, type: StarringReason, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Starring>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.postStarring(accountId, amount, type, options);
+        async postStarring(accountId: string, amount: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Starring>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postStarring(accountId, amount, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['StarsApi.postStarring']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -9384,7 +7439,6 @@ export const StarsApiFp = function(configuration?: Configuration) {
 
 /**
  * StarsApi - factory interface
- * @export
  */
 export const StarsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = StarsApiFp(configuration)
@@ -9442,32 +7496,27 @@ export const StarsApiFactory = function (configuration?: Configuration, basePath
          * @param {string} accountId ID of the account
          * @param {string} starringId ID of the donation
          * @param {StarringState} [state] New state of the donation
-         * @param {StarringReason} [type] New type of the donation
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        patchStarringId(accountId: string, starringId: string, state?: StarringState, type?: StarringReason, options?: RawAxiosRequestConfig): AxiosPromise<Starring> {
-            return localVarFp.patchStarringId(accountId, starringId, state, type, options).then((request) => request(axios, basePath));
+        patchStarringId(accountId: string, starringId: string, state?: StarringState, options?: RawAxiosRequestConfig): AxiosPromise<Starring> {
+            return localVarFp.patchStarringId(accountId, starringId, state, options).then((request) => request(axios, basePath));
         },
         /**
          * Create a new stars donations
          * @param {string} accountId ID or CardID of the account
          * @param {number} amount Amount of the starring
-         * @param {StarringReason} type Type of the donation
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        postStarring(accountId: string, amount: number, type: StarringReason, options?: RawAxiosRequestConfig): AxiosPromise<Starring> {
-            return localVarFp.postStarring(accountId, amount, type, options).then((request) => request(axios, basePath));
+        postStarring(accountId: string, amount: number, options?: RawAxiosRequestConfig): AxiosPromise<Starring> {
+            return localVarFp.postStarring(accountId, amount, options).then((request) => request(axios, basePath));
         },
     };
 };
 
 /**
  * StarsApi - object-oriented interface
- * @export
- * @class StarsApi
- * @extends {BaseAPI}
  */
 export class StarsApi extends BaseAPI {
     /**
@@ -9479,7 +7528,6 @@ export class StarsApi extends BaseAPI {
      * @param {string} [endDate] End date of the donation
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof StarsApi
      */
     public getAccountStarring(accountId: string, page?: number, limit?: number, startDate?: string, endDate?: string, options?: RawAxiosRequestConfig) {
         return StarsApiFp(this.configuration).getAccountStarring(accountId, page, limit, startDate, endDate, options).then((request) => request(this.axios, this.basePath));
@@ -9493,7 +7541,6 @@ export class StarsApi extends BaseAPI {
      * @param {string} [endDate] End date of the donation
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof StarsApi
      */
     public getSelfStarring(page?: number, limit?: number, startDate?: string, endDate?: string, options?: RawAxiosRequestConfig) {
         return StarsApiFp(this.configuration).getSelfStarring(page, limit, startDate, endDate, options).then((request) => request(this.axios, this.basePath));
@@ -9508,7 +7555,6 @@ export class StarsApi extends BaseAPI {
      * @param {string} [endDate] End date of the donations
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof StarsApi
      */
     public getStarrings(page?: number, limit?: number, name?: string, startDate?: string, endDate?: string, options?: RawAxiosRequestConfig) {
         return StarsApiFp(this.configuration).getStarrings(page, limit, name, startDate, endDate, options).then((request) => request(this.axios, this.basePath));
@@ -9520,7 +7566,6 @@ export class StarsApi extends BaseAPI {
      * @param {string} starringId ID of the donation
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof StarsApi
      */
     public markDeleteStarring(accountId: string, starringId: string, options?: RawAxiosRequestConfig) {
         return StarsApiFp(this.configuration).markDeleteStarring(accountId, starringId, options).then((request) => request(this.axios, this.basePath));
@@ -9531,26 +7576,22 @@ export class StarsApi extends BaseAPI {
      * @param {string} accountId ID of the account
      * @param {string} starringId ID of the donation
      * @param {StarringState} [state] New state of the donation
-     * @param {StarringReason} [type] New type of the donation
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof StarsApi
      */
-    public patchStarringId(accountId: string, starringId: string, state?: StarringState, type?: StarringReason, options?: RawAxiosRequestConfig) {
-        return StarsApiFp(this.configuration).patchStarringId(accountId, starringId, state, type, options).then((request) => request(this.axios, this.basePath));
+    public patchStarringId(accountId: string, starringId: string, state?: StarringState, options?: RawAxiosRequestConfig) {
+        return StarsApiFp(this.configuration).patchStarringId(accountId, starringId, state, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Create a new stars donations
      * @param {string} accountId ID or CardID of the account
      * @param {number} amount Amount of the starring
-     * @param {StarringReason} type Type of the donation
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof StarsApi
      */
-    public postStarring(accountId: string, amount: number, type: StarringReason, options?: RawAxiosRequestConfig) {
-        return StarsApiFp(this.configuration).postStarring(accountId, amount, type, options).then((request) => request(this.axios, this.basePath));
+    public postStarring(accountId: string, amount: number, options?: RawAxiosRequestConfig) {
+        return StarsApiFp(this.configuration).postStarring(accountId, amount, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -9558,7 +7599,6 @@ export class StarsApi extends BaseAPI {
 
 /**
  * TransactionsApi - axios parameter creator
- * @export
  */
 export const TransactionsApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -9979,7 +8019,6 @@ export const TransactionsApiAxiosParamCreator = function (configuration?: Config
 
 /**
  * TransactionsApi - functional programming interface
- * @export
  */
 export const TransactionsApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = TransactionsApiAxiosParamCreator(configuration)
@@ -10122,7 +8161,6 @@ export const TransactionsApiFp = function(configuration?: Configuration) {
 
 /**
  * TransactionsApi - factory interface
- * @export
  */
 export const TransactionsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = TransactionsApiFp(configuration)
@@ -10238,9 +8276,6 @@ export const TransactionsApiFactory = function (configuration?: Configuration, b
 
 /**
  * TransactionsApi - object-oriented interface
- * @export
- * @class TransactionsApi
- * @extends {BaseAPI}
  */
 export class TransactionsApi extends BaseAPI {
     /**
@@ -10252,7 +8287,6 @@ export class TransactionsApi extends BaseAPI {
      * @param {TransactionState} [state] Filter by state
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof TransactionsApi
      */
     public getAccountTransactions(accountId: string, page?: number, limit?: number, state?: TransactionState, options?: RawAxiosRequestConfig) {
         return TransactionsApiFp(this.configuration).getAccountTransactions(accountId, page, limit, state, options).then((request) => request(this.axios, this.basePath));
@@ -10266,7 +8300,6 @@ export class TransactionsApi extends BaseAPI {
      * @param {TransactionState} [state] Filter by state
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof TransactionsApi
      */
     public getCurrentAccountTransactions(page?: number, limit?: number, state?: TransactionState, options?: RawAxiosRequestConfig) {
         return TransactionsApiFp(this.configuration).getCurrentAccountTransactions(page, limit, state, options).then((request) => request(this.axios, this.basePath));
@@ -10279,7 +8312,6 @@ export class TransactionsApi extends BaseAPI {
      * @param {string} transactionId ID of the transaction
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof TransactionsApi
      */
     public getTransactionId(accountId: string, transactionId: string, options?: RawAxiosRequestConfig) {
         return TransactionsApiFp(this.configuration).getTransactionId(accountId, transactionId, options).then((request) => request(this.axios, this.basePath));
@@ -10295,7 +8327,6 @@ export class TransactionsApi extends BaseAPI {
      * @param {string} [name] Filter by account name
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof TransactionsApi
      */
     public getTransactions(page?: number, limit?: number, state?: TransactionState, hideRemote?: boolean, name?: string, options?: RawAxiosRequestConfig) {
         return TransactionsApiFp(this.configuration).getTransactions(page, limit, state, hideRemote, name, options).then((request) => request(this.axios, this.basePath));
@@ -10307,7 +8338,6 @@ export class TransactionsApi extends BaseAPI {
      * @param {string} [name] Filter by item name
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof TransactionsApi
      */
     public getTransactionsItems(name?: string, options?: RawAxiosRequestConfig) {
         return TransactionsApiFp(this.configuration).getTransactionsItems(name, options).then((request) => request(this.axios, this.basePath));
@@ -10320,7 +8350,6 @@ export class TransactionsApi extends BaseAPI {
      * @param {string} transactionId ID of the transaction
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof TransactionsApi
      */
     public markDeleteTransactionId(accountId: string, transactionId: string, options?: RawAxiosRequestConfig) {
         return TransactionsApiFp(this.configuration).markDeleteTransactionId(accountId, transactionId, options).then((request) => request(this.axios, this.basePath));
@@ -10333,7 +8362,6 @@ export class TransactionsApi extends BaseAPI {
      * @param {TransactionState} state New state of the transaction
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof TransactionsApi
      */
     public patchTransactionId(accountId: string, transactionId: string, state: TransactionState, options?: RawAxiosRequestConfig) {
         return TransactionsApiFp(this.configuration).patchTransactionId(accountId, transactionId, state, options).then((request) => request(this.axios, this.basePath));
@@ -10349,7 +8377,6 @@ export class TransactionsApi extends BaseAPI {
      * @param {number} [alreadyDone] Update item\&#39;s already done
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof TransactionsApi
      */
     public patchTransactionItemId(accountId: string, transactionId: string, itemId: string, state?: TransactionItemState, amount?: number, alreadyDone?: number, options?: RawAxiosRequestConfig) {
         return TransactionsApiFp(this.configuration).patchTransactionItemId(accountId, transactionId, itemId, state, amount, alreadyDone, options).then((request) => request(this.axios, this.basePath));
@@ -10361,7 +8388,6 @@ export class TransactionsApi extends BaseAPI {
      * @param {NewTransaction} [newTransaction] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof TransactionsApi
      */
     public postTransactions(newTransaction?: NewTransaction, options?: RawAxiosRequestConfig) {
         return TransactionsApiFp(this.configuration).postTransactions(newTransaction, options).then((request) => request(this.axios, this.basePath));
