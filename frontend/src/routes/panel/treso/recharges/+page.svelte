@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { formatDate, formatDateTime, formatPrice, time2Utc } from '$lib/utils';
-	import type { Refill, RefillType } from '$lib/api';
+	import { formatDateTime, formatPrice, time2Utc } from '$lib/utils';
+	import { RefillType } from '$lib/api';
+    import type { Refill } from '$lib/api';
 	import { refillsApi } from '$lib/requests/requests';
 	import { onMount } from 'svelte';
 
@@ -50,10 +51,9 @@
 
 	onMount(() => {
 		reloadItems();
-		console.log();
 	});
 
-	let types = ['cash', 'card', 'other'];
+	let types = [RefillType.RefillCash, RefillType.RefillCard, RefillType.RefillHelloAsso, RefillType.RefillOther];
 </script>
 
 <div class="w-full p-5 mt-4 justify-center">
@@ -111,15 +111,17 @@
 		</div>
 
 	</div>
-	<div class="flex flex-row mt-5 gap-4 justify-center">
+	<div class="grid grid-cols-1 lg:grid-cols-2 w-full min-w-full mt-5 gap-4 justify-center">
 		{#each types as t}
-			<div class="flex flex-col bg-blue-200 items-center rounded-lg">
+			<div class="w-full flex flex-col bg-blue-200 items-center rounded-lg">
 				<h1 class="text-3xl font-semibold p-5">
 					Recharges
-					{#if t == 'cash'}
+					{#if t == RefillType.RefillCash}
 						en espèces
-					{:else if t == 'card'}
+					{:else if t == RefillType.RefillCard}
 						par carte
+                    {:else if t == RefillType.RefillHelloAsso}
+						par HelloAsso
 					{:else}
 						autres
 					{/if}
@@ -163,8 +165,11 @@
 						<thead>
 							<tr>
 								<th class="px-4">Compte</th>
-								<th class="px-4">Opérateur</th>
-								<th class="px-4">Annulé par</th>
+                                <!-- HelloAsso refills are validated by the user and cannot be canceled -->
+                                {#if t != RefillType.RefillHelloAsso}
+                                    <th class="px-4">Opérateur</th>
+                                    <th class="px-4">Annulé par</th>
+                                {/if}
 								<th class="px-4">Montant</th>
 								<th class="px-4">Date</th>
 							</tr>
@@ -174,8 +179,10 @@
 								{#if refill.type == t}
 									<tr>
 										<td class="px-4">{refill.account_name}</td>
-										<td class="px-4">{refill.issued_by_name}</td>
-										<td class="px-4">{refill.canceled_by_name ?? ''}</td>
+                                        {#if t != RefillType.RefillHelloAsso}
+                                            <td class="px-4">{refill.issued_by_name}</td>
+                                            <td class="px-4">{refill.canceled_by_name ?? ''}</td>
+                                        {/if}
 										<td class="px-4">{formatPrice(refill.amount)}</td>
 										<td class="px-4">{formatDateTime(refill.issued_at)}</td>
 									</tr>

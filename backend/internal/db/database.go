@@ -100,6 +100,25 @@ type DBackend interface {
 	GetDeletedRefills(ctx context.Context, page uint64, size uint64) ([]*models.Refill, error)
 	CountDeletedRefills(ctx context.Context) (uint64, error)
 
+	// Remote refill's CRUD
+	CreateRemoteRefill(ctx context.Context, r *models.RemoteRefill) error
+	GetRemoteRefill(ctx context.Context, id string) (*models.RemoteRefill, error)
+	UpdateRemoteRefill(ctx context.Context, r *models.RemoteRefill) error
+	DeleteRemoteRefill(ctx context.Context, id string) error
+
+	FindRemoteRefillForAccount(ctx context.Context, accountId string, checkoutIntentId int32) (*models.RemoteRefill, error)
+	GetAllRemoteRefillsWithState(ctx context.Context, state autogen.RemoteRefillState) ([]*models.RemoteRefill, error)
+	GetAllPendingRemoteRefillsForAccount(ctx context.Context, accountId string) ([]*models.RemoteRefill, error)
+
+
+	GetAllRemoteRefills(ctx context.Context, page uint64, size uint64, accountName *string, state *autogen.RemoteRefillState, startAt, endAt uint64) ([]*models.RemoteRefill, error)
+	CountAllRemoteRefills(ctx context.Context, accountName *string, state *autogen.RemoteRefillState, startAt, endAt uint64) (uint64, error)
+
+	// Update a remote refill state atomically.
+	// The refill passed as a parameter is also updated if it was updated in the database
+	// Returns true if the refill was updated
+	UpdateRemoteRefillStateAtomic(ctx context.Context, refill *models.RemoteRefill, newState autogen.RemoteRefillState) (bool, error)
+
 	// Starring's CRUD
 	CreateStarring(ctx context.Context, r *models.Starring) error
 	GetStarring(ctx context.Context, id string) (*models.Starring, error)

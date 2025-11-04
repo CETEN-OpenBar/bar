@@ -57,7 +57,6 @@ export const time2Utc = (time: number): number => {
 
 export const enumIterator = (e: any): Iterable<[value: string, name: string]> => {
     return Object.entries(Fournisseur).map(([key, value]) => {
-        console.log("Key : " + key + " val : " + value)
         return [value, formatEnumName(key)]
     });
 }

@@ -1,3 +1,7 @@
+<script>
+	import Habutton from "$lib/components/client/habutton.svelte";
+
+</script>
 <div class="sm:hidden">XS</div>
 <div class="hidden sm:block md:hidden">SM</div>
 <div class="hidden md:block lg:hidden">MD</div>

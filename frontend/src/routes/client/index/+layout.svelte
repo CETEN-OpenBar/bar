@@ -2,27 +2,33 @@
 	import { goto } from '$app/navigation';
 	import { accountsApi, authApi } from '$lib/requests/requests';
 	import type { Account } from '$lib/api';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { store } from '$lib/store/store';
 	import Profile from '$lib/components/client/profile.svelte';
 	import 'iconify-icon';
-	import Autodisconnect from '$lib/components/random/autodisconnect.svelte';
 
 	let account: Account | undefined = undefined;
+    let unsub: () => void;
 
 	onMount(() => {
+        unsub = store.subscribe((state) => {
+            account = state.account
+        });
 		accountsApi()
 			.getAccount({
 				withCredentials: true
 			})
 			.then((res) => {
-				account = res.data.account;
-				store.set({ account });
+				store.set({ account: res.data.account });
 			})
 			.catch(() => {
 				goto('/client');
 			});
 	});
+
+    onDestroy(() => {
+        unsub();
+    })
 
 	function changeWantsToStaff() {
 		accountsApi()
