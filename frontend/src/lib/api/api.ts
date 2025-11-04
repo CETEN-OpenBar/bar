@@ -7419,6 +7419,41 @@ export const ItemsApiAxiosParamCreator = function (configuration?: Configuration
             };
         },
         /**
+         * Get an item
+         * @param {string} itemId ID of the item
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getItem: async (itemId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'itemId' is not null or undefined
+            assertParamExists('getItem', 'itemId', itemId)
+            const localVarPath = `/item/{item_id}`
+                .replace(`{${"item_id"}}`, encodeURIComponent(String(itemId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication auth required
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Get an item picture
          * @param {string} categoryId ID of the category
          * @param {string} itemId ID of the item
@@ -7636,6 +7671,16 @@ export const ItemsApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
+         * Get an item
+         * @param {string} itemId ID of the item
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getItem(itemId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Item>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getItem(itemId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * Get an item picture
          * @param {string} categoryId ID of the category
          * @param {string} itemId ID of the item
@@ -7729,6 +7774,15 @@ export const ItemsApiFactory = function (configuration?: Configuration, basePath
          */
         getCategoryItems(categoryId: string, page?: number, limit?: number, state?: ItemState, options?: any): AxiosPromise<GetAllItems200Response> {
             return localVarFp.getCategoryItems(categoryId, page, limit, state, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get an item
+         * @param {string} itemId ID of the item
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getItem(itemId: string, options?: any): AxiosPromise<Item> {
+            return localVarFp.getItem(itemId, options).then((request) => request(axios, basePath));
         },
         /**
          * Get an item picture
@@ -7825,6 +7879,17 @@ export class ItemsApi extends BaseAPI {
      */
     public getCategoryItems(categoryId: string, page?: number, limit?: number, state?: ItemState, options?: AxiosRequestConfig) {
         return ItemsApiFp(this.configuration).getCategoryItems(categoryId, page, limit, state, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get an item
+     * @param {string} itemId ID of the item
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ItemsApi
+     */
+    public getItem(itemId: string, options?: AxiosRequestConfig) {
+        return ItemsApiFp(this.configuration).getItem(itemId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
