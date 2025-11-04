@@ -7,6 +7,7 @@ All URIs are relative to *http://localhost:8080*
 |[**getAllIncoherentItems**](#getallincoherentitems) | **GET** /items/incoherent | |
 |[**getAllItems**](#getallitems) | **GET** /items | |
 |[**getCategoryItems**](#getcategoryitems) | **GET** /categories/{category_id}/items | |
+|[**getItem**](#getitem) | **GET** /item/{item_id} | |
 |[**getItemPicture**](#getitempicture) | **GET** /categories/{category_id}/items/{item_id}/picture | |
 |[**markDeleteItem**](#markdeleteitem) | **DELETE** /categories/{category_id}/items/{item_id} | |
 |[**patchItem**](#patchitem) | **PATCH** /categories/{category_id}/items/{item_id} | |
@@ -206,6 +207,59 @@ const { status, data } = await apiInstance.getCategoryItems(
 |-------------|-------------|------------------|
 |**200** |  |  -  |
 |**404** | Category not found |  -  |
+|**500** | Internal server error |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **getItem**
+> Item getItem()
+
+Get an item
+
+### Example
+
+```typescript
+import {
+    ItemsApi,
+    Configuration
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new ItemsApi(configuration);
+
+let itemId: string; //ID of the item (default to undefined)
+
+const { status, data } = await apiInstance.getItem(
+    itemId
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **itemId** | [**string**] | ID of the item | defaults to undefined|
+
+
+### Return type
+
+**Item**
+
+### Authorization
+
+[auth](../README.md#auth)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** |  |  -  |
+|**404** | Item not found |  -  |
 |**500** | Internal server error |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

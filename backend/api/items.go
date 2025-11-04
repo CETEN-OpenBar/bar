@@ -365,3 +365,25 @@ func (s *Server) GetAllIncoherentItems(c echo.Context, params autogen.GetAllInco
 
 	return nil
 }
+
+// (GET /item/{item_id})
+func (s *Server) GetItem(c echo.Context, itemId autogen.UUID) error {
+	// Get account from cookie
+	_, err := MustGetAdmin(c)
+	if err != nil {
+		return nil
+	}
+
+	item, err := s.DBackend.GetItem(c.Request().Context(), itemId.String())
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return ErrorItemNotFound(c)
+		}
+		logrus.Error(err)
+		return Error500(c)
+	}
+
+	
+	autogen.GetItem200JSONResponse(item.Item).VisitGetItemResponse(c.Response())
+	return nil
+}
