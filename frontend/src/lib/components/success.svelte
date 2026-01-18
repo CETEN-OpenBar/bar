@@ -1,11 +1,13 @@
 <script lang="ts">
 	export let message: string;
+    export let close: () => void = () => {};
 </script>
 
 <!-- Display a popup that asks for a pin -->
 
 <button
 	id="overlay"
+    on:click={close}
 	class="absolute w-full h-full top-0 left-0 bg-black bg-opacity-50 flex justify-center items-center z-40"
 />
 
