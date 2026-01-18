@@ -142,14 +142,36 @@ func (s *Server) GetTransactions(c echo.Context, params autogen.GetTransactionsP
 		return nil
 	}
 
-	var state string
-	if params.State != nil {
-		state = string(*params.State)
+	var TransactionState string
+	if params.TransactionState != nil {
+		TransactionState = string(*params.TransactionState)
+	}
+
+	var hide_canceled bool
+	if params.HideCanceled != nil {
+		hide_canceled = bool(*params.HideCanceled)
+	} else {
+		hide_canceled = true
 	}
 
 	var name string
 	if params.Name != nil {
 		name = string(*params.Name)
+	}
+
+	var StartTime int
+	if params.StartTime != nil {
+		StartTime = int(*params.StartTime)
+	}
+
+	var EndTime int
+	if params.EndTime != nil {
+		EndTime = int(*params.EndTime)
+	}
+
+	var ItemId string
+	if params.ItemId != nil {
+		ItemId = string(*params.ItemId)
 	}
 
 	var hide_remotes bool
@@ -159,7 +181,7 @@ func (s *Server) GetTransactions(c echo.Context, params autogen.GetTransactionsP
 		hide_remotes = true
 	}
 
-	count, err := s.DBackend.CountAllTransactions(c.Request().Context(), state, name, hide_remotes)
+	count, err := s.DBackend.CountAllTransactions(c.Request().Context(), TransactionState, hide_canceled, name, hide_remotes, StartTime, EndTime, ItemId)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)
@@ -168,7 +190,7 @@ func (s *Server) GetTransactions(c echo.Context, params autogen.GetTransactionsP
 	// Make sure the last page is not empty
 	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
-	data, err := s.DBackend.GetAllTransactions(c.Request().Context(), dbpage, limit, state, name, hide_remotes)
+	data, err := s.DBackend.GetAllTransactions(c.Request().Context(), dbpage, limit, TransactionState, hide_canceled, name, hide_remotes, StartTime, EndTime, ItemId)
 	if err != nil {
 		logrus.Error(err)
 		return Error500(c)

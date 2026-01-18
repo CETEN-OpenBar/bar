@@ -202,3 +202,4 @@ func (b *Backend) CountDeletedTransactions(ctx context.Context) (uint64, error) 
 
 	return uint64(count), nil
 }
+

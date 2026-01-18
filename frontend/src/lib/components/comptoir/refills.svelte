@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Refill } from '$lib/api';
-	import { api } from '$lib/config/config';
+    import { RefillType } from '$lib/api';
 	import { refillsApi } from '$lib/requests/requests';
 	import { formatPrice } from '$lib/utils';
 	import { onDestroy, onMount } from 'svelte';
@@ -77,32 +77,36 @@
 					</div>
 					<div class="flex flex-col">
 						<div class="text-lg self-center">{formatPrice(refill.amount)}</div>
-						{#if refill.state == 'valid'}
-							<button
-								class="text-sm text-white self-center bg-red-500 rounded-xl p-2"
-								on:click={() => {
-									refillsApi()
-										.patchRefillId(refill.account_id, refill.id, 'canceled', refill.type, {
-											withCredentials: true
-										})
-										.then(() => {
-											reloadRefills();
-										});
-								}}>Annuler</button
-							>
-						{/if}
-						{#if refill.state == 'canceled'}
-							<button
-								class="text-sm text-white self-center bg-red-500 rounded-xl p-2"
-								on:click={() => {
-									refillsApi()
-										.patchRefillId(refill.account_id, refill.id, 'valid', refill.type, { withCredentials: true })
-										.then(() => {
-											reloadRefills();
-										});
-								}}>Re-valider</button
-							>
-						{/if}
+                        {#if refill.type == RefillType.RefillHelloAsso}
+                            <div class="text-gray-600">HelloAsso</div>
+                        {:else}
+                            {#if refill.state == 'valid'}
+                                <button
+                                    class="text-sm text-white self-center bg-red-500 rounded-xl p-2"
+                                    on:click={() => {
+                                        refillsApi()
+                                            .patchRefillId(refill.account_id, refill.id, 'canceled', refill.type, {
+                                                withCredentials: true
+                                            })
+                                            .then(() => {
+                                                reloadRefills();
+                                            });
+                                    }}>Annuler</button
+                                >
+                            {/if}
+                            {#if refill.state == 'canceled'}
+                                <button
+                                    class="text-sm text-white self-center bg-red-500 rounded-xl p-2"
+                                    on:click={() => {
+                                        refillsApi()
+                                            .patchRefillId(refill.account_id, refill.id, 'valid', refill.type, { withCredentials: true })
+                                            .then(() => {
+                                                reloadRefills();
+                                            });
+                                    }}>Re-valider</button
+                                >
+                            {/if}
+                        {/if}
 					</div>
 				</div>
 			{/each}

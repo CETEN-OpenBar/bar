@@ -212,16 +212,24 @@ const apiInstance = new TransactionsApi(configuration);
 
 let page: number; //Page number (optional) (default to undefined)
 let limit: number; //Number of transactions per page (optional) (default to undefined)
-let state: TransactionState; //Filter by state (optional) (default to undefined)
+let transactionState: TransactionState; //Filter transaction by state (optional) (default to undefined)
+let hideCanceled: boolean; //Hide canceled items (optional) (default to undefined)
 let hideRemote: boolean; //Hide remote transactions (optional) (default to undefined)
 let name: string; //Filter by account name (optional) (default to undefined)
+let startTime: number; //Filter by start_time (optional) (default to undefined)
+let endTime: number; //Filter by end_time (optional) (default to undefined)
+let itemId: string; //Filter by item (optional) (default to undefined)
 
 const { status, data } = await apiInstance.getTransactions(
     page,
     limit,
-    state,
+    transactionState,
+    hideCanceled,
     hideRemote,
-    name
+    name,
+    startTime,
+    endTime,
+    itemId
 );
 ```
 
@@ -231,9 +239,13 @@ const { status, data } = await apiInstance.getTransactions(
 |------------- | ------------- | ------------- | -------------|
 | **page** | [**number**] | Page number | (optional) defaults to undefined|
 | **limit** | [**number**] | Number of transactions per page | (optional) defaults to undefined|
-| **state** | [**TransactionState**] | Filter by state | (optional) defaults to undefined|
+| **transactionState** | [**TransactionState**] | Filter transaction by state | (optional) defaults to undefined|
+| **hideCanceled** | [**boolean**] | Hide canceled items | (optional) defaults to undefined|
 | **hideRemote** | [**boolean**] | Hide remote transactions | (optional) defaults to undefined|
 | **name** | [**string**] | Filter by account name | (optional) defaults to undefined|
+| **startTime** | [**number**] | Filter by start_time | (optional) defaults to undefined|
+| **endTime** | [**number**] | Filter by end_time | (optional) defaults to undefined|
+| **itemId** | [**string**] | Filter by item | (optional) defaults to undefined|
 
 
 ### Return type

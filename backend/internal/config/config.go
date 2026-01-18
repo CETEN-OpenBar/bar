@@ -1,6 +1,8 @@
 package config
 
 import (
+	"time"
+
 	"github.com/caarlos0/env/v9"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
@@ -26,6 +28,15 @@ type Config struct {
 		GoogleClientID     string `env:"GOOGLE_CLIENT_ID"`
 		GoogleClientSecret string `env:"GOOGLE_CLIENT_SECRET"`
 	} `envPrefix:"BAR_OAUTH_"`
+
+	HelloAssoConfig struct {
+		URL          				string `env:"URL" envDefault:"https://api.helloasso.com"`
+		ClientID     				string `env:"CLIENT_ID"`
+		ClientSecret 				string `env:"CLIENT_SECRET"`
+		Slug         				string `env:"SLUG"`
+		// Interval between each run of the checkout processing
+		CheckoutProcessingInterval	time.Duration `env:"CHECKOUT_PROCESSING_INTERVAL" envDefault:"10m"`
+	} `envPrefix:"HELLOASSO_"`
 
 	StorageConfig struct {
 		StoragePath string `env:"STORAGE_PATH" envDefault:"./storage"`
