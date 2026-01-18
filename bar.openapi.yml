@@ -3264,6 +3264,40 @@ paths:
         - admin_auth: []
       tags:
         - items
+  /item/{item_id}:
+    get:
+      description: Get an item
+      operationId: getItem
+      parameters:
+        - name: item_id
+          in: path
+          description: ID of the item
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        "404":
+          description: "Item not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - auth: []
+      tags:
+        - items
   /categories/{category_id}/items:
     get:
       description: Get all items of a category
