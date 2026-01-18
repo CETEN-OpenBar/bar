@@ -1136,14 +1136,26 @@ type GetTransactionsParams struct {
 	// Limit Number of transactions per page
 	Limit *uint64 `form:"limit,omitempty" json:"limit,omitempty" bson:"limit"`
 
-	// State Filter by state
-	State *TransactionState `form:"state,omitempty" json:"state,omitempty" bson:"state"`
+	// TransactionState Filter transaction by state
+	TransactionState *TransactionState `form:"transaction_state,omitempty" json:"transaction_state,omitempty" bson:"transaction_state"`
+
+	// HideCanceled Hide canceled items
+	HideCanceled *bool `form:"hide_canceled,omitempty" json:"hide_canceled,omitempty" bson:"hide_canceled"`
 
 	// HideRemote Hide remote transactions
 	HideRemote *bool `form:"hide_remote,omitempty" json:"hide_remote,omitempty" bson:"hide_remote"`
 
 	// Name Filter by account name
 	Name *string `form:"name,omitempty" json:"name,omitempty" bson:"name"`
+
+	// StartTime Filter by start_time
+	StartTime *int `form:"start_time,omitempty" json:"start_time,omitempty" bson:"start_time"`
+
+	// EndTime Filter by end_time
+	EndTime *int `form:"end_time,omitempty" json:"end_time,omitempty" bson:"end_time"`
+
+	// ItemId Filter by item
+	ItemId *string `form:"item_id,omitempty" json:"item_id,omitempty" bson:"item_id"`
 }
 
 // GetTransactionsItemsParams defines parameters for GetTransactionsItems.
@@ -3838,11 +3850,18 @@ func (w *ServerInterfaceWrapper) GetTransactions(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter limit: %s", err))
 	}
 
-	// ------------- Optional query parameter "state" -------------
+	// ------------- Optional query parameter "transaction_state" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "state", ctx.QueryParams(), &params.State)
+	err = runtime.BindQueryParameter("form", true, false, "transaction_state", ctx.QueryParams(), &params.TransactionState)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter state: %s", err))
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter transaction_state: %s", err))
+	}
+
+	// ------------- Optional query parameter "hide_canceled" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "hide_canceled", ctx.QueryParams(), &params.HideCanceled)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter hide_canceled: %s", err))
 	}
 
 	// ------------- Optional query parameter "hide_remote" -------------
@@ -3857,6 +3876,27 @@ func (w *ServerInterfaceWrapper) GetTransactions(ctx echo.Context) error {
 	err = runtime.BindQueryParameter("form", true, false, "name", ctx.QueryParams(), &params.Name)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter name: %s", err))
+	}
+
+	// ------------- Optional query parameter "start_time" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "start_time", ctx.QueryParams(), &params.StartTime)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter start_time: %s", err))
+	}
+
+	// ------------- Optional query parameter "end_time" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "end_time", ctx.QueryParams(), &params.EndTime)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter end_time: %s", err))
+	}
+
+	// ------------- Optional query parameter "item_id" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "item_id", ctx.QueryParams(), &params.ItemId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter item_id: %s", err))
 	}
 
 	// Invoke the callback with all the unmarshaled arguments
@@ -12505,12 +12545,13 @@ var swaggerSpec = []string{
 	"wN+rFapKjYBJ1MSB/55p2J0mvH2OHDZEgKlKDR/Uv7qykGTCQYt80DXb9Ffv2k+6g7P4k4ZtI0kIKqni",
 	"cPnpzWb5ycoF2NfT1J3U83kRtx+nssFOs8sWz/d8Efud7zuSSvQhyRI6E/XxCpU/iJAgQjxP4+4aajBN",
 	"RUESCmIs4xmdDo5ro8Tabnk4CrA3HcvoccPWPz68fg9qbss6r0K75jnkQJKCjVZbbK75clBOGO4E995B",
-	"ojZSCGPvkjFcJvN2t8iOxHiBSYwI/dYloHe6bszm40nWEXJuoLgxAOOXJC7uVCuFWVwAzJIYjWRzl1wd",
-	"Y5wimK3/HAq1d0LtnSDI2wS5tdN1ee7xEGOZdJpkLeJdP9XYKeW90opKMSHeYdumjOjLfO5slMA4e844",
-	"oicfSpJrTlJ+DjK2eDscpjiC6QxT9vafJ/88GfBTr/xOeQN0PIbkJUMpivA8g1l0/zJDbAgXyfD2laMD",
-	"b32P7nA6eTkhvNnAgK0e4ZBCJsNNcorIN9T0fshMPx06yRdaP5QdA5SlLuyoS+rVvXK+1Mvo+A2j46Re",
-	"EARTGWLzbfUlhI6RYpxJ+xC8uE0Iyx3jSF23PspZ8ap9mXeYZDLcbYYXtWy8BLlGEeIO4AxQmKKGAaSI",
-	"cUFAcE5RChj6ymT+ZjIXtTSMuWUTJxZkHSVMVCElrsLqymnlCLqEyuOXx/8OAAD//8/rGIAU9gEA",
+	"ojZSCGPvkjFcJvN2t8iOxHiBSYwI/dYloHe6bszm40mUmDaLWXSEn5u56f2c1AbqGwMzfkliBCKYRSg1",
+	"3mJzwTFLYjTSLV3CdoxximDWOIu6j6yUhWmcSjbvOdGaT0ErYYCwEUvmqPX4Uw1qU3gd5Pxka5nB+Lzc",
+	"+ObzN9VL3OL9m4M7U0NdpHDIruiQtXa6ftZ6PJJZJgQnWcvRq0V35wnslfJlS4itZg31ZT53plBgnD1n",
+	"HNGTDyXJNScp1xIYW7wdDlMcwXSGKXv7z5N/ngz4gVd+p7wBOh5D8pKhFEV4nsEsun+ZITaEi2R4+8rR",
+	"gbe+R3c4nbycEN5sYMBWjz5JIZOhQDlF5BtqeqZkFqYOa+ULrZ/HjgHKMiR2RCz16l45X+pqpN8wOobt",
+	"BUEwleFP31ZfqegYKcaZtN3Bi9uEsNwxjrRD6qOop5ETRMuc0CSToYgzvKhlSibINYoQdwBngMIUNQwg",
+	"RYwLAoJzilLA0Fcmc2uTuahzYswtmzixIGtcYaKKXHHzQle1K0fQ5W0evzz+dwAAAP//9Ua/crD3AQA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
