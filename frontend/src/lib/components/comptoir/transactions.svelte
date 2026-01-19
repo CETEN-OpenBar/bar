@@ -22,8 +22,7 @@
 	let transactions: Array<Transaction> = [];
 	let maxItemPerTransaction: number = 6;
 	let interval: number;
-	let transactionAmount: number = 10;
-	let resizeObserver: ResizeObserver | null = null;
+	let transactionAmount: number = 5;
 
 	let page: number = 1;
 	let maxPage: number = 1;
@@ -40,72 +39,14 @@
 		}
 	};
 
-	function calculateTransactionAmount() {
-		if (typeof window !== 'undefined') {
-			const screenWidth = window.innerWidth;
-			const screenHeight = window.innerHeight;
-			const isMobile = screenWidth <= 768;
-			
-			// Different header heights for mobile vs desktop
-			const headerHeight = isMobile ? 180 : 140;
-			const paginationHeight = isMobile ? 120 : 100;
-			const availableHeight = screenHeight - headerHeight - paginationHeight;
-			
-			// Measure actual transaction height
-			measureTransactionHeight().then((measuredHeight) => {
-				if (measuredHeight > 0) {
-					const newAmount = Math.max(1, Math.floor(availableHeight / measuredHeight));
-					if (newAmount !== transactionAmount) {
-						transactionAmount = newAmount;
-						reloadTransactions();
-					}
-				}
-			});
-		}
-	}
-
-	function measureTransactionHeight(): Promise<number> {
-		return new Promise((resolve) => {
-			requestAnimationFrame(() => {
-				const transactionCard = document.querySelector('.transaction-card') as HTMLElement;
-				if (transactionCard) {
-					const height = transactionCard.offsetHeight;
-					const computedStyle = window.getComputedStyle(transactionCard);
-					const marginTop = parseFloat(computedStyle.marginTop);
-					const totalHeight = height + marginTop;
-					resolve(totalHeight);
-				} else {
-					// Fallback based on screen size
-					const isMobile = window.innerWidth <= 768;
-					resolve(isMobile ? 280 : 180);
-				}
-			});
-		});
-	}
-
-	function setupResizeObserver() {
-		if (typeof window !== 'undefined' && 'ResizeObserver' in window) {
-			const transactionsList = document.querySelector('.transactions-list');
-			if (transactionsList) {
-				resizeObserver = new ResizeObserver(() => {
-					calculateTransactionAmount();
-				});
-				resizeObserver.observe(transactionsList);
-			}
-		}
-	}
-
 	onMount(() => {
-		calculateTransactionAmount();
 		reloadTransactions();
 		interval = setInterval(() => {
 			reloadTransactions();
 		}, 2000);
 		
-		window.addEventListener('resize', calculateTransactionAmount);
 		window.addEventListener('keydown', handleKeyDown);
 		
-		// Touch swipe support (works on touch PCs and mobile devices)
 		const transactionsList = document.querySelector('.transactions-list');
 		if (transactionsList) {
 			let touchStartX = 0;
@@ -127,7 +68,6 @@
 				}
 			}, { passive: true });
 			
-			// Handle mouse events for touch PCs
 			transactionsList.addEventListener('mousedown', (e: Event) => {
 				const mouseEvent = e as MouseEvent;
 				if (!isTouch) {
@@ -150,46 +90,32 @@
 				
 				if (Math.abs(diff) > swipeThreshold) {
 					if (diff > 0) {
-						// Swipe left - next page
 						if (page < maxPage) nextPage();
 					} else {
-						// Swipe right - previous page
 						if (page > 1) prevPage();
 					}
 				}
 			};
 			
 			const handleMouseSwipe = () => {
-				const swipeThreshold = 100; // Higher threshold for mouse to avoid conflicts
+				const swipeThreshold = 100;
 				const diff = touchStartX - touchEndX;
 				
 				if (Math.abs(diff) > swipeThreshold) {
 					if (diff > 0) {
-						// Swipe left - next page
 						if (page < maxPage) nextPage();
 					} else {
-						// Swipe right - previous page
 						if (page > 1) prevPage();
 					}
 				}
 			};
 		}
-		
-		// Re-measure after transactions are loaded
-		setTimeout(() => {
-			calculateTransactionAmount();
-			setupResizeObserver();
-		}, 1000);
 	});
 
 	onDestroy(() => {
 		clearInterval(interval);
 		if (typeof window !== 'undefined') {
-			window.removeEventListener('resize', calculateTransactionAmount);
 			window.removeEventListener('keydown', handleKeyDown);
-		}
-		if (resizeObserver) {
-			resizeObserver.disconnect();
 		}
 	});
 
@@ -223,11 +149,6 @@
 					newTransactions.push(transaction);
 				}
 				transactions = newTransactions;
-				
-				// Re-measure after transactions are rendered
-				setTimeout(() => {
-					calculateTransactionAmount();
-				}, 100);
 			});
 	}
 
@@ -305,6 +226,7 @@
 		flex-grow: 1;
 		flex: 1;
         padding: 15px;
+        padding-bottom: 0;
 	}
 
 	.header-controls {
@@ -404,20 +326,24 @@
 	.transactions-list {
 		display: flex;
 		flex-direction: column;
-		overflow: auto;
+		overflow-y: auto;
 		flex-grow: 1;
+		gap: 20px;
+		padding: 4px;
+        margin-top: 10px;
+		max-height: calc(100vh - 240px);
 	}
 
 	.transaction-card {
 		display: flex;
 		flex-direction: column;
-		margin-top: 20px;
 		border: 2px solid #e5e7eb;
 		border-radius: 12px;
 		cursor: pointer;
 		transition: all 0.2s ease;
 		position: relative;
 		background-color: white;
+		flex-shrink: 0;
 	}
 
 	@media (prefers-color-scheme: dark) {
