@@ -286,9 +286,15 @@
 		border-radius: 1rem;
 		box-shadow: 0 20px 25px -5px var(--shadow-color);
 		position: relative;
-		min-width: 300px;
+		min-width: 400px;
+		min-height: 350px;
 		text-align: center;
 		cursor: default;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		gap: 1rem;
 	}
 
 	.modal-close {
@@ -304,10 +310,6 @@
 		transition: all 0.2s ease;
 	}
 
-	.modal-close:hover {
-		background-color: var(--bg-secondary);
-		color: var(--text-primary);
-	}
 
 	.modal-title {
 		font-size: 1.5rem;
