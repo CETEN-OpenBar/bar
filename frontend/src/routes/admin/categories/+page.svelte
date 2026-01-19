@@ -6,39 +6,73 @@
 	import { onMount } from 'svelte';
 
 	let categories: Category[] = [];
-	let selectedCategories: Category[] = [];
 	let newCategory: NewCategory = {
 		name: '',
 		picture: '',
 		position: 0
 	};
 
-	let page = 0;
-	let categoriesPerPage = 10;
+	let page: number = 1;
+	let maxPage: number = 1;
+	let categories_per_page = 10;
+
+	let nextPage = () => {
+		if (page < maxPage) {
+			page++;
+			reloadCategories();
+		}
+	};
+	let prevPage = () => {
+		if (page > 1) {
+			page--;
+			reloadCategories();
+		}
+	};
+	let handlePageInput = () => {
+		if (page < 1) {
+			page = 1;
+		} else if (page > maxPage) {
+			page = maxPage;
+		}
+		reloadCategories();
+	};
 
 	let deletingCategory: boolean = false;
 	let confirmationMessage: string | undefined = undefined;
 	let deleteCategoryCallback: VoidFunction = () => {};
 
 	onMount(() => {
+		reloadCategories();
+	});
+
+	function reloadCategories() {
 		categoriesApi()
 			.getCategories(true, { withCredentials: true })
 			.then((res) => {
-				categories = res.data ?? [];
+				const allCategories = res.data ?? [];
+				maxPage = Math.max(1, Math.ceil(allCategories.length / categories_per_page));
+				if (page > maxPage) page = maxPage;
+				const start = (page - 1) * categories_per_page;
+				const end = start + categories_per_page;
+				categories = allCategories.slice(start, end);
 			});
-	});
+	}
 
 	function createNewCategory() {
 		if (!newCategory) return;
 		categoriesApi()
 			.postCategory(newCategory, { withCredentials: true })
 			.then((res) => {
-				categories = [...categories, res.data];
+				reloadCategories();
+				newCategory = {
+					name: '',
+					picture: '',
+					position: 0
+				};
 			});
 	}
 
 	function renameCategory(id: string, newName: string) {
-		if (!newCategory) return;
 		categoriesApi()
 			.patchCategory(id, { name: newName }, { withCredentials: true })
 			.then((res) => {
@@ -52,7 +86,6 @@
 	}
 
 	function toggleHidden(id: string, state: boolean) {
-		if (!newCategory) return;
 		categoriesApi()
 			.patchCategory(id, { hidden: state }, { withCredentials: true })
 			.then((res) => {
@@ -66,7 +99,6 @@
 	}
 
 	function toggleSpecialPrice(id: string, state: boolean) {
-		if (!newCategory) return;
 		categoriesApi()
 			.patchCategory(id, { special_price: state }, { withCredentials: true })
 			.then((res) => {
@@ -80,7 +112,6 @@
 	}
 
 	function reuploadCategoryPicture(id: string, file: File) {
-		if (!newCategory) return;
 		file2Base64(file).then((base64) => {
 			base64 = base64.replace('data:', '').replace(/^.+,/, '');
 			categoriesApi()
@@ -100,7 +131,7 @@
 		categoriesApi()
 			.markDeleteCategory(id, { withCredentials: true })
 			.then(() => {
-				categories = categories.filter((ct) => ct.id !== id);
+				reloadCategories();
 			});
 	}
 
@@ -128,7 +159,7 @@
 			<div class="p-4 sm:p-7">
 				<div class="text-center">
 					<h2 class="block text-2xl font-bold text-gray-800 dark:text-gray-200">
-						Ajouter une catégorie
+						Ajouter une categorie
 					</h2>
 				</div>
 
@@ -144,7 +175,7 @@
 									type="text"
 									id="name"
 									name="name"
-									placeholder="Nom de la catégorie"
+									placeholder="Nom de la categorie"
 									class="py-3 px-4 block w-full border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
 									required
 									aria-describedby="text-error"
@@ -177,7 +208,7 @@
 								type="submit"
 								class="mt-4 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
 								on:click={() => createNewCategory()}
-								data-hs-overlay="#hs-modal-new-image">Créer</button
+								data-hs-overlay="#hs-modal-new-image">Creer</button
 							>
 						</div>
 					</div>
@@ -199,260 +230,329 @@
 	/>
 {/if}
 
-<!-- Table Section -->
-<div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
-	<!-- Card -->
-	<div class="flex flex-col">
-		<div class="-m-1.5 overflow-x-auto">
-			<div class="p-1.5 min-w-full inline-block align-middle">
-				<div
-					class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden dark:bg-slate-900 dark:border-gray-700"
+<div class="h-[calc(100vh-69px)] grid grid-cols-1 grid-rows-[auto_1fr_80px] bg-gray-50 dark:bg-gray-900">
+	<div class="m-3 p-2">
+		<div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-4 sm:gap-6">
+			<div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+				<button
+					class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800 w-full sm:w-auto"
+					data-hs-overlay="#hs-modal-new-image"
 				>
-					<!-- Header -->
-					<div
-						class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-b border-gray-200 dark:border-gray-700"
+					<svg
+						class="w-3 h-3"
+						xmlns="http://www.w3.org/2000/svg"
+						width="16"
+						height="16"
+						viewBox="0 0 16 16"
+						fill="none"
 					>
-						<div>
-							<h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Catégories</h2>
-							<p class="text-sm text-gray-600 dark:text-gray-400">Ajouter des catégories</p>
-						</div>
-
-						<div>
-							<div class="inline-flex gap-x-2">
-								<button
-									class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
-									data-hs-overlay="#hs-modal-new-image"
-								>
-									<svg
-										class="w-3 h-3"
-										xmlns="http://www.w3.org/2000/svg"
-										width="16"
-										height="16"
-										viewBox="0 0 16 16"
-										fill="none"
-									>
-										<path
-											d="M2.63452 7.50001L13.6345 7.5M8.13452 13V2"
-											stroke="currentColor"
-											stroke-width="2"
-											stroke-linecap="round"
-										/>
-									</svg>
-									Ajouter une catégorie
-								</button>
-							</div>
-						</div>
-					</div>
-					<!-- End Header -->
-
-					<!-- Table -->
-					<table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-						<thead class="bg-gray-50 dark:bg-slate-800">
-							<tr>
-								<th scope="col" class="px-6 py-3 text-left">
-									<div class="flex items-center gap-x-2">
-										<span
-											class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
-										>
-											Nom
-										</span>
-									</div>
-								</th>
-								<th scope="col" class="px-6 py-3 text-left">
-									<div class="flex items-center gap-x-2">
-										<span
-											class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
-										>
-											Image
-										</span>
-									</div>
-								</th>
-								<th scope="col" class="px-6 py-3 text-left">
-									<div class="flex items-center gap-x-2">
-										<span
-											class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
-										>
-											Cachée
-										</span>
-									</div>
-								</th>
-								<th scope="col" class="px-6 py-3 text-left">
-									<div class="flex items-center gap-x-2">
-										<span
-											class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200"
-										>
-											Prix Spécial
-										</span>
-									</div>
-								</th>
-
-								<th scope="col" class="px-6 py-3 text-right" />
-							</tr>
-						</thead>
-
-						<tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-							{#each categories.slice(page * categoriesPerPage, (page + 1) * categoriesPerPage) as category}
-								<tr>
-									<td class="h-px w-72">
-										<div class="px-6 py-3">
-											<!-- <p class="block text-sm text-gray-500 break-words">{category.name}</p> -->
-
-											<!-- editable p -->
-
-											<input
-												type="text"
-												class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent"
-												value={category.name}
-												on:input={(e) => {
-													// @ts-ignore
-													let name = e.target?.value;
-													renameCategory(category.id, name);
-												}}
-											/>
-										</div>
-									</td>
-									<td class="h-px w-72">
-										<!-- Display a miniature of the image -->
-										<div class="px-6 py-3 w-24 relative">
-											<!-- <img
-												src={api() + category.picture_uri}
-												alt="indisponible"
-												class="w-full h-full rounded-md object-cover"
-											/> -->
-
-											<!-- input in front of the image to click & reupload -->
-											<input
-												type="file"
-												class="absolute w-[50%] h-[70%] opacity-0 cursor-pointer"
-												on:change={(e) => {
-													// @ts-ignore
-													let file = e.target?.files[0];
-													reuploadCategoryPicture(category.id, file);
-												}}
-											/>
-											{#if category.picture_uri != ''}
-												<img
-													src={api() + category.picture_uri}
-													alt="indisponible"
-													class="w-full h-full rounded-md object-cover"
-												/>
-											{/if}
-										</div>
-									</td>
-									<td class="h-px w-px whitespace-nowrap">
-										<div class="px-6 py-1.5">
-											<input
-												type="checkbox"
-												checked={category.hidden}
-												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
-												on:change={() => toggleHidden(category.id, !category.hidden)}
-											/>
-										</div>
-									</td>
-									<td class="h-px w-px whitespace-nowrap">
-										<div class="px-6 py-1.5">
-											<input
-												type="checkbox"
-												checked={category.special_price}
-												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
-												on:change={() => toggleSpecialPrice(category.id, !category.special_price)}
-											/>
-										</div>
-									</td>
-									<td class="h-px w-px whitespace-nowrap">
-										<div class="px-6 py-1.5">
-											<button
-												class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
-												on:click={() => {
-													deleteCategoryCallback = () => {
-														deletingCategory = false;
-														deleteCategory(category.id)
-													}
-													confirmationMessage = "Supprimer '" + category.name + "' ?";
-													deletingCategory = true;
-												}}
-											>
-												Supprimer
-											</button>
-										</div>
-									</td>
-								</tr>
-							{/each}
-						</tbody>
-					</table>
-					<!-- End Table -->
-
-					<!-- Footer -->
-					<div
-						class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-t border-gray-200 dark:border-gray-700"
-					>
-						<div>
-							<p class="text-sm text-gray-600 dark:text-gray-400">
-								<span class="font-semibold text-gray-800 dark:text-gray-200"
-									>{categories.length}</span
-								> résultats
-							</p>
-						</div>
-
-						<div>
-							<div class="inline-flex gap-x-2">
-								<button
-									type="button"
-									class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
-									on:click={() => {
-										if (page > 0) page--;
-									}}
-								>
-									<svg
-										class="w-3 h-3"
-										xmlns="http://www.w3.org/2000/svg"
-										width="16"
-										height="16"
-										fill="currentColor"
-										viewBox="0 0 16 16"
-									>
-										<path
-											fill-rule="evenodd"
-											d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"
-										/>
-									</svg>
-									Précédent
-								</button>
-
-								<p class="text-sm self-center text-gray-600 dark:text-gray-400">
-									Page {page + 1} / {Math.ceil(categories.length / categoriesPerPage)}
-								</p>
-
-								<button
-									type="button"
-									class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
-									on:click={() => {
-										if (page < Math.ceil(categories.length / categoriesPerPage) - 1) page++;
-									}}
-								>
-									Suivant
-									<svg
-										class="w-3 h-3"
-										xmlns="http://www.w3.org/2000/svg"
-										width="16"
-										height="16"
-										fill="currentColor"
-										viewBox="0 0 16 16"
-									>
-										<path
-											fill-rule="evenodd"
-											d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"
-										/>
-									</svg>
-								</button>
-							</div>
-						</div>
-					</div>
-					<!-- End Footer -->
-				</div>
+						<path
+							d="M2.63452 7.50001L13.6345 7.5M8.13452 13V2"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+						/>
+					</svg>
+					<span class="sm:hidden">Ajouter</span>
+					<span class="hidden sm:inline">Ajouter une categorie</span>
+				</button>
 			</div>
 		</div>
 	</div>
-	<!-- End Card -->
+
+	<div class="flex-grow w-full overflow-x-auto overflow-y-visible">
+		<!-- Desktop Table View -->
+		<div class="hidden min-[800px]:block min-w-full bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-visible">
+			<table class="min-w-full table-fixed divide-y divide-gray-200 dark:divide-gray-700">
+				<colgroup>
+					<col class="w-[25%]" />
+					<col class="w-[25%]" />
+					<col class="w-[15%]" />
+					<col class="w-[15%]" />
+					<col class="w-[20%]" />
+				</colgroup>
+				<thead class="bg-gray-50 dark:bg-gray-700">
+					<tr>
+						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							Nom
+						</th>
+						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							Image
+						</th>
+						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							Cachee
+						</th>
+						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							Prix Special
+						</th>
+						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300">
+							Actions
+						</th>
+					</tr>
+				</thead>
+				<tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+					{#each categories as category}
+						<tr>
+							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600 group relative">
+								<input
+									type="text"
+									class="block w-full text-sm dark:text-white/[.8] p-2 bg-transparent border-none outline-none"
+									value={category.name}
+									on:input={(e) => {
+										// @ts-ignore
+										let name = e.target?.value;
+										renameCategory(category.id, name);
+									}}
+								/>
+								<iconify-icon 
+									icon="mdi:pencil" 
+									class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+								/>
+							</td>
+							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+								<div class="w-16 relative">
+									<input
+										type="file"
+										class="absolute w-full h-full opacity-0 cursor-pointer"
+										accept=".jpg, .jpeg, .png"
+										on:change={(e) => {
+											// @ts-ignore
+											let file = e.target?.files[0];
+											reuploadCategoryPicture(category.id, file);
+										}}
+									/>
+									{#if category.picture_uri != ''}
+										<img
+											src={api() + category.picture_uri}
+											alt="indisponible"
+											class="w-full h-full rounded-md object-cover"
+										/>
+									{:else}
+										<div class="w-full h-12 bg-gray-200 dark:bg-gray-600 rounded-md flex items-center justify-center">
+											<iconify-icon icon="mdi:image-plus" class="text-gray-400" />
+										</div>
+									{/if}
+								</div>
+							</td>
+							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+								<input
+									type="checkbox"
+									checked={category.hidden}
+									class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+									on:change={() => toggleHidden(category.id, !category.hidden)}
+								/>
+							</td>
+							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+								<input
+									type="checkbox"
+									checked={category.special_price}
+									class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+									on:change={() => toggleSpecialPrice(category.id, !category.special_price)}
+								/>
+							</td>
+							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300">
+								<button
+									class="inline-flex items-center gap-x-1.5 text-sm text-red-600 dark:text-red-400 decoration-2 hover:underline font-medium"
+									on:click={() => {
+										deleteCategoryCallback = () => {
+											deletingCategory = false;
+											deleteCategory(category.id);
+										};
+										confirmationMessage = "Supprimer '" + category.name + "' ?";
+										deletingCategory = true;
+									}}
+								>
+									<iconify-icon icon="mdi:delete" width="20" height="20" />
+									Supprimer
+								</button>
+							</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+		</div>
+
+		<!-- Mobile Card View -->
+		<div class="block min-[800px]:hidden space-y-4 px-2">
+			{#if categories.length === 0}
+				<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center">
+					<p class="text-gray-500 dark:text-gray-400">Aucune categorie trouvee</p>
+				</div>
+			{:else}
+				{#each categories as category}
+					<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+						<div class="flex justify-between items-start mb-3">
+							<div class="flex-1">
+								<div class="mb-2">
+									<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Nom</label>
+									<input
+										type="text"
+										class="w-full text-sm dark:text-white/[.8] bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
+										value={category.name}
+										on:input={(e) => {
+											// @ts-ignore
+											let name = e.target?.value;
+											renameCategory(category.id, name);
+										}}
+									/>
+								</div>
+								<div class="mb-2">
+									<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Image</label>
+									<div class="w-20 relative mt-1">
+										<input
+											type="file"
+											class="absolute w-full h-full opacity-0 cursor-pointer"
+											accept=".jpg, .jpeg, .png"
+											on:change={(e) => {
+												// @ts-ignore
+												let file = e.target?.files[0];
+												reuploadCategoryPicture(category.id, file);
+											}}
+										/>
+										{#if category.picture_uri != ''}
+											<img
+												src={api() + category.picture_uri}
+												alt="indisponible"
+												class="w-full h-full rounded-md object-cover"
+											/>
+										{:else}
+											<div class="w-full h-12 bg-gray-200 dark:bg-gray-600 rounded-md flex items-center justify-center">
+												<iconify-icon icon="mdi:image-plus" class="text-gray-400" />
+											</div>
+										{/if}
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="grid grid-cols-2 gap-2 mb-3">
+							<div>
+								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Cachee</label>
+								<div class="py-2">
+									<input
+										type="checkbox"
+										checked={category.hidden}
+										class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+										on:change={() => toggleHidden(category.id, !category.hidden)}
+									/>
+								</div>
+							</div>
+							<div>
+								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Prix Special</label>
+								<div class="py-2">
+									<input
+										type="checkbox"
+										checked={category.special_price}
+										class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+										on:change={() => toggleSpecialPrice(category.id, !category.special_price)}
+									/>
+								</div>
+							</div>
+						</div>
+						<div class="flex flex-wrap gap-2">
+							<button
+								class="flex-1 min-w-0 px-3 py-2 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors flex items-center justify-center gap-1"
+								on:click={() => {
+									deleteCategoryCallback = () => {
+										deletingCategory = false;
+										deleteCategory(category.id);
+									};
+									confirmationMessage = "Supprimer '" + category.name + "' ?";
+									deletingCategory = true;
+								}}
+							>
+								<iconify-icon icon="mdi:delete" width="16" height="16" />
+								Supprimer
+							</button>
+						</div>
+					</div>
+				{/each}
+			{/if}
+		</div>
+	</div>
+
+	<!-- Pagination -->
+	<div class="min-h-[80px] px-3 sm:px-6 py-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
+		<div class="order-2 sm:order-1">
+			<p class="text-sm text-gray-600 dark:text-gray-400 text-center sm:text-left">
+				<span class="font-semibold text-gray-800 dark:text-gray-200">{categories.length}</span> resultats
+			</p>
+		</div>
+		<div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 order-1 sm:order-2 w-full sm:w-auto">
+			<p class="text-sm font-medium text-gray-700 dark:text-gray-300 order-2 sm:order-1">
+				Page
+				<input
+					type="number"
+					min="1"
+					max={maxPage}
+					class="page-input"
+					bind:value={page}
+					on:change={handlePageInput}
+				/>
+				sur <span class="font-bold">{maxPage}</span>
+			</p>
+			<div class="flex items-center gap-2 order-1 sm:order-2">
+				<button
+					type="button"
+					class="py-2 px-3 sm:px-4 inline-flex justify-center items-center gap-1 sm:gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-all text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-800 flex-1 sm:flex-none"
+					on:click={prevPage}
+					disabled={page === 1}
+				>
+					<svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M15 19l-7-7 7-7"
+						/>
+					</svg>
+					<span class="hidden xs:inline">Precedent</span>
+					<span class="xs:hidden">Prec.</span>
+				</button>
+				<button
+					type="button"
+					class="py-2 px-3 sm:px-4 inline-flex justify-center items-center gap-1 sm:gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-all text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-800 flex-1 sm:flex-none"
+					on:click={nextPage}
+					disabled={page >= maxPage}
+				>
+					<span class="hidden xs:inline">Suivant</span>
+					<span class="xs:hidden">Suiv.</span>
+					<svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+					</svg>
+				</button>
+			</div>
+		</div>
+	</div>
 </div>
-<!-- End Table Section -->
+
+<style>
+	.page-input {
+		width: 50px;
+		padding: 4px 6px;
+		border: 1px solid #d1d5db;
+		border-radius: 4px;
+		font-size: 14px;
+		text-align: center;
+		font-weight: 600;
+		-moz-appearance: textfield;
+	}
+
+	.page-input::-webkit-outer-spin-button,
+	.page-input::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+
+	.page-input:focus {
+		outline: none;
+		border-color: #3b82f6;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		.page-input {
+			background-color: #374151;
+			color: #e5e7eb;
+			border-color: #4b5563;
+		}
+	}
+</style>
