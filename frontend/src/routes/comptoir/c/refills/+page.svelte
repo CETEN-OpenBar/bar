@@ -25,6 +25,12 @@
 		}
 	};
 
+	function handleAvatarError(e: Event) {
+		const target = e.currentTarget as HTMLImageElement;
+		target.style.display = 'none';
+		target.nextElementSibling?.classList.remove('hidden');
+	}
+
 	onMount(() => {
 		reloadRefills();
 		interval = setInterval(() => {
@@ -193,7 +199,20 @@
 			{#each refills as refill}
 				<div class="refill-card {refill.state}">
 					<div class="refill-header">
-						<iconify-icon icon="mdi:account-circle" class="refill-avatar placeholder-icon" />
+						{#if refill.account_google_picture}
+							<img
+								src={refill.account_google_picture}
+								alt="Avatar"
+								class="refill-avatar"
+								on:error={handleAvatarError}
+							/>
+						{/if}
+						<iconify-icon
+							icon="mdi:account-circle"
+							class="refill-avatar placeholder-icon {refill.account_google_picture
+								? 'hidden'
+								: ''}"
+						/>
 						<div class="refill-user-info">
 							<b>{refill.account_name}</b>
 							<span class="refill-date">{new Date(refill.issued_at * 1000).toLocaleString()}</span>

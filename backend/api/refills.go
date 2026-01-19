@@ -187,15 +187,16 @@ func (s *Server) PostRefill(c echo.Context, accountId string, params autogen.Pos
 
 	refill := &models.Refill{
 		Refill: autogen.Refill{
-			AccountId:    account.Id,
-			AccountName:  account.Name(),
-			Amount:       params.Amount,
-			Type:         params.Type,
-			Id:           uuid.New(),
-			IssuedAt:     uint64(time.Now().Unix()),
-			IssuedBy:     admin.Id,
-			IssuedByName: admin.Name(),
-			State:        autogen.RefillStateValid,
+			AccountId:            account.Id,
+			AccountName:          account.Name(),
+			AccountGooglePicture: account.GooglePicture,
+			Amount:               params.Amount,
+			Type:                 params.Type,
+			Id:                   uuid.New(),
+			IssuedAt:             uint64(time.Now().Unix()),
+			IssuedBy:             admin.Id,
+			IssuedByName:         admin.Name(),
+			State:                autogen.RefillStateValid,
 		},
 	}
 

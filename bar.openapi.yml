@@ -6388,6 +6388,9 @@ components:
         account_name:
           type: string
           description: Name of the account
+        account_google_picture:
+          type: string
+          description: Google profile picture URL of the account
         amount:
           type: integer
           format: int64
@@ -6490,6 +6493,9 @@ components:
         account_name:
           type: string
           description: Name of the account
+        account_google_picture:
+          type: string
+          description: Google profile picture URL of the account
         amount:
           type: integer
           format: int32
