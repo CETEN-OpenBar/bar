@@ -42,9 +42,9 @@
 	}
 </script>
 
-<div class="w-full p-4 md:p-0">
-	<div class="hidden md:block bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-		<div class="overflow-x-auto">
+<div class="w-full h-full p-4 md:p-0 flex flex-col">
+	<div class="hidden md:flex flex-col flex-1 min-h-0 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+		<div class="flex-1 min-h-0 overflow-auto">
 			<table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
 				<thead class="bg-gray-50 dark:bg-gray-700">
 					<tr class="grid grid-cols-5 divide-x divide-gray-200 dark:divide-gray-700">
@@ -71,7 +71,7 @@
                         </th>
 					</tr>
 				</thead>
-				<tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700 max-h-[calc(100vh-240px)] overflow-y-auto">
+				<tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
 					{#each filtered_items as item}
 						<tr class="grid grid-cols-5 divide-x divide-gray-200 dark:divide-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
 							<td class="px-4 py-3 flex items-center gap-3 sticky left-0 bg-white dark:bg-gray-800 z-10">
@@ -104,8 +104,8 @@
 		</div>
 	</div>
 
-	<div class="md:hidden space-y-4 max-h-[calc(100vh-240px)] overflow-y-auto">
-		<div class="flex items-center gap-2 mb-2">
+	<div class="md:hidden flex-1 min-h-0 flex flex-col space-y-4 overflow-auto">
+		<div class="flex items-center gap-2 mb-2 flex-shrink-0">
 			<span class="text-sm font-medium text-gray-500 dark:text-gray-300">Nom</span>
 			<input
 				type="text"

@@ -90,6 +90,8 @@
 		padding: 16px;
 		background-color: white;
 		border-top: 1px solid #e5e7eb;
+		margin-top: auto;
+		flex-shrink: 0;
 	}
 
 	.pagination-results {

@@ -121,6 +121,13 @@
 		height: 100vh;
 	}
 
+	.slot-container {
+		flex: 1;
+		min-height: 0;
+		display: flex;
+		flex-direction: column;
+	}
+
 	.main-header {
 		display: flex;
 		justify-content: space-between;
@@ -400,7 +407,9 @@
 				</div>
 			</header>
 
-			<slot />
+			<div class="slot-container">
+				<slot />
+			</div>
 
 			{#if askForCard}
 				<div class="modal-overlay" on:click={reset}>

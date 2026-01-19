@@ -483,7 +483,7 @@
 	/>
 {/if}
 
-<div class="h-[calc(100vh-69px)] grid grid-cols-1 grid-rows-[auto_1fr_100px] sm:grid-rows-[auto_1fr_80px] bg-gray-50 dark:bg-gray-900">
+<div class="h-full flex flex-col bg-gray-50 dark:bg-gray-900">
 	<div class="m-3 p-2">
 		<!-- Mobile: Compact filters with toggle -->
 		<div class="lg:hidden">
@@ -665,7 +665,7 @@
 		</div>
 	</div>
 
-	<div class="flex-grow w-full overflow-x-auto overflow-y-visible">
+	<div class="flex-1 min-h-0 w-full overflow-x-auto overflow-y-auto">
 		<!-- Desktop Table View -->
 		<div class="hidden min-[1300px]:block min-w-full bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-visible">
 			<table class="min-w-full table-fixed divide-y divide-gray-200 dark:divide-gray-700">
@@ -975,7 +975,7 @@
 		</div>
 
 		<!-- Mobile Card View -->
-		<div class="block min-[1300px]:hidden space-y-4 px-2 pb-[110px] sm:pb-0">
+		<div class="block min-[1300px]:hidden space-y-4 px-2 pb-4">
 			{#if items.length === 0}
 				<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center">
 					<p class="text-gray-500 dark:text-gray-400">Aucun produit trouvé</p>

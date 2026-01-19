@@ -285,8 +285,8 @@
 	.refills-content {
 		display: flex;
 		flex-direction: column;
-		flex-grow: 1;
 		flex: 1;
+		min-height: 0;
 		padding: 15px;
 		padding-bottom: 0;
 	}
@@ -295,9 +295,9 @@
 		display: flex;
 		flex-direction: column;
 		overflow-y: auto;
-		flex-grow: 1;
+		flex: 1;
+		min-height: 0;
 		gap: 20px;
-		max-height: calc(100vh - 260px);
 	}
 
 	.refill-card {
@@ -567,8 +567,6 @@
 			font-size: 32px;
 		}
 
-		.refills-list {
-			max-height: calc(100vh - 340px);
-		}
+
 	}
 </style>
