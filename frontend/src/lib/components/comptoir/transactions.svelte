@@ -256,7 +256,7 @@
 						Résumé
 					</button>
 					<button class="tab" on:click={() => goto('/comptoir/c/refills')}>
-						<iconify-icon icon="mdi:history" width="18" height="18" />
+						<iconify-icon icon="mdi:cash-clock" width="18" height="18" />
 						Historique recharges
 					</button>
 				</div>
@@ -933,6 +933,11 @@
 	}
 
 	@media (max-width: 480px) {
+        .view-tabs button {
+            font-size: 9px;
+            padding: 3px 8px;
+        }
+
 		.items-grid {
 			grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
 		}
@@ -991,7 +996,7 @@
 		}
 
 		.transactions-list {
-			max-height: calc(100vh - 425px);
+			max-height: calc(100vh - 440px);
 		}
 	}
 </style>
