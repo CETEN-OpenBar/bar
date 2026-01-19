@@ -200,14 +200,6 @@
 	let readableDate: string = formatTimestampToReadableDate(transaction.created_at*1000);
 </script>
 
-{#if success != ''}
-	<Success message={success} />
-{/if}
-
-{#if error != ''}
-	<Error {error} />
-{/if}
-
 <button
 	id="overlay"
 	class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 cursor-default"
@@ -490,6 +482,16 @@
 			</div>
 		</div>
 	</div>
+</div>
+
+<div class="fixed inset-0 z-50 flex justify-center items-center pointer-events-none">
+	{#if success != ''}
+		<Success message={success} />
+	{/if}
+
+	{#if error != ''}
+		<Error {error} />
+	{/if}
 </div>
 
 <style>
