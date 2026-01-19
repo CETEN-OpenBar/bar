@@ -375,16 +375,18 @@
 	.transaction-header {
 		color: black;
 		padding: 12px;
-		padding-left: 12px;
+        padding-right: 35px;
 		display: flex;
 		align-items: center;
 		gap: 8px;
 		position: relative;
+        border-bottom: 1px solid #9ca3af;
 	}
 
 	@media (prefers-color-scheme: dark) {
 		.transaction-header {
 			color: white;
+            border-bottom-color: #4b5563;
 		}
 	}
 
@@ -414,7 +416,7 @@
 		margin: 4px;
 		position: absolute;
 		right: 12px;
-		top: 12px;
+		top: 17px;
 		color: #374151;
 	}
 
@@ -538,7 +540,7 @@
 		border-radius: 50%;
 		position: absolute;
 		left: 12px;
-		top: 65%;
+		top: 72%;
 		transform: translateY(-50%);
 		box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
 	}
@@ -732,7 +734,6 @@
 		}
 
 		.transaction-header {
-			padding-left: 85px;
 			font-size: 14px;
 		}
 
@@ -750,6 +751,10 @@
 		.placeholder-icon {
 			font-size: 32px;
 		}
+
+        .status-led {
+            top: 53%;
+        }
 	}
 </style>
 
