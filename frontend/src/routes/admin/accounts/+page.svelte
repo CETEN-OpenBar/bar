@@ -415,313 +415,327 @@
 
 	<div class="flex-grow w-full overflow-x-auto overflow-y-visible">
 		<!-- Desktop Table View -->
-		<div class="hidden lg:block min-w-full bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-visible">
-			<div class="grid grid-cols-[1fr_1fr_1.5fr_0.8fr_0.8fr_0.8fr_0.8fr_1fr] bg-gray-50 dark:bg-gray-700 divide-x divide-gray-200 dark:divide-gray-700">
-				<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-					Nom
-				</th>
-				<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-					Prénom
-				</th>
-				<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-					Adresse E-Mail
-				</th>
-				<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-					Solde
-				</th>
-				<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-					Étoiles
-				</th>
-				<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-					Rôle
-				</th>
-				<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-					Prix
-				</th>
-				<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-					Actions
-				</th>
-			</div>
-			<div class="divide-y divide-gray-200 dark:divide-gray-700">
-				{#each accounts as account}
-					<div class="grid grid-cols-[1fr_1fr_1.5fr_0.8fr_0.8fr_0.8fr_0.8fr_1fr] divide-x divide-gray-200 dark:divide-gray-700">
-					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300 flex items-center group relative">
-						<input
-							type="text"
-							class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent border-none outline-none flex-1"
-							value={account.last_name}
-							on:input={(e) => {
-								// @ts-ignore
-								let name = e.target?.value;
-								accountsApi()
-									.patchAccountId(
-										account.id,
-										{
-											last_name: name
-										},
-										{ withCredentials: true }
-									)
-									.then((res) => {
-										account = res.data ?? account;
-									})
-									.catch((err) => {
-										account.last_name = account.last_name ?? '';
-									});
-							}}
-						/>
-					<iconify-icon 
-						icon="mdi:pencil" 
-						class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
-					/>
-					</td>
-					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300 flex items-center group relative">
-			            <input
-							type="text"
-							class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent border-none outline-none flex-1"
-							value={account.first_name}
-							on:input={(e) => {
-								// @ts-ignore
-								let name = e.target?.value;
-								accountsApi()
-									.patchAccountId(
-										account.id,
-										{
-											first_name: name
-										},
-										{ withCredentials: true }
-									)
-									.then((res) => {
-										account = res.data ?? account;
-									})
-									.catch((err) => {
-										account.first_name = account.first_name ?? '';
-        							});
-							}}
-						/>
-					<iconify-icon 
-						icon="mdi:pencil" 
-						class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
-					/>
-					</td>
-					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300 flex items-center group relative">
-						<input
-							type="text"
-							class="block text-sm dark:text-white/[.8] break-words p-2 bg-transparent border-none outline-none flex-1"
-							value={account.email_address}
-							on:input={(e) => {
-								// @ts-ignore
-								let name = e.target?.value;
-								accountsApi()
-									.patchAccountId(
-										account.id,
-										{
-											email_address: name
-										},
-										{ withCredentials: true }
-									)
-									.then((res) => {
-										account = res.data ?? account;
-									})
-									.catch((err) => {
-										account.email_address = account.email_address ?? '';
-									});
-							}}
-						/>
-					<iconify-icon 
-						icon="mdi:pencil" 
-						class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
-					/>
-					</td>
-					<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-						{formatPrice(account.balance)}
-					</td>
-					<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-						{#if account.points >= 1000000000}
-							{(account.points / 1000000000).toFixed(account.points % 1000000000 === 0 ? 0 : 1)}G
-						{:else if account.points >= 1000000}
-							{(account.points / 1000000).toFixed(account.points % 1000000 === 0 ? 0 : 1)}M
-						{:else if account.points >= 1000}
-							{(account.points / 1000).toFixed(account.points % 1000 === 0 ? 0 : 1)}k
-						{:else}
-							{account.points}
-						{/if}
-						<iconify-icon icon="mdi:star" class="ml-1 text-yellow-500" />
-					</td>
-					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-							<select
-								class="block text-sm dark:text-white/[.8] dark:bg-slate-900 break-words p-2 bg-transparent border-none outline-none w-full"
-								value={account.role}
-								on:change={(e) => {
-									// @ts-ignore
-									let role = e.target?.value;
-									accountsApi()
-										.patchAccountId(
-											account.id,
-											{
-												role: role
-											},
-											{ withCredentials: true }
-										)
-										.then((res) => {
-											account = res.data ?? account;
-										})
-										.catch((err) => {
-											account.role = account.role ?? '';
-										});
-								}}
-							>
-								<option value="student">Étudiant</option>
-								<option value="student_with_benefits">Étudiant avec avantages</option>
-								<option value="member">Membre</option>
-								<option value="admin">Admin</option>
-								<option value="ghost">Fantôme</option>
-								<option value="superadmin">Superadmin</option>
-							</select>
-						</td>
-						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-							<select
-								class="block text-sm dark:text-white/[.8] dark:bg-slate-900 break-words p-2 bg-transparent border-none outline-none w-full"
-								value={account.price_role}
-								on:change={(e) => {
-									// @ts-ignore
-									let role = e.target?.value;
-									accountsApi()
-										.patchAccountId(
-											account.id,
-											{
-												price_role: role
-											},
-											{ withCredentials: true }
-										)
-										.then((res) => {
-											account = res.data ?? account;
-										})
-										.catch((err) => {
-											account.price_role = account.price_role ?? '';
-										});
-								}}
-							>
-								<option value="externe">Externe</option>
-								<option value="ceten">CETEN</option>
-								<option value="staff_bar">Staff</option>
-								<option value="coutant">Coutant</option>
-								<option value="privilegies">Membre privilégié</option>
-							</select>
-						</td>
-						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300 relative">
-							<button
-								class="text-sm text-blue-600 dark:text-blue-400 font-medium hover:bg-gray-100 dark:hover:bg-slate-800 p-2 rounded-md flex items-center gap-2"
-								on:click={(e) => {
-									const menu = e.currentTarget.nextElementSibling;
-									if (menu) {
-										const rect = e.currentTarget.getBoundingClientRect();
-										const menuHeight = 200; // Approximate dropdown height
-										const viewportHeight = window.innerHeight;
-										const spaceBelow = viewportHeight - rect.bottom;
-										const spaceAbove = rect.top;
-										
+		<div class="hidden min-[1300px]:block min-w-full bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-visible">
+			<table class="min-w-full table-fixed divide-y divide-gray-200 dark:divide-gray-700">
+				<colgroup>
+					<col class="w-[12%]" />
+					<col class="w-[12%]" />
+					<col class="w-[18%]" />
+					<col class="w-[10%]" />
+					<col class="w-[10%]" />
+					<col class="w-[12%]" />
+					<col class="w-[12%]" />
+					<col class="w-[14%]" />
+				</colgroup>
+				<thead class="bg-gray-50 dark:bg-gray-700">
+					<tr>
+						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							Nom
+						</th>
+						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							Prénom
+						</th>
+						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							Adresse E-Mail
+						</th>
+						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							Solde
+						</th>
+						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							Étoiles
+						</th>
+						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							Rôle
+						</th>
+						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							Prix
+						</th>
+						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300">
+							Actions
+						</th>
+					</tr>
+				</thead>
+				<tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+					{#each accounts as account}
+						<tr>
+							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600 group relative">
+								<input
+									type="text"
+									class="block w-full text-sm dark:text-white/[.8] p-2 bg-transparent border-none outline-none"
+									value={account.last_name}
+									on:input={(e) => {
 										// @ts-ignore
-										menu.style.left = `${rect.left}px`;
-										
-										// Position above if not enough space below and enough space above
-										if (spaceBelow < menuHeight && spaceAbove > menuHeight) {
-											// @ts-ignore
-											menu.style.top = `${rect.top - menuHeight - 8}px`;
-										} else {
-											// @ts-ignore
-											menu.style.top = `${rect.bottom + 8}px`;
-										}
-										
-										menu.classList.toggle('hidden');
-										menu.classList.toggle('flex');
-										menu.classList.toggle('flex-col');
-									}
-									e.stopPropagation();
-								}}
-							>
-								Actions
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="16"
-									height="16"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
+										let name = e.target?.value;
+										accountsApi()
+											.patchAccountId(
+												account.id,
+												{
+													last_name: name
+												},
+												{ withCredentials: true }
+											)
+											.then((res) => {
+												account = res.data ?? account;
+											})
+											.catch((err) => {
+												account.last_name = account.last_name ?? '';
+											});
+									}}
+								/>
+								<iconify-icon 
+									icon="mdi:pencil" 
+									class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+								/>
+							</td>
+							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600 group relative">
+								<input
+									type="text"
+									class="block w-full text-sm dark:text-white/[.8] p-2 bg-transparent border-none outline-none"
+									value={account.first_name}
+									on:input={(e) => {
+										// @ts-ignore
+										let name = e.target?.value;
+										accountsApi()
+											.patchAccountId(
+												account.id,
+												{
+													first_name: name
+												},
+												{ withCredentials: true }
+											)
+											.then((res) => {
+												account = res.data ?? account;
+											})
+											.catch((err) => {
+												account.first_name = account.first_name ?? '';
+											});
+									}}
+								/>
+								<iconify-icon 
+									icon="mdi:pencil" 
+									class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+								/>
+							</td>
+							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600 group relative">
+								<input
+									type="text"
+									class="block w-full text-sm dark:text-white/[.8] p-2 bg-transparent border-none outline-none"
+									value={account.email_address}
+									on:input={(e) => {
+										// @ts-ignore
+										let name = e.target?.value;
+										accountsApi()
+											.patchAccountId(
+												account.id,
+												{
+													email_address: name
+												},
+												{ withCredentials: true }
+											)
+											.then((res) => {
+												account = res.data ?? account;
+											})
+											.catch((err) => {
+												account.email_address = account.email_address ?? '';
+											});
+									}}
+								/>
+								<iconify-icon 
+									icon="mdi:pencil" 
+									class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+								/>
+							</td>
+							<td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+								{formatPrice(account.balance)}
+							</td>
+							<td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+								{#if account.points >= 1000000000}
+									{(account.points / 1000000000).toFixed(account.points % 1000000000 === 0 ? 0 : 1)}G
+								{:else if account.points >= 1000000}
+									{(account.points / 1000000).toFixed(account.points % 1000000 === 0 ? 0 : 1)}M
+								{:else if account.points >= 1000}
+									{(account.points / 1000).toFixed(account.points % 1000 === 0 ? 0 : 1)}k
+								{:else}
+									{account.points}
+								{/if}
+								<iconify-icon icon="mdi:star" class="ml-1 text-yellow-500" />
+							</td>
+							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+								<select
+									class="block w-full text-sm dark:text-white/[.8] dark:bg-slate-900 p-2 bg-transparent border-none outline-none"
+									value={account.role}
+									on:change={(e) => {
+										// @ts-ignore
+										let role = e.target?.value;
+										accountsApi()
+											.patchAccountId(
+												account.id,
+												{
+													role: role
+												},
+												{ withCredentials: true }
+											)
+											.then((res) => {
+												account = res.data ?? account;
+											})
+											.catch((err) => {
+												account.role = account.role ?? '';
+											});
+									}}
 								>
-									<path d="m6 9 6 6 6-6" />
-								</svg>
-							</button>
+									<option value="student">Étudiant</option>
+									<option value="student_with_benefits">Étudiant avec avantages</option>
+									<option value="member">Membre</option>
+									<option value="admin">Admin</option>
+									<option value="ghost">Fantôme</option>
+									<option value="superadmin">Superadmin</option>
+								</select>
+							</td>
+							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+								<select
+									class="block w-full text-sm dark:text-white/[.8] dark:bg-slate-900 p-2 bg-transparent border-none outline-none"
+									value={account.price_role}
+									on:change={(e) => {
+										// @ts-ignore
+										let role = e.target?.value;
+										accountsApi()
+											.patchAccountId(
+												account.id,
+												{
+													price_role: role
+												},
+												{ withCredentials: true }
+											)
+											.then((res) => {
+												account = res.data ?? account;
+											})
+											.catch((err) => {
+												account.price_role = account.price_role ?? '';
+											});
+									}}
+								>
+									<option value="externe">Externe</option>
+									<option value="ceten">CETEN</option>
+									<option value="staff_bar">Staff</option>
+									<option value="coutant">Coutant</option>
+									<option value="privilegies">Membre privilégié</option>
+								</select>
+							</td>
+							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 relative">
+								<button
+									class="text-sm text-blue-600 dark:text-blue-400 font-medium hover:bg-gray-100 dark:hover:bg-slate-800 p-2 rounded-md flex items-center gap-2"
+									on:click={(e) => {
+										const menu = e.currentTarget.nextElementSibling;
+										if (menu) {
+											const rect = e.currentTarget.getBoundingClientRect();
+											const menuHeight = 200; // Approximate dropdown height
+											const viewportHeight = window.innerHeight;
+											const spaceBelow = viewportHeight - rect.bottom;
+											const spaceAbove = rect.top;
+											
+											// @ts-ignore
+											menu.style.left = `${rect.left}px`;
+											
+											// Position above if not enough space below and enough space above
+											if (spaceBelow < menuHeight && spaceAbove > menuHeight) {
+												// @ts-ignore
+												menu.style.top = `${rect.top - menuHeight - 8}px`;
+											} else {
+												// @ts-ignore
+												menu.style.top = `${rect.bottom + 8}px`;
+											}
+											
+											menu.classList.toggle('hidden');
+											menu.classList.toggle('flex');
+											menu.classList.toggle('flex-col');
+										}
+										e.stopPropagation();
+									}}
+								>
+									Actions
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="16"
+										height="16"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									>
+										<path d="m6 9 6 6 6-6" />
+									</svg>
+								</button>
 
-							<!-- Dropdown menu -->
-							<div
-								class="dropdown-menu hidden fixed mt-2 py-2 w-48 bg-white dark:bg-slate-900 rounded-md shadow-lg z-[100] border border-gray-200 dark:border-gray-700"
-							>
-								{#if askForCard == false}
+								<!-- Dropdown menu -->
+								<div
+									class="dropdown-menu hidden fixed mt-2 py-2 w-48 bg-white dark:bg-slate-900 rounded-md shadow-lg z-[100] border border-gray-200 dark:border-gray-700"
+								>
+									{#if askForCard == false}
+										<button
+											class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center gap-2"
+											on:click={() => {
+												selectedAccount = account;
+												askForCard = true;
+											}}
+										>
+											<iconify-icon icon="mdi:card-account-details" width="20" height="20" />
+											Nouvelle Carte
+										</button>
+									{/if}
+									<button
+										class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center gap-2"
+										on:click={() => (shown_refill = account)}
+									>
+										<iconify-icon icon="mdi:history" width="20" height="20" />
+										Transactions
+									</button>
+									<button
+										class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center gap-2"
+										on:click={() => (recharging_account = account)}
+									>
+										<iconify-icon icon="mdi:wallet-plus" width="20" height="20" />
+										Recharger
+									</button>
 									<button
 										class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center gap-2"
 										on:click={() => {
-											selectedAccount = account;
-											askForCard = true;
+											shown_stars = account;
 										}}
 									>
-										<iconify-icon icon="mdi:card-account-details" width="20" height="20" />
-										Nouvelle Carte
+										<iconify-icon icon="mdi:star-plus" width="20" height="20" />
+										Ajouter des étoiles
 									</button>
-								{/if}
-								<button
-									class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center gap-2"
-									on:click={() => (shown_refill = account)}
-								>
-									<iconify-icon icon="mdi:history" width="20" height="20" />
-									Transactions
-								</button>
-								<button
-									class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center gap-2"
-									on:click={() => (recharging_account = account)}
-								>
-									<iconify-icon icon="mdi:wallet-plus" width="20" height="20" />
-									Recharger
-								</button>
-								<button
-									class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center gap-2"
-									on:click={() => {
-										shown_stars = account;
-									}}
-								>
-									<iconify-icon icon="mdi:star-plus" width="20" height="20" />
-									Ajouter des étoiles
-								</button>
-								<button
-									class="w-full text-left px-4 py-2 text-sm text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-800 flex items-center gap-2"
-									on:click={() => {
-										deleteAccountCallback = () => {
-											deletingAccount = false;
-											deleteAccount(account.id);
-										};
-										confirmationMessage =
-											'Supprimer le compte de ' +
-											account.first_name +
-											' ' +
-											account.last_name +
-											' ?';
-										deletingAccount = true;
-									}}
-								>
-									<iconify-icon icon="mdi:delete" width="20" height="20" />
-									Supprimer
-								</button>
-							</div>
-						</td>
-					</div>
-				{/each}
-			</div>
+									<button
+										class="w-full text-left px-4 py-2 text-sm text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-800 flex items-center gap-2"
+										on:click={() => {
+											deleteAccountCallback = () => {
+												deletingAccount = false;
+												deleteAccount(account.id);
+											};
+											confirmationMessage =
+												'Supprimer le compte de ' +
+												account.first_name +
+												' ' +
+												account.last_name +
+												' ?';
+											deletingAccount = true;
+										}}
+									>
+										<iconify-icon icon="mdi:delete" width="20" height="20" />
+										Supprimer
+									</button>
+								</div>
+							</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
 		</div>
 
 		<!-- Mobile Card View -->
-		<div class="lg:hidden space-y-4 px-2">
+		<div class="block min-[1300px]:hidden space-y-4 px-2">
 			{#if accounts.length === 0}
 				<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center">
 					<p class="text-gray-500 dark:text-gray-400">Aucun compte trouvé</p>
