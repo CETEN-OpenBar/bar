@@ -318,7 +318,6 @@
 						<div class="item-footer">
 							<div class="item-amounts">
 								<span class="amount-badge">
-									<iconify-icon icon="mdi:numeric" />
 									Quantité: {item.item_already_done}/{item.item_amount}
 								</span>
 							</div>
