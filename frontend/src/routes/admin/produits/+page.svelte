@@ -480,7 +480,7 @@
 	/>
 {/if}
 
-<div class="h-[calc(100vh-69px)] grid grid-cols-1 grid-rows-[auto_1fr_80px] bg-gray-50 dark:bg-gray-900">
+<div class="h-[calc(100vh-69px)] grid grid-cols-1 grid-rows-[auto_1fr_100px] sm:grid-rows-[auto_1fr_80px] bg-gray-50 dark:bg-gray-900">
 	<div class="m-3 p-2">
 		<div class="flex flex-col lg:flex-row lg:flex-wrap lg:items-center gap-4 lg:gap-6">
 			<div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
@@ -873,7 +873,7 @@
 		</div>
 
 		<!-- Mobile Card View -->
-		<div class="block min-[1300px]:hidden space-y-4 px-2">
+		<div class="block min-[1300px]:hidden space-y-4 px-2 pb-[110px] sm:pb-0">
 			{#if items.length === 0}
 				<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center">
 					<p class="text-gray-500 dark:text-gray-400">Aucun produit trouvé</p>
@@ -1150,14 +1150,33 @@
 	</div>
 
 	<!-- Pagination -->
-	<div class="min-h-[80px] px-3 sm:px-6 py-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
-		<div class="order-2 sm:order-1">
-			<p class="text-sm text-gray-600 dark:text-gray-400 text-center sm:text-left">
-				<span class="font-semibold text-gray-800 dark:text-gray-200">{items.length}</span> résultats
-			</p>
+	<div class="h-[100px] sm:h-[80px] px-3 sm:px-6 py-1 sm:py-2 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-center sm:justify-between items-center gap-1 fixed bottom-0 left-0 right-0 z-40 sm:static sm:z-auto">
+		<div class="flex items-center gap-2 order-1">
+			<button
+				type="button"
+				class="py-1.5 px-3 inline-flex justify-center items-center gap-1 rounded-md border font-medium bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-all text-xs disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-800"
+				on:click={prevPage}
+				disabled={page === 1}
+			>
+				<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+				</svg>
+				Prec.
+			</button>
+			<button
+				type="button"
+				class="py-1.5 px-3 inline-flex justify-center items-center gap-1 rounded-md border font-medium bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-all text-xs disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-800"
+				on:click={nextPage}
+				disabled={page >= maxPage}
+			>
+				Suiv.
+				<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+				</svg>
+			</button>
 		</div>
-		<div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 order-1 sm:order-2 w-full sm:w-auto">
-			<p class="text-sm font-medium text-gray-700 dark:text-gray-300 order-2 sm:order-1">
+		<div class="flex items-center gap-3 order-2">
+			<p class="text-xs font-medium text-gray-700 dark:text-gray-300">
 				Page
 				<input
 					type="number"
@@ -1169,37 +1188,10 @@
 				/>
 				sur <span class="font-bold">{maxPage}</span>
 			</p>
-			<div class="flex items-center gap-2 order-1 sm:order-2">
-				<button
-					type="button"
-					class="py-2 px-3 sm:px-4 inline-flex justify-center items-center gap-1 sm:gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-all text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-800 flex-1 sm:flex-none"
-					on:click={prevPage}
-					disabled={page === 1}
-				>
-					<svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M15 19l-7-7 7-7"
-						/>
-					</svg>
-					<span class="hidden xs:inline">Précédent</span>
-					<span class="xs:hidden">Prec.</span>
-				</button>
-				<button
-					type="button"
-					class="py-2 px-3 sm:px-4 inline-flex justify-center items-center gap-1 sm:gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-all text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-800 flex-1 sm:flex-none"
-					on:click={nextPage}
-					disabled={page >= maxPage}
-				>
-					<span class="hidden xs:inline">Suivant</span>
-					<span class="xs:hidden">Suiv.</span>
-					<svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-					</svg>
-				</button>
-			</div>
+			<span class="text-gray-300 dark:text-gray-600">|</span>
+			<p class="text-xs text-gray-600 dark:text-gray-400">
+				<span class="font-semibold text-gray-800 dark:text-gray-200">{items.length}</span> résultats
+			</p>
 		</div>
 	</div>
 </div>
