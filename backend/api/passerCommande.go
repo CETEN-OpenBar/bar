@@ -22,11 +22,12 @@ func (s *Server) PostTransactions(c echo.Context) error {
 
 	transaction := &models.Transaction{
 		Transaction: autogen.Transaction{
-			AccountId:       account.Id.String(),
-			AccountName:     account.Name(),
-			AccountNickName: account.Nickname,
-			State:           autogen.TransactionStarted,
-			Id:              uuid.New(),
+			AccountId:            account.Id.String(),
+			AccountName:          account.Name(),
+			AccountNickName:      account.Nickname,
+			AccountGooglePicture: account.GooglePicture,
+			State:                autogen.TransactionStarted,
+			Id:                   uuid.New(),
 		},
 	}
 

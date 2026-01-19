@@ -6299,6 +6299,9 @@ components:
         account_nick_name:
           type: string
           description: Nickname of the account
+        account_google_picture:
+          type: string
+          description: Google profile picture URL of the account
         total_cost:
           type: integer
           format: uint64

@@ -13,6 +13,12 @@
 	import { dragscroll } from '@svelte-put/dragscroll';
 	import { searchName } from '$lib/store/store';
 
+	function handleAvatarError(e: Event) {
+		const target = e.currentTarget as HTMLImageElement;
+		target.style.display = 'none';
+		target.nextElementSibling?.classList.remove('hidden');
+	}
+
 	let searchNameValue: string;
 
 	searchName.subscribe((value) => {
@@ -369,7 +375,7 @@
 	.transaction-header {
 		color: black;
 		padding: 12px;
-		padding-left: 40px;
+		padding-left: 12px;
 		display: flex;
 		align-items: center;
 		gap: 8px;
@@ -379,6 +385,26 @@
 	@media (prefers-color-scheme: dark) {
 		.transaction-header {
 			color: white;
+		}
+	}
+
+	.transaction-avatar {
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		object-fit: cover;
+		flex-shrink: 0;
+	}
+
+	.placeholder-icon {
+		color: #9ca3af;
+		font-size: 40px;
+		flex-shrink: 0;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		.placeholder-icon {
+			color: #6b7280;
 		}
 	}
 
@@ -512,7 +538,7 @@
 		border-radius: 50%;
 		position: absolute;
 		left: 12px;
-		top: 50%;
+		top: 65%;
 		transform: translateY(-50%);
 		box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
 	}
@@ -706,13 +732,23 @@
 		}
 
 		.transaction-header {
-			padding-left: 35px;
+			padding-left: 85px;
 			font-size: 14px;
 		}
 
 		.remote-icon {
 			width: 16px;
 			height: 16px;
+		}
+
+		.transaction-avatar {
+			width: 32px;
+			height: 32px;
+			font-size: 32px;
+		}
+
+		.placeholder-icon {
+			font-size: 32px;
 		}
 	}
 </style>
@@ -770,6 +806,18 @@
 						{:else}
 							<iconify-icon icon="mdi:monitor" class="remote-icon" />
 						{/if}
+						{#if transaction.account_google_picture}
+							<img
+								src={transaction.account_google_picture}
+								alt="Avatar"
+								class="transaction-avatar"
+								on:error={handleAvatarError}
+							/>
+						{/if}
+						<iconify-icon
+							icon="mdi:account-circle"
+							class="transaction-avatar placeholder-icon {transaction.account_google_picture ? 'hidden' : ''}"
+						/>
 						<b>{transaction.account_nick_name || transaction.account_name}</b>
 						{#if transaction.account_nick_name && transaction.account_name && transaction.account_nick_name !== transaction.account_name}
 							({transaction.account_name})

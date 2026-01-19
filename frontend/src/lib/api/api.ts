@@ -710,6 +710,7 @@ export interface Transaction {
      * Nickname of the account
      */
     'account_nick_name'?: string;
+    'account_google_picture'?: string;
     'total_cost': number;
     'state': TransactionState;
     'deleted_at'?: number;
