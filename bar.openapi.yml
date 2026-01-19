@@ -1145,13 +1145,19 @@ paths:
           schema:
             type: integer
             format: uint64
-        - name: state
+        - name: transaction_state
           in: query
-          description: Filter by state
+          description: Filter transaction by state
           required: false
           schema:
             type: string
             $ref: "#/components/schemas/TransactionState"
+        - name: hide_canceled
+          in: query
+          description: Hide canceled items
+          required: false
+          schema:
+            type: boolean
         - name: hide_remote
           in: query
           description: Hide remote transactions
@@ -1161,6 +1167,24 @@ paths:
         - name: name
           in: query
           description: Filter by account name
+          required: false
+          schema:
+            type: string
+        - name: start_time
+          in: query
+          description: Filter by start_time
+          required: false
+          schema:
+            type: integer
+        - name: end_time
+          in: query
+          description: Filter by end_time
+          required: false
+          schema:
+            type: integer
+        - name: item_id
+          in: query
+          description: Filter by item
           required: false
           schema:
             type: string
@@ -2077,7 +2101,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/HTTPError"
       security:
-        - auth: []
+        - admin_auth: []
       tags:
         - refills
     delete:
@@ -2125,6 +2149,281 @@ paths:
                 $ref: "#/components/schemas/HTTPError"
       security:
         - admin_auth: []
+      tags:
+        - refills
+  /remote-refills:
+    get:
+      description: Get all remote refills
+      operationId: getRemoteRefills
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            format: uint64
+        - name: limit
+          in: query
+          description: Number of transactions per page
+          required: false
+          schema:
+            type: integer
+            format: uint64
+        - name: start_date
+          in: query
+          description: Start date of the refill
+          required: false
+          schema:
+            type: string
+        - name: end_date
+          in: query
+          description: End date of the refill
+          required: false
+          schema:
+            type: string
+        - name: state
+          in: query
+          description: State of the refill
+          required: false
+          schema:
+            $ref: "#/components/schemas/RemoteRefillState"
+        - name: account_name
+          in: query
+          description: Filter by account name
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  remote_refills:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/RemoteRefill"
+                  page:
+                    type: integer
+                    format: uint64
+                  limit:
+                    type: integer
+                    format: uint64
+                  max_page:
+                    type: integer
+                    format: uint64
+                required:
+                  - page
+                  - limit
+                  - max_page
+                  - remote_refills
+        "401":
+          description: "Not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - admin_auth: []
+      tags:
+        - refills
+  /remote-refills/status:
+    get:
+      description: Get the status of the remote refill system
+      operationId: getRemoteRefillStatus
+      responses:
+        "200":
+          description: "The remote refill subsystem is working"
+        "401":
+          description: "Not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "503":
+          description: "Remote refills are not available"
+      security:
+        - auth: []
+      tags:
+        - refills
+  /remote-refills/verify:
+    post:
+      description: Verify a remote refill
+      operationId: verifyRemoteRefill
+      parameters:
+        - name: id
+          in: query
+          description: Remote Refill id
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: "Payment successfully verified, money has been added to the account"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Refill"
+        "409":
+          description: "Remote refill already validated"
+        "404":
+          description: "Refill id unknown"
+        "402":
+          description: "HelloAsso did not validate the payment yet"
+        "401":
+          description: "Not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - admin_auth: []
+      tags:
+        - refills
+  /account/remote-refills/start:
+    post:
+      description: Start a remote refill
+      operationId: startRemoteRefill
+      parameters:
+        - name: amount
+          in: query
+          description: Amount of the refill in cents
+          required: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 50
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  redirect_url:
+                    type: string
+                required:
+                  - redirect_url
+        "400":
+          description: "Invalid amount"
+        "401":
+          description: "Not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+
+      security:
+        - auth: []
+      tags:
+        - refills
+  /account/remote-refills/validate:
+    post:
+      description: Validate a remote refill
+      operationId: selfValidateRemoteRefill
+      parameters:
+        - name: checkout_intent_id
+          in: query
+          description: HelloAsso checkout intent id to validate
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: "Payment successfully verified, money has been added to the account"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Refill"
+        "409":
+          description: "Remote refill already validated"
+        "404":
+          description: "Checkout id unknown or not associated with this account"
+        "402":
+          description: "HelloAsso did not validate the payment yet"
+        "401":
+          description: "Not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - auth: []
+      tags:
+        - refills
+  /account/remote-refills/pending:
+    get:
+      description: Get all pending remote refills for your account
+      operationId: getPendingRemoteRefills
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  remote_refills:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/RemoteRefill"
+                required:
+                  - remote_refills
+        "401":
+          description: "Not authorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPError"
+      security:
+        - auth: []
       tags:
         - refills
   /stars:
@@ -2506,7 +2805,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/HTTPError"
       security:
-        - auth: []
+        - admin_auth: []
       tags:
         - stars
     delete:
@@ -2837,6 +3136,12 @@ paths:
           required: false
           schema:
             $ref: "#/components/schemas/Fournisseur"
+        - name: ref_bundle
+          in: query
+          description: Filter by reference
+          required: false
+          schema:
+            type: string
       responses:
         "200":
           description: ""
@@ -5298,6 +5603,7 @@ components:
         - account_not_found
         - qr_invalid
         - internal_server_error
+        - service_unavailable
         - not_authenticated
         - image_not_found
         - text_not_found
@@ -5312,6 +5618,7 @@ components:
         - ErrAccountNotFound
         - ErrQRInvalid
         - ErrInternalServerError
+        - ErrServiceUnavailable
         - ErrNotAuthenticated
         - ErrImageNotFound
         - ErrTextNotFound
@@ -5332,6 +5639,7 @@ components:
         - Account cannot use ressource at the time being
         - Invalid QR Code nonce
         - Internal server error
+        - Service Unavailable
         - You are not authenticated
         - Image does not exists
         - Text does not exists
@@ -5350,6 +5658,7 @@ components:
         - MsgAccountNotAvailable
         - MsgQRInvalid
         - MsgInternalServerError
+        - MsgServiceUnavailable
         - MsgNotAuthenticated
         - MsgImageNotFound
         - MsgTextNotFound
@@ -6057,12 +6366,14 @@ components:
         - card
         - tranfer
         - check
+        - helloasso
         - other
       x-enum-varnames:
         - RefillCash
         - RefillCard
         - RefillTransfer
         - RefillCheck
+        - RefillHelloAsso
         - RefillOther
     Refill:
       type: object
@@ -6155,6 +6466,55 @@ components:
         - issued_by
         - issued_by_name
         - type
+    RemoteRefill:
+      description: A remote (HelloAsso) refill
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        state:
+          $ref: "#/components/schemas/RemoteRefillState"
+        checkout_intent_id:
+          description: HelloAsso checkout id
+          type: integer
+          format: int32
+        order_id:
+          description: HelloAsso order id, if the transaction suceeded
+          type: integer
+          format: int32
+        account_id:
+          $ref: "#/components/schemas/UUID"
+        account_name:
+          type: string
+          description: Name of the account
+        amount:
+          type: integer
+          format: int32
+          example: 1050 (10.50€)
+        created_at:
+          type: integer
+          format: uint64
+        refill_id:
+          description: Id of the linked refill if the transaction suceeded
+          $ref: "#/components/schemas/UUID"
+      required:
+        - id
+        - state
+        - checkout_id
+        - account_id
+        - account_name
+        - amount
+        - created_at
+    RemoteRefillState:
+      type: string
+      enum:
+        - started
+        - processed
+        - abandoned
+      x-enum-varnames:
+        - RemoteRefillStarted
+        - RemoteRefillProcessed
+        - RemoteRefillAbandoned
     CarouselTextCreate:
       type: object
       properties:

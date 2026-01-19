@@ -92,11 +92,11 @@
 							.postRefill(card.id, card.amount, card.type, { withCredentials: true })
 					.then(() => {
 						success = 'Recharge effectuée avec succès.';
-						setTimeout(() => close(), 2500);
+						setTimeout(() => close(), 2000);
 					})
 					.catch(() => {
 						error = 'Une erreur est survenue.';
-						setTimeout(() => close(), 4000);
+						setTimeout(() => close(), 2000);
 					});
 				}}
 			>
@@ -113,7 +113,6 @@
 						on:input={(e) => {
 							// @ts-ignore
 							card.amount = parsePrice(e.target?.value);
-							console.log(card.amount);
 
 							// rebounce update
 							clearTimeout(rebounce);
@@ -134,17 +133,16 @@
 			<button
 				class="text-3xl bg-green-500 p-4 rounded-xl hover:bg-green-700 transition-all text-white"
 				on:click={() => {
-					console.log(card);
 					if (card.type) {
 						refillsApi()
 							.postRefill(card.id, card.amount, card.type, { withCredentials: true })
 							.then(() => {
 								success = 'Recharge effectuée avec succès.';
-								setTimeout(() => close(), 4000);
+								setTimeout(() => close(), 2000);
 							})
 							.catch(() => {
 								error = 'Une erreur est survenue.';
-								setTimeout(() => close(), 4000);
+								setTimeout(() => close(), 2000);
 							});
 					}
 				}}
