@@ -625,20 +625,23 @@
 					{#each items as item}
 						<tr>
 							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
-								<input
-									type="text"
-									class="block w-full text-sm dark:text-white/[.8] p-2 bg-transparent border-none outline-none"
-									value={item.name}
-									on:input={(e) => {
-										// @ts-ignore
-										let name = e.target?.value;
-										editItem(item.id, { name: name }, item.category_id);
-									}}
-								/>
+								<div class="relative group">
+									<input
+										type="text"
+										class="block w-full text-sm dark:text-white/[.8] p-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
+										value={item.name}
+										on:input={(e) => {
+											// @ts-ignore
+											let name = e.target?.value;
+											editItem(item.id, { name: name }, item.category_id);
+										}}
+									/>
+									<iconify-icon icon="mdi:pencil" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" width="14" height="14"></iconify-icon>
+								</div>
 							</td>
 							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
 								<select
-									class="block w-full text-sm dark:text-white/[.8] dark:bg-slate-900 p-2 bg-transparent border-none outline-none"
+									class="block w-full text-sm dark:text-white/[.8] dark:bg-slate-900 p-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 									value={item.category_id}
 									on:change={(e) => {
 										// @ts-ignore
@@ -671,7 +674,7 @@
 							</td>
 							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
 								<select
-									class="block w-full text-sm dark:text-white/[.8] dark:bg-slate-900 p-2 bg-transparent border-none outline-none"
+									class="block w-full text-sm dark:text-white/[.8] dark:bg-slate-900 p-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 									value={item.state}
 									on:change={(e) => {
 										// @ts-ignore
@@ -684,150 +687,172 @@
 								</select>
 							</td>
 							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
-								<input
-									type="number"
-									class="block w-full text-sm dark:text-white/[.8] p-2 bg-transparent border-none outline-none"
-									value={item.amount_left}
-									on:input={(e) => {
-										// @ts-ignore
-										let stock = parseInt(e.target?.value);
-										editItem(item.id, { amount_left: stock }, item.category_id);
-									}}
-								/>
+								<div class="relative group">
+									<input
+										type="number"
+										class="block w-full text-sm dark:text-white/[.8] p-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
+										value={item.amount_left}
+										on:input={(e) => {
+											// @ts-ignore
+											let stock = parseInt(e.target?.value);
+											editItem(item.id, { amount_left: stock }, item.category_id);
+										}}
+									/>
+									<iconify-icon icon="mdi:pencil" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" width="14" height="14"></iconify-icon>
+								</div>
 							</td>
 							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
-								<input
-									type="number"
-									class="block w-full text-sm dark:text-white/[.8] p-2 bg-transparent border-none outline-none"
-									value={item.buy_limit}
-									on:input={(e) => {
-										// @ts-ignore
-										let buy_limit = parseInt(e.target?.value);
-										// @ts-ignore
-										if (e.target?.value === '') {
-											editItem(item.id, { buy_limit: -1 }, item.category_id);
-											return;
-										}
-										editItem(item.id, { buy_limit: buy_limit }, item.category_id);
-									}}
-								/>
+								<div class="relative group">
+									<input
+										type="number"
+										class="block w-full text-sm dark:text-white/[.8] p-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
+										value={item.buy_limit}
+										on:input={(e) => {
+											// @ts-ignore
+											let buy_limit = parseInt(e.target?.value);
+											// @ts-ignore
+											if (e.target?.value === '') {
+												editItem(item.id, { buy_limit: -1 }, item.category_id);
+												return;
+											}
+											editItem(item.id, { buy_limit: buy_limit }, item.category_id);
+										}}
+									/>
+									<iconify-icon icon="mdi:pencil" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" width="14" height="14"></iconify-icon>
+								</div>
 							</td>
 							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
-								<input
-									type="number"
-									class="block w-full text-sm dark:text-white/[.8] p-2 bg-transparent border-none outline-none"
-									value={item.optimal_amount}
-									on:input={(e) => {
-										// @ts-ignore
-										let optimal_amount = parseInt(e.target?.value);
-										editItem(item.id, { optimal_amount: optimal_amount }, item.category_id);
-									}}
-								/>
+								<div class="relative group">
+									<input
+										type="number"
+										class="block w-full text-sm dark:text-white/[.8] p-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
+										value={item.optimal_amount}
+										on:input={(e) => {
+											// @ts-ignore
+											let optimal_amount = parseInt(e.target?.value);
+											editItem(item.id, { optimal_amount: optimal_amount }, item.category_id);
+										}}
+									/>
+									<iconify-icon icon="mdi:pencil" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" width="14" height="14"></iconify-icon>
+								</div>
 							</td>
 							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
-								<input
-									type="number"
-									id="price"
-									name="price"
-									placeholder={formatPrice(item.prices['coutant'])}
-									class="block w-full text-sm dark:text-white/[.8] p-2 bg-transparent border-none outline-none"
-									on:input={(e) => {
-										let prices = item.prices;
-										// @ts-ignore
-										prices['coutant'] = parsePrice(e.target?.value);
-										editItem(item.id, { prices: prices }, item.category_id);
-										if (rebounceTimeout) clearTimeout(rebounceTimeout);
-										rebounceTimeout = setTimeout(() => {
-											let elems = document.querySelectorAll('[id=price]');
-											elems.forEach((elem) => {
-												// @ts-ignore
-												elem.value = '';
-											});
-										}, 1000);
-									}}
-								/>
+								<div class="relative group">
+									<input
+										type="number"
+										id="price"
+										name="price"
+										placeholder={formatPrice(item.prices['coutant'])}
+										class="block w-full text-sm dark:text-white/[.8] p-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
+										on:input={(e) => {
+											let prices = item.prices;
+											// @ts-ignore
+											prices['coutant'] = parsePrice(e.target?.value);
+											editItem(item.id, { prices: prices }, item.category_id);
+											if (rebounceTimeout) clearTimeout(rebounceTimeout);
+											rebounceTimeout = setTimeout(() => {
+												let elems = document.querySelectorAll('[id=price]');
+												elems.forEach((elem) => {
+													// @ts-ignore
+													elem.value = '';
+												});
+											}, 1000);
+										}}
+									/>
+									<iconify-icon icon="mdi:pencil" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" width="14" height="14"></iconify-icon>
+								</div>
 							</td>
 							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
-								<input
-									type="number"
-									id="price"
-									name="price"
-									placeholder={formatPrice(item.prices['ceten'])}
-									class="block w-full text-sm dark:text-white/[.8] p-2 bg-transparent border-none outline-none"
-									on:input={(e) => {
-										let prices = item.prices;
-										// @ts-ignore
-										prices['ceten'] = parsePrice(e.target?.value);
-										editItem(item.id, { prices: prices }, item.category_id);
-										if (rebounceTimeout) clearTimeout(rebounceTimeout);
-										rebounceTimeout = setTimeout(() => {
-											let elems = document.querySelectorAll('[id=price]');
-											elems.forEach((elem) => {
-												// @ts-ignore
-												elem.value = '';
-											});
-										}, 1000);
-									}}
-								/>
+								<div class="relative group">
+									<input
+										type="number"
+										id="price"
+										name="price"
+										placeholder={formatPrice(item.prices['ceten'])}
+										class="block w-full text-sm dark:text-white/[.8] p-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
+										on:input={(e) => {
+											let prices = item.prices;
+											// @ts-ignore
+											prices['ceten'] = parsePrice(e.target?.value);
+											editItem(item.id, { prices: prices }, item.category_id);
+											if (rebounceTimeout) clearTimeout(rebounceTimeout);
+											rebounceTimeout = setTimeout(() => {
+												let elems = document.querySelectorAll('[id=price]');
+												elems.forEach((elem) => {
+													// @ts-ignore
+													elem.value = '';
+												});
+											}, 1000);
+										}}
+									/>
+									<iconify-icon icon="mdi:pencil" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" width="14" height="14"></iconify-icon>
+								</div>
 							</td>
 							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
-								<input
-									type="number"
-									id="price"
-									name="price"
-									placeholder={formatPrice(item.prices['externe'])}
-									class="block w-full text-sm dark:text-white/[.8] p-2 bg-transparent border-none outline-none"
-									on:input={(e) => {
-										let prices = item.prices;
-										// @ts-ignore
-										prices['externe'] = parsePrice(e.target?.value);
-										editItem(item.id, { prices: prices }, item.category_id);
-										if (rebounceTimeout) clearTimeout(rebounceTimeout);
-										rebounceTimeout = setTimeout(() => {
-											let elems = document.querySelectorAll('[id=price]');
-											elems.forEach((elem) => {
-												// @ts-ignore
-												elem.value = '';
-											});
-										}, 1000);
-									}}
-								/>
+								<div class="relative group">
+									<input
+										type="number"
+										id="price"
+										name="price"
+										placeholder={formatPrice(item.prices['externe'])}
+										class="block w-full text-sm dark:text-white/[.8] p-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
+										on:input={(e) => {
+											let prices = item.prices;
+											// @ts-ignore
+											prices['externe'] = parsePrice(e.target?.value);
+											editItem(item.id, { prices: prices }, item.category_id);
+											if (rebounceTimeout) clearTimeout(rebounceTimeout);
+											rebounceTimeout = setTimeout(() => {
+												let elems = document.querySelectorAll('[id=price]');
+												elems.forEach((elem) => {
+													// @ts-ignore
+													elem.value = '';
+												});
+											}, 1000);
+										}}
+									/>
+									<iconify-icon icon="mdi:pencil" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" width="14" height="14"></iconify-icon>
+								</div>
 							</td>
 							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
-								<input
-									type="number"
-									id="price"
-									name="price"
-									placeholder={formatPrice(item.prices['staff_bar'])}
-									class="block w-full text-sm dark:text-white/[.8] p-2 bg-transparent border-none outline-none"
-									on:input={(e) => {
-										let prices = item.prices;
-										// @ts-ignore
-										prices['staff_bar'] = parsePrice(e.target?.value);
-										editItem(item.id, { prices: prices }, item.category_id);
-										if (rebounceTimeout) clearTimeout(rebounceTimeout);
-										rebounceTimeout = setTimeout(() => {
-											let elems = document.querySelectorAll('[id=price]');
-											elems.forEach((elem) => {
-												// @ts-ignore
-												elem.value = '';
-											});
-										}, 1000);
-									}}
-								/>
+								<div class="relative group">
+									<input
+										type="number"
+										id="price"
+										name="price"
+										placeholder={formatPrice(item.prices['staff_bar'])}
+										class="block w-full text-sm dark:text-white/[.8] p-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
+										on:input={(e) => {
+											let prices = item.prices;
+											// @ts-ignore
+											prices['staff_bar'] = parsePrice(e.target?.value);
+											editItem(item.id, { prices: prices }, item.category_id);
+											if (rebounceTimeout) clearTimeout(rebounceTimeout);
+											rebounceTimeout = setTimeout(() => {
+												let elems = document.querySelectorAll('[id=price]');
+												elems.forEach((elem) => {
+													// @ts-ignore
+													elem.value = '';
+												});
+											}, 1000);
+										}}
+									/>
+									<iconify-icon icon="mdi:pencil" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" width="14" height="14"></iconify-icon>
+								</div>
 							</td>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 relative">
+							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 relative flex flex-col gap-1">
 								<button
 									class="{item.promotion_ends_at ?? 0 > new Date().getTime() / 1000
 										? 'animate-pulse'
-										: ''} text-sm text-blue-600 dark:text-blue-400 font-medium hover:bg-gray-100 dark:hover:bg-slate-800 p-2 rounded-md"
+										: ''} flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 font-medium hover:bg-blue-50 dark:hover:bg-blue-900/30 p-2 rounded-md transition-colors"
 									data-hs-overlay="#hs-modal-edit-item"
 									on:click={() => (selectedItem = item)}
 								>
+									<iconify-icon icon="mdi:percent" width="16" height="16"></iconify-icon>
 									Promotions
 								</button>
 								<button
-									class="block w-full text-left px-2 py-1.5 text-sm text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-800"
+									class="flex items-center gap-2 w-full text-left px-2 py-1.5 text-sm text-red-700 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-md transition-colors"
 									on:click={() => {
 										deleteItemCallback = () => {
 											deletingItem = false;
@@ -837,6 +862,7 @@
 										deletingItem = true;
 									}}
 								>
+									<iconify-icon icon="mdi:delete" width="16" height="16"></iconify-icon>
 									Supprimer
 								</button>
 							</td>
@@ -913,9 +939,11 @@
 						</div>
 						<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Achetable</label>
+								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
+									Achetable
+								</label>
 								<select
-									class="w-full text-sm dark:text-white/[.8] dark:bg-slate-900 bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
+									class="w-full text-sm dark:text-white/[.8] dark:bg-slate-900 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 									value={item.state}
 									on:change={(e) => {
 										// @ts-ignore
@@ -928,10 +956,13 @@
 								</select>
 							</div>
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Stock</label>
+								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
+									<iconify-icon icon="mdi:pencil" width="12" height="12"></iconify-icon>
+									Stock
+								</label>
 								<input
 									type="number"
-									class="w-full text-sm dark:text-white/[.8] bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
+									class="w-full text-sm dark:text-white/[.8] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 									value={item.amount_left}
 									on:input={(e) => {
 										// @ts-ignore
@@ -941,10 +972,13 @@
 								/>
 							</div>
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Limite</label>
+								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
+									<iconify-icon icon="mdi:pencil" width="12" height="12"></iconify-icon>
+									Limite
+								</label>
 								<input
 									type="number"
-									class="w-full text-sm dark:text-white/[.8] bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
+									class="w-full text-sm dark:text-white/[.8] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 									value={item.buy_limit}
 									on:input={(e) => {
 										// @ts-ignore
@@ -959,10 +993,13 @@
 								/>
 							</div>
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Optimal</label>
+								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
+									<iconify-icon icon="mdi:pencil" width="12" height="12"></iconify-icon>
+									Optimal
+								</label>
 								<input
 									type="number"
-									class="w-full text-sm dark:text-white/[.8] bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
+									class="w-full text-sm dark:text-white/[.8] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 									value={item.optimal_amount}
 									on:input={(e) => {
 										// @ts-ignore
@@ -974,13 +1011,16 @@
 						</div>
 						<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Coutant</label>
+								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
+									<iconify-icon icon="mdi:pencil" width="12" height="12"></iconify-icon>
+									Coutant
+								</label>
 								<input
 									type="number"
 									id="price"
 									name="price"
 									placeholder={formatPrice(item.prices['coutant'])}
-									class="w-full text-sm dark:text-white/[.8] bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
+									class="w-full text-sm dark:text-white/[.8] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 									on:input={(e) => {
 										let prices = item.prices;
 										// @ts-ignore
@@ -998,13 +1038,16 @@
 								/>
 							</div>
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Ceten</label>
+								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
+									<iconify-icon icon="mdi:pencil" width="12" height="12"></iconify-icon>
+									Ceten
+								</label>
 								<input
 									type="number"
 									id="price"
 									name="price"
 									placeholder={formatPrice(item.prices['ceten'])}
-									class="w-full text-sm dark:text-white/[.8] bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
+									class="w-full text-sm dark:text-white/[.8] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 									on:input={(e) => {
 										let prices = item.prices;
 										// @ts-ignore
@@ -1022,13 +1065,16 @@
 								/>
 							</div>
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Externe</label>
+								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
+									<iconify-icon icon="mdi:pencil" width="12" height="12"></iconify-icon>
+									Externe
+								</label>
 								<input
 									type="number"
 									id="price"
 									name="price"
 									placeholder={formatPrice(item.prices['externe'])}
-									class="w-full text-sm dark:text-white/[.8] bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
+									class="w-full text-sm dark:text-white/[.8] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 									on:input={(e) => {
 										let prices = item.prices;
 										// @ts-ignore
@@ -1046,13 +1092,16 @@
 								/>
 							</div>
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Staff</label>
+								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
+									<iconify-icon icon="mdi:pencil" width="12" height="12"></iconify-icon>
+									Staff
+								</label>
 								<input
 									type="number"
 									id="price"
 									name="price"
 									placeholder={formatPrice(item.prices['staff_bar'])}
-									class="w-full text-sm dark:text-white/[.8] bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
+									class="w-full text-sm dark:text-white/[.8] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 									on:input={(e) => {
 										let prices = item.prices;
 										// @ts-ignore
