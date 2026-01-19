@@ -534,6 +534,7 @@ export interface Refill {
      * Name of the account
      */
     'account_name': string;
+    'account_google_picture'?: string;
     'amount': number;
     'state': RefillState;
     'issued_at': number;
@@ -710,6 +711,7 @@ export interface Transaction {
      * Nickname of the account
      */
     'account_nick_name'?: string;
+    'account_google_picture'?: string;
     'total_cost': number;
     'state': TransactionState;
     'deleted_at'?: number;

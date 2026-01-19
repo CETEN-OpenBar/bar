@@ -50,11 +50,11 @@
 
 <div id="popup" class="absolute w-full h-full top-0 left-0 flex justify-center items-center">
 	<div
-		class="relative text-black flex flex-col justify-center items-center gap-4 p-10 h-96 bg-white rounded-xl shadow-xl z-20"
+		class="relative text-black dark:text-white flex flex-col justify-center items-center gap-4 p-10 h-96 bg-white dark:bg-gray-800 rounded-xl shadow-xl z-20"
 	>
 		<!-- button to close the popup -->
 		<button
-			class="absolute top-0 right-0 p-2 text-xl font-bold m-2 rounded-full transition-all text-black"
+			class="absolute top-0 right-0 p-2 text-xl font-bold m-2 rounded-full transition-all text-black dark:text-white"
 			on:click={() => {
 				close();
 			}}
@@ -87,7 +87,7 @@
 			<div
 				class="flex flex-col gap-8"
 				on:keypress={(e) => {
-					if (e.key == 'Enter')
+					if (e.key == 'Enter' && card.type)
 						refillsApi()
 							.postRefill(card.id, card.amount, card.type, { withCredentials: true })
 					.then(() => {
@@ -101,13 +101,13 @@
 				}}
 			>
 				<div class="flex flex-col">
-					<label for="price-new" class="block text-xl mb-2 align-middle">Montant :</label>
+					<label for="price-new" class="block text-xl mb-2 align-middle dark:text-white">Montant :</label>
 					<input
 						type="number"
 						id="price-new"
 						name="price"
 						placeholder="Montant de la recharge"
-						class="text-sm bg-gray-200 rounded-md p-2 text-center"
+						class="text-sm bg-gray-200 dark:bg-gray-700 dark:text-white rounded-md p-2 text-center"
 						required
 						aria-describedby="text-error"
 						on:input={(e) => {
@@ -133,16 +133,18 @@
 			<button
 				class="text-3xl bg-green-500 p-4 rounded-xl hover:bg-green-700 transition-all text-white"
 				on:click={() => {
-					refillsApi()
-						.postRefill(card.id, card.amount, card.type, { withCredentials: true })
-						.then(() => {
-							success = 'Recharge effectuée avec succès.';
-							setTimeout(() => close(), 2000);
-						})
-						.catch(() => {
-							error = 'Une erreur est survenue.';
-							setTimeout(() => close(), 2000);
-						});
+					if (card.type) {
+						refillsApi()
+							.postRefill(card.id, card.amount, card.type, { withCredentials: true })
+							.then(() => {
+								success = 'Recharge effectuée avec succès.';
+								setTimeout(() => close(), 2000);
+							})
+							.catch(() => {
+								error = 'Une erreur est survenue.';
+								setTimeout(() => close(), 2000);
+							});
+					}
 				}}
 			>
 				Valider
