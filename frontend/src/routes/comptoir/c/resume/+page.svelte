@@ -4,7 +4,7 @@
 </script>
 
 <div class="content-wrapper">
-	<ComptoirHeaderControls activeTab="resume" />
+	<ComptoirHeaderControls activeTab="resume" showSearch={false} />
 
 	<main class="content-area">
 		<TransactionsItems />

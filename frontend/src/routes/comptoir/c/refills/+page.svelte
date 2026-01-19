@@ -4,7 +4,7 @@
 </script>
 
 <div class="content-wrapper">
-	<ComptoirHeaderControls activeTab="refills" />
+	<ComptoirHeaderControls activeTab="refills" showSearch={false} />
 
 	<main class="content-area">
 		<Refills amount={6} />
