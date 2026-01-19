@@ -268,7 +268,16 @@
 		</div>
 		<div class="pagination-controls">
 			<p class="pagination-info">
-				Page <span class="font-bold">{page}</span> sur <span class="font-bold">{maxPage}</span>
+				Page
+				<input
+					type="number"
+					min="1"
+					max={maxPage}
+					class="page-input"
+					bind:value={page}
+					on:change={reloadRefills}
+				/>
+				sur <span class="font-bold">{maxPage}</span>
 			</p>
 			<div class="pagination-buttons">
 				<button class="pagination-button" on:click={prevPage} disabled={page === 1}>
@@ -555,6 +564,36 @@
 		display: flex;
 		align-items: center;
 		gap: 16px;
+	}
+
+	.page-input {
+		width: 50px;
+		padding: 4px 6px;
+		border: 1px solid #d1d5db;
+		border-radius: 4px;
+		font-size: 14px;
+		text-align: center;
+		font-weight: 600;
+		-moz-appearance: textfield;
+	}
+
+	.page-input::-webkit-outer-spin-button,
+	.page-input::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+
+	.page-input:focus {
+		outline: none;
+		border-color: #3b82f6;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		.page-input {
+			background-color: #374151;
+			color: #e5e7eb;
+			border-color: #4b5563;
+		}
 	}
 
 	.pagination-info {
