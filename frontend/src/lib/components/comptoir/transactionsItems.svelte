@@ -134,13 +134,13 @@
 						<div class="text-sm font-medium text-gray-900 dark:text-gray-300">{item.item_already_done}</div>
 					</div>
 					<div class="bg-gray-100 dark:bg-gray-700 rounded p-2">
-						<div class="text-xs text-gray-500 dark:text-gray-400">Stock</div>
-						<div class="text-sm font-medium text-gray-900 dark:text-gray-300">{getStockAmount(item.item_id)}</div>
-					</div>
-					<div class="bg-gray-100 dark:bg-gray-700 rounded p-2">
-						<div class="text-xs text-gray-500 dark:text-gray-400">Restants</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">Restants</div>
 						<div class="text-sm font-medium text-gray-900 dark:text-gray-300">{item.item_amount - item.item_already_done}</div>
 					</div>
+                    <div class="bg-gray-100 dark:bg-gray-700 rounded p-2">
+                        <div class="text-xs text-gray-500 dark:text-gray-400">Stock</div>
+                        <div class="text-sm font-medium text-gray-900 dark:text-gray-300">{getStockAmount(item.item_id)}</div>
+                    </div>
 				</div>
 			</div>
 		{/each}
