@@ -346,7 +346,7 @@
 				</button>
 
 				<button class="btn btn-small" on:click={() => newRefill = true}>
-					<iconify-icon icon="mdi:plus-circle" width="16" height="16" />
+					<iconify-icon icon="mdi:cash-plus" width="16" height="16" />
 					Recharge
 				</button>
 

@@ -276,7 +276,6 @@
 		flex-direction: row;
 		align-items: center;
 		gap: 20px;
-		flex-grow: 1;
 		font-size: 18px;
 		font-weight: 600;
 	}
@@ -317,16 +316,6 @@
 		width: 24px;
 		vertical-align: middle;
 		margin-left: 4px;
-	}
-
-	.amount-header {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		flex-grow: 1;
-		font-size: 18px;
-		font-weight: 600;
-		justify-content: flex-end;
 	}
 
 	.transactions-list {
@@ -753,7 +742,21 @@
 		}
 
         .status-led {
-            top: 53%;
+            top: 55%;
+        }
+
+        .pagination {
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .pagination-controls {
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .transactions-list {
+            max-height: calc(100vh - 425px);
         }
 	}
 </style>
@@ -796,7 +799,6 @@
 					</label>
 				</div>
 			</div>
-			<div class="amount-header">Montant</div>
 		</div>
 
 		<div use:dragscroll class="transactions-list">
