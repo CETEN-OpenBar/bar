@@ -536,7 +536,7 @@
 		overflow-y: auto;
 		flex-grow: 1;
 		gap: 20px;
-		max-height: calc(100vh - 240px);
+		max-height: calc(100vh - 260px);
 	}
 
 	.transaction-card {
