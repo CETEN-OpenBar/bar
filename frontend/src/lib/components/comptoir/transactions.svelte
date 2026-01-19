@@ -51,30 +51,38 @@
 		interval = setInterval(() => {
 			reloadTransactions();
 		}, 2000);
-		
+
 		window.addEventListener('keydown', handleKeyDown);
-		
+
 		const transactionsList = document.querySelector('.transactions-list');
 		if (transactionsList) {
 			let touchStartX = 0;
 			let touchEndX = 0;
 			let isTouch = false;
-			
-			transactionsList.addEventListener('touchstart', (e: Event) => {
-				const touchEvent = e as TouchEvent;
-				touchStartX = touchEvent.changedTouches[0].screenX;
-				isTouch = true;
-			}, { passive: true });
-			
-			transactionsList.addEventListener('touchend', (e: Event) => {
-				if (isTouch) {
+
+			transactionsList.addEventListener(
+				'touchstart',
+				(e: Event) => {
 					const touchEvent = e as TouchEvent;
-					touchEndX = touchEvent.changedTouches[0].screenX;
-					handleSwipe();
-					isTouch = false;
-				}
-			}, { passive: true });
-			
+					touchStartX = touchEvent.changedTouches[0].screenX;
+					isTouch = true;
+				},
+				{ passive: true }
+			);
+
+			transactionsList.addEventListener(
+				'touchend',
+				(e: Event) => {
+					if (isTouch) {
+						const touchEvent = e as TouchEvent;
+						touchEndX = touchEvent.changedTouches[0].screenX;
+						handleSwipe();
+						isTouch = false;
+					}
+				},
+				{ passive: true }
+			);
+
 			transactionsList.addEventListener('mousedown', (e: Event) => {
 				const mouseEvent = e as MouseEvent;
 				if (!isTouch) {
@@ -82,7 +90,7 @@
 					isTouch = false;
 				}
 			});
-			
+
 			transactionsList.addEventListener('mouseup', (e: Event) => {
 				const mouseEvent = e as MouseEvent;
 				if (!isTouch) {
@@ -90,11 +98,11 @@
 					handleMouseSwipe();
 				}
 			});
-			
+
 			const handleSwipe = () => {
 				const swipeThreshold = 50;
 				const diff = touchStartX - touchEndX;
-				
+
 				if (Math.abs(diff) > swipeThreshold) {
 					if (diff > 0) {
 						if (page < maxPage) nextPage();
@@ -103,11 +111,11 @@
 					}
 				}
 			};
-			
+
 			const handleMouseSwipe = () => {
 				const swipeThreshold = 100;
 				const diff = touchStartX - touchEndX;
-				
+
 				if (Math.abs(diff) > swipeThreshold) {
 					if (diff > 0) {
 						if (page < maxPage) nextPage();
@@ -134,7 +142,18 @@
 
 	function reloadTransactions() {
 		transactionsApi()
-			.getTransactions(page, transactionAmount, st, false, !showRemoteTransactions, searchNameValue, undefined, undefined, undefined, { withCredentials: true })
+			.getTransactions(
+				page,
+				transactionAmount,
+				st,
+				false,
+				!showRemoteTransactions,
+				searchNameValue,
+				undefined,
+				undefined,
+				undefined,
+				{ withCredentials: true }
+			)
 			.then((res) => {
 				page = res.data.page ?? 1;
 				maxPage = res.data.max_page ?? 1;
@@ -170,7 +189,11 @@
 
 	function handleKeyDown(event: KeyboardEvent) {
 		// Only handle navigation keys if not typing in an input
-		if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement || event.target instanceof HTMLSelectElement) {
+		if (
+			event.target instanceof HTMLInputElement ||
+			event.target instanceof HTMLTextAreaElement ||
+			event.target instanceof HTMLSelectElement
+		) {
 			return;
 		}
 
@@ -219,6 +242,164 @@
 	/>
 {/if}
 
+<div class="transactions-wrapper">
+	<div class="transactions-content">
+		<div class="header-controls">
+			<div class="title-section">
+				<div class="view-tabs">
+					<button class="tab active" on:click={() => {}}>
+						<iconify-icon icon="mdi:format-list-bulleted" width="18" height="18" />
+						Transactions
+					</button>
+					<button class="tab" on:click={() => goto('/comptoir/c/resume')}>
+						<iconify-icon icon="mdi:chart-box" width="18" height="18" />
+						Résumé
+					</button>
+					<button class="tab" on:click={() => goto('/comptoir/c/refills')}>
+						<iconify-icon icon="mdi:history" width="18" height="18" />
+						Historique recharges
+					</button>
+				</div>
+				<input
+					class="search-input"
+					placeholder="Rechercher une personne"
+					bind:value={$searchName}
+					on:input={handleSearchInput}
+				/>
+			</div>
+			<div class="filters-section">
+				<div>
+					Filtre :
+					<select class="filter-select" bind:value={st} on:change={reloadTransactions}>
+						<option value={undefined}>Tout</option>
+						<option value="started">En cours</option>
+						<option value="finished">Terminées</option>
+						<option value="canceled">Annulées</option>
+					</select>
+				</div>
+				<div>
+					<label class="checkbox-label">
+						Commandes en ligne
+						<input
+							type="checkbox"
+							class="checkbox-input"
+							bind:checked={showRemoteTransactions}
+							on:change={reloadTransactions}
+						/>
+					</label>
+				</div>
+			</div>
+		</div>
+
+		<div use:dragscroll class="transactions-list">
+			{#each transactions as transaction}
+				<button
+					class="transaction-card {transaction.state}"
+					on:click={() => (displayTransaction = transaction)}
+				>
+					<div class="transaction-header">
+						{#if transaction.is_remote}
+							<iconify-icon icon="mdi:wifi" class="remote-icon" />
+						{:else}
+							<iconify-icon icon="mdi:monitor" class="remote-icon" />
+						{/if}
+						{#if transaction.account_google_picture}
+							<img
+								src={transaction.account_google_picture}
+								alt="Avatar"
+								class="transaction-avatar"
+								on:error={handleAvatarError}
+							/>
+						{/if}
+						<iconify-icon
+							icon="mdi:account-circle"
+							class="transaction-avatar placeholder-icon {transaction.account_google_picture
+								? 'hidden'
+								: ''}"
+						/>
+						<b>{transaction.account_nick_name || transaction.account_name}</b>
+						{#if transaction.account_nick_name && transaction.account_name && transaction.account_nick_name !== transaction.account_name}
+							({transaction.account_name})
+						{/if}
+					</div>
+
+					<div class="transaction-content">
+						<div class="items-section">
+							<div class="items-grid">
+								{#each transaction.items as item}
+									<div
+										class="item-card {item.state == TransactionItemState.TransactionItemCanceled
+											? 'canceled'
+											: ''} {item.state == TransactionItemState.TransactionItemFinished
+											? 'finished'
+											: ''}"
+									>
+										{#if item.state == TransactionItemState.TransactionItemCanceled || item.state == TransactionItemState.TransactionItemFinished}
+											<img src={api() + item.picture_uri} alt="item" class="item-image completed" />
+											<div class="item-name completed">{item.item_name}</div>
+											<div class="item-amount completed">x {item.item_amount}</div>
+										{:else}
+											<img src={api() + item.picture_uri} alt="item" class="item-image" />
+											<div class="item-name">{item.item_name}</div>
+											<div class="item-amount">x {item.item_amount}</div>
+										{/if}
+									</div>
+								{/each}
+							</div>
+						</div>
+						<div class="price-section">
+							{formatPrice(transaction.total_cost)}
+						</div>
+					</div>
+
+					<div
+						class="status-led {transaction.state == 'finished'
+							? 'validated'
+							: transaction.state == 'canceled'
+							? 'cancelled'
+							: 'waiting'}"
+					/>
+				</button>
+			{/each}
+		</div>
+	</div>
+
+	<div class="pagination">
+		<div class="pagination-results">
+			<span class="font-semibold">{transactions.length}</span> résultats
+		</div>
+		<div class="pagination-controls">
+			<p class="pagination-info">
+				Page <span class="font-bold">{page}</span> sur <span class="font-bold">{maxPage}</span>
+			</p>
+			<div class="pagination-buttons">
+				<button class="pagination-button" on:click={prevPage} disabled={page === 1}>
+					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M15 19l-7-7 7-7"
+						/>
+					</svg>
+					<span>Précédent</span>
+				</button>
+				<button class="pagination-button" on:click={nextPage} disabled={page === maxPage}>
+					<span>Suivant</span>
+					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M9 5l7 7-7 7"
+						/>
+					</svg>
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <style>
 	.transactions-wrapper {
 		width: 100%;
@@ -232,8 +413,8 @@
 		flex-direction: column;
 		flex-grow: 1;
 		flex: 1;
-        padding: 15px;
-        padding-bottom: 0;
+		padding: 15px;
+		padding-bottom: 0;
 	}
 
 	.header-controls {
@@ -377,7 +558,7 @@
 		flex-grow: 1;
 		gap: 20px;
 		padding: 4px;
-        margin-top: 10px;
+		margin-top: 10px;
 		max-height: calc(100vh - 240px);
 	}
 
@@ -416,18 +597,18 @@
 	.transaction-header {
 		color: black;
 		padding: 12px;
-        padding-right: 35px;
+		padding-right: 35px;
 		display: flex;
 		align-items: center;
 		gap: 8px;
 		position: relative;
-        border-bottom: 1px solid #9ca3af;
+		border-bottom: 1px solid #9ca3af;
 	}
 
 	@media (prefers-color-scheme: dark) {
 		.transaction-header {
 			color: white;
-            border-bottom-color: #4b5563;
+			border-bottom-color: #4b5563;
 		}
 	}
 
@@ -508,19 +689,19 @@
 	}
 
 	.item-card.finished {
-        background-color: #86efac;
+		background-color: #86efac;
 		opacity: 0.85;
 	}
-    
-    @media (prefers-color-scheme: dark) {
-        .item-card.canceled {
-            background-color: #843535;
-        }
 
-        .item-card.finished {
-            background-color: #145e31;
-        }
-    }
+	@media (prefers-color-scheme: dark) {
+		.item-card.canceled {
+			background-color: #843535;
+		}
+
+		.item-card.finished {
+			background-color: #145e31;
+		}
+	}
 
 	.item-image {
 		width: 24px;
@@ -554,7 +735,8 @@
 	}
 
 	@media (prefers-color-scheme: dark) {
-		.item-name, .item-amount {
+		.item-name,
+		.item-amount {
 			color: white;
 		}
 	}
@@ -744,7 +926,8 @@
 			height: 20px;
 		}
 
-		.item-name, .item-amount {
+		.item-name,
+		.item-amount {
 			font-size: 10px;
 		}
 	}
@@ -793,190 +976,22 @@
 			font-size: 32px;
 		}
 
-        .status-led {
-            top: 53%;
-        }
+		.status-led {
+			top: 53%;
+		}
 
-        .pagination {
-            flex-direction: column;
-            gap: 12px;
-        }
+		.pagination {
+			flex-direction: column;
+			gap: 12px;
+		}
 
-        .pagination-controls {
-            flex-direction: column;
-            gap: 5px;
-        }
+		.pagination-controls {
+			flex-direction: column;
+			gap: 5px;
+		}
 
-        .transactions-list {
-            max-height: calc(100vh - 425px);
-        }
+		.transactions-list {
+			max-height: calc(100vh - 425px);
+		}
 	}
 </style>
-
-<div class="transactions-wrapper">
-	<div class="transactions-content">
-		<div class="header-controls">
-			<div class="title-section">
-				<div class="view-tabs">
-					<button
-						class="tab active"
-						on:click={() => {}}
-					>
-						<iconify-icon icon="mdi:format-list-bulleted" width="18" height="18" />
-						Transactions
-					</button>
-					<button
-						class="tab"
-						on:click={() => goto('/comptoir/c/refills')}
-					>
-						<iconify-icon icon="mdi:history" width="18" height="18" />
-						Historique
-					</button>
-					<button
-						class="tab"
-						on:click={() => goto('/comptoir/c/resume')}
-					>
-						<iconify-icon icon="mdi:chart-box" width="18" height="18" />
-						Résumé
-					</button>
-				</div>
-				<input
-					class="search-input"
-					placeholder="Rechercher une personne"
-					bind:value={$searchName}
-					on:input={handleSearchInput}
-				/>
-			</div>
-			<div class="filters-section">
-				<div>
-					Filtre :
-					<select
-						class="filter-select"
-						bind:value={st}
-						on:change={reloadTransactions}
-					>
-						<option value={undefined}>Tout</option>
-						<option value="started">En cours</option>
-						<option value="finished">Terminées</option>
-						<option value="canceled">Annulées</option>
-					</select>
-				</div>
-				<div>
-					<label class="checkbox-label">
-						Commandes en ligne
-						<input
-							type="checkbox"
-							class="checkbox-input"
-							bind:checked={showRemoteTransactions}
-							on:change={reloadTransactions}
-						/>
-					</label>
-				</div>
-			</div>
-		</div>
-
-		<div use:dragscroll class="transactions-list">
-			{#each transactions as transaction}
-				<button
-					class="transaction-card {transaction.state}"
-					on:click={() => (displayTransaction = transaction)}
-				>
-					<div class="transaction-header">
-						{#if transaction.is_remote}
-							<iconify-icon icon="mdi:wifi" class="remote-icon" />
-						{:else}
-							<iconify-icon icon="mdi:monitor" class="remote-icon" />
-						{/if}
-						{#if transaction.account_google_picture}
-							<img
-								src={transaction.account_google_picture}
-								alt="Avatar"
-								class="transaction-avatar"
-								on:error={handleAvatarError}
-							/>
-						{/if}
-						<iconify-icon
-							icon="mdi:account-circle"
-							class="transaction-avatar placeholder-icon {transaction.account_google_picture ? 'hidden' : ''}"
-						/>
-						<b>{transaction.account_nick_name || transaction.account_name}</b>
-						{#if transaction.account_nick_name && transaction.account_name && transaction.account_nick_name !== transaction.account_name}
-							({transaction.account_name})
-						{/if}
-					</div>
-					
-					<div class="transaction-content">
-						<div class="items-section">
-							<div class="items-grid">
-								{#each transaction.items as item}
-									<div class="item-card {item.state == TransactionItemState.TransactionItemCanceled ? 'canceled' : ''} {item.state == TransactionItemState.TransactionItemFinished ? 'finished' : ''}">
-										{#if item.state == TransactionItemState.TransactionItemCanceled || item.state == TransactionItemState.TransactionItemFinished}
-											<img
-												src={api() + item.picture_uri}
-												alt="item"
-												class="item-image completed"
-											/>
-											<div class="item-name completed">{item.item_name}</div>
-											<div class="item-amount completed">x {item.item_amount}</div>
-										{:else}
-											<img
-												src={api() + item.picture_uri}
-												alt="item"
-												class="item-image"
-											/>
-											<div class="item-name">{item.item_name}</div>
-											<div class="item-amount">x {item.item_amount}</div>
-										{/if}
-									</div>
-								{/each}
-							</div>
-						</div>
-						<div class="price-section">
-							{formatPrice(transaction.total_cost)}
-						</div>
-					</div>
-					
-					<div class="status-led {transaction.state == 'finished' ? 'validated' : transaction.state == 'canceled' ? 'cancelled' : 'waiting'}"></div>
-				</button>
-			{/each}
-		</div>
-	</div>
-
-	<div class="pagination">
-		<div class="pagination-results">
-			<span class="font-semibold">{transactions.length}</span> résultats
-		</div>
-		<div class="pagination-controls">
-			<p class="pagination-info">
-				Page <span class="font-bold">{page}</span> sur <span class="font-bold">{maxPage}</span>
-			</p>
-			<div class="pagination-buttons">
-				<button
-					class="pagination-button"
-					on:click={prevPage}
-					disabled={page === 1}
-				>
-					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M15 19l-7-7 7-7"
-						/>
-					</svg>
-					<span>Précédent</span>
-				</button>
-				<button
-					class="pagination-button"
-					on:click={nextPage}
-					disabled={page === maxPage}
-				>
-					<span>Suivant</span>
-					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-					</svg>
-				</button>
-			</div>
-		</div>
-	</div>
-</div>
