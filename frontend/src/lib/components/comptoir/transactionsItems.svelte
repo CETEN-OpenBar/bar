@@ -64,11 +64,11 @@
 							Terminés
 						</th>
 						<th class="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-							Stock
+                            Restants
 						</th>
-						<th class="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-							Restants
-						</th>
+                        <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                            Stock
+                        </th>
 					</tr>
 				</thead>
 				<tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700 max-h-[calc(100vh-240px)] overflow-y-auto">
@@ -85,11 +85,11 @@
 							<td class="px-4 py-3 text-center text-sm text-gray-900 dark:text-gray-300">{item.item_amount}</td>
 							<td class="px-4 py-3 text-center text-sm text-gray-900 dark:text-gray-300">{item.item_already_done}</td>
 							<td class="px-4 py-3 text-center text-sm font-medium text-gray-900 dark:text-gray-300">
-								{getStockAmount(item.item_id)}
+                                {item.item_amount - item.item_already_done}
 							</td>
-							<td class="px-4 py-3 text-center text-sm font-medium text-gray-900 dark:text-gray-300">
-								{item.item_amount - item.item_already_done}
-							</td>
+                            <td class="px-4 py-3 text-center text-sm font-medium text-gray-900 dark:text-gray-300">
+                                {getStockAmount(item.item_id)}
+                            </td>
 						</tr>
 					{/each}
 					{#if filtered_items.length === 0}
