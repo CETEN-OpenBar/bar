@@ -25,6 +25,24 @@
 		account.google_picture = `https://www.gravatar.com/avatar/${account.email_address}?d=mp`;
 	}
 
+	function formatPriceRole(price_role: string){
+		switch (price_role){
+			case "coutant":
+				return "Prix Coutant";
+			case "staff_bar":
+				return "Prix Staff";
+			case "privilegies":
+				return "Prix Privilégies";
+			case "ceten":
+				return "Prix Ceten";
+			case "externe":
+				return "Prix Externe";
+			case "menu":
+				return "Prix Menu";
+			default:
+				return "";
+		}
+	}
 	function setNewPin(pin: string) {
 		if (pin == '') {
 			pin_step = 0;
@@ -104,6 +122,7 @@
 			<div class="flex flex-col justify-center">
 				<Price amount={account.balance} class="text-md text-white self-center" />
 				<Stars stars={account.points} class="text-md text-white self-center" />
+				<p class="text-md text-white self-center">{formatPriceRole(account.price_role)}</p>
 			</div>
 		</button>
 	</div>
