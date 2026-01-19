@@ -22,7 +22,7 @@
 	};
 
 	let searchQuery = '';
-	let page: number = 0;
+	let page: number = 1;
 	let maxPage: number = 0;
 	let nextPage = () => {
 		if (page < maxPage) {
@@ -31,10 +31,18 @@
 		}
 	};
 	let prevPage = () => {
-		if (page > 0) {
+		if (page > 1) {
 			page--;
 			reloadAccounts();
 		}
+	};
+	let handlePageInput = () => {
+		if (page < 1) {
+			page = 1;
+		} else if (page > maxPage) {
+			page = maxPage;
+		}
+		reloadAccounts();
 	};
 	let accounts_per_page = 10;
 	let shown_refill: Account | undefined = undefined;
@@ -293,8 +301,40 @@
 						</div>
 					</div>
 					<!-- End Form -->
-				</div>
-			</div>
+	</div>
+</div>
+
+<style>
+	.page-input {
+		width: 50px;
+		padding: 4px 6px;
+		border: 1px solid #d1d5db;
+		border-radius: 4px;
+		font-size: 14px;
+		text-align: center;
+		font-weight: 600;
+		-moz-appearance: textfield;
+	}
+
+	.page-input::-webkit-outer-spin-button,
+	.page-input::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+
+	.page-input:focus {
+		outline: none;
+		border-color: #3b82f6;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		.page-input {
+			background-color: #374151;
+			color: #e5e7eb;
+			border-color: #4b5563;
+		}
+	}
+</style>
 		</div>
 	</div>
 </div>
@@ -743,8 +783,40 @@
 													});
 											}}
 										/>
-									</div>
-								</div>
+	</div>
+</div>
+
+<style>
+	.page-input {
+		width: 50px;
+		padding: 4px 6px;
+		border: 1px solid #d1d5db;
+		border-radius: 4px;
+		font-size: 14px;
+		text-align: center;
+		font-weight: 600;
+		-moz-appearance: textfield;
+	}
+
+	.page-input::-webkit-outer-spin-button,
+	.page-input::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+
+	.page-input:focus {
+		outline: none;
+		border-color: #3b82f6;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		.page-input {
+			background-color: #374151;
+			color: #e5e7eb;
+			border-color: #4b5563;
+		}
+	}
+</style>
 								<div class="mb-2">
 									<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">E-mail</label>
 									<input
@@ -930,14 +1002,23 @@
 		</div>
 		<div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 order-1 sm:order-2 w-full sm:w-auto">
 			<p class="text-sm font-medium text-gray-700 dark:text-gray-300 order-2 sm:order-1">
-				Page <span class="font-bold">{page}</span> sur <span class="font-bold">{maxPage}</span>
+				Page
+				<input
+					type="number"
+					min="1"
+					max={maxPage}
+					class="page-input"
+					bind:value={page}
+					on:change={handlePageInput}
+				/>
+				sur <span class="font-bold">{maxPage}</span>
 			</p>
 			<div class="flex items-center gap-2 order-1 sm:order-2">
 				<button
 					type="button"
 					class="py-2 px-3 sm:px-4 inline-flex justify-center items-center gap-1 sm:gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-all text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-800 flex-1 sm:flex-none"
 					on:click={prevPage}
-					disabled={page === 0}
+					disabled={page === 1}
 				>
 					<svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
@@ -950,12 +1031,12 @@
 					<span class="hidden xs:inline">Précédent</span>
 					<span class="xs:hidden">Prec.</span>
 				</button>
-				<button
-					type="button"
-					class="py-2 px-3 sm:px-4 inline-flex justify-center items-center gap-1 sm:gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-all text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-800 flex-1 sm:flex-none"
-					on:click={nextPage}
-					disabled={page === maxPage}
-				>
+			<button
+				type="button"
+				class="py-2 px-3 sm:px-4 inline-flex justify-center items-center gap-1 sm:gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-all text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-800 flex-1 sm:flex-none"
+				on:click={nextPage}
+				disabled={page >= maxPage}
+			>
 					<span class="hidden xs:inline">Suivant</span>
 					<span class="xs:hidden">Suiv.</span>
 					<svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
