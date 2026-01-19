@@ -4,6 +4,7 @@
 	import { categoriesApi } from '$lib/requests/requests';
 	import ConfirmationPopup from '$lib/components/confirmationPopup.svelte';
 	import { onMount } from 'svelte';
+	import PaginationFooter from '$lib/components/PaginationFooter.svelte';
 
 	let categories: Category[] = [];
 	let newCategory: NewCategory = {
@@ -471,80 +472,13 @@
 	</div>
 
 	<!-- Pagination -->
-	<div class="h-[100px] sm:h-[80px] px-3 sm:px-6 py-1 sm:py-2 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-center sm:justify-between items-center gap-1 fixed bottom-0 left-0 right-0 z-40 sm:static sm:z-auto">
-		<div class="flex items-center gap-2 order-1">
-			<button
-				type="button"
-				class="py-1.5 px-3 inline-flex justify-center items-center gap-1 rounded-md border font-medium bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-all text-xs disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-800"
-				on:click={prevPage}
-				disabled={page === 1}
-			>
-				<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-				</svg>
-				Prec.
-			</button>
-			<button
-				type="button"
-				class="py-1.5 px-3 inline-flex justify-center items-center gap-1 rounded-md border font-medium bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-all text-xs disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-800"
-				on:click={nextPage}
-				disabled={page >= maxPage}
-			>
-				Suiv.
-				<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-				</svg>
-			</button>
-		</div>
-		<div class="flex items-center gap-3 order-2">
-			<p class="text-xs font-medium text-gray-700 dark:text-gray-300">
-				Page
-				<input
-					type="number"
-					min="1"
-					max={maxPage}
-					class="page-input"
-					bind:value={page}
-					on:change={handlePageInput}
-				/>
-				sur <span class="font-bold">{maxPage}</span>
-			</p>
-			<span class="text-gray-300 dark:text-gray-600">|</span>
-			<p class="text-xs text-gray-600 dark:text-gray-400">
-				<span class="font-semibold text-gray-800 dark:text-gray-200">{categories.length}</span> résultats
-			</p>
-		</div>
-	</div>
+	<PaginationFooter
+		bind:page
+		{maxPage}
+		resultsCount={categories.length}
+		showPageInput={true}
+		on:prevPage={prevPage}
+		on:nextPage={nextPage}
+		on:pageChange={handlePageInput}
+	/>
 </div>
-
-<style>
-	.page-input {
-		width: 50px;
-		padding: 4px 6px;
-		border: 1px solid #d1d5db;
-		border-radius: 4px;
-		font-size: 14px;
-		text-align: center;
-		font-weight: 600;
-		-moz-appearance: textfield;
-	}
-
-	.page-input::-webkit-outer-spin-button,
-	.page-input::-webkit-inner-spin-button {
-		-webkit-appearance: none;
-		margin: 0;
-	}
-
-	.page-input:focus {
-		outline: none;
-		border-color: #3b82f6;
-	}
-
-	@media (prefers-color-scheme: dark) {
-		.page-input {
-			background-color: #374151;
-			color: #e5e7eb;
-			border-color: #4b5563;
-		}
-	}
-</style>
