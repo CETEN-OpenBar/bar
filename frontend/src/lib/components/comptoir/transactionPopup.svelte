@@ -85,29 +85,59 @@
 	}
 
 	async function finishTransaction() {
-		let res = await transactionsApi().patchTransactionId(
-			newTransaction.account_id,
-			newTransaction.id,
-			'finished',
-			{
-				withCredentials: true }
-		);
+		for (let i = 0; i < newTransaction.items.length; i++) {
+			let item = newTransaction.items[i];
 
-		if (res.status != 200) {
-			error = "Une erreur s'est produite";
-			setTimeout(() => {
-				error = '';
-			}, 1500);
-			return;
+			// @ts-ignore
+			if (item.state == transaction.items[i].state) item.state = undefined;
+
+			let res = await transactionsApi().patchTransactionItemId(
+				newTransaction.account_id,
+				newTransaction.id,
+				item.item_id,
+				item.state,
+				item.item_amount,
+				item.item_already_done,
+				{
+					withCredentials: true
+				}
+			);
+
+			if (res.status != 200) {
+				error = "Une erreur s'est produite";
+				setTimeout(() => {
+					error = '';
+				}, 1500);
+				return;
+			}
 		}
 
-		transaction = newTransaction;
-		success = 'Commande terminée';
-		setTimeout(() => {
-			success = '';
-			searchName.set('');
-			close();
-		}, 1500);
+		if (!error) {
+			let res = await transactionsApi().patchTransactionId(
+				newTransaction.account_id,
+				newTransaction.id,
+				'finished',
+				{
+					withCredentials: true
+				}
+			);
+
+			if (res.status != 200) {
+				error = "Une erreur s'est produite";
+				setTimeout(() => {
+					error = '';
+				}, 1500);
+				return;
+			}
+
+			transaction = newTransaction;
+			success = 'Commande terminée';
+			setTimeout(() => {
+				success = '';
+				searchName.set('');
+				close();
+			}, 1500);
+		}
 	}
 
 	async function saveTransaction() {
