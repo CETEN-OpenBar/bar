@@ -335,16 +335,6 @@
 	<div class="transactions-container">
 		<header class="header-section">
 			<div class="actions-group">
-				<button class="btn btn-small" on:click={() => goto('/comptoir/c/refills')}>
-					<iconify-icon icon="mdi:history" width="16" height="16" />
-					Historique
-				</button>
-				
-				<button class="btn btn-small" on:click={() => goto('/comptoir/c/resume')}>
-					<iconify-icon icon="mdi:chart-box" width="16" height="16" />
-					Résumé
-				</button>
-
 				<button class="btn btn-small" on:click={() => newRefill = true}>
 					<iconify-icon icon="mdi:cash-plus" width="16" height="16" />
 					Recharge
@@ -386,16 +376,6 @@
 			</div>
 
 			<div class="mobile-menu" class:open={mobileMenuOpen}>
-				<button class="btn btn-small" on:click={() => { goto('/comptoir/c/refills'); mobileMenuOpen = false; }}>
-					<iconify-icon icon="mdi:history" width="16" height="16" />
-					Historique
-				</button>
-				
-				<button class="btn btn-small" on:click={() => { goto('/comptoir/c/resume'); mobileMenuOpen = false; }}>
-					<iconify-icon icon="mdi:chart-box" width="16" height="16" />
-					Résumé
-				</button>
-
 				<button class="btn btn-small" on:click={() => { newRefill = true; mobileMenuOpen = false; }}>
 					<iconify-icon icon="mdi:plus-circle" width="16" height="16" />
 					Recharge

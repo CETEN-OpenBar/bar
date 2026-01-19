@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import {
 		TransactionItemState,
 		type Transaction,
@@ -253,6 +254,57 @@
 	.title {
 		font-size: 18px;
 		font-weight: 600;
+	}
+
+	.view-tabs {
+		display: flex;
+		background-color: #e5e7eb;
+		border-radius: 8px;
+		padding: 4px;
+		gap: 0;
+	}
+
+	.tab {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		padding: 8px 16px;
+		background-color: transparent;
+		color: #374151;
+		border: none;
+		cursor: pointer;
+		font-size: 14px;
+		font-weight: 500;
+		transition: all 0.2s ease;
+		border-radius: 6px;
+	}
+
+	.tab:hover {
+		background-color: rgba(0, 0, 0, 0.05);
+	}
+
+	.tab.active {
+		background-color: #2563eb;
+		color: white;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		.view-tabs {
+			background-color: #374151;
+		}
+
+		.tab {
+			color: #e5e7eb;
+		}
+
+		.tab:hover {
+			background-color: rgba(255, 255, 255, 0.05);
+		}
+
+		.tab.active {
+			background-color: #2563eb;
+			color: white;
+		}
 	}
 
 	.search-input {
@@ -765,7 +817,29 @@
 	<div class="transactions-content">
 		<div class="header-controls">
 			<div class="title-section">
-				<div class="title">Transactions</div>
+				<div class="view-tabs">
+					<button
+						class="tab active"
+						on:click={() => {}}
+					>
+						<iconify-icon icon="mdi:format-list-bulleted" width="18" height="18" />
+						Transactions
+					</button>
+					<button
+						class="tab"
+						on:click={() => goto('/comptoir/c/refills')}
+					>
+						<iconify-icon icon="mdi:history" width="18" height="18" />
+						Historique
+					</button>
+					<button
+						class="tab"
+						on:click={() => goto('/comptoir/c/resume')}
+					>
+						<iconify-icon icon="mdi:chart-box" width="18" height="18" />
+						Résumé
+					</button>
+				</div>
 				<input
 					class="search-input"
 					placeholder="Rechercher une personne"
