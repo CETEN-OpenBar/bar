@@ -742,7 +742,7 @@
 		}
 
         .status-led {
-            top: 55%;
+            top: 53%;
         }
 
         .pagination {
