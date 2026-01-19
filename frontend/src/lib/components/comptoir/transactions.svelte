@@ -304,13 +304,13 @@
 		flex-direction: column;
 		flex-grow: 1;
 		flex: 1;
+        padding: 15px;
 	}
 
 	.header-controls {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
-		margin-top: 8px;
 		gap: 20px;
 	}
 
@@ -623,11 +623,9 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		margin-top: 20px;
 		padding: 16px;
 		background-color: white;
 		border: 1px solid #e5e7eb;
-		border-radius: 8px;
 	}
 
 	.pagination-results {
