@@ -87,13 +87,13 @@
 
 	function reloadItems() {
 		itemsApi()
-			.getAllItems(page - 1, itemsPerPage, searchState, searchCategory, searchName, undefined, undefined, {
+			.getAllItems(page, itemsPerPage, searchState, searchCategory, searchName, undefined, undefined, {
 				withCredentials: true
 			})
 			.then((res) => {
-				maxPage = res.data.max_page ?? 0 + 1;
-				page = res.data.page ?? 0 + 1;
-				itemsPerPage = res.data.limit ?? 0;
+				maxPage = res.data.max_page ?? 1;
+				page = res.data.page ?? 1;
+				itemsPerPage = res.data.limit ?? 7;
 				items = res.data.items ?? [];
 			});
 	}
