@@ -13,6 +13,7 @@
 	import TransactionPopup from './transactionPopup.svelte';
 	import { dragscroll } from '@svelte-put/dragscroll';
 	import { searchName } from '$lib/store/store';
+	import ComptoirHeaderControls from './headerControls.svelte';
 
 	function handleAvatarError(e: Event) {
 		const target = e.currentTarget as HTMLImageElement;
@@ -244,30 +245,8 @@
 
 <div class="transactions-wrapper">
 	<div class="transactions-content">
-		<div class="header-controls">
-			<div class="title-section">
-				<div class="view-tabs">
-					<button class="tab active" on:click={() => {}}>
-						<iconify-icon icon="mdi:format-list-bulleted" width="18" height="18" />
-						Transactions
-					</button>
-					<button class="tab" on:click={() => goto('/comptoir/c/resume')}>
-						<iconify-icon icon="mdi:chart-box" width="18" height="18" />
-						Résumé
-					</button>
-					<button class="tab" on:click={() => goto('/comptoir/c/refills')}>
-						<iconify-icon icon="mdi:cash-clock" width="18" height="18" />
-						Historique recharges
-					</button>
-				</div>
-				<input
-					class="search-input"
-					placeholder="Rechercher une personne"
-					bind:value={$searchName}
-					on:input={handleSearchInput}
-				/>
-			</div>
-			<div class="filters-section">
+		<ComptoirHeaderControls activeTab="transactions">
+			<div class="filters-section" slot="filters">
 				<div>
 					Filtre :
 					<select class="filter-select" bind:value={st} on:change={reloadTransactions}>
@@ -289,7 +268,7 @@
 					</label>
 				</div>
 			</div>
-		</div>
+		</ComptoirHeaderControls>
 
 		<div use:dragscroll class="transactions-list">
 			{#each transactions as transaction}
@@ -557,8 +536,6 @@
 		overflow-y: auto;
 		flex-grow: 1;
 		gap: 20px;
-		padding: 4px;
-		margin-top: 10px;
 		max-height: calc(100vh - 240px);
 	}
 
@@ -582,8 +559,7 @@
 	}
 
 	.transaction-card:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+		border: 2px solid #9ca3af;
 	}
 
 	.transaction-card.canceled {
@@ -802,7 +778,7 @@
 		align-items: center;
 		padding: 16px;
 		background-color: white;
-		border: 1px solid #e5e7eb;
+		border-top: 1px solid #e5e7eb;
 	}
 
 	.pagination-results {
