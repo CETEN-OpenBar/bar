@@ -7,6 +7,60 @@
 	import { onMount } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
 
+	let itemsContainer: HTMLElement;
+
+	let touchStartX = 0;
+	let touchEndX = 0;
+	let isTouch = false;
+
+	function handleTouchStart(e: TouchEvent) {
+		touchStartX = e.changedTouches[0].screenX;
+		isTouch = true;
+	}
+
+	function handleTouchEnd(e: TouchEvent) {
+		if (isTouch) {
+			touchEndX = e.changedTouches[0].screenX;
+			handleSwipe();
+			isTouch = false;
+		}
+	}
+
+	function handleMouseDown(e: MouseEvent) {
+		touchStartX = e.screenX;
+	}
+
+	function handleMouseUp(e: MouseEvent) {
+		touchEndX = e.screenX;
+		handleMouseSwipe();
+	}
+
+	function handleSwipe() {
+		const swipeThreshold = 50;
+		const diff = touchStartX - touchEndX;
+
+		if (Math.abs(diff) > swipeThreshold) {
+			if (diff > 0) {
+				if (page < maxPage+1) nextPage();
+			} else {
+				if (page > 1) prevPage();
+			}
+		}
+	}
+
+	function handleMouseSwipe() {
+		const swipeThreshold = 100;
+		const diff = touchStartX - touchEndX;
+
+		if (Math.abs(diff) > swipeThreshold) {
+			if (diff > 0) {
+				if (page < maxPage+1) nextPage();
+			} else {
+				if (page > 1) prevPage();
+			}
+		}
+	}
+
 	export let state: ItemState = 'buyable';
 	export let category: string = '';
 
@@ -32,8 +86,8 @@
 
 	let items: Item[] = [];
 
-	let page: number = 0;
-	let maxPage: number = 0;
+	let page: number = 1;
+	let maxPage: number = 1;
 	let nextPage = () => {
 		if (page < maxPage) {
 			page++;
@@ -41,7 +95,7 @@
 		}
 	};
 	let prevPage = () => {
-		if (page > 0) {
+		if (page > 1) {
 			page--;
 			reloadItems();
 		}
@@ -133,90 +187,105 @@
 	</div>
 {/if}
 
-<!-- horizontal & overflows -->
-{#if items.length === 0}
-	<div class="flex flex-col flex-grow justify-items-center">
-		<span class="text-3xl text-white" in:fade={{ duration: 200, delay: 100 }}>Aucun article</span>
-	</div>
-{:else}
-	<div
-		class="flex flex-wrap flex-grow max-w-full md:p-12 p-4"
-		in:fly={{ x: -direction * 300, duration: 500 }}
-		out:fly={{ x: direction * 300, duration: 500 }}
-		use:dragscroll
-	>
-		{#each items as item}
-			<!-- image wil be in a button box -->
-			<div
-				class="flex-1 flex flex-col basis-[min-content] my-1 min-w-40 max-w-40 min-h-50 h-50 max-h-50
-				items-center rounded-lg text-white transition-colors duration-300 overflow-x-clip"
-			>
-				<!-- add info svg on the top right -->
-				{#if item.is_menu}
+<div
+	bind:this={itemsContainer}
+	class="flex flex-col flex-grow w-full"
+	on:touchstart={handleTouchStart}
+	on:touchend={handleTouchEnd}
+	on:mousedown={handleMouseDown}
+	on:mouseup={handleMouseUp}
+>
+	<!-- horizontal & overflows -->
+	{#if items.length === 0}
+		<div class="flex flex-col flex-grow justify-items-center">
+			<span class="text-3xl text-white" in:fade={{ duration: 200, delay: 100 }}>Aucun article</span>
+		</div>
+	{:else}
+		<div
+			class="flex flex-wrap flex-grow max-w-full md:p-12 p-4 content-start"
+			in:fly={{ x: -direction * 300, duration: 500 }}
+			out:fly={{ x: direction * 300, duration: 500 }}
+			use:dragscroll
+		>
+			{#each items as item}
+				<!-- image wil be in a button box -->
+				<div
+					class="flex-1 flex flex-col basis-[min-content] my-1 min-w-40 max-w-40 min-h-50 h-50 max-h-50
+					items-center rounded-lg text-white transition-colors duration-300 overflow-x-clip"
+				>
+					<!-- add info svg on the top right -->
+					{#if item.is_menu}
+						<button
+							class="relative top-0 right-0 w-10 h-10"
+							on:click={() => {
+								menuPopup = {
+									items: item.menu_items,
+									categories: item.menu_categories
+								};
+							}}
+						>
+							<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:info" />
+						</button>
+					{/if}
 					<button
-						class="relative top-0 right-0 w-10 h-10"
+						class="relative"
 						on:click={() => {
-							menuPopup = {
-								items: item.menu_items,
-								categories: item.menu_categories
-							};
+							// check we are not clicking on the info button
+							clickWrapper(item);
 						}}
 					>
-						<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:info" />
-					</button>
-				{/if}
-				<button
-					class="relative"
-					on:click={() => {
-						// check we are not clicking on the info button
-						clickWrapper(item);
-					}}
-				>
-					<img
-						draggable="false"
-						class="w-full h-28 md:h-32 object-contain"
-						src={api() + item.picture_uri}
-						alt={item.name}
-					/>
-					<div class="flex flex-col">
-						<span class="text-lg font-bold w-40 m-[0_auto]">{item.name}</span>
-						<span class="text-sm">Prix: {formatPrice(item.display_price ?? 999)}</span>
-					</div>
-					{#if item.amount_left <= 0}
-						<!-- Stock épuisé icon -->
 						<img
-							class="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[70%] w-20 h-20 md:h-24 md:w-24 drop-shadow-2xl"
-							alt="oof"
-							src="/epuise.webp"
+							draggable="false"
+							class="w-full h-28 md:h-32 object-contain"
+							src={api() + item.picture_uri}
+							alt={item.name}
 						/>
-					{/if}
-				</button>
-			</div>
-		{/each}
-	</div>
-{/if}
+						<div class="flex flex-col">
+							<span class="text-lg font-bold w-40 m-[0_auto]">{item.name}</span>
+							<span class="text-sm">Prix: {formatPrice(item.display_price ?? 999)}</span>
+						</div>
+						{#if item.amount_left <= 0}
+							<!-- Stock épuisé icon -->
+							<img
+								class="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[70%] w-20 h-20 md:h-24 md:w-24 drop-shadow-2xl"
+								alt="oof"
+								src="/epuise.webp"
+							/>
+						{/if}
+					</button>
+				</div>
+			{/each}
+		</div>
+	{/if}
 
-<!-- Navigation -->
-<div class="flex flex-col justify-center">
-	<div class="text-3xl text-white text-center">
-		{page}/{maxPage}
-	</div>
-	<div class="flex flex-row gap-4 justify-center items-center w-full h-16">
-		<button
-			class="w-10 h-10 border-2 border-gray-300 rounded-full"
-			on:click={() => {
-				prevPage();
-			}}
-		>
-			<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:chevron-left" />
-		</button>
-		<button
-			class="w-10 h-10 text-center border-2 border-gray-300 rounded-full"
-			on:click={() => {
-				nextPage();
-			}}
-		>
-			<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:chevron-right" />
-		</button>
+	<!-- Navigation -->
+	<div class="flex flex-col justify-center flex-shrink-0">
+		<div class="text-3xl text-white text-center">
+			{page}/{maxPage}
+		</div>
+		<div class="flex flex-row gap-4 justify-center items-center w-full h-16">
+			<button
+				class="w-10 h-10 border-2 border-gray-300 rounded-full"
+				on:click={() => {
+					prevPage();
+				}}
+			>
+				<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:chevron-left" />
+			</button>
+			<button
+				class="w-10 h-10 text-center border-2 border-gray-300 rounded-full"
+				on:click={() => {
+					nextPage();
+				}}
+			>
+				<iconify-icon class="text-white align-middle text-2xl" icon="akar-icons:chevron-right" />
+			</button>
+		</div>
 	</div>
 </div>
+
+<style>
+	:global(.content-start) {
+		content-visibility: auto;
+	}
+</style>
