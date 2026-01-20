@@ -13,6 +13,7 @@
 	import { categoriesApi, itemsApi } from '$lib/requests/requests';
 	import { formatPrice, parsePrice } from '$lib/utils';
 	import { onMount } from 'svelte';
+	import PaginationFooter from '$lib/components/PaginationFooter.svelte';
 
 	interface NewItemWithCategory extends NewItem {
 		category_id: string;
@@ -75,6 +76,8 @@
 	let confirmationMessage: string | undefined = undefined;
 	let deleteItemCallback: VoidFunction = () => {};
 
+	let filtersOpen: boolean = false;
+
 	onMount(() => {
 		categoriesApi()
 			.getCategories(true, { withCredentials: true })
@@ -87,13 +90,13 @@
 
 	function reloadItems() {
 		itemsApi()
-			.getAllItems(page - 1, itemsPerPage, searchState, searchCategory, searchName, undefined, undefined, {
+			.getAllItems(page, itemsPerPage, searchState, searchCategory, searchName, undefined, undefined, {
 				withCredentials: true
 			})
 			.then((res) => {
-				maxPage = res.data.max_page ?? 0 + 1;
-				page = res.data.page ?? 0 + 1;
-				itemsPerPage = res.data.limit ?? 0;
+				maxPage = res.data.max_page ?? 1;
+				page = res.data.page ?? 1;
+				itemsPerPage = res.data.limit ?? 7;
 				items = res.data.items ?? [];
 			});
 	}
@@ -480,65 +483,26 @@
 	/>
 {/if}
 
-<div class="h-[calc(100vh-69px)] grid grid-cols-1 grid-rows-[auto_1fr_80px] bg-gray-50 dark:bg-gray-900">
+<div class="h-full flex flex-col bg-gray-50 dark:bg-gray-900">
 	<div class="m-3 p-2">
-		<div class="flex flex-col lg:flex-row lg:flex-wrap lg:items-center gap-4 lg:gap-6">
-			<div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-				<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Par catégorie:</span>
-				<select
-					id="category"
-					name="category"
-					class="px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white dark:placeholder-gray-500 w-full sm:w-auto"
-					on:change={(e) => {
-						// @ts-ignore
-						searchCategory = e.target?.value;
-						if (searchCategory === '') searchCategory = undefined;
-						page = 1;
-						reloadItems();
-					}}
-				>
-					<option value="">Pas de filtre</option>
-					{#each categories as category}
-						<option value={category.id}>{category.name}</option>
-					{/each}
-				</select>
-			</div>
-			<div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-				<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Par état:</span>
-				<select
-					id="state"
-					name="state"
-					class="px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white dark:placeholder-gray-500 w-full sm:w-auto"
-					on:change={(e) => {
-						// @ts-ignore
-						let val = e.target?.value;
-						if (val == '') searchState = undefined;
-						else searchState = val;
-						page = 1;
-						reloadItems();
-					}}
-				>
-					<option value="">Pas de filtre</option>
-					<option value="buyable">Achetable</option>
-					<option value="not_buyable">Non achetable</option>
-				</select>
-			</div>
-			<div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-				<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Par nom:</span>
-				<input
-					type="text"
-					placeholder="Rechercher..."
-					bind:value={searchName}
-					on:input={() => {
-						page = 1;
-						reloadItems();
-					}}
-					class="px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 w-full sm:w-auto"
-				/>
-			</div>
-			<div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+		<!-- Mobile: Compact filters with toggle -->
+		<div class="lg:hidden">
+			<div class="flex items-center gap-2 mb-2">
 				<button
-					class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800 w-full sm:w-auto"
+					class="flex-1 py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-gray-300 dark:border-gray-600 font-medium bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all text-sm"
+					on:click={() => filtersOpen = !filtersOpen}
+				>
+					<iconify-icon icon="mdi:filter-variant" width="18" height="18"></iconify-icon>
+					Filtres
+					{#if searchCategory || searchState || searchName}
+						<span class="bg-blue-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[18px]">
+							{(searchCategory ? 1 : 0) + (searchState ? 1 : 0) + (searchName ? 1 : 0)}
+						</span>
+					{/if}
+					<iconify-icon icon={filtersOpen ? "mdi:chevron-up" : "mdi:chevron-down"} width="18" height="18"></iconify-icon>
+				</button>
+				<button
+					class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
 					data-hs-overlay="#hs-modal-new-item"
 				>
 					<svg
@@ -556,14 +520,152 @@
 							stroke-linecap="round"
 						/>
 					</svg>
-					<span class="lg:hidden">Ajouter</span>
-					<span class="hidden lg:inline">Ajouter un produit</span>
+					Ajouter
+				</button>
+			</div>
+			{#if filtersOpen}
+				<div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3 mb-2 space-y-3">
+					<div class="grid grid-cols-2 gap-3">
+						<div>
+							<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1">Catégorie</label>
+							<select
+								id="category-mobile"
+								name="category"
+								class="w-full px-2 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white"
+								on:change={(e) => {
+									// @ts-ignore
+									searchCategory = e.target?.value;
+									if (searchCategory === '') searchCategory = undefined;
+									page = 1;
+									reloadItems();
+								}}
+							>
+								<option value="">Toutes</option>
+								{#each categories as category}
+									<option value={category.id}>{category.name}</option>
+								{/each}
+							</select>
+						</div>
+						<div>
+							<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1">Etat</label>
+							<select
+								id="state-mobile"
+								name="state"
+								class="w-full px-2 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white"
+								on:change={(e) => {
+									// @ts-ignore
+									let val = e.target?.value;
+									if (val == '') searchState = undefined;
+									else searchState = val;
+									page = 1;
+									reloadItems();
+								}}
+							>
+								<option value="">Tous</option>
+								<option value="buyable">Achetable</option>
+								<option value="not_buyable">Non achetable</option>
+							</select>
+						</div>
+					</div>
+					<div>
+						<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1">Rechercher</label>
+						<input
+							type="text"
+							placeholder="Nom du produit..."
+							bind:value={searchName}
+							on:input={() => {
+								page = 1;
+								reloadItems();
+							}}
+							class="w-full px-2 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+						/>
+					</div>
+				</div>
+			{/if}
+		</div>
+
+		<!-- Desktop: Original layout -->
+		<div class="hidden lg:flex flex-row flex-wrap items-center gap-6">
+			<div class="flex flex-row items-center gap-3">
+				<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Par catégorie:</span>
+				<select
+					id="category"
+					name="category"
+					class="px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white dark:placeholder-gray-500 w-auto"
+					on:change={(e) => {
+						// @ts-ignore
+						searchCategory = e.target?.value;
+						if (searchCategory === '') searchCategory = undefined;
+						page = 1;
+						reloadItems();
+					}}
+				>
+					<option value="">Pas de filtre</option>
+					{#each categories as category}
+						<option value={category.id}>{category.name}</option>
+					{/each}
+				</select>
+			</div>
+			<div class="flex flex-row items-center gap-3">
+				<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Par état:</span>
+				<select
+					id="state"
+					name="state"
+					class="px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white dark:placeholder-gray-500 w-auto"
+					on:change={(e) => {
+						// @ts-ignore
+						let val = e.target?.value;
+						if (val == '') searchState = undefined;
+						else searchState = val;
+						page = 1;
+						reloadItems();
+					}}
+				>
+					<option value="">Pas de filtre</option>
+					<option value="buyable">Achetable</option>
+					<option value="not_buyable">Non achetable</option>
+				</select>
+			</div>
+			<div class="flex flex-row items-center gap-3">
+				<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Par nom:</span>
+				<input
+					type="text"
+					placeholder="Rechercher..."
+					bind:value={searchName}
+					on:input={() => {
+						page = 1;
+						reloadItems();
+					}}
+					class="px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 w-auto"
+				/>
+			</div>
+			<div class="flex flex-row items-center gap-3">
+				<button
+					class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800 w-auto"
+					data-hs-overlay="#hs-modal-new-item"
+				>
+					<svg
+						class="w-3 h-3"
+						xmlns="http://www.w3.org/2000/svg"
+						width="16"
+						height="16"
+						viewBox="0 0 16 16"
+						fill="none"
+					>
+						<path
+							d="M2.63452 7.50001L13.6345 7.5M8.13452 13V2"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+						/>
+					</svg>
+					Ajouter un produit
 				</button>
 			</div>
 		</div>
 	</div>
 
-	<div class="flex-grow w-full overflow-x-auto overflow-y-visible">
+	<div class="flex-1 min-h-0 w-full overflow-x-auto overflow-y-auto">
 		<!-- Desktop Table View -->
 		<div class="hidden min-[1300px]:block min-w-full bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-visible">
 			<table class="min-w-full table-fixed divide-y divide-gray-200 dark:divide-gray-700">
@@ -873,7 +975,7 @@
 		</div>
 
 		<!-- Mobile Card View -->
-		<div class="block min-[1300px]:hidden space-y-4 px-2">
+		<div class="block min-[1300px]:hidden space-y-4 px-2 pb-4">
 			{#if items.length === 0}
 				<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center">
 					<p class="text-gray-500 dark:text-gray-400">Aucun produit trouvé</p>
@@ -1150,91 +1252,18 @@
 	</div>
 
 	<!-- Pagination -->
-	<div class="min-h-[80px] px-3 sm:px-6 py-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
-		<div class="order-2 sm:order-1">
-			<p class="text-sm text-gray-600 dark:text-gray-400 text-center sm:text-left">
-				<span class="font-semibold text-gray-800 dark:text-gray-200">{items.length}</span> résultats
-			</p>
-		</div>
-		<div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 order-1 sm:order-2 w-full sm:w-auto">
-			<p class="text-sm font-medium text-gray-700 dark:text-gray-300 order-2 sm:order-1">
-				Page
-				<input
-					type="number"
-					min="1"
-					max={maxPage}
-					class="page-input"
-					bind:value={page}
-					on:change={handlePageInput}
-				/>
-				sur <span class="font-bold">{maxPage}</span>
-			</p>
-			<div class="flex items-center gap-2 order-1 sm:order-2">
-				<button
-					type="button"
-					class="py-2 px-3 sm:px-4 inline-flex justify-center items-center gap-1 sm:gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-all text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-800 flex-1 sm:flex-none"
-					on:click={prevPage}
-					disabled={page === 1}
-				>
-					<svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M15 19l-7-7 7-7"
-						/>
-					</svg>
-					<span class="hidden xs:inline">Précédent</span>
-					<span class="xs:hidden">Prec.</span>
-				</button>
-				<button
-					type="button"
-					class="py-2 px-3 sm:px-4 inline-flex justify-center items-center gap-1 sm:gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-all text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-800 flex-1 sm:flex-none"
-					on:click={nextPage}
-					disabled={page >= maxPage}
-				>
-					<span class="hidden xs:inline">Suivant</span>
-					<span class="xs:hidden">Suiv.</span>
-					<svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-					</svg>
-				</button>
-			</div>
-		</div>
-	</div>
+	<PaginationFooter
+		bind:page
+		{maxPage}
+		resultsCount={items.length}
+		showPageInput={true}
+		on:prevPage={prevPage}
+		on:nextPage={nextPage}
+		on:pageChange={handlePageInput}
+	/>
 </div>
 
 <style>
-	.page-input {
-		width: 50px;
-		padding: 4px 6px;
-		border: 1px solid #d1d5db;
-		border-radius: 4px;
-		font-size: 14px;
-		text-align: center;
-		font-weight: 600;
-		-moz-appearance: textfield;
-	}
-
-	.page-input::-webkit-outer-spin-button,
-	.page-input::-webkit-inner-spin-button {
-		-webkit-appearance: none;
-		margin: 0;
-	}
-
-	.page-input:focus {
-		outline: none;
-		border-color: #3b82f6;
-	}
-
-	@media (prefers-color-scheme: dark) {
-		.page-input {
-			background-color: #374151;
-			color: #e5e7eb;
-			border-color: #4b5563;
-		}
-	}
-
 	input[type='number'] {
 		-moz-appearance: textfield;
 	}

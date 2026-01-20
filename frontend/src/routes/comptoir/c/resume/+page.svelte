@@ -13,18 +13,21 @@
 
 <style>
 	.content-wrapper {
-		padding: 15px 15px 0 15px;
+		padding: 15px 15px 15px 15px;
 		flex: 1;
+		min-height: 0;
 		display: flex;
 		flex-direction: column;
+		overflow: hidden;
 	}
 
 	.content-area {
 		flex: 1;
+		min-height: 0;
 		background-color: var(--bg-secondary);
 		border-radius: 0.75rem;
 		border: 1px solid var(--border-color);
-		overflow: hidden;
+		overflow: auto;
 	}
 
 	:root {

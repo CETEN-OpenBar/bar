@@ -5,6 +5,7 @@
 	import { RefillType, type Refill } from '$lib/api';
 	import { dragscroll } from '@svelte-put/dragscroll';
 	import ComptoirHeaderControls from '$lib/components/comptoir/headerControls.svelte';
+	import PaginationFooter from '$lib/components/PaginationFooter.svelte';
 
 	let refills: Array<Refill> = [];
 	let refillAmount: number = 4;
@@ -262,49 +263,15 @@
 		</div>
 	</div>
 
-	<div class="pagination">
-		<div class="pagination-results">
-			<span class="font-semibold">{refills.length}</span> résultats
-		</div>
-		<div class="pagination-controls">
-			<p class="pagination-info">
-				Page
-				<input
-					type="number"
-					min="1"
-					max={maxPage}
-					class="page-input"
-					bind:value={page}
-					on:change={reloadRefills}
-				/>
-				sur <span class="font-bold">{maxPage}</span>
-			</p>
-			<div class="pagination-buttons">
-				<button class="pagination-button" on:click={prevPage} disabled={page === 1}>
-					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M15 19l-7-7 7-7"
-						/>
-					</svg>
-					<span>Précédent</span>
-				</button>
-				<button class="pagination-button" on:click={nextPage} disabled={page === maxPage}>
-					<span>Suivant</span>
-					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M9 5l7 7-7 7"
-						/>
-					</svg>
-				</button>
-			</div>
-		</div>
-	</div>
+	<PaginationFooter
+		bind:page
+		{maxPage}
+		resultsCount={refills.length}
+		showPageInput={true}
+		on:prevPage={prevPage}
+		on:nextPage={nextPage}
+		on:pageChange={reloadRefills}
+	/>
 </div>
 
 <style>
@@ -318,8 +285,8 @@
 	.refills-content {
 		display: flex;
 		flex-direction: column;
-		flex-grow: 1;
 		flex: 1;
+		min-height: 0;
 		padding: 15px;
 		padding-bottom: 0;
 	}
@@ -328,9 +295,9 @@
 		display: flex;
 		flex-direction: column;
 		overflow-y: auto;
-		flex-grow: 1;
+		flex: 1;
+		min-height: 0;
 		gap: 20px;
-		max-height: calc(100vh - 260px);
 	}
 
 	.refill-card {
@@ -546,124 +513,6 @@
 		background-color: #16a34a;
 	}
 
-	.pagination {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: 16px;
-		background-color: white;
-		border-top: 1px solid #e5e7eb;
-	}
-
-	.pagination-results {
-		font-size: 14px;
-		color: #6b7280;
-	}
-
-	.pagination-controls {
-		display: flex;
-		align-items: center;
-		gap: 16px;
-	}
-
-	.page-input {
-		width: 50px;
-		padding: 4px 6px;
-		border: 1px solid #d1d5db;
-		border-radius: 4px;
-		font-size: 14px;
-		text-align: center;
-		font-weight: 600;
-		-moz-appearance: textfield;
-	}
-
-	.page-input::-webkit-outer-spin-button,
-	.page-input::-webkit-inner-spin-button {
-		-webkit-appearance: none;
-		margin: 0;
-	}
-
-	.page-input:focus {
-		outline: none;
-		border-color: #3b82f6;
-	}
-
-	@media (prefers-color-scheme: dark) {
-		.page-input {
-			background-color: #374151;
-			color: #e5e7eb;
-			border-color: #4b5563;
-		}
-	}
-
-	.pagination-info {
-		font-size: 14px;
-		font-weight: 500;
-		color: #374151;
-	}
-
-	.pagination-buttons {
-		display: flex;
-		gap: 8px;
-	}
-
-	.pagination-button {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		padding: 8px 16px;
-		background-color: white;
-		color: #374151;
-		border: 1px solid #d1d5db;
-		border-radius: 6px;
-		font-size: 14px;
-		font-weight: 500;
-		cursor: pointer;
-		transition: all 0.2s ease;
-	}
-
-	.pagination-button:hover:not(:disabled) {
-		background-color: #f9fafb;
-		border-color: #9ca3af;
-	}
-
-	.pagination-button:disabled {
-		background-color: #f9fafb;
-		color: #9ca3af;
-		cursor: not-allowed;
-	}
-
-	@media (prefers-color-scheme: dark) {
-		.pagination {
-			background-color: #1f2937;
-			border-color: #374151;
-		}
-
-		.pagination-results {
-			color: #9ca3af;
-		}
-
-		.pagination-info {
-			color: #e5e7eb;
-		}
-
-		.pagination-button {
-			background-color: #374151;
-			color: #e5e7eb;
-			border-color: #4b5563;
-		}
-
-		.pagination-button:hover:not(:disabled) {
-			background-color: #4b5563;
-			border-color: #6b7280;
-		}
-
-		.pagination-button:disabled {
-			background-color: #374151;
-			color: #6b7280;
-		}
-	}
-
 	@media (max-width: 768px) {
 		.refill-content {
 			grid-template-columns: 8fr 1fr;
@@ -718,18 +567,6 @@
 			font-size: 32px;
 		}
 
-		.pagination {
-			flex-direction: column;
-			gap: 12px;
-		}
 
-		.pagination-controls {
-			flex-direction: column;
-			gap: 5px;
-		}
-
-		.refills-list {
-			max-height: calc(100vh - 340px);
-		}
 	}
 </style>
