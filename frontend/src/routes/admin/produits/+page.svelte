@@ -651,19 +651,6 @@
 				</select>
 			</div>
 			<div class="flex flex-row items-center gap-3">
-				<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Par nom:</span>
-				<input
-					type="text"
-					placeholder="Rechercher..."
-					bind:value={searchName}
-					on:input={() => {
-						page = 1;
-						reloadItems();
-					}}
-					class="px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 w-auto"
-				/>
-			</div>
-			<div class="flex flex-row items-center gap-3">
 				<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Par fourn.:</span>
 				<select
 					id="fournisseur"
@@ -683,6 +670,19 @@
 						<option value={val}>{name}</option>
 					{/each}
 				</select>
+			</div>
+            <div class="flex flex-row items-center gap-3">
+				<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Par nom:</span>
+				<input
+					type="text"
+					placeholder="Rechercher..."
+					bind:value={searchName}
+					on:input={() => {
+						page = 1;
+						reloadItems();
+					}}
+					class="px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 w-auto"
+				/>
 			</div>
 			<div class="flex flex-row items-center gap-3">
 				<button
