@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **id** | **string** |  | [default to undefined]
 **account_id** | **string** |  | [default to undefined]
 **account_name** | **string** | Name of the account | [default to undefined]
+**account_google_picture** | **string** | Google profile picture URL of the account | [optional] [default to undefined]
 **amount** | **number** |  | [default to undefined]
 **state** | [**RefillState**](RefillState.md) |  | [default to undefined]
 **issued_at** | **number** |  | [default to undefined]
@@ -28,6 +29,7 @@ const instance: Refill = {
     id,
     account_id,
     account_name,
+    account_google_picture,
     amount,
     state,
     issued_at,

@@ -242,11 +242,15 @@ const apiInstance = new AccountsApi(configuration);
 let page: number; //page to get (optional) (default to 0)
 let limit: number; //number of accounts to get (optional) (default to 10)
 let search: string; //search string (optional) (default to undefined)
+let priceRole: string; //price_role of account (optional) (default to undefined)
+let role: string; //role of account (optional) (default to undefined)
 
 const { status, data } = await apiInstance.getAccounts(
     page,
     limit,
-    search
+    search,
+    priceRole,
+    role
 );
 ```
 
@@ -257,6 +261,8 @@ const { status, data } = await apiInstance.getAccounts(
 | **page** | [**number**] | page to get | (optional) defaults to 0|
 | **limit** | [**number**] | number of accounts to get | (optional) defaults to 10|
 | **search** | [**string**] | search string | (optional) defaults to undefined|
+| **priceRole** | [**string**] | price_role of account | (optional) defaults to undefined|
+| **role** | [**string**] | role of account | (optional) defaults to undefined|
 
 
 ### Return type

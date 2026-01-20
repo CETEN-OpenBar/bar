@@ -39,7 +39,9 @@ docs/GetDeletedCarouselImages200Response.md
 docs/GetDeletedCarouselTexts200Response.md
 docs/GetDeletedCategories200Response.md
 docs/GetDeletedStarring200Response.md
+docs/GetPendingRemoteRefills200Response.md
 docs/GetRefills200Response.md
+docs/GetRemoteRefills200Response.md
 docs/GetRestocks200Response.md
 docs/GetStarrings200Response.md
 docs/GetTransactions200Response.md
@@ -67,6 +69,8 @@ docs/Refill.md
 docs/RefillState.md
 docs/RefillType.md
 docs/RefillsApi.md
+docs/RemoteRefill.md
+docs/RemoteRefillState.md
 docs/Restock.md
 docs/RestockItem.md
 docs/RestockState.md
@@ -75,6 +79,7 @@ docs/RestocksApi.md
 docs/Starring.md
 docs/StarringState.md
 docs/StarsApi.md
+docs/StartRemoteRefill200Response.md
 docs/ToggleAccountWantsToStaff200Response.md
 docs/Transaction.md
 docs/TransactionItem.md

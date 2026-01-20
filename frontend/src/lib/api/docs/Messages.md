@@ -21,6 +21,8 @@
 
 * `MsgInternalServerError` (value: `'Internal server error'`)
 
+* `MsgServiceUnavailable` (value: `'Service Unavailable'`)
+
 * `MsgNotAuthenticated` (value: `'You are not authenticated'`)
 
 * `MsgImageNotFound` (value: `'Image does not exists'`)
