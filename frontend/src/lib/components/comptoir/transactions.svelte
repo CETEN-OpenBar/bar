@@ -348,8 +348,10 @@
 		bind:page
 		{maxPage}
 		resultsCount={transactions.length}
+		showPageInput={true}
 		on:prevPage={prevPage}
 		on:nextPage={nextPage}
+		on:pageChange={reloadTransactions}
 	/>
 </div>
 
