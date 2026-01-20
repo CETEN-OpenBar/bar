@@ -41,8 +41,18 @@ func (s *Server) GetAccounts(c echo.Context, params autogen.GetAccountsParams) e
 		search = *params.Search
 	}
 
+	var priceRole string
+	if params.PriceRole != nil {
+		priceRole = string(*params.PriceRole)
+	}
+
+	var role string
+	if params.Role != nil {
+		role = string(*params.Role)
+	}
+
 	// Calculate max page
-	count, err := s.DBackend.CountAccounts(c.Request().Context(), search)
+	count, err := s.DBackend.CountAccounts(c.Request().Context(), role, priceRole, search)
 	if err != nil {
 		return Error500(c)
 	}
@@ -51,7 +61,7 @@ func (s *Server) GetAccounts(c echo.Context, params autogen.GetAccountsParams) e
 	dbpage, page, limit, maxPage := autogen.Pager(params.Page, params.Limit, &count)
 
 	// Get accounts from database
-	accounts, err := s.DBackend.GetAccounts(c.Request().Context(), dbpage, limit, search)
+	accounts, err := s.DBackend.GetAccounts(c.Request().Context(), role, priceRole, dbpage, limit, search)
 	if err != nil {
 		return Error500(c)
 	}

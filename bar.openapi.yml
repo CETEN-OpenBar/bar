@@ -772,6 +772,17 @@ paths:
           description: search string
           schema:
             type: string
+        - name: price_role
+          in: query
+          description: price_role of account
+          schema: 
+            $ref: "#/components/schemas/AccountPriceRole"
+        - name: role
+          in: query
+          description: role of account
+          schema: 
+            $ref: "#/components/schemas/AccountRole"
+
       responses:
         "200":
           description: Returns new account's info
