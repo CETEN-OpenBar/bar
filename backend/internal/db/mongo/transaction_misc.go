@@ -65,14 +65,23 @@ func (b *Backend) GetAllTransactions(ctx context.Context, page uint64, size uint
 	filter := bson.M{}
 
 	if TransactionState != "" {
-        filter["state"] = TransactionState
-    }
-
+		filter["state"] = TransactionState
+	}
 
 	if name != "" {
-		filter["account_name"] = bson.M{
-			"$regex": name,
-			"$options": "i",
+		filter["$or"] = []bson.M{
+			{
+				"account_name": bson.M{
+					"$regex":   name,
+					"$options": "i",
+				},
+			},
+			{
+				"account_nick_name": bson.M{
+					"$regex":   name,
+					"$options": "i",
+				},
+			},
 		}
 	}
 
@@ -105,7 +114,6 @@ func (b *Backend) GetAllTransactions(ctx context.Context, page uint64, size uint
 		filter["items"] = bson.M{"$elemMatch": itemsElemMatch}
 	}
 
-
 	// Get "size" transactions from "page" using aggregation
 	var transactions []*models.Transaction
 	cursor, err := b.db.Collection(TransactionsCollection).Find(ctx, filter, options.Find().SetSkip(int64(page*size)).SetLimit(int64(size)).SetSort(bson.M{"created_at": -1}))
@@ -121,7 +129,6 @@ func (b *Backend) GetAllTransactions(ctx context.Context, page uint64, size uint
 	return transactions, nil
 }
 
-
 func (b *Backend) CountAllTransactions(ctx context.Context, TransactionState string, hide_canceled bool, name string, hide_remotes bool, StartTime int, EndTime int, ItemID string) (uint64, error) {
 	ctx, cancel := b.TimeoutContext(ctx)
 	defer cancel()
@@ -129,14 +136,23 @@ func (b *Backend) CountAllTransactions(ctx context.Context, TransactionState str
 	filter := bson.M{}
 
 	if TransactionState != "" {
-        filter["state"] = TransactionState
-    }
-
+		filter["state"] = TransactionState
+	}
 
 	if name != "" {
-		filter["account_name"] = bson.M{
-			"$regex": name,
-			"$options": "i",
+		filter["$or"] = []bson.M{
+			{
+				"account_name": bson.M{
+					"$regex":   name,
+					"$options": "i",
+				},
+			},
+			{
+				"account_nick_name": bson.M{
+					"$regex":   name,
+					"$options": "i",
+				},
+			},
 		}
 	}
 
@@ -210,7 +226,7 @@ func (b *Backend) GetAllActiveTransactionsItems(ctx context.Context, name string
 		},
 		{
 			"$set": bson.M{
-				"item.item_amount": "$total_amount",
+				"item.item_amount":       "$total_amount",
 				"item.item_already_done": "$already_done",
 			},
 		},

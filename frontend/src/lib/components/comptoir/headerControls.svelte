@@ -14,6 +14,7 @@
 	function handleSearchInput(event: Event) {
 		const target = event.currentTarget as HTMLInputElement;
 		searchNameValue = target.value.toLowerCase();
+		searchName.set(searchNameValue);
 	}
 </script>
 
