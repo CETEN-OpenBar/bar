@@ -6,14 +6,18 @@
 		ItemPrices,
 		UpdateItem,
 		AccountPriceRole,
-		ItemState
+		ItemState,
+		Fournisseur
 	} from '$lib/api';
 	import ConfirmationPopup from '$lib/components/confirmationPopup.svelte';
 	import { api } from '$lib/config/config';
 	import { categoriesApi, itemsApi } from '$lib/requests/requests';
-	import { formatPrice, parsePrice } from '$lib/utils';
+	import { formatPrice, parsePrice, fournisseurIterator } from '$lib/utils';
 	import { onMount } from 'svelte';
 	import PaginationFooter from '$lib/components/PaginationFooter.svelte';
+	import PriceCell from '$lib/components/admin/priceCell.svelte';
+	import FournisseurCell from '$lib/components/admin/fournisseurCell.svelte';
+	import StockCell from '$lib/components/admin/stockCell.svelte';
 
 	interface NewItemWithCategory extends NewItem {
 		category_id: string;
@@ -66,11 +70,10 @@
 	};
 	let itemsPerPage = 7;
 
-	let rebounceTimeout: number | null = null;
-
 	let searchState: ItemState | undefined = undefined;
 	let searchCategory: string | undefined = undefined;
 	let searchName: string | undefined = undefined;
+	let searchFournisseur: Fournisseur | undefined = undefined;
 
 	let deletingItem: boolean = false;
 	let confirmationMessage: string | undefined = undefined;
@@ -90,7 +93,7 @@
 
 	function reloadItems() {
 		itemsApi()
-			.getAllItems(page, itemsPerPage, searchState, searchCategory, searchName, undefined, undefined, {
+			.getAllItems(page, itemsPerPage, searchState, searchCategory, searchName, searchFournisseur, undefined, {
 				withCredentials: true
 			})
 			.then((res) => {
@@ -568,6 +571,27 @@
 						</div>
 					</div>
 					<div>
+						<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1">Fournisseur</label>
+						<select
+							id="fournisseur-mobile"
+							name="fournisseur"
+							class="w-full px-2 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white"
+							on:change={(e) => {
+								// @ts-ignore
+								let val = e.target?.value;
+								if (val == '') searchFournisseur = undefined;
+								else searchFournisseur = val;
+								page = 1;
+								reloadItems();
+							}}
+						>
+							<option value="">Tous</option>
+							{#each fournisseurIterator as [val, name]}
+								<option value={val}>{name}</option>
+							{/each}
+						</select>
+					</div>
+					<div>
 						<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1">Rechercher</label>
 						<input
 							type="text"
@@ -640,6 +664,27 @@
 				/>
 			</div>
 			<div class="flex flex-row items-center gap-3">
+				<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Par fourn.:</span>
+				<select
+					id="fournisseur"
+					name="fournisseur"
+					class="px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white dark:placeholder-gray-500 w-auto"
+					on:change={(e) => {
+						// @ts-ignore
+						let val = e.target?.value;
+						if (val == '') searchFournisseur = undefined;
+						else searchFournisseur = val;
+						page = 1;
+						reloadItems();
+					}}
+				>
+					<option value="">Pas de filtre</option>
+					{#each fournisseurIterator as [val, name]}
+						<option value={val}>{name}</option>
+					{/each}
+				</select>
+			</div>
+			<div class="flex flex-row items-center gap-3">
 				<button
 					class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800 w-auto"
 					data-hs-overlay="#hs-modal-new-item"
@@ -670,18 +715,14 @@
 		<div class="hidden min-[1300px]:block min-w-full bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-visible">
 			<table class="min-w-full table-fixed divide-y divide-gray-200 dark:divide-gray-700">
 				<colgroup>
+					<col class="w-[14%]" />
 					<col class="w-[12%]" />
-					<col class="w-[12%]" />
 					<col class="w-[8%]" />
 					<col class="w-[8%]" />
-					<col class="w-[8%]" />
-					<col class="w-[8%]" />
-					<col class="w-[8%]" />
-					<col class="w-[8%]" />
-					<col class="w-[8%]" />
-					<col class="w-[8%]" />
-					<col class="w-[8%]" />
-					<col class="w-[12%]" />
+					<col class="w-[14%]" />
+					<col class="w-[14%]" />
+					<col class="w-[16%]" />
+					<col class="w-[14%]" />
 				</colgroup>
 				<thead class="bg-gray-50 dark:bg-gray-700">
 					<tr>
@@ -698,25 +739,13 @@
 							Achetable
 						</th>
 						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
-							Stock
+							Stock / Limite / Optimal
 						</th>
 						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
-							Limite
+							Fournisseur
 						</th>
 						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
-							Optimal
-						</th>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
-							Coutant
-						</th>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
-							Ceten
-						</th>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
-							Externe
-						</th>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
-							Staff
+							Prix
 						</th>
 						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300">
 							Actions
@@ -789,158 +818,13 @@
 								</select>
 							</td>
 							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
-								<div class="relative group">
-									<input
-										type="number"
-										class="block w-full text-sm dark:text-white/[.8] p-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
-										value={item.amount_left}
-										on:input={(e) => {
-											// @ts-ignore
-											let stock = parseInt(e.target?.value);
-											editItem(item.id, { amount_left: stock }, item.category_id);
-										}}
-									/>
-									<iconify-icon icon="mdi:pencil" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" width="14" height="14"></iconify-icon>
-								</div>
+								<StockCell {item} {editItem} />
 							</td>
 							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
-								<div class="relative group">
-									<input
-										type="number"
-										class="block w-full text-sm dark:text-white/[.8] p-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
-										value={item.buy_limit}
-										on:input={(e) => {
-											// @ts-ignore
-											let buy_limit = parseInt(e.target?.value);
-											// @ts-ignore
-											if (e.target?.value === '') {
-												editItem(item.id, { buy_limit: -1 }, item.category_id);
-												return;
-											}
-											editItem(item.id, { buy_limit: buy_limit }, item.category_id);
-										}}
-									/>
-									<iconify-icon icon="mdi:pencil" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" width="14" height="14"></iconify-icon>
-								</div>
+								<FournisseurCell {item} {editItem} />
 							</td>
 							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
-								<div class="relative group">
-									<input
-										type="number"
-										class="block w-full text-sm dark:text-white/[.8] p-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
-										value={item.optimal_amount}
-										on:input={(e) => {
-											// @ts-ignore
-											let optimal_amount = parseInt(e.target?.value);
-											editItem(item.id, { optimal_amount: optimal_amount }, item.category_id);
-										}}
-									/>
-									<iconify-icon icon="mdi:pencil" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" width="14" height="14"></iconify-icon>
-								</div>
-							</td>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
-								<div class="relative group">
-									<input
-										type="number"
-										id="price"
-										name="price"
-										placeholder={formatPrice(item.prices['coutant'])}
-										class="block w-full text-sm dark:text-white/[.8] p-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
-										on:input={(e) => {
-											let prices = item.prices;
-											// @ts-ignore
-											prices['coutant'] = parsePrice(e.target?.value);
-											editItem(item.id, { prices: prices }, item.category_id);
-											if (rebounceTimeout) clearTimeout(rebounceTimeout);
-											rebounceTimeout = setTimeout(() => {
-												let elems = document.querySelectorAll('[id=price]');
-												elems.forEach((elem) => {
-													// @ts-ignore
-													elem.value = '';
-												});
-											}, 1000);
-										}}
-									/>
-									<iconify-icon icon="mdi:pencil" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" width="14" height="14"></iconify-icon>
-								</div>
-							</td>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
-								<div class="relative group">
-									<input
-										type="number"
-										id="price"
-										name="price"
-										placeholder={formatPrice(item.prices['ceten'])}
-										class="block w-full text-sm dark:text-white/[.8] p-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
-										on:input={(e) => {
-											let prices = item.prices;
-											// @ts-ignore
-											prices['ceten'] = parsePrice(e.target?.value);
-											editItem(item.id, { prices: prices }, item.category_id);
-											if (rebounceTimeout) clearTimeout(rebounceTimeout);
-											rebounceTimeout = setTimeout(() => {
-												let elems = document.querySelectorAll('[id=price]');
-												elems.forEach((elem) => {
-													// @ts-ignore
-													elem.value = '';
-												});
-											}, 1000);
-										}}
-									/>
-									<iconify-icon icon="mdi:pencil" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" width="14" height="14"></iconify-icon>
-								</div>
-							</td>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
-								<div class="relative group">
-									<input
-										type="number"
-										id="price"
-										name="price"
-										placeholder={formatPrice(item.prices['externe'])}
-										class="block w-full text-sm dark:text-white/[.8] p-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
-										on:input={(e) => {
-											let prices = item.prices;
-											// @ts-ignore
-											prices['externe'] = parsePrice(e.target?.value);
-											editItem(item.id, { prices: prices }, item.category_id);
-											if (rebounceTimeout) clearTimeout(rebounceTimeout);
-											rebounceTimeout = setTimeout(() => {
-												let elems = document.querySelectorAll('[id=price]');
-												elems.forEach((elem) => {
-													// @ts-ignore
-													elem.value = '';
-												});
-											}, 1000);
-										}}
-									/>
-									<iconify-icon icon="mdi:pencil" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" width="14" height="14"></iconify-icon>
-								</div>
-							</td>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
-								<div class="relative group">
-									<input
-										type="number"
-										id="price"
-										name="price"
-										placeholder={formatPrice(item.prices['staff_bar'])}
-										class="block w-full text-sm dark:text-white/[.8] p-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
-										on:input={(e) => {
-											let prices = item.prices;
-											// @ts-ignore
-											prices['staff_bar'] = parsePrice(e.target?.value);
-											editItem(item.id, { prices: prices }, item.category_id);
-											if (rebounceTimeout) clearTimeout(rebounceTimeout);
-											rebounceTimeout = setTimeout(() => {
-												let elems = document.querySelectorAll('[id=price]');
-												elems.forEach((elem) => {
-													// @ts-ignore
-													elem.value = '';
-												});
-											}, 1000);
-										}}
-									/>
-									<iconify-icon icon="mdi:pencil" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" width="14" height="14"></iconify-icon>
-								</div>
+								<PriceCell {item} {editItem} />
 							</td>
 							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 relative flex flex-col gap-1">
 								<button
@@ -1111,114 +995,14 @@
 								/>
 							</div>
 						</div>
-						<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+						<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
-									<iconify-icon icon="mdi:pencil" width="12" height="12"></iconify-icon>
-									Coutant
-								</label>
-								<input
-									type="number"
-									id="price"
-									name="price"
-									placeholder={formatPrice(item.prices['coutant'])}
-									class="w-full text-sm dark:text-white/[.8] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
-									on:input={(e) => {
-										let prices = item.prices;
-										// @ts-ignore
-										prices['coutant'] = parsePrice(e.target?.value);
-										editItem(item.id, { prices: prices }, item.category_id);
-										if (rebounceTimeout) clearTimeout(rebounceTimeout);
-										rebounceTimeout = setTimeout(() => {
-											let elems = document.querySelectorAll('[id=price]');
-											elems.forEach((elem) => {
-												// @ts-ignore
-												elem.value = '';
-											});
-										}, 1000);
-									}}
-								/>
+								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1">Fournisseur</label>
+								<FournisseurCell {item} {editItem} />
 							</div>
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
-									<iconify-icon icon="mdi:pencil" width="12" height="12"></iconify-icon>
-									Ceten
-								</label>
-								<input
-									type="number"
-									id="price"
-									name="price"
-									placeholder={formatPrice(item.prices['ceten'])}
-									class="w-full text-sm dark:text-white/[.8] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
-									on:input={(e) => {
-										let prices = item.prices;
-										// @ts-ignore
-										prices['ceten'] = parsePrice(e.target?.value);
-										editItem(item.id, { prices: prices }, item.category_id);
-										if (rebounceTimeout) clearTimeout(rebounceTimeout);
-										rebounceTimeout = setTimeout(() => {
-											let elems = document.querySelectorAll('[id=price]');
-											elems.forEach((elem) => {
-												// @ts-ignore
-												elem.value = '';
-											});
-										}, 1000);
-									}}
-								/>
-							</div>
-							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
-									<iconify-icon icon="mdi:pencil" width="12" height="12"></iconify-icon>
-									Externe
-								</label>
-								<input
-									type="number"
-									id="price"
-									name="price"
-									placeholder={formatPrice(item.prices['externe'])}
-									class="w-full text-sm dark:text-white/[.8] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
-									on:input={(e) => {
-										let prices = item.prices;
-										// @ts-ignore
-										prices['externe'] = parsePrice(e.target?.value);
-										editItem(item.id, { prices: prices }, item.category_id);
-										if (rebounceTimeout) clearTimeout(rebounceTimeout);
-										rebounceTimeout = setTimeout(() => {
-											let elems = document.querySelectorAll('[id=price]');
-											elems.forEach((elem) => {
-												// @ts-ignore
-												elem.value = '';
-											});
-										}, 1000);
-									}}
-								/>
-							</div>
-							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
-									<iconify-icon icon="mdi:pencil" width="12" height="12"></iconify-icon>
-									Staff
-								</label>
-								<input
-									type="number"
-									id="price"
-									name="price"
-									placeholder={formatPrice(item.prices['staff_bar'])}
-									class="w-full text-sm dark:text-white/[.8] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
-									on:input={(e) => {
-										let prices = item.prices;
-										// @ts-ignore
-										prices['staff_bar'] = parsePrice(e.target?.value);
-										editItem(item.id, { prices: prices }, item.category_id);
-										if (rebounceTimeout) clearTimeout(rebounceTimeout);
-										rebounceTimeout = setTimeout(() => {
-											let elems = document.querySelectorAll('[id=price]');
-											elems.forEach((elem) => {
-												// @ts-ignore
-												elem.value = '';
-											});
-										}, 1000);
-									}}
-								/>
+								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1">Prix</label>
+								<PriceCell {item} {editItem} />
 							</div>
 						</div>
 						<div class="flex flex-wrap gap-2">
