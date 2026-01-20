@@ -35,58 +35,68 @@
 
 <div class="relative">
 	{#if !expanded}
-		<div
-			class="flex items-center gap-1 flex-wrap text-xs"
-			role="button"
-			tabindex="0"
+		<button
+			class="w-full text-left p-2 rounded-md border border-gray-200 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-all group"
 			on:click={() => (expanded = true)}
-			on:keydown={(e) => e.key === 'Enter' && (expanded = true)}
 		>
-			<span class="bg-gray-100 dark:bg-gray-700 px-1 rounded">Stock:{item.amount_left}</span>
-			<span class="bg-gray-100 dark:bg-gray-700 px-1 rounded">Lim:{item.buy_limit ?? '-'}</span>
-			<span class="bg-gray-100 dark:bg-gray-700 px-1 rounded">Opt:{item.optimal_amount}</span>
-			<button
-				class="ml-1 p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
-				on:click|stopPropagation={() => (expanded = true)}
-			>
-				<iconify-icon icon="mdi:pencil" width="14" height="14"></iconify-icon>
-			</button>
-		</div>
+			<div class="flex items-center justify-between gap-2">
+				<div class="flex flex-col gap-1 text-xs flex-1 min-w-0">
+					<div class="flex items-center gap-2">
+						<span class="text-gray-500 dark:text-gray-400 font-medium w-14">Stock:</span>
+						<span class="font-semibold dark:text-gray-200">{item.amount_left}</span>
+					</div>
+					<div class="flex items-center gap-2">
+						<span class="text-gray-500 dark:text-gray-400 font-medium w-14">Limite:</span>
+						<span class="font-semibold dark:text-gray-200">{item.buy_limit ?? '-'}</span>
+					</div>
+					<div class="flex items-center gap-2">
+						<span class="text-gray-500 dark:text-gray-400 font-medium w-14">Optimal:</span>
+						<span class="font-semibold dark:text-gray-200">{item.optimal_amount}</span>
+					</div>
+				</div>
+				<iconify-icon icon="mdi:chevron-down" width="16" height="16" class="text-gray-400 group-hover:text-blue-500 transition-colors flex-shrink-0"></iconify-icon>
+			</div>
+		</button>
 	{:else}
-		<div class="min-w-[140px] space-y-1 mt-8">
-			<button
-				class="absolute -top-8 right-2 px-2 py-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded z-10 flex items-center gap-1 text-xs"
-				on:click={() => (expanded = false)}
-			>
-				<iconify-icon icon="mdi:close" width="14" height="14"></iconify-icon>
-				<span>Fermer</span>
-			</button>
-			<div class="flex items-center gap-2">
-				<span class="text-xs w-14 shrink-0 dark:text-gray-300">Stock:</span>
-				<input
-					type="number"
-					value={item.amount_left}
-					class="w-full text-xs px-2 py-1 border border-gray-200 dark:border-gray-600 rounded dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:outline-none"
-					on:input={handleStockChange}
-				/>
+		<div class="border border-blue-500 dark:border-blue-400 rounded-md p-3 bg-blue-50/50 dark:bg-blue-950/20">
+			<div class="flex items-center justify-between mb-3">
+				<span class="text-xs font-semibold text-blue-700 dark:text-blue-300">Modifier Stocks</span>
+				<button
+					class="px-2 py-1 text-xs bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded flex items-center gap-1 transition-colors"
+					on:click={() => (expanded = false)}
+				>
+					<iconify-icon icon="mdi:check" width="14" height="14"></iconify-icon>
+					<span>Fermer</span>
+				</button>
 			</div>
-			<div class="flex items-center gap-2">
-				<span class="text-xs w-14 shrink-0 dark:text-gray-300">Limite:</span>
-				<input
-					type="number"
-					value={item.buy_limit}
-					class="w-full text-xs px-2 py-1 border border-gray-200 dark:border-gray-600 rounded dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:outline-none"
-					on:input={handleLimitChange}
-				/>
-			</div>
-			<div class="flex items-center gap-2">
-				<span class="text-xs w-14 shrink-0 dark:text-gray-300">Optimal:</span>
-				<input
-					type="number"
-					value={item.optimal_amount}
-					class="w-full text-xs px-2 py-1 border border-gray-200 dark:border-gray-600 rounded dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:outline-none"
-					on:input={handleOptimalChange}
-				/>
+			<div class="space-y-2">
+				<div class="flex items-center gap-2">
+					<label class="text-xs w-16 shrink-0 font-medium dark:text-gray-300">Stock:</label>
+					<input
+						type="number"
+						value={item.amount_left}
+						class="flex-1 text-xs px-2 py-1.5 border border-gray-300 dark:border-gray-500 rounded bg-white dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
+						on:input={handleStockChange}
+					/>
+				</div>
+				<div class="flex items-center gap-2">
+					<label class="text-xs w-16 shrink-0 font-medium dark:text-gray-300">Limite:</label>
+					<input
+						type="number"
+						value={item.buy_limit}
+						class="flex-1 text-xs px-2 py-1.5 border border-gray-300 dark:border-gray-500 rounded bg-white dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
+						on:input={handleLimitChange}
+					/>
+				</div>
+				<div class="flex items-center gap-2">
+					<label class="text-xs w-16 shrink-0 font-medium dark:text-gray-300">Optimal:</label>
+					<input
+						type="number"
+						value={item.optimal_amount}
+						class="flex-1 text-xs px-2 py-1.5 border border-gray-300 dark:border-gray-500 rounded bg-white dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
+						on:input={handleOptimalChange}
+					/>
+				</div>
 			</div>
 		</div>
 	{/if}

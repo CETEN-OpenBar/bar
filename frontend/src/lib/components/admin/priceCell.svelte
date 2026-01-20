@@ -41,46 +41,55 @@
 
 <div class="relative">
 	{#if !expanded}
-		<div
-			class="flex items-center gap-1 flex-wrap text-xs"
-			role="button"
-			tabindex="0"
+		<button
+			class="w-full text-left p-2 rounded-md border border-gray-200 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-all group"
 			on:click={() => (expanded = true)}
-			on:keydown={(e) => e.key === 'Enter' && (expanded = true)}
 		>
-			{#each priceRoles as role}
-				<span class="bg-gray-100 dark:bg-gray-700 px-1 rounded">{getCompactPrice(role)}</span>
-			{/each}
-			<button
-				class="ml-1 p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
-				on:click|stopPropagation={() => (expanded = true)}
-			>
-				<iconify-icon icon="mdi:pencil" width="14" height="14"></iconify-icon>
-			</button>
-		</div>
-	{:else}
-		<div class="min-w-[180px] space-y-1 mt-8">
-			<button
-				class="absolute -top-8 right-2 px-2 py-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded z-10 flex items-center gap-1 text-xs"
-				on:click={() => (expanded = false)}
-			>
-				<iconify-icon icon="mdi:close" width="14" height="14"></iconify-icon>
-				<span>Fermer</span>
-			</button>
-			{#each priceRoles as role}
-				{@const price = item.prices[role]}
-				{@const label = role === 'coutant' ? 'Coutant' : role === 'externe' ? 'Externe' : role === 'ceten' ? 'Ceten' : role === 'staff_bar' ? 'Staff' : role === 'privilegies' ? 'Privil.' : 'Menu'}
-				<div class="flex items-center gap-2">
-					<span class="text-xs w-12 shrink-0 dark:text-gray-300">{label}:</span>
-					<input
-						type="number"
-						id="price-{item.id}-{role}"
-						placeholder={formatPrice(price)}
-						class="w-full text-xs px-2 py-1 border border-gray-200 dark:border-gray-600 rounded dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:outline-none"
-						on:input={(e) => handlePriceChange(role, e)}
-					/>
+			<div class="flex items-center justify-between gap-2">
+				<div class="grid grid-cols-2 gap-x-3 gap-y-1 text-xs flex-1 min-w-0">
+					{#each priceRoles as role}
+						{@const label = priceLabels[role]}
+						{@const price = formatPrice(item.prices[role])}
+						<div class="flex items-center gap-1.5">
+							<span class="text-gray-500 dark:text-gray-400 font-medium">{label}:</span>
+							<span class="font-semibold dark:text-gray-200">{price}</span>
+						</div>
+					{/each}
 				</div>
-			{/each}
+				<iconify-icon icon="mdi:chevron-down" width="16" height="16" class="text-gray-400 group-hover:text-blue-500 transition-colors flex-shrink-0"></iconify-icon>
+			</div>
+		</button>
+	{:else}
+		<div class="border border-blue-500 dark:border-blue-400 rounded-md p-3 bg-blue-50/50 dark:bg-blue-950/20">
+			<div class="flex items-center justify-between mb-3">
+				<span class="text-xs font-semibold text-blue-700 dark:text-blue-300">Modifier Prix</span>
+				<button
+					class="px-2 py-1 text-xs bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded flex items-center gap-1 transition-colors"
+					on:click={() => (expanded = false)}
+				>
+					<iconify-icon icon="mdi:check" width="14" height="14"></iconify-icon>
+					<span>Fermer</span>
+				</button>
+			</div>
+			<div class="space-y-2">
+				{#each priceRoles as role}
+					{@const price = item.prices[role]}
+					{@const label = role === 'coutant' ? 'Coutant' : role === 'externe' ? 'Externe' : role === 'ceten' ? 'Ceten' : role === 'staff_bar' ? 'Staff' : role === 'privilegies' ? 'Privil.' : 'Menu'}
+					<div class="flex items-center gap-2">
+						<label class="text-xs w-16 shrink-0 font-medium dark:text-gray-300">{label}:</label>
+						<div class="flex-1 relative">
+							<input
+								type="number"
+								id="price-{item.id}-{role}"
+								placeholder={formatPrice(price)}
+								class="w-full text-xs px-2 py-1.5 pr-6 border border-gray-300 dark:border-gray-500 rounded bg-white dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
+								on:input={(e) => handlePriceChange(role, e)}
+							/>
+							<span class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">€</span>
+						</div>
+					</div>
+				{/each}
+			</div>
 		</div>
 	{/if}
 </div>

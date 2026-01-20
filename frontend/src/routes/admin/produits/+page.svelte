@@ -68,7 +68,7 @@
 			reloadItems();
 		}
 	};
-	let itemsPerPage = 7;
+	let itemsPerPage = 6;
 
 	let searchState: ItemState | undefined = undefined;
 	let searchCategory: string | undefined = undefined;
@@ -739,7 +739,7 @@
 							Achetable
 						</th>
 						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
-							Stock / Limite / Optimal
+							Stocks
 						</th>
 						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
 							Fournisseur
