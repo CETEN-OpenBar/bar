@@ -27,6 +27,7 @@
 
 
 	let searchQuery = '';
+	let filtersOpen: boolean = false;
 	let page: number = 1;
 	let maxPage: number = 0;
 	let nextPage = () => {
@@ -327,43 +328,24 @@
 
 <div class="h-full flex flex-col bg-gray-50 dark:bg-gray-900">
 	<div class="m-3 p-2">
-		<div class="flex flex-col lg:flex-row lg:flex-wrap lg:items-center gap-4 lg:gap-6">
-			<div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-				<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Rechercher:</span>
-				<input
-					type="text"
-					placeholder="Rechercher par nom..."
-					bind:value={searchQuery}
-					on:input={() => {
-						page = 0;
-						reloadAccounts();
-					}}
-					class="px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 w-full sm:w-auto"
-				/>
-			</div>
-			<div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-				<!-- Import -->
-				<input
-					type="file"
-					id="import"
-					name="import"
-					class="hidden"
-					accept=".csv"
-					on:change={(e) => importAccounts(e)}
-				/>
+		<!-- Mobile: Compact filters with toggle -->
+		<div class="lg:hidden">
+			<div class="flex items-center gap-2 mb-2">
 				<button
-					class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800 w-full sm:w-auto"
-					on:click={() => {
-						// @ts-ignore
-						document.getElementById('import').click();
-					}}
+					class="flex-1 py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-gray-300 dark:border-gray-600 font-medium bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all text-sm"
+					on:click={() => filtersOpen = !filtersOpen}
 				>
-					<span class="lg:hidden">Importer</span>
-					<span class="hidden lg:inline">Importer des Comptes</span>
+					<iconify-icon icon="mdi:filter-variant" width="18" height="18"></iconify-icon>
+					Filtres
+					{#if searchPriceRole || searchRole || searchQuery}
+						<span class="bg-blue-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[18px]">
+							{(searchPriceRole ? 1 : 0) + (searchRole ? 1 : 0) + (searchQuery ? 1 : 0)}
+						</span>
+					{/if}
+					<iconify-icon icon={filtersOpen ? "mdi:chevron-up" : "mdi:chevron-down"} width="18" height="18"></iconify-icon>
 				</button>
-
 				<button
-					class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800 w-full sm:w-auto"
+					class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
 					data-hs-overlay="#hs-modal-new-account"
 				>
 					<svg
@@ -381,16 +363,154 @@
 							stroke-linecap="round"
 						/>
 					</svg>
-					<span class="lg:hidden">Ajouter</span>
-					<span class="hidden lg:inline">Ajouter un compte</span>
-					
+					Ajouter
 				</button>
-				<div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+			</div>
+			{#if filtersOpen}
+				<div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3 mb-2 space-y-3">
+					<div>
+						<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1">Rechercher</label>
+						<input
+							type="text"
+							placeholder="Rechercher par nom..."
+							bind:value={searchQuery}
+							on:input={() => {
+								page = 1;
+								reloadAccounts();
+							}}
+							class="w-full px-2 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+						/>
+					</div>
+					<div class="grid grid-cols-2 gap-3">
+						<div>
+							<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1">Prix</label>
+							<select
+								id="category-mobile"
+								name="category"
+								class="w-full px-2 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white"
+								on:change={(e) => {
+									// @ts-ignore
+									searchPriceRole = e.target?.value;
+									if (searchPriceRole === '') searchPriceRole = undefined;
+									page = 1;
+									reloadAccounts();
+								}}
+							>
+								<option value="">Tous</option>
+								<option value="ceten">CETEN</option>
+								<option value="coutant">Coutant</option>
+								<option value="staff_bar">Staff</option>
+								<option value="externe">Externe</option>
+								<option value="privilegies">Privilégié</option>
+							</select>
+						</div>
+						<div>
+							<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1">Rôle</label>
+							<select
+								id="category-mobile"
+								name="category"
+								class="w-full px-2 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white"
+								on:change={(e) => {
+									// @ts-ignore
+									searchRole = e.target?.value;
+									if (searchRole === '') searchRole = undefined;
+									page = 1;
+									reloadAccounts();
+								}}
+							>
+								<option value="">Tous</option>
+								<option value="student">Étudiant</option>
+								<option value="student_with_benefits">Avec avantages</option>
+								<option value="member">Membre</option>
+								<option value="admin">Admin</option>
+								<option value="ghost">Fantôme</option>
+								<option value="superadmin">SuperAdmin</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			{/if}
+		</div>
+
+		<!-- Desktop: Original layout -->
+		<div class="hidden lg:flex flex-row flex-wrap items-center gap-6">
+			<div class="flex flex-row items-center gap-3">
+				<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Rechercher:</span>
+				<input
+					type="text"
+					placeholder="Rechercher par nom..."
+					bind:value={searchQuery}
+					on:input={() => {
+						page = 1;
+						reloadAccounts();
+					}}
+					class="px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 w-auto"
+				/>
+			</div>
+			<div class="flex flex-row items-center gap-3">
+				<!-- Import -->
+				<input
+					type="file"
+					id="import"
+					name="import"
+					class="hidden"
+					accept=".csv"
+					on:change={(e) => importAccounts(e)}
+				/>
+				<button
+					class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
+					on:click={() => {
+						// @ts-ignore
+						document.getElementById('import').click();
+					}}
+				>
+					<svg
+						class="w-3 h-3"
+						xmlns="http://www.w3.org/2000/svg"
+						width="16"
+						height="16"
+						viewBox="0 0 16 16"
+						fill="none"
+					>
+						<path
+							d="M2.63452 7.50001L13.6345 7.5M8.13452 13V2"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+						/>
+					</svg>
+					Importer des Comptes
+				</button>
+			</div>
+			<div class="flex flex-row items-center gap-3">
+				<button
+					class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
+					data-hs-overlay="#hs-modal-new-account"
+				>
+					<svg
+						class="w-3 h-3"
+						xmlns="http://www.w3.org/2000/svg"
+						width="16"
+						height="16"
+						viewBox="0 0 16 16"
+						fill="none"
+					>
+						<path
+							d="M2.63452 7.50001L13.6345 7.5M8.13452 13V2"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+						/>
+					</svg>
+					Ajouter un compte
+				</button>
+			</div>
+			<div class="flex flex-row items-center gap-3">
 				<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Prix:</span>
 				<select
 					id="category"
 					name="category"
-					class="px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white dark:placeholder-gray-500 w-full sm:w-auto"
+					class="px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white dark:placeholder-gray-500 w-auto"
 					on:change={(e) => {
 						// @ts-ignore
 						searchPriceRole = e.target?.value;
@@ -405,16 +525,14 @@
 					<option value="staff_bar">Prix staff</option>
 					<option value="externe">Prix externe</option>
 					<option value="privilegies">Prix privilégié</option>
-				
 				</select>
 			</div>
-
-			<div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+			<div class="flex flex-row items-center gap-3">
 				<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Rôle:</span>
 				<select
 					id="category"
 					name="category"
-					class="px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white dark:placeholder-gray-500 w-full sm:w-auto"
+					class="px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white dark:placeholder-gray-500 w-auto"
 					on:change={(e) => {
 						// @ts-ignore
 						searchRole = e.target?.value;
@@ -430,10 +548,7 @@
 					<option value="admin">Admin</option>
 					<option value="ghost">Fantôme</option>
 					<option value="superadmin">SuperAdmin</option>
-
-				
 				</select>
-			</div>
 			</div>
 		</div>
 	</div>
