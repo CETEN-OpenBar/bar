@@ -31,7 +31,7 @@
 	let transactions: Array<Transaction> = [];
 	let maxItemPerTransaction: number = 6;
 	let interval: number;
-	let transactionAmount: number = 5;
+	let transactionAmount: number = 4;
 
 	let page: number = 1;
 	let maxPage: number = 1;
@@ -523,13 +523,13 @@
 		cursor: pointer;
 		transition: all 0.2s ease;
 		position: relative;
-		background-color: white;
+		background-color: #f9fafb;
 		flex-shrink: 0;
 	}
 
 	@media (prefers-color-scheme: dark) {
 		.transaction-card {
-			background-color: #2f2f41;
+			background-color: var(--bg-secondary);
 			border: 2px solid #3c4554;
 		}
 	}
@@ -656,8 +656,8 @@
 	}
 
 	.item-image {
-		width: 24px;
-		height: 24px;
+		width: 36px;
+		height: 36px;
 		border-radius: 16px;
 		align-self: center;
 	}
@@ -667,7 +667,7 @@
 	}
 
 	.item-name {
-		font-size: 12px;
+		font-size: 14px;
 		text-align: center;
 		color: black;
 	}
@@ -715,7 +715,7 @@
 		border-radius: 50%;
 		position: absolute;
 		left: 12px;
-		top: 72%;
+		top: 70%;
 		transform: translateY(-50%);
 		box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
 	}
@@ -786,8 +786,8 @@
 		}
 
 		.item-image {
-			width: 20px;
-			height: 20px;
+			width: 30px;
+			height: 30px;
 		}
 
 		.item-name,
