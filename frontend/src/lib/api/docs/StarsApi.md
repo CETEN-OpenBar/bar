@@ -306,7 +306,7 @@ const { status, data } = await apiInstance.patchStarringId(
 
 ### Authorization
 
-[auth](../README.md#auth)
+[admin_auth](../README.md#admin_auth)
 
 ### HTTP request headers
 

@@ -534,6 +534,9 @@ export interface Refill {
      * Name of the account
      */
     'account_name': string;
+    /**
+     * Google profile picture URL of the account
+     */
     'account_google_picture'?: string;
     'amount': number;
     'state': RefillState;
@@ -589,6 +592,10 @@ export interface RemoteRefill {
      * Name of the account
      */
     'account_name': string;
+    /**
+     * Google profile picture URL of the account
+     */
+    'account_google_picture'?: string;
     'amount': number;
     'created_at': number;
     'refill_id'?: string;
@@ -711,6 +718,9 @@ export interface Transaction {
      * Nickname of the account
      */
     'account_nick_name'?: string;
+    /**
+     * Google profile picture URL of the account
+     */
     'account_google_picture'?: string;
     'total_cost': number;
     'state': TransactionState;
@@ -967,10 +977,12 @@ export const AccountsApiAxiosParamCreator = function (configuration?: Configurat
          * @param {number} [page] page to get
          * @param {number} [limit] number of accounts to get
          * @param {string} [search] search string
+         * @param {string} [priceRole] price_role of account
+         * @param {string} [role] role of account
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAccounts: async (page?: number, limit?: number, search?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getAccounts: async (page?: number, limit?: number, search?: string, priceRole?: string, role?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/accounts`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -995,6 +1007,14 @@ export const AccountsApiAxiosParamCreator = function (configuration?: Configurat
 
             if (search !== undefined) {
                 localVarQueryParameter['search'] = search;
+            }
+
+            if (priceRole !== undefined) {
+                localVarQueryParameter['price_role'] = priceRole;
+            }
+
+            if (role !== undefined) {
+                localVarQueryParameter['role'] = role;
             }
 
 
@@ -1396,11 +1416,13 @@ export const AccountsApiFp = function(configuration?: Configuration) {
          * @param {number} [page] page to get
          * @param {number} [limit] number of accounts to get
          * @param {string} [search] search string
+         * @param {string} [priceRole] price_role of account
+         * @param {string} [role] role of account
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getAccounts(page?: number, limit?: number, search?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAccounts200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getAccounts(page, limit, search, options);
+        async getAccounts(page?: number, limit?: number, search?: string, priceRole?: string, role?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetAccounts200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAccounts(page, limit, search, priceRole, role, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['AccountsApi.getAccounts']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -1572,11 +1594,13 @@ export const AccountsApiFactory = function (configuration?: Configuration, baseP
          * @param {number} [page] page to get
          * @param {number} [limit] number of accounts to get
          * @param {string} [search] search string
+         * @param {string} [priceRole] price_role of account
+         * @param {string} [role] role of account
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAccounts(page?: number, limit?: number, search?: string, options?: RawAxiosRequestConfig): AxiosPromise<GetAccounts200Response> {
-            return localVarFp.getAccounts(page, limit, search, options).then((request) => request(axios, basePath));
+        getAccounts(page?: number, limit?: number, search?: string, priceRole?: string, role?: string, options?: RawAxiosRequestConfig): AxiosPromise<GetAccounts200Response> {
+            return localVarFp.getAccounts(page, limit, search, priceRole, role, options).then((request) => request(axios, basePath));
         },
         /**
          * Import accounts from a CSV file
@@ -1720,11 +1744,13 @@ export class AccountsApi extends BaseAPI {
      * @param {number} [page] page to get
      * @param {number} [limit] number of accounts to get
      * @param {string} [search] search string
+     * @param {string} [priceRole] price_role of account
+     * @param {string} [role] role of account
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public getAccounts(page?: number, limit?: number, search?: string, options?: RawAxiosRequestConfig) {
-        return AccountsApiFp(this.configuration).getAccounts(page, limit, search, options).then((request) => request(this.axios, this.basePath));
+    public getAccounts(page?: number, limit?: number, search?: string, priceRole?: string, role?: string, options?: RawAxiosRequestConfig) {
+        return AccountsApiFp(this.configuration).getAccounts(page, limit, search, priceRole, role, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

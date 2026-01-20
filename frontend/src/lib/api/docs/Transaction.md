@@ -10,6 +10,7 @@ Name | Type | Description | Notes
 **account_id** | **string** |  | [default to undefined]
 **account_name** | **string** | Name of the account | [default to undefined]
 **account_nick_name** | **string** | Nickname of the account | [optional] [default to undefined]
+**account_google_picture** | **string** | Google profile picture URL of the account | [optional] [default to undefined]
 **total_cost** | **number** |  | [default to undefined]
 **state** | [**TransactionState**](TransactionState.md) |  | [default to undefined]
 **deleted_at** | **number** |  | [optional] [default to undefined]
@@ -28,6 +29,7 @@ const instance: Transaction = {
     account_id,
     account_name,
     account_nick_name,
+    account_google_picture,
     total_cost,
     state,
     deleted_at,

@@ -21,6 +21,10 @@
 		price_role: 'externe'
 	};
 
+	let searchPriceRole: string | undefined = undefined;
+	let searchRole: string | undefined = undefined;
+
+
 	let searchQuery = '';
 	let page: number = 1;
 	let maxPage: number = 0;
@@ -74,7 +78,7 @@
 
 	function reloadAccounts() {
 		accountsApi()
-			.getAccounts(page, accounts_per_page, searchQuery, { withCredentials: true })
+			.getAccounts(page, accounts_per_page, searchQuery, searchPriceRole, searchRole, { withCredentials: true })
 			.then((res) => {
 				accounts = res.data.accounts ?? [];
 				page = res.data.page;
@@ -225,6 +229,8 @@
 						Ajouter un compte
 					</h2>
 				</div>
+
+			
 
 				<div class="mt-5">
 					<!-- Form -->
@@ -408,7 +414,57 @@
 					</svg>
 					<span class="lg:hidden">Ajouter</span>
 					<span class="hidden lg:inline">Ajouter un compte</span>
+					
 				</button>
+				<div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+				<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Prix:</span>
+				<select
+					id="category"
+					name="category"
+					class="px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white dark:placeholder-gray-500 w-full sm:w-auto"
+					on:change={(e) => {
+						// @ts-ignore
+						searchPriceRole = e.target?.value;
+						if (searchPriceRole === '') searchPriceRole = undefined;
+						page = 1;
+						reloadAccounts();
+					}}
+				>
+					<option value="">Pas de filtre</option>
+					<option value="ceten">Prix CETEN</option>
+					<option value="coutant">Prix coutant</option>
+					<option value="staff_bar">Prix staff</option>
+					<option value="externe">Prix externe</option>
+					<option value="privilegies">Prix privilégié</option>
+				
+				</select>
+			</div>
+
+			<div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+				<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Rôle:</span>
+				<select
+					id="category"
+					name="category"
+					class="px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white dark:placeholder-gray-500 w-full sm:w-auto"
+					on:change={(e) => {
+						// @ts-ignore
+						searchRole = e.target?.value;
+						if (searchRole === '') searchRole = undefined;
+						page = 1;
+						reloadAccounts();
+					}}
+				>
+					<option value="">Pas de filtre</option>
+					<option value="student">Étudiant</option>
+					<option value="student_with_benefits">Étudiant avec avantages</option>
+					<option value="member">Membre</option>
+					<option value="admin">Admin</option>
+					<option value="ghost">Fantôme</option>
+					<option value="superadmin">SuperAdmin</option>
+
+				
+				</select>
+			</div>
 			</div>
 		</div>
 	</div>

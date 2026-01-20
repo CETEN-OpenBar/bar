@@ -50,7 +50,6 @@ func (s *Server) GetAccounts(c echo.Context, params autogen.GetAccountsParams) e
 	if params.Role != nil {
 		role = string(*params.Role)
 	}
-
 	// Calculate max page
 	count, err := s.DBackend.CountAccounts(c.Request().Context(), role, priceRole, search)
 	if err != nil {

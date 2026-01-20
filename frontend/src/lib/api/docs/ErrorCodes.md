@@ -13,6 +13,8 @@
 
 * `ErrInternalServerError` (value: `'internal_server_error'`)
 
+* `ErrServiceUnavailable` (value: `'service_unavailable'`)
+
 * `ErrNotAuthenticated` (value: `'not_authenticated'`)
 
 * `ErrImageNotFound` (value: `'image_not_found'`)
