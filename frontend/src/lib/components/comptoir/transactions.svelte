@@ -23,9 +23,15 @@
 	}
 
 	let searchNameValue: string;
+	let searchDebounceTimer: ReturnType<typeof setTimeout>;
 
 	searchName.subscribe((value) => {
 		searchNameValue = value;
+		clearTimeout(searchDebounceTimer);
+		searchDebounceTimer = setTimeout(() => {
+			page = 1;
+			reloadTransactions(value);
+		}, 150);
 	});
 
 	let transactions: Array<Transaction> = [];
@@ -130,6 +136,7 @@
 	});
 
 	onDestroy(() => {
+		clearTimeout(searchDebounceTimer);
 		clearInterval(interval);
 		if (typeof window !== 'undefined') {
 			window.removeEventListener('keydown', handleKeyDown);
@@ -142,7 +149,9 @@
 
 	type TransactionItemWithFakeAmount = TransactionItem & { item_fake_amount?: number };
 
-	function reloadTransactions() {
+	function reloadTransactions(searchValue?: string | Event) {
+		const isEvent = searchValue instanceof Event;
+		const searchToUse = isEvent ? searchNameValue : (searchValue as string | undefined) ?? searchNameValue;
 		transactionsApi()
 			.getTransactions(
 				page,
@@ -150,7 +159,7 @@
 				st,
 				false,
 				!showRemoteTransactions,
-				searchNameValue,
+				searchToUse,
 				undefined,
 				undefined,
 				undefined,
