@@ -27,18 +27,22 @@
 			});
 	}
 
-	function reloadItems() {
-		itemsApi()
-			.getAllItems(1, 1000, undefined, undefined, undefined, undefined, undefined, { withCredentials: true })
-			.then((res) => {
-				if (!(res.data.items instanceof Array)) return;
-				stockItems = res.data.items;
-			});
-	}
+	async function reloadItems() {
+		let allItems: Item[] = [];
+		let page = 1;
+		let maxPage = 1;
 
-	function getStockAmount(itemId: string): number {
-		const stockItem = stockItems.find(i => i.id === itemId);
-		return stockItem?.amount_left ?? 0;
+		while (page <= maxPage) {
+			const res = await itemsApi()
+				.getAllItems(page, 1000, undefined, undefined, undefined, undefined, undefined, { withCredentials: true });
+			if (res.data.items instanceof Array) {
+				allItems = [...allItems, ...res.data.items];
+			}
+			maxPage = res.data.max_page ?? 1;
+			page++;
+		}
+
+		stockItems = allItems;
 	}
 </script>
 
@@ -87,9 +91,9 @@
 							<td class="px-4 py-3 text-center text-sm font-medium text-gray-900 dark:text-gray-300">
                                 {item.item_amount - item.item_already_done}
 							</td>
-                            <td class="px-4 py-3 text-center text-sm font-medium text-gray-900 dark:text-gray-300">
-                                {getStockAmount(item.item_id)}
-                            </td>
+							<td class="px-4 py-3 text-center text-sm font-medium text-gray-900 dark:text-gray-300">
+                                {stockItems.find(i => i.id === item.item_id)?.amount_left ?? 0}
+							</td>
 						</tr>
 					{/each}
 					{#if filtered_items.length === 0}
@@ -137,10 +141,10 @@
                         <div class="text-xs text-gray-500 dark:text-gray-400">Restants</div>
 						<div class="text-sm font-medium text-gray-900 dark:text-gray-300">{item.item_amount - item.item_already_done}</div>
 					</div>
-                    <div class="bg-gray-100 dark:bg-gray-700 rounded p-2">
-                        <div class="text-xs text-gray-500 dark:text-gray-400">Stock</div>
-                        <div class="text-sm font-medium text-gray-900 dark:text-gray-300">{getStockAmount(item.item_id)}</div>
-                    </div>
+                     <div class="bg-gray-100 dark:bg-gray-700 rounded p-2">
+                         <div class="text-xs text-gray-500 dark:text-gray-400">Stock</div>
+                         <div class="text-sm font-medium text-gray-900 dark:text-gray-300">{stockItems.find(i => i.id === item.item_id)?.amount_left ?? 0}</div>
+                     </div>
 				</div>
 			</div>
 		{/each}
