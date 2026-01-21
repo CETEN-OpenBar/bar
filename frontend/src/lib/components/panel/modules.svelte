@@ -66,11 +66,6 @@
 		link: '/panel/products/incoherants'
 	});
 	modules.push({
-		name: 'Fournisseur',
-		color: 'bg-green-600',
-		link: '/panel/products/fournisseur'
-	});
-	modules.push({
 		name: 'Course',
 		color: 'bg-green-600',
 		link: '/panel/products/course'
