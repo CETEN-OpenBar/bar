@@ -21,6 +21,9 @@ import (
 	"golang.org/x/oauth2"
 )
 
+// Globally meant to use qr code to connect to board (protected by local token)
+// But look like it wasn't finished and so is unusable
+
 // (GET /auth/qr)
 func (s *Server) GetBorneAuthQRWebsocket(c echo.Context) error {
 	// Check that header "X-Local-Token" is set to the local token
