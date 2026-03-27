@@ -202,28 +202,34 @@ func SuccessRedirect(c echo.Context) error {
 }
 
 // (GET /auth/google/callback)
-func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
-	// Get account from state and delete state
-	data, found := stateCache.Get(params.State)
-	if !found {
-		// This callback is used when connecting to the admin panel for example.
-		// The users clicks a button to log in with Google.
-		return auth.OAuthCallback(c, params)
-	}
-	stateCache.Delete(params.State)
+func (s *Server) Callback(ctx echo.Context, params autogen.CallbackParams) error {
+	err := auth.ExecuteOAuthCallback(ctx, params.State, params.Code)
+	// TODO Do something on error
+}
 
-	state := data.(*StateCache)
-	switch state.Type {
-	case "qr_auth":
-		// Used when connecting to a borne with the QR Code displayed
-		return s.CallbackQRAuth(c, params, state)
-	case "linking":
-		// Used when linking an account to a Google account
-		return s.CallbackLinking(c, params, state)
-	default:
-		// Default fallback that should not happen
-		return s.CallbackLinking(c, params, state)
+// - Get Token, Generate a Client
+// - Retrieive account information (provider specific)
+// - Pull account from database (might be provider specific)
+// - Update cached account properties
+// - Update account in database
+// - Save account in session coockie (Currently only if a redirect was specified, might be a bug)
+func AuthCallback() {
+	logrus.WithField("account", account.EmailAdress).Info("Account logged in using OAuth.")
+
+	err := s.DBackend.UpdateAccount(c.Request().Context(), account)
+	if err != nil {
+		logrus.Error(err)
+		return ErrorRedirect(c, "#021")
 	}
+
+	r, found := redirectCache.Get(params.State)
+	if !found {
+		return SuccessRedirect(c)
+	}
+	redirectCache.Delete(params.State)
+
+	s.SetCookie(c, account)
+	return c.Redirect(http.StatusPermanentRedirect, r.(string))
 }
 
 // OAuth callback for qr_code linking
@@ -382,6 +388,18 @@ func (s *Server) CallbackLinking(c echo.Context, params autogen.CallbackParams, 
 
 // (GET /auth/google)
 func (s *Server) ConnectGoogle(c echo.Context, p autogen.ConnectGoogleParams) error {
+	conf := config.GetConfig()
+
+	// Get ?r=
+	rel := p.R
+
+	// Check if it's a safe redirect (TODO: check if this is correct)
+	switch rel {
+	case "admin":
+		rel = conf.ApiConfig.FrontendBasePath + "/admin"
+	case "client/commande":
+		rel = conf.ApiConfig.FrontendBasePath + "/client/commande"
+	}
 	return auth.InitOAuth(c, p)
 }
 
