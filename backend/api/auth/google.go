@@ -57,24 +57,21 @@ func (p *GoogleOAuthProvider) FetchAccountData(requestContext context.Context, o
 	oAuth2Config := getGoogleOAuthConfig()
 	token, err := oAuth2Config.Exchange(requestContext, oAuthCode)
 	if err != nil {
-		// TODO Crash correctly
-		// 14
+		return nil, err
 	}
 
 	// Get user from Google
 	client := oAuth2Config.Client(requestContext, token)
 	resp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
 	if err != nil {
-		// TODO Crash correctly
-		// 15
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	usr := &googleUser{}
 	err = json.NewDecoder(resp.Body).Decode(usr)
 	if err != nil {
-		// TODO Crash correctly
-		// 16
+		return nil, err
 	}
 	return &OAuthAccountData{
 		usr.FirstName,

@@ -7,6 +7,7 @@ import (
 	"github.com/patrickmn/go-cache"
 	"net/http"
 	"time"
+	"errors"
 )
 
 type OAuthAccountData struct {
@@ -17,20 +18,23 @@ type OAuthAccountData struct {
 	PictureLink string
 }
 
+var InvalidOAuthStateError = errors.New("Invalid OAuth state")
+var BrokenOAuthCallbackError = errors.New("Broken OAuth callback")
+
 type OAuthProvider interface {
 	GetOAuthLink(state string) string
 	FetchAccountData(requestContext context.Context, oAuthCode string) (*OAuthAccountData, error)
 }
 
 type OAuthCallbackFunction interface {
-	callback(*OAuthAccountData, echo.Context) error
+	Callback(*OAuthAccountData, echo.Context) error
 }
 
 var connectionCache = cache.New(5*time.Minute, 10*time.Minute)
 
-func InitOAuth(ctx echo.Context, callbackFunction *OAuthCallbackFunction) error {
+func InitOAuth(ctx echo.Context, callbackFunction OAuthCallbackFunction) error {
 	state := uuid.NewString()
-	// Note that if could lead to excessive memory usage if someone request it too many times
+	// Note that it could lead to excessive memory usage if someone request it too many times
 	connectionCache.SetDefault(state, callbackFunction)
 	// TODO Use appropriate OAuth provider
 	oauthProvider := GoogleOAuthProvider{}
@@ -42,13 +46,13 @@ func ExecuteOAuthCallback(ctx echo.Context, state string, code string) error {
 	rawCallbackFunction, found := connectionCache.Get(state)
 	if !found {
 		// Ignore all request with invalid state for security reasons
-		// TODO Crash correctly
+		return InvalidOAuthStateError
 	}
 	connectionCache.Delete(state)
-	callbackFunction, ok := rawCallbackFunction.(*OAuthCallbackFunction)
+	callbackFunction, ok := rawCallbackFunction.(OAuthCallbackFunction)
 	if !ok {
 		// Should not happen. But who knows
-		// TODO Crash correctly
+		return BrokenOAuthCallbackError
 	}
 	// TODO Use appropriate OAuth provider
 	oauthProvider := GoogleOAuthProvider{}
@@ -56,5 +60,6 @@ func ExecuteOAuthCallback(ctx echo.Context, state string, code string) error {
 	if err != nil {
 		return err
 	}
-	return (*callbackFunction).callback(account, ctx)
+	return callbackFunction.Callback(account, ctx)
 }
+
