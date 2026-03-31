@@ -1,13 +1,11 @@
 package api
 
 import (
-	"bar/autogen"
 	"bar/api/auth"
+	"bar/autogen"
 	"bar/internal/config"
 	"bar/internal/models"
-	"bar/internal/db"
 	"encoding/base64"
-	"errors"
 	"fmt"
 	"image/color"
 	"net/http"
@@ -23,14 +21,15 @@ import (
 )
 
 var qrCache = cache.New(5*time.Minute, 10*time.Minute)
+var pendingQrScanning = cache.New(5*time.Minute, 10*time.Minute)
 
 type connectionOAuthCallback struct {
-	database db.DBackend
+	server      *Server
 	redirectUrl string
 }
 
 type linkingOAuthCallback struct {
-	database db.DBackend
+	server    *Server
 	accountId string
 }
 
@@ -48,9 +47,8 @@ func (s *Server) ConnectGoogle(c echo.Context, p autogen.ConnectGoogleParams) er
 	case "client/commande":
 		rel = conf.ApiConfig.FrontendBasePath + "/client/commande"
 	}
-	return auth.InitOAuth(c, connectionOAuthCallback{s.DBackend, rel})
+	return auth.InitOAuth(c, connectionOAuthCallback{s, rel})
 }
-
 
 // POST /account/qr
 // - Ask for user or boarded user
@@ -78,7 +76,7 @@ func (s *Server) GetAccountQR(c echo.Context) error {
 		return ErrorAccNotFound(c)
 	}
 
-	b64, found := qrCache.Get(account.Id.String())
+	encodedQrCode, found := qrCache.Get(account.Id.String())
 	if !found {
 		// Generate QR code nonce
 		nonce := uuid.NewString()
@@ -95,14 +93,18 @@ func (s *Server) GetAccountQR(c echo.Context) error {
 		if err != nil {
 			return Error500(c)
 		}
-		b64 = base64.StdEncoding.EncodeToString(png)
-		qrCache.Set(account.Id.String(), b64, cache.DefaultExpiration)
+		encodedQrCode = base64.StdEncoding.EncodeToString(png)
 
+		qrCache.SetDefault(account.Id.String(), encodedQrCode)
+		// Currently we pass the state in in the qr code but we logically cache the qr code per account
+		// So we end up with this double cache. We should instead pass the encoded account id to avoid it.
+		// But it would require to changes routes and so the spec.
+		pendingQrScanning.SetDefault(nonce, account.Id.String())
 		logrus.Debugf("QR code generated for account %s: %s", account.Id.String(), url)
 	}
 
 	// Convert to base64
-	r := strings.NewReader(b64.(string))
+	r := strings.NewReader(encodedQrCode.(string))
 
 	autogen.GetAccountQR200ImagepngResponse{
 		ContentLength: int64(r.Len()),
@@ -129,22 +131,17 @@ func (s *Server) GetAccountQRWebsocket(c echo.Context) error {
 // - Redirect to OAuth link
 func (s *Server) ConnectAccount(c echo.Context, qrNonce string) error {
 	// Get account from nonce and delete nonce
-	data, found := qrCache.Get(qrNonce)
-	if !found {
+	rawAccountId, accountTryingToConnect := pendingQrScanning.Get(qrNonce)
+	if !accountTryingToConnect {
 		return ErrorNotAuthenticated(c)
 	}
+	accountId := rawAccountId.(string)
 
-	qrCache.Delete(qrNonce)
+	pendingQrScanning.Delete(qrNonce)
+	qrCache.Delete(accountId)
+	BroadcastToRoom(accountId, []byte("scanned"))
 
-	d := data.(*QrCache)
-
-		accountID := d.Data
-		qrCache.Delete(accountID.(string))
-		BroadcastToRoom(accountID.(string), []byte("scanned"))
-
-	// accountId
-
-	return auth.InitOAuth(c, linkOAuthCallback{accountID})
+	return auth.InitOAuth(c, linkingOAuthCallback{s, accountId})
 }
 
 func ErrorRedirect(c echo.Context, err string) error {
@@ -160,11 +157,12 @@ func SuccessRedirect(c echo.Context) error {
 // (GET /auth/google/callback)
 func (s *Server) Callback(ctx echo.Context, params autogen.CallbackParams) error {
 	err := auth.ExecuteOAuthCallback(ctx, params.State, params.Code)
-	if errors.Is(err, auth.InvalidOAuthStateError) {
-	}
-	if errors.Is(err, auth.BrokenOAuthCallbackError) {
-	}
 	// TODO Do something on error
+	/*
+		if errors.Is(err, auth.InvalidOAuthStateError) {
+		}
+		if errors.Is(err, auth.BrokenOAuthCallbackError) {
+		}*/
 	return err
 }
 
@@ -178,7 +176,7 @@ func (callback connectionOAuthCallback) Callback(accountData *auth.OAuthAccountD
 	logrus.WithField("account", accountData.EmailAdress).Info("Account logged in using OAuth.")
 
 	requestCtx := ctx.Request().Context()
-	database := callback.database
+	database := callback.server.DBackend
 	account, err := database.GetAccountByGoogle(requestCtx, accountData.Id)
 	if err != nil {
 		account, err = database.GetAccountByEmail(requestCtx, accountData.EmailAdress)
@@ -190,7 +188,7 @@ func (callback connectionOAuthCallback) Callback(accountData *auth.OAuthAccountD
 			return ctx.Redirect(http.StatusPermanentRedirect, conf.ApiConfig.FrontendBasePath+"/auth?noaccount")
 		}
 		logrus.Error(err)
-		return ErrorRedirect(c, "#017")
+		return ErrorRedirect(ctx, "#017")
 	}
 
 	account.FirstName = accountData.FirstName
@@ -202,10 +200,10 @@ func (callback connectionOAuthCallback) Callback(accountData *auth.OAuthAccountD
 	err = database.UpdateAccount(ctx.Request().Context(), account)
 	if err != nil {
 		logrus.Error(err)
-		return ErrorRedirect(c, "#021")
+		return ErrorRedirect(ctx, "#021")
 	}
 
-	s.SetCookie(c, account)
+	callback.server.SetCookie(ctx, account)
 	return ctx.Redirect(http.StatusFound, callback.redirectUrl)
 }
 
@@ -227,8 +225,9 @@ func (callback connectionOAuthCallback) Callback(accountData *auth.OAuthAccountD
 // - Broadcast with websocket "connected"
 // - Eventually (?) set account coockie
 // - Redirect to url
-func (callback linkingOAuthCallback) Callback(accountData *auth.OAuthAccountData, ctx echo.Context) error {
+func (callback linkingOAuthCallback) Callback(usr *auth.OAuthAccountData, c echo.Context) error {
 	accountId := callback.accountId
+	s := callback.server
 
 	account, err := s.DBackend.GetAccount(c.Request().Context(), accountId)
 	if err != nil {
@@ -247,15 +246,15 @@ func (callback linkingOAuthCallback) Callback(accountData *auth.OAuthAccountData
 
 	account.FirstName = usr.FirstName
 	account.LastName = usr.LastName
-	account.EmailAddress = usr.Email
-	account.GoogleId = &usr.ID
-	account.GooglePicture = &usr.Picture
+	account.EmailAddress = usr.EmailAdress
+	account.GoogleId = &usr.Id
+	account.GooglePicture = &usr.PictureLink
 
 	if account.State == autogen.AccountNotOnBoarded {
 		account.State = autogen.AccountOK
 
 		// Check if an account with this Google ID and no Card ID exists
-		acc, err := s.DBackend.GetAccountByEmail(c.Request().Context(), usr.Email)
+		acc, err := s.DBackend.GetAccountByEmail(c.Request().Context(), usr.EmailAdress)
 		if err != nil {
 			if err != mongo.ErrNoDocuments {
 				logrus.Error(err)
@@ -282,9 +281,9 @@ func (callback linkingOAuthCallback) Callback(accountData *auth.OAuthAccountData
 
 			account.FirstName = usr.FirstName
 			account.LastName = usr.LastName
-			account.EmailAddress = usr.Email
-			account.GoogleId = &usr.ID
-			account.GooglePicture = &usr.Picture
+			account.EmailAddress = usr.EmailAdress
+			account.GoogleId = &usr.Id
+			account.GooglePicture = &usr.PictureLink
 		}
 
 		// Delete ONBOARD cookie
@@ -297,16 +296,9 @@ func (callback linkingOAuthCallback) Callback(accountData *auth.OAuthAccountData
 		}
 	}
 
-	BroadcastToRoom(accountID.(string), []byte("connected"))
+	BroadcastToRoom(accountId, []byte("connected"))
 
-	r, found := redirectCache.Get(params.State)
-	if !found {
-		return SuccessRedirect(c)
-	}
-	redirectCache.Delete(params.State)
-
-	s.SetCookie(c, account)
-	return c.Redirect(http.StatusPermanentRedirect, r.(string))
+	return SuccessRedirect(c)
 }
 
 // (GET /logout)
