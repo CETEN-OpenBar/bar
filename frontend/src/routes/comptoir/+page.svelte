@@ -39,40 +39,84 @@
 	let display: Boolean = false;
 	let images: Array<CarouselImage> = fakeImages;
 	let texts: Array<CarouselText> = fakeTexts;
+	let mounted = false;
+	let requestsController: AbortController | undefined;
+	let carouselTimer: ReturnType<typeof setTimeout> | undefined;
+	let displayTimer: ReturnType<typeof setTimeout> | undefined;
+	let errorTimer: ReturnType<typeof setTimeout> | undefined;
+	const preloadingImages = new Set<HTMLImageElement>();
 
 	onMount(() => {
+		mounted = true;
+		requestsController = new AbortController();
 		fetchCarousel();
+		return () => {
+			mounted = false;
+			requestsController?.abort();
+			clearTimeout(carouselTimer);
+			clearTimeout(displayTimer);
+			clearTimeout(errorTimer);
+			for (const image of preloadingImages) {
+				image.onload = null;
+				image.onerror = null;
+				image.src = '';
+			}
+			preloadingImages.clear();
+		};
 	});
 
 	const preloadImage = (src: string) =>
 		new Promise((resolve, reject) => {
 			const image = new Image();
-			image.onload = resolve;
-			image.onerror = reject;
+			preloadingImages.add(image);
+			image.onload = (event) => {
+				preloadingImages.delete(image);
+				resolve(event);
+			};
+			image.onerror = (event) => {
+				preloadingImages.delete(image);
+				reject(event);
+			};
 			image.src = src;
 		});
 
+	function showCarousel() {
+		if (!mounted) return;
+		clearTimeout(displayTimer);
+		displayTimer = setTimeout(() => {
+			if (mounted) display = true;
+		}, 1500);
+	}
+
 	function fetchCarousel() {
+		if (!mounted) return;
 		carouselApi()
-			.getCarouselImages()
+			.getCarouselImages({ signal: requestsController?.signal })
 			.then((res) => {
+				if (!mounted) return;
 				if (res.data != null) images = res.data;
 				if (images.length === 0) images = fakeImages;
-				Promise.all(images.map((x) => preloadImage(api() + x.image_url))).finally(() => {
-					setTimeout(() => {
-						display = true;
-					}, 1500);
-				});
+				Promise.all(images.map((x) => preloadImage(api() + x.image_url))).then(
+					showCarousel,
+					showCarousel
+				);
+			})
+			.catch((error) => {
+				if (mounted) console.error('Impossible de charger les images du carrousel', error);
 			});
 
 		carouselApi()
-			.getCarouselTexts()
+			.getCarouselTexts({ signal: requestsController?.signal })
 			.then((res) => {
+				if (!mounted) return;
 				if (res.data != null) texts = res.data;
 				if (texts.length === 0) texts = fakeTexts;
+			})
+			.catch((error) => {
+				if (mounted) console.error('Impossible de charger les textes du carrousel', error);
 			});
 
-		setTimeout(fetchCarousel, 60000);
+		carouselTimer = setTimeout(fetchCarousel, 60000);
 	}
 
 	let card = {
@@ -95,10 +139,12 @@
 					card_pin: card.pin
 				},
 				{
-					withCredentials: true
+					withCredentials: true,
+					signal: requestsController?.signal
 				}
 			)
 			.then((res) => {
+				if (!mounted) return;
 				if (
 					res.data.account?.role === AccountRole.AccountAdmin ||
 					AccountRole.AccountSuperAdmin ||
@@ -108,8 +154,10 @@
 				goto('/comptoir/c/transactions');
 			})
 			.catch(() => {
+				if (!mounted) return;
 				incorrectPin = 'Mauvais code pin';
-				setTimeout(() => {
+				clearTimeout(errorTimer);
+				errorTimer = setTimeout(() => {
 					incorrectPin = '';
 				}, 3000);
 			});
