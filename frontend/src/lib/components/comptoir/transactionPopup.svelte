@@ -13,7 +13,7 @@
 	import Error from '../error.svelte';
 	import Success from '../success.svelte';
 	import Transactions from './transactions.svelte';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onDestroy } from 'svelte';
 	import { searchName } from '$lib/store/store';
 
 	export let transaction: Transaction;
@@ -22,6 +22,34 @@
 	let newTransaction: Transaction = structuredClone(transaction);
 	let success = '';
 	let error = '';
+	let destroyed = false;
+	let successTimer: ReturnType<typeof setTimeout> | undefined;
+	let errorTimer: ReturnType<typeof setTimeout> | undefined;
+
+	onDestroy(() => {
+		destroyed = true;
+		clearTimeout(successTimer);
+		clearTimeout(errorTimer);
+	});
+
+	function showSuccess(message: string, afterDelay?: () => void) {
+		if (destroyed) return;
+		clearTimeout(successTimer);
+		success = message;
+		successTimer = setTimeout(() => {
+			success = '';
+			afterDelay?.();
+		}, 1500);
+	}
+
+	function showError() {
+		if (destroyed) return;
+		clearTimeout(errorTimer);
+		error = "Une erreur s'est produite";
+		errorTimer = setTimeout(() => {
+			error = '';
+		}, 1500);
+	}
 
 	type MenuPopup = {
 		items: MenuItem[] | undefined;
@@ -43,19 +71,12 @@
 		);
 
 		if (res.status != 200) {
-			error = "Une erreur s'est produite";
-			setTimeout(() => {
-				error = '';
-			}, 1500);
+			showError();
 			return;
 		}
 
 		transaction = newTransaction;
-		success = 'Commande annulée';
-		setTimeout(() => {
-			success = '';
-			close();
-		}, 1500);
+		showSuccess('Commande annulée', close);
 	}
 
 	async function putBackTransaction() {
@@ -69,19 +90,12 @@
 		);
 
 		if (res.status != 200) {
-			error = "Une erreur s'est produite";
-			setTimeout(() => {
-				error = '';
-			}, 1500);
+			showError();
 			return;
 		}
 
 		transaction = newTransaction;
-		success = 'Commande remise en attente';
-		setTimeout(() => {
-			success = '';
-			close();
-		}, 1500);
+		showSuccess('Commande remise en attente', close);
 	}
 
 	async function finishTransaction() {
@@ -104,10 +118,7 @@
 			);
 
 			if (res.status != 200) {
-				error = "Une erreur s'est produite";
-				setTimeout(() => {
-					error = '';
-				}, 1500);
+				showError();
 				return;
 			}
 		}
@@ -123,20 +134,15 @@
 			);
 
 			if (res.status != 200) {
-				error = "Une erreur s'est produite";
-				setTimeout(() => {
-					error = '';
-				}, 1500);
+				showError();
 				return;
 			}
 
 			transaction = newTransaction;
-			success = 'Commande terminée';
-			setTimeout(() => {
-				success = '';
+			showSuccess('Commande terminée', () => {
 				searchName.set('');
 				close();
-			}, 1500);
+			});
 		}
 	}
 
@@ -160,28 +166,24 @@
 			);
 
 			if (res.status != 200) {
-				error = "Une erreur s'est produite";
-				setTimeout(() => {
-					error = '';
-				}, 1500);
+				showError();
 				return;
 			}
 		}
 
 		if (!error) {
 			transaction = newTransaction;
-			success = 'Changements enregistrée';
-			setTimeout(() => {
-				success = '';
-			}, 1500);
+			showSuccess('Changements enregistrée');
 			reloadTransaction();
 		}
 	}
 
 	function reloadTransaction() {
+		if (destroyed) return;
 		transactionsApi()
 			.getTransactionId(transaction.account_id, transaction.id, { withCredentials: true })
 			.then((res) => {
+				if (destroyed) return;
 				transaction = res.data;
 				newTransaction = structuredClone(transaction);
 			});
