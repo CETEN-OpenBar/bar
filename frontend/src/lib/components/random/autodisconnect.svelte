@@ -1,56 +1,70 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { authApi } from '$lib/requests/requests';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
 	export let delay: number = 60000;
 	export let location: string = '/borne';
 
-	let disconnectInterval: number | undefined = undefined;
-
 	onMount(() => {
-        disconnectInterval = setInterval(logout, delay);
+		let mounted = true;
+		let disconnecting = false;
+		let disconnectTimer: ReturnType<typeof setTimeout> | undefined;
+		const events = [
+			'mousemove',
+			'mousedown',
+			'keypress',
+			'DOMMouseScroll',
+			'mousewheel',
+			'touchmove',
+			'MSPointerMove',
+			'click',
+			'drag',
+			'dragend',
+			'dragenter',
+			'dragleave',
+			'dragover',
+			'dragstart',
+			'touchstart',
+			'touchend',
+			'gesturestart',
+			'gesturechange',
+			'gestureend'
+		];
 
-        // trigger action on any event
-        let events = [
-            'mousemove',
-            'mousedown',
-            'keypress',
-            'DOMMouseScroll',
-            'mousewheel',
-            'touchmove',
-            'MSPointerMove',
-            'click',
-            'drag',
-            'dragend',
-            'dragenter',
-            'dragleave',
-            'dragover',
-            'dragstart',
-            'touchstart',
-            'touchend',
-            'gesturestart',
-            'gesturechange',
-            'gestureend',
-        ];
-        for (let i in events) {
-            window.addEventListener(events[i], onAction);
-        }
-    });
+		async function logout() {
+			if (!mounted || disconnecting) return;
+			disconnecting = true;
+			clearTimeout(disconnectTimer);
+			try {
+				await authApi().logout({ withCredentials: true });
+				if (mounted) goto(location);
+			} catch (error) {
+				if (mounted) {
+					console.error('Impossible de fermer la session', error);
+					disconnecting = false;
+					onAction();
+				}
+			}
+		}
 
-    onDestroy(() => {
-        clearInterval(disconnectInterval);
-    });
+		function onAction() {
+			if (!mounted || disconnecting) return;
+			clearTimeout(disconnectTimer);
+			disconnectTimer = setTimeout(logout, delay);
+		}
 
-	async function logout() {
-		// TODO: don't forget to uncomment this
-		let _ = await authApi().logout({ withCredentials: true });
-		clearInterval(disconnectInterval);
-		goto(location);
-	}
+		onAction();
+		for (const event of events) {
+			window.addEventListener(event, onAction);
+		}
 
-	function onAction() {
-		clearInterval(disconnectInterval);
-		disconnectInterval = setInterval(logout, delay);
-	}
+		return () => {
+			mounted = false;
+			clearTimeout(disconnectTimer);
+			for (const event of events) {
+				window.removeEventListener(event, onAction);
+			}
+		};
+	});
 </script>

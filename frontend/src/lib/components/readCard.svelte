@@ -1,33 +1,50 @@
 <script lang="ts">
-	import { dev } from '$app/environment';
-	import { onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 	export let callback: (card: string) => void = () => {};
 
-	let socket = new WebSocket('ws://localhost:3737/');
+	onMount(() => {
+		let mounted = true;
+		let socket: WebSocket | undefined;
+		let reconnectTimer: ReturnType<typeof setTimeout> | undefined;
 
-	function defineSocket(socket: WebSocket) {
-		type WsData = {
-			uid: string;
-		};
+		function closeSocket() {
+			if (!socket) return;
+			socket.onmessage = null;
+			socket.onerror = null;
+			socket.onclose = null;
+			socket.close();
+			socket = undefined;
+		}
 
-		socket.onmessage = (event) => {
-			const data: WsData = JSON.parse(event.data);
-			callback(data.uid);
-		};
-
-		// on any error the websocket should try to reconnect 1 second later
-		socket.onerror = () => {
-			setTimeout(() => {
-				socket = new WebSocket('ws://localhost:3737/');
-				defineSocket(socket);
+		function reconnect() {
+			if (!mounted || reconnectTimer !== undefined) return;
+			reconnectTimer = setTimeout(() => {
+				reconnectTimer = undefined;
+				if (!mounted) return;
+				closeSocket();
+				connect();
 			}, 1000);
-		};
-	}
+		}
 
-	onDestroy(() => {
-		socket.close();
-		// remove the event listener
-		window.removeEventListener('keydown', handleInput);
+		function connect() {
+			const currentSocket = new WebSocket('ws://localhost:3737/');
+			socket = currentSocket;
+			currentSocket.onmessage = (event) => {
+				if (!mounted || socket !== currentSocket) return;
+				const data: { uid: string } = JSON.parse(event.data);
+				callback(data.uid);
+			};
+			currentSocket.onerror = reconnect;
+			currentSocket.onclose = reconnect;
+		}
+
+		connect();
+		return () => {
+			mounted = false;
+			clearTimeout(reconnectTimer);
+			closeSocket();
+			buffer = '';
+		};
 	});
 
 	let buffer = '';
@@ -39,8 +56,6 @@
 			buffer += event.key;
 		}
 	}
-
-	defineSocket(socket);
 </script>
 
 <svelte:window on:keydown={handleInput} />

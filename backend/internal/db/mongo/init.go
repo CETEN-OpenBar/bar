@@ -25,6 +25,13 @@ var (
 	// Add indexes to index "id" which is text & unique
 	indexes = map[string][]mongo.IndexModel{
 		"transactions": {
+			// Filter the selected counter tab before scanning newest transactions.
+			mongo.IndexModel{
+				Keys: bson.D{
+					{Key: "state", Value: 1},
+					{Key: "created_at", Value: -1},
+				},
+			},
 			// index descending by created_at
 			mongo.IndexModel{
 				Keys: bson.M{

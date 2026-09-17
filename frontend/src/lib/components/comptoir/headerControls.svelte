@@ -5,16 +5,9 @@
 	export let activeTab: 'transactions' | 'resume' | 'refills' = 'transactions';
 	export let showSearch: boolean = true;
 
-	let searchNameValue: string;
-
-	searchName.subscribe((value) => {
-		searchNameValue = value;
-	});
-
 	function handleSearchInput(event: Event) {
 		const target = event.currentTarget as HTMLInputElement;
-		searchNameValue = target.value.toLowerCase();
-		searchName.set(searchNameValue);
+		searchName.set(target.value.toLowerCase());
 	}
 </script>
 
@@ -50,7 +43,7 @@
 			<input
 				class="search-input"
 				placeholder="Rechercher une personne"
-				bind:value={searchNameValue}
+				value={$searchName}
 				on:input={handleSearchInput}
 			/>
 		{/if}

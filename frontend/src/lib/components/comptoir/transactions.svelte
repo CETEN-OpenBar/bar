@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import {
 		TransactionItemState,
 		type Transaction,
@@ -9,7 +8,7 @@
 	import { api } from '$lib/config/config';
 	import { transactionsApi } from '$lib/requests/requests';
 	import { formatPrice } from '$lib/utils';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import TransactionPopup from './transactionPopup.svelte';
 	import { dragscroll } from '@svelte-put/dragscroll';
 	import { searchName } from '$lib/store/store';
@@ -22,21 +21,14 @@
 		target.nextElementSibling?.classList.remove('hidden');
 	}
 
-	let searchNameValue: string;
-	let searchDebounceTimer: ReturnType<typeof setTimeout>;
-
-	searchName.subscribe((value) => {
-		searchNameValue = value;
-		clearTimeout(searchDebounceTimer);
-		searchDebounceTimer = setTimeout(() => {
-			page = 1;
-			reloadTransactions(value);
-		}, 150);
-	});
+	let searchNameValue = '';
+	let searchDebounceTimer: ReturnType<typeof setTimeout> | undefined;
+	let refreshTimer: ReturnType<typeof setTimeout> | undefined;
+	let requestController: AbortController | undefined;
+	let mounted = false;
 
 	let transactions: Array<Transaction> = [];
 	let maxItemPerTransaction: number = 6;
-	let interval: number;
 	let transactionAmount: number = 4;
 
 	let page: number = 1;
@@ -55,15 +47,29 @@
 	};
 
 	onMount(() => {
-		reloadTransactions();
-		interval = setInterval(() => {
-			reloadTransactions();
-		}, 2000);
+		mounted = true;
+		const listenersController = new AbortController();
+		let initialSearch = true;
+		const unsubscribe = searchName.subscribe((value) => {
+			searchNameValue = value;
+			page = 1;
+			clearTimeout(searchDebounceTimer);
+			clearTimeout(refreshTimer);
+			// Invalidate the previous search as soon as typing starts.
+			requestController?.abort();
+			if (initialSearch) {
+				initialSearch = false;
+				reloadTransactions();
+			} else {
+				searchDebounceTimer = setTimeout(reloadTransactions, 150);
+			}
+		});
 
 		window.addEventListener('keydown', handleKeyDown);
 
 		const transactionsList = document.querySelector('.transactions-list');
 		if (transactionsList) {
+			const listenerOptions = { signal: listenersController.signal };
 			let touchStartX = 0;
 			let touchEndX = 0;
 			let isTouch = false;
@@ -75,7 +81,7 @@
 					touchStartX = touchEvent.changedTouches[0].screenX;
 					isTouch = true;
 				},
-				{ passive: true }
+				{ ...listenerOptions, passive: true }
 			);
 
 			transactionsList.addEventListener(
@@ -88,24 +94,32 @@
 						isTouch = false;
 					}
 				},
-				{ passive: true }
+				{ ...listenerOptions, passive: true }
 			);
 
-			transactionsList.addEventListener('mousedown', (e: Event) => {
-				const mouseEvent = e as MouseEvent;
-				if (!isTouch) {
-					touchStartX = mouseEvent.screenX;
-					isTouch = false;
-				}
-			});
+			transactionsList.addEventListener(
+				'mousedown',
+				(e: Event) => {
+					const mouseEvent = e as MouseEvent;
+					if (!isTouch) {
+						touchStartX = mouseEvent.screenX;
+						isTouch = false;
+					}
+				},
+				listenerOptions
+			);
 
-			transactionsList.addEventListener('mouseup', (e: Event) => {
-				const mouseEvent = e as MouseEvent;
-				if (!isTouch) {
-					touchEndX = mouseEvent.screenX;
-					handleMouseSwipe();
-				}
-			});
+			transactionsList.addEventListener(
+				'mouseup',
+				(e: Event) => {
+					const mouseEvent = e as MouseEvent;
+					if (!isTouch) {
+						touchEndX = mouseEvent.screenX;
+						handleMouseSwipe();
+					}
+				},
+				listenerOptions
+			);
 
 			const handleSwipe = () => {
 				const swipeThreshold = 50;
@@ -133,14 +147,16 @@
 				}
 			};
 		}
-	});
 
-	onDestroy(() => {
-		clearTimeout(searchDebounceTimer);
-		clearInterval(interval);
-		if (typeof window !== 'undefined') {
+		return () => {
+			mounted = false;
+			unsubscribe();
+			clearTimeout(searchDebounceTimer);
+			clearTimeout(refreshTimer);
+			requestController?.abort();
+			listenersController.abort();
 			window.removeEventListener('keydown', handleKeyDown);
-		}
+		};
 	});
 
 	let st: TransactionState | undefined = 'started';
@@ -149,51 +165,62 @@
 
 	type TransactionItemWithFakeAmount = TransactionItem & { item_fake_amount?: number };
 
-	function reloadTransactions(searchValue?: string | Event) {
-		const isEvent = searchValue instanceof Event;
-		const searchToUse = isEvent ? searchNameValue : (searchValue as string | undefined) ?? searchNameValue;
-		transactionsApi()
-			.getTransactions(
+	async function reloadTransactions() {
+		if (!mounted) return;
+		clearTimeout(searchDebounceTimer);
+		clearTimeout(refreshTimer);
+		requestController?.abort();
+		const controller = new AbortController();
+		requestController = controller;
+		try {
+			const res = await transactionsApi().getTransactions(
 				page,
 				transactionAmount,
 				st,
 				false,
 				!showRemoteTransactions,
-				searchToUse,
+				searchNameValue,
 				undefined,
 				undefined,
 				undefined,
-				{ withCredentials: true }
-			)
-			.then((res) => {
-				page = res.data.page ?? 1;
-				maxPage = res.data.max_page ?? 1;
-				if (!(res.data.transactions instanceof Array)) return;
-				let countedItems = 0;
-				let newTransactions = [];
-				for (let transaction of res.data.transactions) {
-					let items: Array<TransactionItemWithFakeAmount> = [];
+				{ withCredentials: true, signal: controller.signal }
+			);
+			if (controller.signal.aborted || !mounted) return;
+			page = res.data.page ?? 1;
+			maxPage = res.data.max_page ?? 1;
+			if (!(res.data.transactions instanceof Array)) return;
+			let countedItems = 0;
+			let newTransactions = [];
+			for (let transaction of res.data.transactions) {
+				let items: Array<TransactionItemWithFakeAmount> = [];
 
-					for (let r of transaction.items ?? []) {
-						let item = r as TransactionItemWithFakeAmount;
-						if (countedItems >= maxItemPerTransaction) break;
-						if (countedItems + item.item_amount > maxItemPerTransaction) {
-							item.item_fake_amount = maxItemPerTransaction - countedItems;
-						}
-						items.push(item);
+				for (let r of transaction.items ?? []) {
+					let item = r as TransactionItemWithFakeAmount;
+					if (countedItems >= maxItemPerTransaction) break;
+					if (countedItems + item.item_amount > maxItemPerTransaction) {
+						item.item_fake_amount = maxItemPerTransaction - countedItems;
 					}
-					transaction.items = items;
-					newTransactions.push(transaction);
+					items.push(item);
 				}
-				transactions = newTransactions;
-			});
+				transaction.items = items;
+				newTransactions.push(transaction);
+			}
+			transactions = newTransactions;
+		} catch (error) {
+			if (!controller.signal.aborted) {
+				console.error('Impossible de charger les transactions', error);
+			}
+		} finally {
+			// Wait for completion before polling again, even on a slow connection.
+			if (mounted && !controller.signal.aborted) {
+				refreshTimer = setTimeout(reloadTransactions, 2000);
+			}
+		}
 	}
 
 	let displayTransaction: Transaction | null = null;
 
-	function handleSearchInput(event: Event) {
-		const target = event.currentTarget as HTMLInputElement;
-		searchNameValue = target.value.toLowerCase();
+	function resetFilters() {
 		page = 1;
 		reloadTransactions();
 	}
@@ -259,7 +286,7 @@
 			<div class="filters-section" slot="filters">
 				<div>
 					Filtre :
-					<select class="filter-select" bind:value={st} on:change={reloadTransactions}>
+					<select class="filter-select" bind:value={st} on:change={resetFilters}>
 						<option value={undefined}>Tout</option>
 						<option value="started">En cours</option>
 						<option value="finished">Terminées</option>
@@ -273,7 +300,7 @@
 							type="checkbox"
 							class="checkbox-input"
 							bind:checked={showRemoteTransactions}
-							on:change={reloadTransactions}
+							on:change={resetFilters}
 						/>
 					</label>
 				</div>
@@ -806,10 +833,10 @@
 	}
 
 	@media (max-width: 480px) {
-        .view-tabs button {
-            font-size: 9px;
-            padding: 3px 8px;
-        }
+		.view-tabs button {
+			font-size: 9px;
+			padding: 3px 8px;
+		}
 
 		.items-grid {
 			grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
@@ -857,7 +884,5 @@
 		.status-led {
 			top: 53%;
 		}
-
-
 	}
 </style>
