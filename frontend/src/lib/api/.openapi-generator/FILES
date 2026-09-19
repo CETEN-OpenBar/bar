@@ -64,7 +64,6 @@ docs/NewTransaction.md
 docs/NewTransactionItem.md
 docs/PatchAccountPasswordRequest.md
 docs/PatchAccountPinRequest.md
-docs/PostBorneAuthQRRequest.md
 docs/Refill.md
 docs/RefillState.md
 docs/RefillType.md
