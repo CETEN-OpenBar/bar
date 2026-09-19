@@ -1,6 +1,14 @@
+<script context="module" lang="ts">
+	export type TransactionAction = 'finish' | 'cancel' | 'restart' | 'save';
+	export type TransactionFeedback = {
+		kind: 'success' | 'error';
+		action: TransactionAction;
+		message: string;
+	};
+</script>
+
 <script lang="ts">
 	import {
-		ItemState,
 		TransactionItemState,
 		type Transaction,
 		type MenuItem,
@@ -10,46 +18,20 @@
 	import { api } from '$lib/config/config';
 	import { transactionsApi } from '$lib/requests/requests';
 	import { formatPrice } from '$lib/utils';
-	import Error from '../error.svelte';
-	import Success from '../success.svelte';
-	import Transactions from './transactions.svelte';
-	import { createEventDispatcher, onDestroy } from 'svelte';
-	import { searchName } from '$lib/store/store';
+	import { onDestroy } from 'svelte';
 
 	export let transaction: Transaction;
 	export let close: () => void;
+	export let notify: (feedback: TransactionFeedback) => void;
 
+	const customerName = transaction.account_nick_name?.trim() || transaction.account_name;
 	let newTransaction: Transaction = structuredClone(transaction);
-	let success = '';
-	let error = '';
+	let pending = false;
 	let destroyed = false;
-	let successTimer: ReturnType<typeof setTimeout> | undefined;
-	let errorTimer: ReturnType<typeof setTimeout> | undefined;
 
 	onDestroy(() => {
 		destroyed = true;
-		clearTimeout(successTimer);
-		clearTimeout(errorTimer);
 	});
-
-	function showSuccess(message: string, afterDelay?: () => void) {
-		if (destroyed) return;
-		clearTimeout(successTimer);
-		success = message;
-		successTimer = setTimeout(() => {
-			success = '';
-			afterDelay?.();
-		}, 1500);
-	}
-
-	function showError() {
-		if (destroyed) return;
-		clearTimeout(errorTimer);
-		error = "Une erreur s'est produite";
-		errorTimer = setTimeout(() => {
-			error = '';
-		}, 1500);
-	}
 
 	type MenuPopup = {
 		items: MenuItem[] | undefined;
@@ -58,135 +40,91 @@
 	};
 	let menuPopup: MenuPopup | undefined;
 
-	const eventDispatcher = createEventDispatcher();
+	const successMessages: Record<TransactionAction, string> = {
+		finish: `Transaction de ${customerName} validée.`,
+		cancel: `Transaction de ${customerName} annulée.`,
+		restart: `Transaction de ${customerName} remise en attente.`,
+		save: `Modifications de la transaction de ${customerName} enregistrées.`
+	};
+	const errorMessages: Record<TransactionAction, string> = {
+		finish: `Impossible de valider la transaction de ${customerName}. Réessaie.`,
+		cancel: `Impossible d’annuler la transaction de ${customerName}. Réessaie.`,
+		restart: `Impossible de remettre en attente la transaction de ${customerName}. Réessaie.`,
+		save: `Impossible d’enregistrer la transaction de ${customerName}. Réessaie.`
+	};
 
-	async function cancelTransaction() {
-		let res = await transactionsApi().patchTransactionId(
-			newTransaction.account_id,
-			newTransaction.id,
-			'canceled',
-			{
-				withCredentials: true
+	async function performAction(action: TransactionAction) {
+		if (pending || destroyed) return;
+		pending = true;
+		// Keep the action tied to its original transaction, even if another modal opens.
+		const draft = structuredClone(newTransaction);
+		const originalItems = transaction.items;
+
+		try {
+			if (action === 'save' || action === 'finish') {
+				for (const [index, item] of draft.items.entries()) {
+					const state = item.state === originalItems[index].state ? undefined : item.state;
+					const res = await transactionsApi().patchTransactionItemId(
+						draft.account_id,
+						draft.id,
+						item.item_id,
+						state,
+						item.item_amount,
+						item.item_already_done,
+						{ withCredentials: true }
+					);
+					if (res.status !== 200) throw new Error('Transaction item update failed');
+					// A retry must not submit an item state that the server already accepted.
+					if (!destroyed) {
+						transaction = {
+							...transaction,
+							items: transaction.items.map((original, i) =>
+								i === index ? structuredClone(item) : original
+							)
+						};
+					}
+				}
 			}
-		);
 
-		if (res.status != 200) {
-			showError();
+			if (action !== 'save') {
+				const state = action === 'finish' ? 'finished' : action === 'cancel' ? 'canceled' : 'started';
+				const res = await transactionsApi().patchTransactionId(
+					draft.account_id,
+					draft.id,
+					state,
+					{ withCredentials: true }
+				);
+				if (res.status !== 200) throw new Error('Transaction update failed');
+			}
+		} catch {
+			notify({ kind: 'error', action, message: errorMessages[action] });
+			pending = false;
 			return;
 		}
 
-		transaction = newTransaction;
-		showSuccess('Commande annulée', close);
-	}
-
-	async function putBackTransaction() {
-		let res = await transactionsApi().patchTransactionId(
-			newTransaction.account_id,
-			newTransaction.id,
-			'started',
-			{
-				withCredentials: true
-			}
-		);
-
-		if (res.status != 200) {
-			showError();
-			return;
-		}
-
-		transaction = newTransaction;
-		showSuccess('Commande remise en attente', close);
-	}
-
-	async function finishTransaction() {
-		for (let i = 0; i < newTransaction.items.length; i++) {
-			let item = newTransaction.items[i];
-
-			// @ts-ignore
-			if (item.state == transaction.items[i].state) item.state = undefined;
-
-			let res = await transactionsApi().patchTransactionItemId(
-				newTransaction.account_id,
-				newTransaction.id,
-				item.item_id,
-				item.state,
-				item.item_amount,
-				item.item_already_done,
-				{
+		if (action === 'save' && !destroyed) {
+			try {
+				const res = await transactionsApi().getTransactionId(draft.account_id, draft.id, {
 					withCredentials: true
+				});
+				if (res.status !== 200) throw new Error('Transaction reload failed');
+				if (!destroyed) {
+					transaction = res.data;
+					newTransaction = structuredClone(transaction);
 				}
-			);
-
-			if (res.status != 200) {
-				showError();
+			} catch {
+				notify({
+					kind: 'error',
+					action,
+					message: `Transaction de ${customerName} enregistrée, mais impossible de la recharger.`
+				});
+				pending = false;
 				return;
 			}
 		}
 
-		if (!error) {
-			let res = await transactionsApi().patchTransactionId(
-				newTransaction.account_id,
-				newTransaction.id,
-				'finished',
-				{
-					withCredentials: true
-				}
-			);
-
-			if (res.status != 200) {
-				showError();
-				return;
-			}
-
-			transaction = newTransaction;
-			showSuccess('Commande terminée', () => {
-				searchName.set('');
-				close();
-			});
-		}
-	}
-
-	async function saveTransaction() {
-		for (let i = 0; i < newTransaction.items.length; i++) {
-			let item = newTransaction.items[i];
-
-			// @ts-ignore
-			if (item.state == transaction.items[i].state) item.state = undefined;
-
-			let res = await transactionsApi().patchTransactionItemId(
-				newTransaction.account_id,
-				newTransaction.id,
-				item.item_id,
-				item.state,
-				item.item_amount,
-				item.item_already_done,
-				{
-					withCredentials: true
-				}
-			);
-
-			if (res.status != 200) {
-				showError();
-				return;
-			}
-		}
-
-		if (!error) {
-			transaction = newTransaction;
-			showSuccess('Changements enregistrée');
-			reloadTransaction();
-		}
-	}
-
-	function reloadTransaction() {
-		if (destroyed) return;
-		transactionsApi()
-			.getTransactionId(transaction.account_id, transaction.id, { withCredentials: true })
-			.then((res) => {
-				if (destroyed) return;
-				transaction = res.data;
-				newTransaction = structuredClone(transaction);
-			});
+		notify({ kind: 'success', action, message: successMessages[action] });
+		pending = false;
 	}
 
 	function formatTimestampToReadableDate(timestamp: number): string {
@@ -211,7 +149,7 @@
 />
 
 <div class="fixed inset-0 z-50 flex justify-center items-center pointer-events-none">
-	<div class="popup-container pointer-events-auto">
+	<div class="popup-container pointer-events-auto" aria-busy={pending}>
 		<div class="popup-header">
 			<div class="header-left">
 				{#if transaction.account_google_picture}
@@ -322,7 +260,7 @@
 								<div class="action-buttons">
 									{#if item.item_amount > 1 && item.item_already_done == 0}
 										<button
-											class="action-btn minus"
+											class="action-btn minus" disabled={pending}
 											on:click={() => {
 												if (item.item_amount > 1) item.item_amount--;
 											}}
@@ -331,7 +269,7 @@
 										</button>
 									{/if}
 									<button
-										class="action-btn cancel"
+										class="action-btn cancel" disabled={pending}
 										on:click={() => {
 											item.state = TransactionItemState.TransactionItemCanceled;
 										}}
@@ -339,7 +277,7 @@
 										<iconify-icon icon="mdi:close-circle" />
 									</button>
 									<button
-										class="action-btn complete"
+										class="action-btn complete" disabled={pending}
 										on:click={() => {
 											if (item.item_already_done < item.item_amount) item.item_already_done += 1;
 											if (item.item_already_done == item.item_amount)
@@ -350,7 +288,7 @@
 									</button>
 									{#if item.item_amount < transaction.items[i].item_amount}
 										<button
-											class="action-btn add"
+											class="action-btn add" disabled={pending}
 											on:click={() => {
 												if (item.item_amount < transaction.items[i].item_amount) item.item_amount++;
 											}}
@@ -448,16 +386,16 @@
 			<div class="action-column primary-actions">
 				<button
 					class="action-main-btn save"
-					disabled={transaction.state !== 'started'}
-					on:click={saveTransaction}
+					disabled={pending || transaction.state !== 'started'}
+					on:click={() => performAction('save')}
 				>
 					<iconify-icon icon="mdi:content-save" />
 					<span>Enregistrer</span>
 				</button>
 				<button
 					class="action-main-btn finish"
-					disabled={transaction.state !== 'started'}
-					on:click={finishTransaction}
+					disabled={pending || transaction.state !== 'started'}
+					on:click={() => performAction('finish')}
 				>
 					<iconify-icon icon="mdi:check-all" />
 					<span>Terminer (paiement)</span>
@@ -466,16 +404,16 @@
 			<div class="action-column secondary-actions">
 				<button
 					class="action-main-btn undo"
-					disabled={transaction.state === 'started'}
-					on:click={putBackTransaction}
+					disabled={pending || transaction.state === 'started'}
+					on:click={() => performAction('restart')}
 				>
 					<iconify-icon icon="mdi:arrow-u-left-top" />
 					<span>Remettre en attente</span>
 				</button>
 				<button
 					class="action-main-btn cancel"
-					disabled={transaction.state !== 'started'}
-					on:click={cancelTransaction}
+					disabled={pending || transaction.state !== 'started'}
+					on:click={() => performAction('cancel')}
 				>
 					<iconify-icon icon="mdi:cash-refund" />
 					<span>Annuler (remboursement)</span>
@@ -485,15 +423,6 @@
 	</div>
 </div>
 
-<div class="fixed inset-0 z-50 flex justify-center items-center pointer-events-none">
-	{#if success != ''}
-		<Success message={success} />
-	{/if}
-
-	{#if error != ''}
-		<Error {error} />
-	{/if}
-</div>
 
 <style>
 	.fixed {

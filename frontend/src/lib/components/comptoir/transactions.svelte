@@ -9,7 +9,8 @@
 	import { transactionsApi } from '$lib/requests/requests';
 	import { formatPrice } from '$lib/utils';
 	import { onMount } from 'svelte';
-	import TransactionPopup from './transactionPopup.svelte';
+	import TransactionPopup, { type TransactionFeedback } from './transactionPopup.svelte';
+	import TransactionNotifications from './transactionNotifications.svelte';
 	import { dragscroll } from '@svelte-put/dragscroll';
 	import { searchName } from '$lib/store/store';
 	import ComptoirHeaderControls from './headerControls.svelte';
@@ -218,7 +219,36 @@
 		}
 	}
 
-	let displayTransaction: Transaction | null = null;
+	type TransactionSession = {
+		transaction: Transaction;
+		close: () => void;
+		notify: (feedback: TransactionFeedback) => void;
+	};
+	let displayTransaction: TransactionSession | null = null;
+	let notifications: TransactionNotifications;
+
+	function openTransaction(transaction: Transaction) {
+		const session: TransactionSession = {
+			transaction,
+			close: () => {
+				if (displayTransaction !== session) return;
+				displayTransaction = null;
+				reloadTransactions();
+			},
+			notify: (feedback) => {
+				if (!mounted) return;
+				notifications.show(feedback.message, feedback.kind);
+				if (feedback.kind !== 'success') return;
+				if (feedback.action !== 'save' && displayTransaction === session) {
+					if (feedback.action === 'finish') searchName.set('');
+					session.close();
+				} else {
+					reloadTransactions();
+				}
+			}
+		};
+		displayTransaction = session;
+	}
 
 	function resetFilters() {
 		page = 1;
@@ -271,14 +301,16 @@
 </script>
 
 {#if displayTransaction}
-	<TransactionPopup
-		transaction={displayTransaction}
-		close={() => {
-			reloadTransactions();
-			displayTransaction = null;
-		}}
-	/>
+	{#key displayTransaction}
+		<TransactionPopup
+			transaction={displayTransaction.transaction}
+			close={displayTransaction.close}
+			notify={displayTransaction.notify}
+		/>
+	{/key}
 {/if}
+
+<TransactionNotifications bind:this={notifications} />
 
 <div class="transactions-wrapper">
 	<div class="transactions-content">
@@ -311,7 +343,7 @@
 			{#each transactions as transaction}
 				<button
 					class="transaction-card {transaction.state}"
-					on:click={() => (displayTransaction = transaction)}
+					on:click={() => openTransaction(transaction)}
 				>
 					<div class="transaction-header">
 						{#if transaction.is_remote}
