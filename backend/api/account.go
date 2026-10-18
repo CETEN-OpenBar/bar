@@ -31,7 +31,7 @@ func (s *Server) GetAccount(c echo.Context) error {
 
 // (GET /accounts)
 func (s *Server) GetAccounts(c echo.Context, params autogen.GetAccountsParams) error {
-	_, err := MustGetUser(c)
+	_, err := MustGetAdmin(c)
 	if err != nil {
 		return nil
 	}
