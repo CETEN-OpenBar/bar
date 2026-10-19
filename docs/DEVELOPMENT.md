@@ -15,7 +15,7 @@ Works on Linux, macOS and WSL. You need [Docker](https://docs.docker.com/get-doc
 ```sh
 task setup    # first time: checks your tools, creates backend/.env and frontend/static/config.json, installs dependencies
 task dev      # MongoDB + backend + frontend in one terminal, Ctrl-C to stop
-task seed     # optional: sample products and test accounts
+task seed     # sample products and test accounts, needed to sign in on /client
 ```
 
 `task setup` never overwrites a `.env` or `config.json` you already have, so you can run it again at any time.
@@ -34,7 +34,7 @@ MongoDB runs as a replica set, because the backend uses multi-document transacti
 
 ### Backend: `backend/.env`
 
-`task setup` creates it from [`.env.example`](../backend/.env.example). Those values work for local development as they are: sign-in goes through the dev login server, and HelloAsso stays off until you fill it in.
+`task setup` creates it from [`.env.example`](../backend/.env.example). Those values work for local development as they are: sign-in on `/client` goes through the dev login server, and HelloAsso stays off until you fill it in.
 
 | Variable | Default | Notes |
 |---|---|---|

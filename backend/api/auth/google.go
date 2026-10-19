@@ -4,6 +4,9 @@ import (
 	"bar/internal/config"
 	"context"
 	"encoding/json"
+	"fmt"
+	"net/http"
+
 	"golang.org/x/oauth2"
 )
 
@@ -67,6 +70,9 @@ func (p *GoogleOAuthProvider) FetchAccountData(requestContext context.Context, o
 		return nil, err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("Google userinfo: %s", resp.Status)
+	}
 
 	usr := &googleUser{}
 	err = json.NewDecoder(resp.Body).Decode(usr)

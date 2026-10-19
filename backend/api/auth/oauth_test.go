@@ -115,3 +115,39 @@ func TestGoogleOAuthLinkUnchanged(t *testing.T) {
 		}
 	}
 }
+
+type dataProvider struct{ data OAuthAccountData }
+
+func (p dataProvider) GetOAuthLink(state string) string { return "http://idp/authorize" }
+
+func (p dataProvider) FetchAccountData(context.Context, string) (*OAuthAccountData, error) {
+	d := p.data
+	return &d, nil
+}
+
+type recordCallback struct{ called *bool }
+
+func (r recordCallback) Callback(*OAuthAccountData, echo.Context) error {
+	*r.called = true
+	return nil
+}
+
+// Accounts are looked up by ID, then by email, and one account may have an
+// empty email, so neither may be empty.
+func TestExecuteOAuthCallbackRejectsMissingIdentity(t *testing.T) {
+	for name, data := range map[string]OAuthAccountData{
+		"no id":    {EmailAdress: "alice@telecomnancy.net"},
+		"no email": {Id: "alice-sub"},
+	} {
+		t.Run(name, func(t *testing.T) {
+			useProvider(t, dataProvider{data}, nil)
+			called := false
+			c, _ := newEchoContext()
+			connectionCache.SetDefault("st", recordCallback{&called})
+
+			if err := ExecuteOAuthCallback(c, "st", "code"); err == nil || called {
+				t.Errorf("ExecuteOAuthCallback() = %v, callback called: %v", err, called)
+			}
+		})
+	}
+}

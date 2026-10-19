@@ -38,6 +38,7 @@ type OAuthCallbackFunction interface {
 
 var connectionCache = cache.New(5*time.Minute, 10*time.Minute)
 
+var MissingIdentityError = errors.New("OAuth provider sent no account ID or email")
 var ProviderUnavailableError = errors.New("OAuth provider unavailable")
 
 // providerFor picks the OAuth provider named by BAR_OAUTH_PROVIDER.
@@ -114,6 +115,11 @@ func ExecuteOAuthCallback(ctx echo.Context, state string, code string) error {
 	account, err := oauthProvider.FetchAccountData(ctx.Request().Context(), code)
 	if err != nil {
 		return err
+	}
+	// Accounts are found by this ID, then by email, and one account may
+	// have an empty email: never look either up empty
+	if account.Id == "" || account.EmailAdress == "" {
+		return MissingIdentityError
 	}
 	return callbackFunction.Callback(account, ctx)
 }
