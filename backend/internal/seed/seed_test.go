@@ -173,3 +173,23 @@ func TestRunSavesPicturesWhereTheAPIReadsThem(t *testing.T) {
 		}
 	}
 }
+
+// The dev login server answers with <username>@telecomnancy.net, and OAuth
+// logins find accounts by email.
+func TestRunAccountsMatchDevLogin(t *testing.T) {
+	stubPictures(t)
+	b := newFakeBackend()
+	if _, err := Run(context.Background(), b); err != nil {
+		t.Fatal(err)
+	}
+
+	for card, want := range map[string]string{
+		"2": "membre@telecomnancy.net",
+		"3": "etudiant@telecomnancy.net",
+		"4": "admin@telecomnancy.net",
+	} {
+		if got := b.accounts[card].EmailAddress; got != want {
+			t.Errorf("card %s email = %q, want %q", card, got, want)
+		}
+	}
+}

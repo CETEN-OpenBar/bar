@@ -57,15 +57,16 @@ var categories = []sampleCategory{
 
 type sampleAccount struct {
 	card      string
+	login     string // username on the dev login page
 	firstName string
 	role      autogen.AccountRole
 	balance   int64 // cents
 }
 
 var accounts = []sampleAccount{
-	{"2", "Membre", autogen.AccountMember, 0},
-	{"3", "Étudiant", autogen.AccountStudent, 2000},
-	{"4", "Admin", autogen.AccountAdmin, 0},
+	{"2", "membre", "Membre", autogen.AccountMember, 0},
+	{"3", "etudiant", "Étudiant", autogen.AccountStudent, 2000},
+	{"4", "admin", "Admin", autogen.AccountAdmin, 0},
 }
 
 // IsLocalURI reports whether every host in a mongodb:// URI is this machine.
@@ -170,8 +171,9 @@ func Run(ctx context.Context, b db.DBackend) (int, error) {
 		acc := &models.Account{Account: autogen.Account{
 			Id:     uuid.NewSHA1(namespace, []byte("account:"+sa.card)),
 			CardId: autogen.OptionalString(sa.card),
-			// email_address has a unique index, empty strings included
-			EmailAddress: "carte" + sa.card + "@bar.local",
+			// What the dev login server sends back, so OAuth finds the account.
+			// email_address is also unique, empty strings included.
+			EmailAddress: sa.login + "@telecomnancy.net",
 			FirstName:    sa.firstName,
 			LastName:     "Test",
 			Role:         sa.role,

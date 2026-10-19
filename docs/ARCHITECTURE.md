@@ -62,4 +62,4 @@ The browser loads `/config.json` at runtime to find the backend, so one build wo
 | `/comptoir` | Counter staff: order queue, refills, end of day |
 | `/admin` | Admins: accounts, products, categories, carousel, trash |
 | `/panel` | Admins: menus, restocks, treasury, stock checks and other tools |
-| `/auth` | Google sign-in |
+| `/auth` | Sign-in (Google, or the dev login server locally) |
