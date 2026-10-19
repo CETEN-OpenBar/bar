@@ -17,7 +17,7 @@ layout {
 
 	tab name="backend" {
 		pane cwd="backend" command="go" {
-			args "run" "cmd/bar/main.go"
+			args "tool" "air"
 		}
 	}
 
