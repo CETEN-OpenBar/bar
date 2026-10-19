@@ -1,6 +1,7 @@
 package api
 
 import (
+	"bar/api/auth"
 	"bar/autogen"
 	"bar/autogen/helloasso"
 	"bar/internal/config"
@@ -63,6 +64,8 @@ func NewServer(db db.DBackend) *Server {
 		db,
 		nil,
 	}
+
+	auth.CheckProvider()
 
 	if !helloAssoConfigured(config.GetConfig()) {
 		logrus.Info("HelloAsso not configured, online top-ups disabled")
