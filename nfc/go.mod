@@ -1,6 +1,6 @@
 module nfc
 
-go 1.21.3
+go 1.27
 
 require (
 	github.com/caarlos0/env/v9 v9.0.0

@@ -18,7 +18,7 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
-        goversion: "https://dl.google.com/go/go1.21.2.linux-amd64.tar.gz"
+        goversion: "https://dl.google.com/go/go1.27.2.linux-amd64.tar.gz"
         project_path: "./nfc"
         binary_name: "nfc"
         extra_files: LICENSE

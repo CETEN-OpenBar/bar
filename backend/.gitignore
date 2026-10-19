@@ -1,3 +1,4 @@
 # Production related 
 .env
 storage
+tmp/
