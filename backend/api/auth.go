@@ -47,7 +47,7 @@ func (s *Server) ConnectGoogle(c echo.Context, p autogen.ConnectGoogleParams) er
 	case "client/commande":
 		rel = conf.ApiConfig.FrontendBasePath + "/client/commande"
 	}
-	return auth.InitOAuth(c, connectionOAuthCallback{s, rel})
+	return initOAuth(c, connectionOAuthCallback{s, rel})
 }
 
 // POST /account/qr
@@ -141,7 +141,7 @@ func (s *Server) ConnectAccount(c echo.Context, qrNonce string) error {
 	qrCache.Delete(accountId)
 	BroadcastToRoom(accountId, []byte("scanned"))
 
-	return auth.InitOAuth(c, linkingOAuthCallback{s, accountId})
+	return initOAuth(c, linkingOAuthCallback{s, accountId})
 }
 
 func ErrorRedirect(c echo.Context, err string) error {
@@ -156,14 +156,21 @@ func SuccessRedirect(c echo.Context) error {
 
 // (GET /auth/google/callback)
 func (s *Server) Callback(ctx echo.Context, params autogen.CallbackParams) error {
-	err := auth.ExecuteOAuthCallback(ctx, params.State, params.Code)
-	// TODO Do something on error
-	/*
-		if errors.Is(err, auth.InvalidOAuthStateError) {
-		}
-		if errors.Is(err, auth.BrokenOAuthCallbackError) {
-		}*/
-	return err
+	if err := auth.ExecuteOAuthCallback(ctx, params.State, params.Code); err != nil {
+		logrus.Error(err)
+		return ErrorRedirect(ctx, "#003")
+	}
+	return nil
+}
+
+// initOAuth sends the user to the OAuth provider, or to the error page if it
+// can't be reached or isn't configured.
+func initOAuth(c echo.Context, callback auth.OAuthCallbackFunction) error {
+	if err := auth.InitOAuth(c, callback); err != nil {
+		logrus.Error(err)
+		return ErrorRedirect(c, "#022")
+	}
+	return nil
 }
 
 // - Get Token, Generate a Client

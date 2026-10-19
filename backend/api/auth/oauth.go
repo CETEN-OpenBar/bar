@@ -32,13 +32,25 @@ type OAuthCallbackFunction interface {
 
 var connectionCache = cache.New(5*time.Minute, 10*time.Minute)
 
+var ProviderUnavailableError = errors.New("OAuth provider unavailable")
+
+// activeProvider is replaced in tests.
+var activeProvider = func() (OAuthProvider, error) {
+	return &GoogleOAuthProvider{}, nil
+}
+
 func InitOAuth(ctx echo.Context, callbackFunction OAuthCallbackFunction) error {
 	state := uuid.NewString()
 	// Note that it could lead to excessive memory usage if someone request it too many times
-	connectionCache.SetDefault(state, callbackFunction)
-	// TODO Use appropriate OAuth provider
-	oauthProvider := GoogleOAuthProvider{}
+	oauthProvider, err := activeProvider()
+	if err != nil {
+		return err
+	}
 	url := oauthProvider.GetOAuthLink(state)
+	if url == "" {
+		return ProviderUnavailableError
+	}
+	connectionCache.SetDefault(state, callbackFunction)
 	return ctx.Redirect(http.StatusFound, url)
 }
 
@@ -54,8 +66,10 @@ func ExecuteOAuthCallback(ctx echo.Context, state string, code string) error {
 		// Should not happen. But who knows
 		return BrokenOAuthCallbackError
 	}
-	// TODO Use appropriate OAuth provider
-	oauthProvider := GoogleOAuthProvider{}
+	oauthProvider, err := activeProvider()
+	if err != nil {
+		return err
+	}
 	account, err := oauthProvider.FetchAccountData(ctx.Request().Context(), code)
 	if err != nil {
 		return err
