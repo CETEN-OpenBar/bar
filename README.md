@@ -1,115 +1,73 @@
-<p align="center">
-  <p align="center">
-    <a href="https://github.com/CETEN-OpenBar/bar/releases/latest"><img alt="Release" src="https://img.shields.io/github/release/CETEN-OpenBar/bar.svg?style=flat-square"></a>
-    <a href="/LICENSE"><img alt="Software License" src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square"></a>
-    <a href="https://codeclimate.com/github/CETEN-OpenBar/bar/test_coverage"><img src="https://api.codeclimate.com/v1/badges/d9fcf617937d6026221f/test_coverage" /></a>
-    <a href="https://codeclimate.com/github/CETEN-OpenBar/bar/maintainability"><img src="https://api.codeclimate.com/v1/badges/d9fcf617937d6026221f/maintainability" /></a>
-    <a href="https://goreportcard.com/report/github.com/CETEN-OpenBar/bar/backend"><img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/CETEN-OpenBar/bar/backend"></a>
-    <a href="https://godoc.org/github.com/CETEN-OpenBar/bar/backend"><img src="https://godoc.org/github.com/CETEN-OpenBar/bar/backend?status.svg" alt="GoDoc"></a>
-  </p>
-</p>
+<div align="center">
+
+<img src="docs/assets/logo.png" alt="Le Bar logo" width="360">
 
 # Le Bar
 
-**Le Bar** is a monorepository containing both the frontend and backend components of a system designed to manage various aspects of a bar's operations. This document provides an overview of the project structure, setup instructions, and available commands.
+Software for running a student bar: self-service kiosk, ordering from your phone, the counter, stock and the cash register.
 
-## Presentation
+[![Release](https://img.shields.io/github/v/release/CETEN-OpenBar/bar?style=flat-square&color=e8a33d)](https://github.com/CETEN-OpenBar/bar/releases/latest)
+[![Build](https://img.shields.io/github/actions/workflow/status/CETEN-OpenBar/bar/build.yml?branch=main&style=flat-square&label=build)](https://github.com/CETEN-OpenBar/bar/actions/workflows/build.yml)
+[![License](https://img.shields.io/github/license/CETEN-OpenBar/bar?style=flat-square&color=brightgreen)](LICENSE)
+[![Last commit](https://img.shields.io/github/last-commit/CETEN-OpenBar/bar?style=flat-square)](https://github.com/CETEN-OpenBar/bar/commits/main)
+[![Contributors](https://img.shields.io/github/contributors/CETEN-OpenBar/bar?style=flat-square)](https://github.com/CETEN-OpenBar/bar/graphs/contributors)
 
-<img src="docs/image.png" alt="presentation" width="50%">
+![Go](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white)
+![Svelte](https://img.shields.io/badge/SvelteKit-FF3E00?style=for-the-badge&logo=svelte&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+![OpenAPI](https://img.shields.io/badge/OpenAPI-6BA539?style=for-the-badge&logo=openapiinitiative&logoColor=white)
 
-## Dependencies
+</div>
 
-Before you begin, ensure you have the following dependencies installed:
+<p align="center">
+  <img src="docs/assets/screenshot.png" alt="Ordering screen on the kiosk" width="80%">
+</p>
 
-- **Go:** The Go programming language is required to build and run the backend. You can download and install Go from the [official website](https://golang.org/).
+## What it does
 
-- **Node.js:** Node.js is required to build and run the frontend. Download and install Node.js from the [official website](https://nodejs.org/).
+- Members tap their NFC card at the kiosk, type their PIN and order. They can also scan a QR code to log in from their phone.
+- From their phone, members can order, check their balance and history, and top up online with HelloAsso.
+- Behind the counter, staff see orders arrive live, add money to accounts and close the day.
+- Admins manage products, menus, stock, restocks, the shopping list, accounts and the cash register.
+- Two small daemons on the bar machine drive the NFC reader, the door and the cash drawer.
 
-- **Go-Task (task):** Task is a simple task runner for Go projects. It's used in this project for automating setup and regeneration tasks. You can install Task by following the instructions on the [GitHub repository](https://github.com/go-task/task).
+## Repository
 
-## Project Structure
+| Folder | What's inside |
+|---|---|
+| [`backend/`](backend/) | Go API (Echo + MongoDB) |
+| [`frontend/`](frontend/) | SvelteKit app: kiosk, mobile, counter and admin |
+| [`nfc/`](nfc/) | NFC card reader daemon |
+| [`porte/`](porte/) | Door, cash drawer and fan daemon |
+| [`bar.openapi.yml`](bar.openapi.yml) | API spec, the source of both the Go server and the TS client |
 
-The repository is organized into the following components:
+## Quick start
 
-- **backend:** This folder contains the backend implementation of the application.
-- **frontend:** This folder encompasses the entire frontend of the application, including terminal, admin panels & public interface.
-- **bar.openapi.yml:** The OpenAPI specification for the project.
-- **docker-compose.yml:** A configuration file for Docker Compose, enabling easy deployment of the MongoDB database and Mongo Express.
-- **backend/Taskfile.yml and frontend/Taskfile.yml:** Contains tasks for setting up dependencies and regenerating API files using OpenAPI specifications.
+```sh
+docker compose up -d                                   # MongoDB + Mongo Express
+cp backend/.env.example backend/.env
+cp frontend/static/config.example.json frontend/static/config.json
+(cd backend && go run ./cmd/bar)                       # API on :8080
+(cd frontend && npm install && npm run dev)            # app on :5173
+```
 
-## Configuration
+Open <http://localhost:5173/borne>, type `1`, press <kbd>Enter</kbd>, then enter the PIN `1234`. That logs you in as the default admin without a card reader.
 
-- **Backend Configuration:**
-  - Copy the `.env.example` file located at `backend/.env.example` to `backend/.env` in the development environment. Adjust the values in `.env` as needed for your setup.
+## Documentation
 
-  - **Google OAuth Configuration:**
-    - To enable Google OAuth, you need to create a Google Cloud project and obtain OAuth client credentials.
-    - Follow these steps to create and configure the Google project:
-      1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
-      2. Create a new project.
-      3. In the project dashboard, navigate to "APIs & Services" > "Credentials."
-      4. Create OAuth client credentials. Choose "Web application" as the application type.
-      5. Set the authorized redirect URIs to match your backend URI (e.g., `http://localhost:8080/auth/google/callback`).
-      6. Once created, copy the Client ID and Client Secret.
-    - Update the following environment variables in `backend/.env` with the obtained credentials:
-      ```
-      BAR_OAUTH_GOOGLE_CLIENT_ID=YOUR_CLIENT_ID
-      BAR_OAUTH_GOOGLE_CLIENT_SECRET=YOUR_CLIENT_SECRET
-      ```
-
-- **Frontend Configuration:**
-  - Copy the `frontend/static/config.dev.json` file to `frontend/static/config.json` in the development environment. Modify the settings in `config.json` to match your preferences.
-
-## Setup
-
-To get the project up and running, follow these steps:
-
-1. **Start Database:**
-   - Run the following command to initiate the MongoDB database and Mongo Express UI:
-     ```
-     docker compose up -d
-     ```
-
-2. **Backend Setup:**
-   - Navigate to the `backend` folder.
-   - Run the setup task to install backend dependencies:
-     ```
-     task setup
-     ```
-
-3. **Frontend Setup:**
-   - Navigate to the `frontend` folder.
-   - Run the setup task to install frontend dependencies:
-     ```
-     task setup
-     ```
-
-4. **Regenerate API Files:**
-   - To regenerate API files based on OpenAPI specifications, run the following in either the `backend` or `frontend` folder, depending on which API files you need to generate (you only need to do so on bar.openapi.yml changes):
-     ```
-     task regen
-     ```
-
-2. **Backend:**
-   - Navigate to the `backend` folder.
-   - Start the backend using the following command:
-     ```
-     go run cmd/bar/main.go
-     ```
-
-3. **Frontend:**
-   - Navigate to the `frontend` folder.
-   - Start the frontend development server with:
-     ```
-     npm run dev
-     ```
-
-Please note that actions requiring the terminal to be "safe" require an "X-Local-Token" for route access. For such cases, ensure the frontend is redeployed on the local machine using the local token.
+- [Development guide](docs/DEVELOPMENT.md): setup, configuration, regenerating the API, checks, releases
+- [Architecture](docs/ARCHITECTURE.md): how the pieces fit together and where things live
 
 ## Contributing
 
-Contributions to the project are welcome. If you encounter any issues or have suggestions, please submit an issue or pull request.
+Open an issue or a pull request. There are [issue templates](https://github.com/CETEN-OpenBar/bar/issues/new/choose) and a PR template.
+
+<a href="https://github.com/CETEN-OpenBar/bar/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=CETEN-OpenBar/bar" alt="Contributors">
+</a>
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+[MIT](LICENSE)
