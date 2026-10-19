@@ -1,5 +1,3 @@
-version: '3.5'
-
 services:
   backend:
     build:
@@ -25,11 +23,12 @@ services:
       - "dev"
       - "frontend"
   mongo:
-    image: mongo
+    # 8.0+ refuses to start on Linux kernel 6.19 and newer (SERVER-121912)
+    image: mongo:7.0
     restart: always
     command: mongod --replSet rs0 --bind_ip_all
     ports:
-    - 27017:27017 # admin
+    - 127.0.0.1:27017:27017
     environment:
       MONGO_INITDB_DATABASE: astralys
     healthcheck:
@@ -40,9 +39,11 @@ services:
     volumes:
       - ./data:/out
   mongo-express:
-    image: mongo-express
+    image: mongo-express:1.0.2
     restart: always
     network_mode: host
     environment:
-      ME_CONFIG_MONGODB_SERVER: 127.0.0.1
-      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_MONGODB_URL: mongodb://127.0.0.1:27017/
+      # Local development only: no login, and only reachable from this machine
+      ME_CONFIG_BASICAUTH: "false"
+      VCAP_APP_HOST: 127.0.0.1
