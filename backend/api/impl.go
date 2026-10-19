@@ -52,11 +52,21 @@ func (s *Server) SetupHelloAsso() error {
 	return nil;
 }
 
+// helloAssoConfigured reports whether HelloAsso credentials were provided
+func helloAssoConfigured(c config.Config) bool {
+	return c.HelloAssoConfig.ClientID != "" && c.HelloAssoConfig.ClientSecret != ""
+}
+
 func NewServer(db db.DBackend) *Server {
 
 	s := &Server{
 		db,
 		nil,
+	}
+
+	if !helloAssoConfigured(config.GetConfig()) {
+		logrus.Info("HelloAsso not configured, online top-ups disabled")
+		return s
 	}
 
 	err := s.SetupHelloAsso();
