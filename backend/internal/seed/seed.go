@@ -87,6 +87,15 @@ func IsLocalURI(uri string) bool {
 	return true
 }
 
+// RedactURI hides the password in a connection URI so it can be printed.
+func RedactURI(uri string) string {
+	u, err := url.Parse(uri)
+	if err != nil || u.Scheme == "" || u.Host == "" {
+		return "<unparseable URI>"
+	}
+	return u.Redacted()
+}
+
 // Run creates the sample categories, items and accounts that don't exist yet
 // and returns how many documents it created.
 func Run(ctx context.Context, b db.DBackend) (int, error) {

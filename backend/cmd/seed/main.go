@@ -17,14 +17,14 @@ func main() {
 	c := config.GetConfig()
 
 	if !seed.IsLocalURI(c.MongoConfig.ConnectionURI) {
-		fmt.Fprintf(os.Stderr, "refusing to seed non-local database: %s\n", c.MongoConfig.ConnectionURI)
+		fmt.Fprintf(os.Stderr, "refusing to seed non-local database: %s\n", seed.RedactURI(c.MongoConfig.ConnectionURI))
 		os.Exit(1)
 	}
 
 	opts := db.NewDatabaseOptions(c.MongoConfig.ConnectionURI, c.MongoConfig.Database, time.Millisecond*time.Duration(c.MongoConfig.Timeout))
 	b := mongo.NewMongoBackend(opts)
 	if err := b.Connect(); err != nil {
-		fmt.Fprintf(os.Stderr, "could not connect to %s: %v\n", c.MongoConfig.ConnectionURI, err)
+		fmt.Fprintf(os.Stderr, "could not connect to %s: %v\n", seed.RedactURI(c.MongoConfig.ConnectionURI), err)
 		os.Exit(1)
 	}
 	defer b.Disconnect()

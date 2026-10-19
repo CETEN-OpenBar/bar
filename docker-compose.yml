@@ -41,9 +41,13 @@ services:
   mongo-express:
     image: mongo-express:1.0.2
     restart: always
-    network_mode: host
+    depends_on:
+      mongo:
+        condition: service_healthy
+    # Local development only: no login, so only published on this machine
+    ports:
+      - 127.0.0.1:8081:8081
     environment:
-      ME_CONFIG_MONGODB_URL: mongodb://127.0.0.1:27017/
-      # Local development only: no login, and only reachable from this machine
+      # directConnection: the replica set advertises 127.0.0.1, which is this container
+      ME_CONFIG_MONGODB_URL: mongodb://mongo:27017/?directConnection=true
       ME_CONFIG_BASICAUTH: "false"
-      VCAP_APP_HOST: 127.0.0.1

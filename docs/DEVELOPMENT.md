@@ -106,7 +106,9 @@ The main interfaces:
 
 ## Changing the API
 
-[`bar.openapi.yml`](../bar.openapi.yml) is the contract. Both sides are generated from it, so never edit the generated code by hand:
+[`bar.openapi.yml`](../bar.openapi.yml) is the contract. Both sides are generated from it, so never edit the generated code by hand.
+
+The root `task setup` doesn't install the generators. Install them once with `task backend:setup` (oapi-codegen, gomodifytags) and `task frontend:setup` (openapi-generator-cli, which needs Java). Nix users already have openapi-generator-cli. Be aware that `task backend:setup` installs the latest oapi-codegen, which currently produces code that doesn't build against the committed runtime (see #160).
 
 1. Edit `bar.openapi.yml`.
 2. Regenerate both sides:

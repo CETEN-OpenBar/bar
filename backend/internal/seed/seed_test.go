@@ -105,6 +105,24 @@ func TestIsLocalURI(t *testing.T) {
 	}
 }
 
+func TestRedactURI(t *testing.T) {
+	tests := []struct {
+		uri  string
+		want string
+	}{
+		{"mongodb://admin:hunter2@db.example.org:27017/bar", "mongodb://admin:xxxxx@db.example.org:27017/bar"},
+		{"mongodb+srv://u:p@cluster0.x.mongodb.net", "mongodb+srv://u:xxxxx@cluster0.x.mongodb.net"},
+		{"mongodb://db.example.org:27017", "mongodb://db.example.org:27017"},
+		{"not a uri with secret", "<unparseable URI>"},
+	}
+
+	for _, tt := range tests {
+		if got := RedactURI(tt.uri); got != tt.want {
+			t.Errorf("RedactURI(%q) = %q, want %q", tt.uri, got, tt.want)
+		}
+	}
+}
+
 func TestRunIsIdempotent(t *testing.T) {
 	stubPictures(t)
 	b := newFakeBackend()
