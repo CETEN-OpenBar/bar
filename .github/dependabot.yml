@@ -1,0 +1,33 @@
+# Keeps the SHA-pinned actions, Go modules and base images up to date.
+# Updates wait a week after release, so a hijacked version has time to be
+# caught before it lands here.
+version: 2
+
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns: ["*"]
+
+  - package-ecosystem: gomod
+    directories: [/backend, /nfc, /porte]
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      go:
+        patterns: ["*"]
+        update-types: [minor, patch]
+
+  - package-ecosystem: docker
+    directories: [/backend, /frontend]
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
