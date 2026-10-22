@@ -133,14 +133,22 @@ The HelloAsso client is generated the same way from their public spec: `cd backe
 ## Checks before a pull request
 
 ```sh
-# backend (repeat go build / go vet in nfc/ and porte/ if you touched them)
-cd backend && go build ./... && go vet ./... && go test ./...
-
-# frontend
-cd frontend && npm run check && npm run lint && npm run build
+task test              # go vet and unit tests for every Go module, svelte-check
+task test:integration  # backend tests against a real MongoDB, started with Docker
+cd frontend && npm run lint && npm run build
 ```
 
-CI only runs the Go build and tests and the frontend build ([build.yml](../.github/workflows/build.yml)), so run the other checks yourself.
+`nfc` needs `libpcsclite-dev` to build, see [Hardware daemons](#hardware-daemons).
+
+Integration tests sit behind the `integration` build tag, in `*_integration_test.go` files. They start MongoDB 7 as a single-node replica set with [testcontainers](https://golang.testcontainers.org/), so change streams and transactions work. See [mongo_integration_test.go](../backend/internal/db/mongo/mongo_integration_test.go) for the setup.
+
+[CI](../.github/workflows/ci.yml) runs on every pull request:
+
+- go vet, the unit tests with the race detector and golangci-lint for `backend`, `nfc` and `porte`. Lint only fails on findings in the lines a PR changes, because the existing code has about 80 of them.
+- the integration tests.
+- `npm run check` and `npm run build`. `npm run lint` isn't in CI yet: Prettier flags most files.
+- a GoReleaser snapshot of the release, which also checks that the kiosk archives keep the layout the updaters expect, and a build of the frontend image.
+- [zizmor](https://docs.zizmor.sh/) on the workflows.
 
 Format Go with `gofumpt` and the frontend with `npm run format`.
 
@@ -166,9 +174,30 @@ Both daemons update themselves from the latest GitHub release.
 
 ## Releases and deployment
 
-Publishing a GitHub release:
+Releases are tagged `vX.Y.Z`. Write the release on GitHub and publish it. [release.yml](../.github/workflows/release.yml) then:
 
-- builds and pushes `ghcr.io/ceten-openbar/bar-backend` and `bar-frontend`, then calls the deployment hook ([docker.yml](../.github/workflows/docker.yml)).
-- builds the `nfc` and `porte` binaries and attaches them to the release ([nfc.yml](../.github/workflows/nfc.yml), [porte.yml](../.github/workflows/porte.yml)), where the daemons pick them up.
+- builds the backend with [GoReleaser](../.goreleaser.yaml) and pushes `ghcr.io/ceten-openbar/bar-backend`.
+- builds and pushes `ghcr.io/ceten-openbar/bar-frontend`.
+- attaches the `nfc` and `porte` archives to the release, where the daemons pick them up, along with `checksums.txt` and an SBOM for each archive.
+- calls the deployment hook in the `CD_URL` secret. Flux, set up in another repository, deploys the new images.
 
-Releases are tagged `vX.Y.Z`.
+Both images get the release tag, plus `latest` unless the release is a pre-release. The daemons ignore pre-releases, so a pre-release is a safe way to try the pipeline.
+
+Every image and `checksums.txt` is signed with [cosign](https://docs.sigstore.dev/) (keyless, through the workflow's GitHub identity) and gets [SLSA build provenance](https://slsa.dev/spec/v1.0/provenance). To check a release:
+
+```sh
+# images: signature, then provenance
+cosign verify ghcr.io/ceten-openbar/bar-backend:vX.Y.Z \
+  --certificate-identity-regexp '^https://github.com/CETEN-OpenBar/bar/.github/workflows/release.yml@' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+gh attestation verify oci://ghcr.io/ceten-openbar/bar-backend:vX.Y.Z -R CETEN-OpenBar/bar
+
+# kiosk archives: download them next to checksums.txt and its bundle
+cosign verify-blob checksums.txt --bundle checksums.txt.sigstore.json \
+  --certificate-identity-regexp '^https://github.com/CETEN-OpenBar/bar/.github/workflows/release.yml@' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+sha256sum --check --ignore-missing checksums.txt
+gh attestation verify nfc-vX.Y.Z-linux-amd64.tar.gz -R CETEN-OpenBar/bar
+```
+
+The `.md5` files next to the archives are for daemons running an updater from v0.0.58 or older, which only read those. Remove the `legacy-md5` entry from `.goreleaser.yaml` once every kiosk runs a newer one.
