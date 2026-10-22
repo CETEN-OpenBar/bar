@@ -1,0 +1,107 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# Builds the backend image and the nfc/porte kiosk daemons.
+# Run by .github/workflows/release.yml once a release is published, and as a
+# snapshot by ci.yml. Try it locally with:
+#   goreleaser release --snapshot --clean --skip=sign
+version: 2
+
+project_name: bar
+
+builds:
+  - id: backend
+    dir: backend
+    main: ./cmd/bar
+    binary: bar
+    env: [CGO_ENABLED=0]
+    goos: [linux]
+    goarch: [amd64]
+    flags: [-trimpath]
+    ldflags: [-s -w]
+    mod_timestamp: "{{ .CommitTimestamp }}"
+
+  - id: nfc
+    dir: nfc
+    binary: nfc
+    # The card reader goes through libpcsclite
+    env: [CGO_ENABLED=1]
+    goos: [linux]
+    goarch: [amd64]
+    flags: [-trimpath]
+    ldflags: [-s -w]
+    mod_timestamp: "{{ .CommitTimestamp }}"
+
+  - id: porte
+    dir: porte
+    binary: porte
+    env: [CGO_ENABLED=0]
+    goos: [linux]
+    goarch: [amd64]
+    flags: [-trimpath]
+    ldflags: [-s -w]
+    mod_timestamp: "{{ .CommitTimestamp }}"
+
+# The kiosk updaters (nfc/update.go, porte/update.go) look for
+# <name>-*-linux-amd64.tar.gz holding the binary and LICENSE at its root
+archives:
+  - id: nfc
+    ids: [nfc]
+    name_template: "nfc-{{ .Tag }}-{{ .Os }}-{{ .Arch }}"
+    formats: [tar.gz]
+    files: [LICENSE]
+
+  - id: porte
+    ids: [porte]
+    name_template: "porte-{{ .Tag }}-{{ .Os }}-{{ .Arch }}"
+    formats: [tar.gz]
+    files: [LICENSE]
+
+sboms:
+  - artifacts: archive
+
+checksum:
+  name_template: checksums.txt
+
+signs:
+  # The updaters shipped up to v0.0.58 only read <archive>.md5, holding the hex
+  # digest and a newline. Keep it until every kiosk runs a newer updater.
+  - id: legacy-md5
+    cmd: sh
+    args: ["-c", 'md5sum "${artifact}" | cut -d " " -f 1 > "${signature}"']
+    signature: "${artifact}.md5"
+    artifacts: archive
+
+  - id: cosign
+    cmd: cosign
+    signature: "${artifact}.sigstore.json"
+    args: [sign-blob, "--bundle=${signature}", "${artifact}", --yes]
+    artifacts: checksum
+
+dockers_v2:
+  - id: backend
+    ids: [backend]
+    dockerfile: backend/Dockerfile
+    # Flux deploys from this image, keep the name and tags in sync with it
+    images: [ghcr.io/ceten-openbar/bar-backend]
+    tags:
+      - "{{ .Tag }}"
+      - "{{ if not .Prerelease }}latest{{ end }}"
+    platforms: [linux/amd64]
+    # Snapshots load the image into Docker, whose classic store can't hold
+    # attestations
+    sbom: "{{ not .IsSnapshot }}"
+    flags: [--target=release]
+    labels:
+      org.opencontainers.image.source: https://github.com/CETEN-OpenBar/bar
+      org.opencontainers.image.revision: "{{ .FullCommit }}"
+      org.opencontainers.image.version: "{{ .Version }}"
+      org.opencontainers.image.licenses: MIT
+
+docker_signs:
+  - args: [sign, "${artifact}@${digest}", --yes]
+
+release:
+  # A person writes and publishes the release, GoReleaser only adds files
+  mode: keep-existing
+
+changelog:
+  disable: true

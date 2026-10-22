@@ -34,3 +34,6 @@ data
 rename
 
 .direnv/
+
+# GoReleaser output
+dist/
