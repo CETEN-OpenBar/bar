@@ -163,9 +163,10 @@
 
 	<div class="flex-1 overflow-y-auto px-6 py-4">
 		{#each Object.entries(groupedItems) as [categoryId, categoryItems]}
-			{#if categories.find(c => c.id === categoryId)}
+			{@const category = categories.find(c => c.id === categoryId)}
+			{#if category}
 				<div class="mb-6">
-					<h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">{categories.find(c => c.id === categoryId).name}</h2>
+					<h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">{category.name}</h2>
 					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
 						{#each categoryItems as item}
 							<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-4">
