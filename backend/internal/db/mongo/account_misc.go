@@ -48,12 +48,10 @@ func (b *Backend) GetAccounts(ctx context.Context, role string, priceRole string
 				"$and": andConditions,
 			},
 		},
-		{
-			"$skip": page * size,
-		},
-		{
-			"$limit": size,
-		},
+	}
+	// A size of 0 means no limit, like SetLimit(0) in find queries
+	if size > 0 {
+		pipeline = append(pipeline, bson.M{"$skip": page * size}, bson.M{"$limit": size})
 	}
 
 	cursor, err := b.db.Collection(AccountsCollection).Aggregate(ctx, pipeline)

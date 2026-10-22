@@ -103,8 +103,11 @@ func (b *Backend) GetItems(ctx context.Context, categoryID string, page, size ui
 			},
 		})
 	}
-	pipeline = append(pipeline, bson.M{"$skip": int64(page * size)})
-	pipeline = append(pipeline, bson.M{"$limit": int64(size)})
+	// A size of 0 means no limit, like SetLimit(0) in find queries
+	if size > 0 {
+		pipeline = append(pipeline, bson.M{"$skip": int64(page * size)})
+		pipeline = append(pipeline, bson.M{"$limit": int64(size)})
+	}
 
 	if sort {
 		pipeline = append(pipeline, bson.M{

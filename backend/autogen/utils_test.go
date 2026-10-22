@@ -10,8 +10,9 @@ func TestPager(t *testing.T) {
 		page, limit, count                       *uint64
 		wantDBPage, wantPage, wantLimit, wantMax uint64
 	}{
-		{"no limit uses default", ptr(1), nil, ptr(25), 0, 1, 10, 3},
-		{"zero limit uses default", ptr(1), ptr(0), ptr(25), 0, 1, 10, 3},
+		{"no limit is one page of everything", ptr(1), nil, ptr(25), 0, 1, 0, 1},
+		{"zero limit is one page of everything", ptr(1), ptr(0), ptr(25), 0, 1, 0, 1},
+		{"no limit and nothing to count", ptr(1), nil, ptr(0), 0, 1, 0, 0},
 		{"limit capped at 100", ptr(1), ptr(500), ptr(250), 0, 1, 100, 3},
 		{"explicit limit", ptr(2), ptr(5), ptr(12), 1, 2, 5, 3},
 		{"no page is first page", nil, ptr(5), ptr(12), 0, 1, 5, 3},
