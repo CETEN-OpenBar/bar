@@ -89,9 +89,13 @@ func Pager(page *uint64, limit *uint64, count *uint64) (dbPage uint64, pageOut u
 	if page != nil {
 		pageOut = *page
 	}
-	// We make sure that limit is filled, it's going to be 0 otherwise
+	// We make sure that limit is filled, it falls back to the spec default otherwise
+	// (a limit of 0 would make Mongo reject $limit and divide by zero below)
 	if limit != nil {
 		limitOut = *limit
+	}
+	if limitOut == 0 {
+		limitOut = 10
 	}
 	// We block the limit to 100
 	if limitOut > 100 {
