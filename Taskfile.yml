@@ -70,6 +70,19 @@ tasks:
     cmds:
       - go run ./cmd/seed
 
+  test:
+    desc: Run the Go unit tests and the frontend checks
+    cmds:
+      - for: [backend, nfc, porte]
+        cmd: go -C {{.ITEM}} vet ./... && go -C {{.ITEM}} test ./...
+      - npm --prefix frontend run check
+
+  test:integration:
+    desc: Run the backend tests against a real MongoDB (needs Docker)
+    cmds:
+      - task: check
+      - go -C backend test -tags integration ./...
+
   down:
     desc: Stop MongoDB and Mongo Express (data is kept)
     cmds:
