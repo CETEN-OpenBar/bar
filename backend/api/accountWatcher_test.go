@@ -28,7 +28,14 @@ type watchBackend struct {
 }
 
 func newWatchBackend(mt *mtest.T, events ...primitive.ObjectID) *watchBackend {
-	return &watchBackend{mt: mt, start: make(chan struct{}), events: events, done: make(chan struct{})}
+	b := &watchBackend{mt: mt, start: make(chan struct{}), events: events, done: make(chan struct{})}
+	// The watcher wakes every listener on its way out: let it finish before
+	// the next test registers its own
+	mt.T.Cleanup(func() {
+		waitClosed(mt.T, b.done, "stream never stopped")
+		waitWatcherStopped(mt.T)
+	})
+	return b
 }
 
 func (b *watchBackend) ListenForChanges(ctx context.Context, coll string, fn func(*mongo.ChangeStream)) error {
@@ -72,6 +79,9 @@ func watch(s *Server, account *models.Account, ctx context.Context) <-chan struc
 	return done
 }
 
+// Upper bound for things that should happen right away, generous for slow CI runners
+const timeout = 5 * time.Second
+
 func listenerCount(id primitive.ObjectID) int {
 	mutex.Lock()
 	defer mutex.Unlock()
@@ -80,10 +90,27 @@ func listenerCount(id primitive.ObjectID) int {
 
 func waitForListeners(t *testing.T, id primitive.ObjectID, n int) {
 	t.Helper()
-	deadline := time.Now().Add(time.Second)
+	deadline := time.Now().Add(timeout)
 	for listenerCount(id) != n {
 		if time.Now().After(deadline) {
 			t.Fatalf("got %d listeners, want %d", listenerCount(id), n)
+		}
+		time.Sleep(time.Millisecond)
+	}
+}
+
+func waitWatcherStopped(t *testing.T) {
+	t.Helper()
+	deadline := time.Now().Add(timeout)
+	for {
+		mutex.Lock()
+		running := watcherRunning
+		mutex.Unlock()
+		if !running {
+			return
+		}
+		if time.Now().After(deadline) {
+			t.Fatal("watcher still running")
 		}
 		time.Sleep(time.Millisecond)
 	}
@@ -93,7 +120,7 @@ func waitClosed(t *testing.T, ch <-chan struct{}, what string) {
 	t.Helper()
 	select {
 	case <-ch:
-	case <-time.After(time.Second):
+	case <-time.After(timeout):
 		t.Fatal(what)
 	}
 }
