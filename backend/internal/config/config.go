@@ -10,9 +10,9 @@ import (
 
 type Config struct {
 	MongoConfig struct {
-		ConnectionURI string `env:"URI" envDefault:"mongodb://localhost:27017"`
+		ConnectionURI string `env:"URI" envDefault:"mongodb://127.0.0.1:27017"`
 		Database      string `env:"DB" envDefault:"bar"`
-		Timeout       uint64 `env:"TIMEOUT" envDefault:"30"`
+		Timeout       uint64 `env:"TIMEOUT" envDefault:"3000"`
 	} `envPrefix:"BAR_MONGO_"`
 
 	ApiConfig struct {
