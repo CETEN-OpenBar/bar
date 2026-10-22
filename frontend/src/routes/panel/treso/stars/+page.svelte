@@ -82,7 +82,7 @@
 
 	<div class="flex-grow w-full overflow-x-auto">
 		<div class="min-w-full bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-			<div class="grid grid-cols-[1fr_1.5fr_1fr_0.75fr_0.5fr_0.5fr] bg-gray-50 dark:bg-gray-700 divide-x divide-gray-200 dark:divide-gray-700" >
+			<div class="grid grid-cols-[1fr_1.5fr_1fr_0.75fr_0.5fr] bg-gray-50 dark:bg-gray-700 divide-x divide-gray-200 dark:divide-gray-700" >
 				<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     Date
                 </th>
@@ -96,15 +96,12 @@
                     Montant
                 </th>
 				<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider opacity-60"> 
-                    Type
-                </th>
-				<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider opacity-60"> 
                     État
                 </th>
 			</div>
 			<div class="divide-y divide-gray-200 dark:divide-gray-700">
 				{#each stars as star}
-					<div class="grid grid-cols-[1fr_1.5fr_1fr_0.75fr_0.5fr_0.5fr] divide-x divide-gray-200 dark:divide-gray-700">
+					<div class="grid grid-cols-[1fr_1.5fr_1fr_0.75fr_0.5fr] divide-x divide-gray-200 dark:divide-gray-700">
 						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
                             {new Date(star.issued_at * 1000).toLocaleDateString('fr-FR', {
 								day: 'numeric',
@@ -124,9 +121,6 @@
                             {star.amount}
 							<iconify-icon icon="mdi:star" class="text-yellow-500" />
 						</td>
-						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300 opacity-60">
-                            {star.type}
-                        </td>
 						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300 opacity-60">
                             {star.state}
                         </td>
