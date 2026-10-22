@@ -163,6 +163,8 @@ func (b *Backend) ListenForChanges(ctx context.Context, coll string, fn func(*mo
 	if err != nil {
 		return err
 	}
+	// ctx may have expired by now, but the cursor still has to be killed
+	defer cs.Close(context.Background())
 
 	// Call function
 	fn(cs)
