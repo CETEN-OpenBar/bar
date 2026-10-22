@@ -98,8 +98,8 @@ func (b *Backend) GetItems(ctx context.Context, categoryID string, page, size ui
 
 		pipeline = append(pipeline, bson.M{
 			"$sort": bson.D{
-				{"sortPriority", 1},
-				{"_id", 1}, 
+				{Key: "sortPriority", Value: 1},
+				{Key: "_id", Value: 1},
 			},
 		})
 	}
