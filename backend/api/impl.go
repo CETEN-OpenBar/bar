@@ -9,7 +9,6 @@ import (
 	"os"
 	"time"
 
-	gorillaContext "github.com/gorilla/context"
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -115,7 +114,6 @@ func (s *Server) Serve(c *config.Config) error {
 	onBoardStore := sessions.NewCookieStore([]byte(c.ApiConfig.AdminSessionSecret))
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			defer gorillaContext.Clear(c.Request())
 			c.Set("userStore", userStore)
 			c.Set("adminStore", adminStore)
 			c.Set("onBoardStore", onBoardStore)
