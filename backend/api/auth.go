@@ -1,11 +1,11 @@
 package api
 
 import (
+	"bar/api/auth"
 	"bar/autogen"
 	"bar/internal/config"
 	"bar/internal/models"
 	"encoding/base64"
-	"encoding/json"
 	"fmt"
 	"image/color"
 	"net/http"
@@ -18,26 +18,47 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/skip2/go-qrcode"
 	"go.mongodb.org/mongo-driver/mongo"
-	"golang.org/x/oauth2"
-	admin "google.golang.org/api/admin/directory/v1"
-	"google.golang.org/api/option"
 )
 
 var qrCache = cache.New(5*time.Minute, 10*time.Minute)
-var stateCache = cache.New(5*time.Minute, 10*time.Minute)
-var redirectCache = cache.New(5*time.Minute, 10*time.Minute)
+var pendingQrScanning = cache.New(5*time.Minute, 10*time.Minute)
 
-type StateCache struct {
-	Type string
-	Data interface{}
+type connectionOAuthCallback struct {
+	server      *Server
+	redirectUrl string
 }
 
-type QrCache struct {
-	Type string
-	Data interface{}
+type linkingOAuthCallback struct {
+	server    *Server
+	accountId string
 }
 
-// (GET /account/qr)
+// (GET /auth/google)
+func (s *Server) ConnectGoogle(c echo.Context, p autogen.ConnectGoogleParams) error {
+	conf := config.GetConfig()
+
+	// Get ?r=
+	rel := p.R
+
+	// Check if it's a safe redirect (TODO: check if this is correct)
+	switch rel {
+	case "admin":
+		rel = conf.ApiConfig.FrontendBasePath + "/admin"
+	case "client/commande":
+		rel = conf.ApiConfig.FrontendBasePath + "/client/commande"
+	}
+	return auth.InitOAuth(c, connectionOAuthCallback{s, rel})
+}
+
+// POST /account/qr
+// - Ask for user or boarded user
+// - Check account pin (passed by POST)
+// - If account does not have a cached qrcode
+// -   Generate unique qr code storing HOST/auth/google/begin/QR_CODE_ID
+// -   Encode qr code in base64 and save in cache (with type 'linking' and id. Currently with 2 entries)
+// - Send response with qr code as base64
+
+// (POST /account/qr)
 func (s *Server) GetAccountQR(c echo.Context) error {
 	// Get account from cookie
 	account, err := MustGetUserOrOnBoard(c)
@@ -55,16 +76,10 @@ func (s *Server) GetAccountQR(c echo.Context) error {
 		return ErrorAccNotFound(c)
 	}
 
-	b64, found := qrCache.Get(account.Id.String())
+	encodedQrCode, found := qrCache.Get(account.Id.String())
 	if !found {
 		// Generate QR code nonce
 		nonce := uuid.NewString()
-
-		// Cache nonce
-		qrCache.Set(nonce, &QrCache{
-			Type: "linking",
-			Data: account.Id.String(),
-		}, cache.DefaultExpiration)
 
 		conf := config.GetConfig()
 		url := fmt.Sprintf("%s/auth/google/begin/%s", conf.ApiConfig.BasePath, nonce)
@@ -78,14 +93,18 @@ func (s *Server) GetAccountQR(c echo.Context) error {
 		if err != nil {
 			return Error500(c)
 		}
-		b64 = base64.StdEncoding.EncodeToString(png)
-		qrCache.Set(account.Id.String(), b64, cache.DefaultExpiration)
+		encodedQrCode = base64.StdEncoding.EncodeToString(png)
 
+		qrCache.SetDefault(account.Id.String(), encodedQrCode)
+		// Currently we pass the state in in the qr code but we logically cache the qr code per account
+		// So we end up with this double cache. We should instead pass the encoded account id to avoid it.
+		// But it would require to changes routes and so the spec.
+		pendingQrScanning.SetDefault(nonce, account.Id.String())
 		logrus.Debugf("QR code generated for account %s: %s", account.Id.String(), url)
 	}
 
 	// Convert to base64
-	r := strings.NewReader(b64.(string))
+	r := strings.NewReader(encodedQrCode.(string))
 
 	autogen.GetAccountQR200ImagepngResponse{
 		ContentLength: int64(r.Len()),
@@ -104,77 +123,25 @@ func (s *Server) GetAccountQRWebsocket(c echo.Context) error {
 	return LinkUpgrade(c)
 }
 
-var scopes = []string{
-	"https://www.googleapis.com/auth/userinfo.profile",
-	"https://www.googleapis.com/auth/userinfo.email",
-	"https://www.googleapis.com/auth/admin.directory.user.readonly",
-}
-
 // (GET /auth/google/begin/{qr_nonce})
+// - Retrieve stored qr code in cache (error if not in cache)
+// - Delete from cache
+// - Send through websocket "scanned"
+// - Get OAuth link
+// - Redirect to OAuth link
 func (s *Server) ConnectAccount(c echo.Context, qrNonce string) error {
 	// Get account from nonce and delete nonce
-	data, found := qrCache.Get(qrNonce)
-	if !found {
+	rawAccountId, accountTryingToConnect := pendingQrScanning.Get(qrNonce)
+	if !accountTryingToConnect {
 		return ErrorNotAuthenticated(c)
 	}
+	accountId := rawAccountId.(string)
 
-	qrCache.Delete(qrNonce)
+	pendingQrScanning.Delete(qrNonce)
+	qrCache.Delete(accountId)
+	BroadcastToRoom(accountId, []byte("scanned"))
 
-	d := data.(*QrCache)
-
-	if d.Type == "linking" {
-		accountID := d.Data
-		qrCache.Delete(accountID.(string))
-		BroadcastToRoom(accountID.(string), []byte("scanned"))
-	} else if d.Type == "qr_auth" {
-		uid := d.Data
-		BroadcastToRoom(uid.(string), []byte("scanned"))
-	}
-
-	conf := config.GetConfig()
-
-	// Init OAuth2 flow with Google
-	oauth2Config := oauth2.Config{
-		ClientID:     conf.OauthConfig.GoogleClientID,
-		ClientSecret: conf.OauthConfig.GoogleClientSecret,
-		RedirectURL:  fmt.Sprintf("%s/auth/google/callback", conf.ApiConfig.BasePath),
-		Scopes:       scopes,
-		Endpoint: oauth2.Endpoint{
-			AuthURL:  "https://accounts.google.com/o/oauth2/auth",
-			TokenURL: "https://oauth2.googleapis.com/token",
-		},
-	}
-
-	// state is not nonce
-	state := uuid.NewString()
-
-	// Cache state
-	stateCache.Set(state, &StateCache{
-		Type: d.Type,
-		Data: d.Data,
-	}, cache.DefaultExpiration)
-
-	hostDomainOption := oauth2.SetAuthURLParam("hd", "telecomnancy.net")
-	// Redirect to Google
-	url := oauth2Config.AuthCodeURL(state, oauth2.AccessTypeOffline, hostDomainOption)
-
-	return c.Redirect(301, url)
-}
-
-type education struct {
-	Promo  uint64 `json:"Promotion"`
-	Spé    string `json:"Approfondissement"`
-	Statut uint64 `json:"Statut"`
-}
-
-type googleUser struct {
-	ID        string `json:"id"`
-	Email     string `json:"email"`
-	Name      string `json:"name"`
-	FirstName string `json:"given_name"`
-	LastName  string `json:"family_name"`
-	Link      string `json:"link"`
-	Picture   string `json:"picture"`
+	return auth.InitOAuth(c, linkingOAuthCallback{s, accountId})
 }
 
 func ErrorRedirect(c echo.Context, err string) error {
@@ -188,43 +155,88 @@ func SuccessRedirect(c echo.Context) error {
 }
 
 // (GET /auth/google/callback)
-func (s *Server) Callback(c echo.Context, params autogen.CallbackParams) error {
-	// Get account from state and delete state
-	data, found := stateCache.Get(params.State)
-	if !found {
-		// This callback is used when connecting to the admin panel for example.
-		// The users clicks a button to log in with Google.
-		return s.CallbackInpromptu(c, params)
-	}
-	stateCache.Delete(params.State)
-
-	state := data.(*StateCache)
-	switch state.Type {
-	case "qr_auth":
-		// Used when connecting to a borne with the QR Code displayed
-		return s.CallbackQRAuth(c, params, state)
-	case "linking":
-		// Used when linking an account to a Google account
-		return s.CallbackLinking(c, params, state)
-	default:
-		// Default fallback that should not happen
-		return s.CallbackLinking(c, params, state)
-	}
+func (s *Server) Callback(ctx echo.Context, params autogen.CallbackParams) error {
+	err := auth.ExecuteOAuthCallback(ctx, params.State, params.Code)
+	// TODO Do something on error
+	/*
+		if errors.Is(err, auth.InvalidOAuthStateError) {
+		}
+		if errors.Is(err, auth.BrokenOAuthCallbackError) {
+		}*/
+	return err
 }
 
-func (s *Server) CallbackLinking(c echo.Context, params autogen.CallbackParams, state *StateCache) error {
-	accountID := state.Data
+// - Get Token, Generate a Client
+// - Retrieive account information (provider specific)
+// - Pull account from database (might be provider specific)
+// - Update cached account properties
+// - Update account in database
+// - Save account in session coockie (Currently only if a redirect was specified, might be a bug)
+func (callback connectionOAuthCallback) Callback(accountData *auth.OAuthAccountData, ctx echo.Context) error {
+	logrus.WithField("account", accountData.EmailAdress).Info("Account logged in using OAuth.")
 
-	conf := config.GetConfig()
+	requestCtx := ctx.Request().Context()
+	database := callback.server.DBackend
+	account, err := database.GetAccountByGoogle(requestCtx, accountData.Id)
+	if err != nil {
+		account, err = database.GetAccountByEmail(requestCtx, accountData.EmailAdress)
+	}
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			// Redirect to the auth page with an error message
+			conf := config.GetConfig()
+			return ctx.Redirect(http.StatusPermanentRedirect, conf.ApiConfig.FrontendBasePath+"/auth?noaccount")
+		}
+		logrus.Error(err)
+		return ErrorRedirect(ctx, "#017")
+	}
 
-	account, err := s.DBackend.GetAccount(c.Request().Context(), accountID.(string))
+	account.FirstName = accountData.FirstName
+	account.LastName = accountData.LastName
+	account.EmailAddress = accountData.EmailAdress
+	account.GoogleId = &accountData.Id
+	account.GooglePicture = &accountData.PictureLink
+
+	err = database.UpdateAccount(ctx.Request().Context(), account)
+	if err != nil {
+		logrus.Error(err)
+		return ErrorRedirect(ctx, "#021")
+	}
+
+	callback.server.SetCookie(ctx, account)
+	return ctx.Redirect(http.StatusFound, callback.redirectUrl)
+}
+
+// OAuth callback for qr_code linking
+// - Pull account from database based on id stored in cache (identified by state from oauth)
+// - If no account is found, check if the account was just created on board and pull it from there (cf. /auth/card)
+// - Get token from OAuth
+// - Get client and pull accounts info from OAuth
+// - If account state is not on boarded (understand not linked to a card yet)
+// -   Set account state to ok
+// -   Pull account from database from email
+// -   If no account found in db
+// -     Add account to db
+// -   Else
+// -     If account in db has no card id, set it to to previously pulled account
+// -   Remove on board session coockie
+// - Else
+// -   Update account in db
+// - Broadcast with websocket "connected"
+// - Eventually (?) set account coockie
+// - Redirect to url
+func (callback linkingOAuthCallback) Callback(usr *auth.OAuthAccountData, c echo.Context) error {
+	accountId := callback.accountId
+	s := callback.server
+
+	account, err := s.DBackend.GetAccount(c.Request().Context(), accountId)
 	if err != nil {
 		if err != mongo.ErrNoDocuments {
 			logrus.Error(err)
 			return ErrorRedirect(c, "#001")
 		}
 		// Check if account is onBoard
-		acc, found := onBoardCache.Get(accountID.(string))
+		acc, found := onBoardCache.Get(accountId)
 		if !found {
 			logrus.Error(err)
 			return ErrorRedirect(c, "#002")
@@ -232,69 +244,17 @@ func (s *Server) CallbackLinking(c echo.Context, params autogen.CallbackParams, 
 		account = acc.(*models.Account)
 	}
 
-	// Get token from Google
-	oauth2Config := oauth2.Config{
-		ClientID:     conf.OauthConfig.GoogleClientID,
-		ClientSecret: conf.OauthConfig.GoogleClientSecret,
-		RedirectURL:  fmt.Sprintf("%s/auth/google/callback", conf.ApiConfig.BasePath),
-		Scopes:       scopes,
-		Endpoint: oauth2.Endpoint{
-			AuthURL:  "https://accounts.google.com/o/oauth2/auth",
-			TokenURL: "https://oauth2.googleapis.com/token",
-		},
-	}
-
-	token, err := oauth2Config.Exchange(c.Request().Context(), params.Code)
-	if err != nil {
-		logrus.Error(err)
-		return ErrorRedirect(c, "#003")
-	}
-
-	// Get user from Google
-	client := oauth2Config.Client(c.Request().Context(), token)
-	resp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
-	if err != nil {
-		logrus.Error(err)
-		return ErrorRedirect(c, "#004")
-	}
-	defer resp.Body.Close()
-
-	usr := &googleUser{}
-	err = json.NewDecoder(resp.Body).Decode(usr)
-	if err != nil {
-		logrus.Error(err)
-		return ErrorRedirect(c, "#005")
-	}
-
-	adminService, err := admin.NewService(c.Request().Context(), option.WithTokenSource(oauth2Config.TokenSource(c.Request().Context(), token)))
-	if err != nil {
-		logrus.Error(err)
-		return ErrorRedirect(c, "#006")
-	}
-
-	t, err := adminService.Users.Get(usr.ID).Projection("custom").CustomFieldMask("Education").ViewType("domain_public").Do()
-	if err != nil {
-		logrus.Error(err)
-		return ErrorRedirect(c, "#007")
-	}
-	edc := &education{}
-	err = json.Unmarshal(t.CustomSchemas["Education"], edc)
-	if err != nil {
-		logrus.Error(err)
-		return ErrorRedirect(c, "#008")
-	}
-
 	account.FirstName = usr.FirstName
 	account.LastName = usr.LastName
-	account.EmailAddress = usr.Email
-	account.GoogleId = &usr.ID
-	account.GooglePicture = &usr.Picture
+	account.EmailAddress = usr.EmailAdress
+	account.GoogleId = &usr.Id
+	account.GooglePicture = &usr.PictureLink
 
 	if account.State == autogen.AccountNotOnBoarded {
 		account.State = autogen.AccountOK
 
 		// Check if an account with this Google ID and no Card ID exists
-		acc, err := s.DBackend.GetAccountByEmail(c.Request().Context(), usr.Email)
+		acc, err := s.DBackend.GetAccountByEmail(c.Request().Context(), usr.EmailAdress)
 		if err != nil {
 			if err != mongo.ErrNoDocuments {
 				logrus.Error(err)
@@ -321,9 +281,9 @@ func (s *Server) CallbackLinking(c echo.Context, params autogen.CallbackParams, 
 
 			account.FirstName = usr.FirstName
 			account.LastName = usr.LastName
-			account.EmailAddress = usr.Email
-			account.GoogleId = &usr.ID
-			account.GooglePicture = &usr.Picture
+			account.EmailAddress = usr.EmailAdress
+			account.GoogleId = &usr.Id
+			account.GooglePicture = &usr.PictureLink
 		}
 
 		// Delete ONBOARD cookie
@@ -336,147 +296,9 @@ func (s *Server) CallbackLinking(c echo.Context, params autogen.CallbackParams, 
 		}
 	}
 
-	BroadcastToRoom(accountID.(string), []byte("connected"))
+	BroadcastToRoom(accountId, []byte("connected"))
 
-	r, found := redirectCache.Get(params.State)
-	if !found {
-		return SuccessRedirect(c)
-	}
-	redirectCache.Delete(params.State)
-
-	s.SetCookie(c, account)
-	return c.Redirect(http.StatusPermanentRedirect, r.(string))
-}
-
-// (GET /auth/google/callback)
-func (s *Server) CallbackInpromptu(c echo.Context, params autogen.CallbackParams) error {
-	conf := config.GetConfig()
-
-	// Get token from Google
-	oauth2Config := oauth2.Config{
-		ClientID:     conf.OauthConfig.GoogleClientID,
-		ClientSecret: conf.OauthConfig.GoogleClientSecret,
-		RedirectURL:  fmt.Sprintf("%s/auth/google/callback", conf.ApiConfig.BasePath),
-		Scopes:       scopes,
-		Endpoint: oauth2.Endpoint{
-			AuthURL:  "https://accounts.google.com/o/oauth2/auth",
-			TokenURL: "https://oauth2.googleapis.com/token",
-		},
-	}
-
-	token, err := oauth2Config.Exchange(c.Request().Context(), params.Code)
-	if err != nil {
-		logrus.Error(err)
-		return ErrorRedirect(c, "#014")
-	}
-
-	// Get user from Google
-	client := oauth2Config.Client(c.Request().Context(), token)
-	resp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
-	if err != nil {
-		logrus.Error(err)
-		return ErrorRedirect(c, "#015")
-	}
-	defer resp.Body.Close()
-
-	usr := &googleUser{}
-	err = json.NewDecoder(resp.Body).Decode(usr)
-	if err != nil {
-		logrus.Error(err)
-		return ErrorRedirect(c, "#016")
-	}
-
-	account, err := s.DBackend.GetAccountByGoogle(c.Request().Context(), usr.ID)
-	if err != nil {
-		account, err = s.DBackend.GetAccountByEmail(c.Request().Context(), usr.Email)
-		if err != nil {
-			if err == mongo.ErrNoDocuments {
-				// Redirect to the auth page with an error message
-				conf := config.GetConfig()
-				return c.Redirect(http.StatusPermanentRedirect, conf.ApiConfig.FrontendBasePath+"/auth?noaccount")
-			}
-			logrus.Error(err)
-			return ErrorRedirect(c, "#017")
-		}
-	}
-
-	logrus.WithField("account", account.Name()).Info("Account logged in using OAuth.")
-	adminService, err := admin.NewService(c.Request().Context(), option.WithTokenSource(oauth2Config.TokenSource(c.Request().Context(), token)))
-	if err != nil {
-		logrus.Error(err)
-		return ErrorRedirect(c, "#018")
-	}
-
-	t, err := adminService.Users.Get(usr.ID).Projection("custom").CustomFieldMask("Education").ViewType("domain_public").Do()
-	if err != nil {
-		logrus.Error(err)
-		return ErrorRedirect(c, "#019")
-	}
-	edc := &education{}
-	err = json.Unmarshal(t.CustomSchemas["Education"], edc)
-	if err != nil {
-		logrus.Error(err)
-		return ErrorRedirect(c, "#020")
-	}
-
-	account.FirstName = usr.FirstName
-	account.LastName = usr.LastName
-	account.EmailAddress = usr.Email
-	account.GoogleId = &usr.ID
-	account.GooglePicture = &usr.Picture
-
-	err = s.DBackend.UpdateAccount(c.Request().Context(), account)
-	if err != nil {
-		logrus.Error(err)
-		return ErrorRedirect(c, "#021")
-	}
-
-	r, found := redirectCache.Get(params.State)
-	if !found {
-		return SuccessRedirect(c)
-	}
-	redirectCache.Delete(params.State)
-
-	s.SetCookie(c, account)
-	return c.Redirect(http.StatusPermanentRedirect, r.(string))
-}
-
-// (GET /auth/google)
-func (s *Server) ConnectGoogle(c echo.Context, p autogen.ConnectGoogleParams) error {
-	conf := config.GetConfig()
-
-	// Get ?r=
-	rel := p.R
-
-	// Check if it's a safe redirect (TODO: check if this is correct)
-	switch rel {
-	case "admin":
-		rel = conf.ApiConfig.FrontendBasePath + "/admin"
-	case "client/commande":
-		rel = conf.ApiConfig.FrontendBasePath + "/client/commande"
-	}
-	// Init OAuth2 flow with Google
-	oauth2Config := oauth2.Config{
-		ClientID:     conf.OauthConfig.GoogleClientID,
-		ClientSecret: conf.OauthConfig.GoogleClientSecret,
-		RedirectURL:  fmt.Sprintf("%s/auth/google/callback", conf.ApiConfig.BasePath),
-		Scopes:       scopes,
-		Endpoint: oauth2.Endpoint{
-			AuthURL:  "https://accounts.google.com/o/oauth2/auth",
-			TokenURL: "https://oauth2.googleapis.com/token",
-		},
-	}
-
-	// state is not nonce
-	state := uuid.NewString()
-
-	redirectCache.Set(state, rel, cache.DefaultExpiration)
-
-	hostDomainOption := oauth2.SetAuthURLParam("hd", "telecomnancy.net")
-	// Redirect to Google
-	url := oauth2Config.AuthCodeURL(state, oauth2.AccessTypeOffline, hostDomainOption)
-
-	return c.Redirect(http.StatusTemporaryRedirect, url)
+	return SuccessRedirect(c)
 }
 
 // (GET /logout)
