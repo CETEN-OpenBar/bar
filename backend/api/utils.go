@@ -7,6 +7,7 @@ import (
 	"math"
 
 	"github.com/labstack/echo/v4"
+	"github.com/sirupsen/logrus"
 )
 
 func (s *Server) SetCookie(c echo.Context, account *models.Account) {
@@ -107,6 +108,10 @@ func MustGetAdmin(c echo.Context) (*models.Account, error) {
 
 func UpdateItem(item *models.Item, category *models.Category, restockItem autogen.RestockItem) *models.Item {
 	item.State = autogen.ItemBuyable
+	if restockItem.AmountPerBundle == 0 {
+		restockItem.AmountPerBundle = 1
+		logrus.WithField("restockItem", restockItem.ItemName).Error("AmountPerBundle is 0, setting to 1")
+	} 
 	item.AmountLeft += restockItem.AmountOfBundle * restockItem.AmountPerBundle
 	item.LastTva = &restockItem.Tva
 	if !category.SpecialPrice {
