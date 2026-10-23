@@ -1,0 +1,76 @@
+# https://taskfile.dev
+# Run `task --list` to see everything.
+
+version: '3'
+
+output: prefixed
+
+includes:
+  backend:
+    taskfile: ./backend/Taskfile.yml
+    dir: ./backend
+  frontend:
+    taskfile: ./frontend/Taskfile.yml
+    dir: ./frontend
+
+tasks:
+  setup:
+    desc: Check tools, create local config files and install dependencies
+    cmds:
+      - task: check
+      - '[ -f backend/.env ] || cp backend/.env.example backend/.env'
+      - '[ -f frontend/static/config.json ] || cp frontend/static/config.example.json frontend/static/config.json'
+      - go -C backend mod download
+      - npm --prefix frontend ci --no-audit --no-fund
+
+  check:
+    internal: true
+    silent: true
+    cmds:
+      - command -v docker >/dev/null || { echo "Docker is not installed, see https://docs.docker.com/get-docker/"; exit 1; }
+      - docker info >/dev/null 2>&1 || { echo "Docker is installed but not running, or your user can't use it. Start Docker and try again."; exit 1; }
+      - command -v go >/dev/null || { echo "Go is not installed. Run 'mise install' or 'nix develop', see docs/DEVELOPMENT.md"; exit 1; }
+      # Fails on Go < 1.20 (no -C) and on toolchains that can't switch to the go.mod version by themselves
+      - go -C backend list -m >/dev/null 2>&1 || { echo "Go 1.27 is needed, you have $(go version). Run 'mise install' or 'nix develop', see docs/DEVELOPMENT.md"; exit 1; }
+      - command -v node >/dev/null || { echo "Node.js is not installed. Run 'mise install' or 'nix develop', see docs/DEVELOPMENT.md"; exit 1; }
+      - '[ "$(node -v | sed "s/^v//; s/\..*//")" -ge 20 ] 2>/dev/null || { echo "Node.js 20 or newer is needed (24 recommended), you have $(node -v). Run ''mise install'' or ''nix develop'', see docs/DEVELOPMENT.md"; exit 1; }'
+
+  db:
+    desc: Start MongoDB and Mongo Express
+    cmds:
+      - task: check
+      - docker compose up -d --wait mongo mongo-express
+
+  dev:
+    desc: Run MongoDB, the backend (reloads on save) and the frontend
+    deps: [db]
+    cmds:
+      - task: servers
+
+  servers:
+    internal: true
+    deps: [dev:backend, dev:frontend]
+
+  dev:backend:
+    internal: true
+    dir: backend
+    cmds:
+      - go tool air
+
+  dev:frontend:
+    internal: true
+    dir: frontend
+    cmds:
+      - npm run dev
+
+  seed:
+    desc: Fill the local database with sample products and test accounts
+    deps: [db]
+    dir: backend
+    cmds:
+      - go run ./cmd/seed
+
+  down:
+    desc: Stop MongoDB and Mongo Express (data is kept)
+    cmds:
+      - docker compose down

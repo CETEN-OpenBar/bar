@@ -4,45 +4,37 @@ How to run, change and release Le Bar. For how the code is organised, see [ARCHI
 
 ## Prerequisites
 
-| Tool | Used for |
-|---|---|
-| [Go](https://go.dev/dl/) | backend, `nfc`, `porte` |
-| [Node.js](https://nodejs.org/) + npm | frontend |
-| [Docker](https://docs.docker.com/get-docker/) with Compose | MongoDB in development |
-| [Task](https://taskfile.dev/installation/) | `task setup` / `task regen` helpers |
+Works on Linux, macOS and WSL. You need [Docker](https://docs.docker.com/get-docker/) with Compose, plus Go 1.27, Node.js 24 and [Task](https://taskfile.dev). Pick one way to get the last three:
 
-If you use Nix, `nix develop` (or [direnv](https://direnv.net/) with the provided `.envrc`) installs all of these, plus gopls, gofumpt, the Svelte language server and `openapi-generator-cli`. See [flake.nix](../flake.nix).
+- **mise** (simplest): [install mise](https://mise.jdx.dev/getting-started.html), then run `mise install` in the repo. It reads [mise.toml](../mise.toml).
+- **Nix**: `nix develop`, or [direnv](https://direnv.net/) with the provided `.envrc`. The flake also brings gopls, gofumpt, the Svelte language server and `openapi-generator-cli`.
+- **By hand**: install Go, Node and Task yourself at those versions.
 
 ## Running locally
 
 ```sh
-# 1. Database: MongoDB as a single-node replica set, plus Mongo Express
-docker compose up -d
-
-# 2. Backend (http://localhost:8080)
-cd backend
-cp .env.example .env
-task setup            # first time only: go mod download + codegen tools
-go run ./cmd/bar
-
-# 3. Frontend (http://localhost:5173), in another terminal
-cd frontend
-cp static/config.example.json static/config.json
-task setup            # first time only: npm install + openapi-generator-cli
-npm run dev
+task setup    # first time: checks your tools, creates backend/.env and frontend/static/config.json, installs dependencies
+task dev      # MongoDB + backend + frontend in one terminal, Ctrl-C to stop
+task seed     # optional: sample products and test accounts
 ```
 
-MongoDB has to run as a replica set, because the backend uses multi-document transactions and change streams. The compose file starts and initialises `rs0` for you. If you bring your own Mongo, initialise a replica set first.
+`task setup` never overwrites a `.env` or `config.json` you already have, so you can run it again at any time.
 
-Mongo Express runs on the host network at <http://localhost:8081>.
+`task dev` starts MongoDB and Mongo Express in Docker, then runs the backend on <http://localhost:8080> and the frontend on <http://localhost:5173>. The backend runs under [air](https://github.com/air-verse/air) and rebuilds when you save a `.go` file. If the build fails, the error shows up in the log and the previous version keeps running. The very first start takes a little longer while Go compiles everything.
 
-If you use [zellij](https://zellij.dev/), `zellij --layout layout.kdl` opens the frontend, backend, lazygit and an editor in tabs.
+Ctrl-C stops the backend and the frontend. MongoDB keeps running, with your data, until you run `task down`.
+
+Mongo Express is at <http://localhost:8081>, with no login. Like MongoDB, it only accepts connections from your own machine.
+
+MongoDB runs as a replica set, because the backend uses multi-document transactions and change streams. The compose file sets that up. If you bring your own Mongo, initialise a replica set first.
+
+`task --list` shows every task. If you use [zellij](https://zellij.dev/), `zellij --layout layout.kdl` opens the frontend, backend, lazygit and an editor in tabs.
 
 ## Configuration
 
 ### Backend: `backend/.env`
 
-Copy [`.env.example`](../backend/.env.example). The values work out of the box for local development except Google and HelloAsso, which are optional.
+`task setup` creates it from [`.env.example`](../backend/.env.example). Those values work for local development as they are. Google sign-in and HelloAsso stay off until you fill them in.
 
 | Variable | Default | Notes |
 |---|---|---|
@@ -74,11 +66,11 @@ Some routes (card login, the kiosk QR code, the door and cash drawer) are only m
 
 #### HelloAsso (optional)
 
-Without valid credentials the backend still starts. It logs an error, retries every 2 minutes, and online top-ups stay disabled until it succeeds.
+Leave the `HELLOASSO_*` credentials empty and online top-ups are disabled; the backend logs that once at startup. With credentials set, the backend connects at startup and retries every 2 minutes if HelloAsso can't be reached.
 
 ### Frontend: `frontend/static/config.json`
 
-Loaded by the browser at runtime, so one build can be pointed at any backend. Copy [`config.example.json`](../frontend/static/config.example.json):
+Loaded by the browser at runtime, so one build can be pointed at any backend. `task setup` creates it from [`config.example.json`](../frontend/static/config.example.json):
 
 | Key | Meaning |
 |---|---|
@@ -93,7 +85,15 @@ On startup the backend creates a super-admin with card `1` and PIN `1234` if no 
 
 You don't need an NFC reader: open <http://localhost:5173/borne>, type `1`, press <kbd>Enter</kbd>, then enter `1234`. Typing on `/borne` does the same thing as tapping a card.
 
-Any unknown card ID starts the onboarding flow with the PIN `1234`.
+After `task seed` there are three more test cards, all with PIN `1234`:
+
+| Card | Role | Balance |
+|---|---|---|
+| `2` | member | 0 € |
+| `3` | student | 20 € |
+| `4` | admin | 0 € |
+
+Any other card ID starts the onboarding flow with the PIN `1234`.
 
 The main interfaces:
 
@@ -106,7 +106,9 @@ The main interfaces:
 
 ## Changing the API
 
-[`bar.openapi.yml`](../bar.openapi.yml) is the contract. Both sides are generated from it, so never edit the generated code by hand:
+[`bar.openapi.yml`](../bar.openapi.yml) is the contract. Both sides are generated from it, so never edit the generated code by hand.
+
+The root `task setup` doesn't install the generators. Install them once with `task backend:setup` (oapi-codegen, gomodifytags) and `task frontend:setup` (openapi-generator-cli, which needs Java). Nix users already have openapi-generator-cli. Be aware that `task backend:setup` installs the latest oapi-codegen, which currently produces code that doesn't build against the committed runtime (see #160).
 
 1. Edit `bar.openapi.yml`.
 2. Regenerate both sides:

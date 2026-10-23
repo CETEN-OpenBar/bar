@@ -45,12 +45,13 @@ Software for running a student bar: self-service kiosk, ordering from your phone
 
 ## Quick start
 
+You need Docker and [mise](https://mise.jdx.dev/getting-started.html) (or Nix, see the [development guide](docs/DEVELOPMENT.md#prerequisites)).
+
 ```sh
-docker compose up -d                                   # MongoDB + Mongo Express
-cp backend/.env.example backend/.env
-cp frontend/static/config.example.json frontend/static/config.json
-(cd backend && go run ./cmd/bar)                       # API on :8080
-(cd frontend && npm install && npm run dev)            # app on :5173
+mise install    # Go, Node and Task at the right versions
+task setup      # config files and dependencies
+task dev        # MongoDB, API on :8080 (reloads on save), app on :5173
+task seed       # sample products and test accounts
 ```
 
 Open <http://localhost:5173/borne>, type `1`, press <kbd>Enter</kbd>, then enter the PIN `1234`. That logs you in as the default admin without a card reader.

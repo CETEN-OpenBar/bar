@@ -1,4 +1,4 @@
-FROM golang:1.21-alpine AS backend
+FROM golang:1.27-alpine AS backend
 WORKDIR /app
 ENV CGO_ENABLED=0
 COPY go.mod go.sum ./

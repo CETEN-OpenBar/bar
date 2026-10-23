@@ -1,0 +1,6 @@
+# Tool versions for development. Run `mise install` once, then use `task`.
+# Nix users get the same tools from flake.nix.
+[tools]
+go = "1.27"
+node = "24"
+task = "3"

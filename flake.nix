@@ -21,15 +21,15 @@
         {
           default = pkgs.mkShell {
             packages = with pkgs; [
-              # svelte dev
-              nodejs
-              nodePackages.typescript
-              nodePackages.typescript-language-server
-              nodePackages_latest.svelte-language-server
-              nodePackages_latest.svelte-check
+              # svelte dev (same versions as mise.toml)
+              nodejs_24
+              typescript
+              typescript-language-server
+              svelte-language-server
+              svelte-check
 
               # go dev
-              go
+              go_1_27
               gopls
               gofumpt
 
