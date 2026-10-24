@@ -11,18 +11,34 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// mutex guards listeners and watcherRunning
 var mutex sync.Mutex
 var listeners = make(map[primitive.ObjectID][]chan int)
 var watcherRunning = false
 
+// notify wakes the listeners of an account. Listeners are buffered and only
+// read once, so one that already has a pending notification is skipped
+// instead of blocking the watcher.
+func notify(ls []chan int) {
+	for _, listener := range ls {
+		select {
+		case listener <- 1:
+		default:
+		}
+	}
+}
+
 func (s *Server) AccountWatcher() {
 	// If already running, return
+	mutex.Lock()
 	if watcherRunning {
+		mutex.Unlock()
 		return
 	}
 	watcherRunning = true
+	mutex.Unlock()
 
-	s.DBackend.ListenForChanges(context.TODO(), "accounts", func(changeStream *mongo.ChangeStream) {
+	err := s.DBackend.ListenForChanges(context.TODO(), "accounts", func(changeStream *mongo.ChangeStream) {
 		for changeStream.Next(context.TODO()) {
 			// Get account id from change stream
 			var accountChange struct {
@@ -37,13 +53,22 @@ func (s *Server) AccountWatcher() {
 			}
 
 			// Notify listeners
-			for _, listener := range listeners[accountChange.DocumentKey.Id] {
-				listener <- 1
-			}
+			mutex.Lock()
+			notify(listeners[accountChange.DocumentKey.Id])
+			mutex.Unlock()
 		}
 	})
+	if err != nil {
+		logrus.Error(err)
+	}
 
+	// The stream is gone: wake everyone so clients poll again, which restarts it
+	mutex.Lock()
 	watcherRunning = false
+	for _, ls := range listeners {
+		notify(ls)
+	}
+	mutex.Unlock()
 }
 
 // (GET /account/watch)
@@ -53,17 +78,22 @@ func (s *Server) WatchAccount(c echo.Context) error {
 		return nil
 	}
 
-	// Make sure the stream is up
-	go s.AccountWatcher()
-
 	// Add a listener to the account
-	listener := make(chan int)
+	listener := make(chan int, 1)
 	mutex.Lock()
 	listeners[account.PrivateID] = append(listeners[account.PrivateID], listener)
 	mutex.Unlock()
 
-	// Wait for a notification
-	<-listener
+	// Make sure the stream is up, after registering so a stream that stops
+	// right away still wakes this listener
+	go s.AccountWatcher()
+
+	// Wait for a notification, or for the client to leave
+	ctx := c.Request().Context()
+	select {
+	case <-listener:
+	case <-ctx.Done():
+	}
 
 	mutex.Lock()
 	// Remove the listener
@@ -75,8 +105,13 @@ func (s *Server) WatchAccount(c echo.Context) error {
 	}
 	mutex.Unlock()
 
+	// Nobody is left to answer
+	if ctx.Err() != nil {
+		return nil
+	}
+
 	// Return account
-	account, err = s.DBackend.GetAccount(c.Request().Context(), account.Id.String())
+	account, err = s.DBackend.GetAccount(ctx, account.Id.String())
 	if err != nil {
 		return err
 	}

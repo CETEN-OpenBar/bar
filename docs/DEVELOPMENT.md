@@ -38,9 +38,9 @@ MongoDB runs as a replica set, because the backend uses multi-document transacti
 
 | Variable | Default | Notes |
 |---|---|---|
-| `BAR_MONGO_URI` | `mongodb://localhost:27017` | |
+| `BAR_MONGO_URI` | `mongodb://127.0.0.1:27017` | |
 | `BAR_MONGO_DB` | `bar` | |
-| `BAR_MONGO_TIMEOUT` | `30` | Query timeout, in milliseconds |
+| `BAR_MONGO_TIMEOUT` | `3000` | Query timeout, in milliseconds |
 | `BAR_API_PORT` | `:8080` | |
 | `BAR_API_BASE_PATH` | `http://localhost:8080` | Public URL of the API, used for the OAuth redirect |
 | `BAR_API_FRONTEND_BASE_PATH` | `http://localhost:5173` | Where to send users back after login |

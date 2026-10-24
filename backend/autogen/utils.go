@@ -89,7 +89,8 @@ func Pager(page *uint64, limit *uint64, count *uint64) (dbPage uint64, pageOut u
 	if page != nil {
 		pageOut = *page
 	}
-	// We make sure that limit is filled, it's going to be 0 otherwise
+	// We make sure that limit is filled, it's going to be 0 otherwise, which
+	// the queries treat as no limit
 	if limit != nil {
 		limitOut = *limit
 	}
@@ -100,8 +101,15 @@ func Pager(page *uint64, limit *uint64, count *uint64) (dbPage uint64, pageOut u
 
 	// We calculate the max page (0 if count is nil)
 	if count != nil {
-		maxPageFloat := float64(*count) / float64(limitOut)
-		maxPage = uint64(math.Ceil(maxPageFloat))
+		if limitOut == 0 {
+			// Everything fits on a single page
+			if *count > 0 {
+				maxPage = 1
+			}
+		} else {
+			maxPageFloat := float64(*count) / float64(limitOut)
+			maxPage = uint64(math.Ceil(maxPageFloat))
+		}
 	}
 
 	if pageOut > maxPage+1 {

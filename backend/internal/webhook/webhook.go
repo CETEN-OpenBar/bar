@@ -38,6 +38,10 @@ func SendDiscordWebhook(restock models.Restock) error {
 
 	c := config.GetConfig()
 	webhookURL := c.DiscordWebhookURL
+	if webhookURL == "" {
+		logrus.Debug("Discord webhook not configured, skipping restock notification")
+		return nil
+	}
 	avatarURL := "https://bar.telecomnancy.net/logo.png" // The URL of the bot's avatar
 	botUsername := "BarBot"                              // The name that appears as the webhook sender
 

@@ -83,9 +83,8 @@
 					today.toLocaleString('default', { day: '2-digit' })}
 
 				on:change={(e) => {
-				// @ts-ignore
-				let s = time2Utc(new Date(e.target.value).getTime() / 1000);
-				today = new Date(e.target.value);
+				let s = time2Utc(new Date(e.currentTarget.value).getTime() / 1000);
+				today = new Date(e.currentTarget.value);
 				startDate = s.toString();
 				endDate = (s + 24 * 60 * 60).toString();
 				reloadItems();

@@ -9,7 +9,7 @@
 	let nickname: string = '';
 
 	async function getAccounts(search: string) {
-		let res = await accountsApi().getAccounts(0, 5, search, { withCredentials: true });
+		let res = await accountsApi().getAccounts(0, 5, search, undefined, undefined, { withCredentials: true });
 		if (Array.isArray(res.data.accounts)) accounts = res.data.accounts;
 	}
 

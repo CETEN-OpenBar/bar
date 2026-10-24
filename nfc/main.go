@@ -24,7 +24,7 @@ type handler struct {
 func (h *handler) ServeCard(c acr122u.Card) {
 	uid := fmt.Sprintf("%x", c.UID())
 	logrus.WithField("uid", uid).Info("card inserted")
-	for l := range listeners {
+	for _, l := range connectedListeners() {
 		l.WriteJSON(map[string]interface{}{
 			"uid": uid,
 		})
