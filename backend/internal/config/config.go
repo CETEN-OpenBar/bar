@@ -27,6 +27,11 @@ type Config struct {
 	OauthConfig struct {
 		GoogleClientID     string `env:"GOOGLE_CLIENT_ID"`
 		GoogleClientSecret string `env:"GOOGLE_CLIENT_SECRET"`
+		// google, or oidc for any OpenID Connect issuer (such as the dev server)
+		Provider         string `env:"PROVIDER" envDefault:"google"`
+		OIDCIssuer       string `env:"OIDC_ISSUER"`
+		OIDCClientID     string `env:"OIDC_CLIENT_ID"`
+		OIDCClientSecret string `env:"OIDC_CLIENT_SECRET"`
 	} `envPrefix:"BAR_OAUTH_"`
 
 	HelloAssoConfig struct {

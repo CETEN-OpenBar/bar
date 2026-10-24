@@ -36,10 +36,10 @@ tasks:
       - '[ "$(node -v | sed "s/^v//; s/\..*//")" -ge 20 ] 2>/dev/null || { echo "Node.js 20 or newer is needed (24 recommended), you have $(node -v). Run ''mise install'' or ''nix develop'', see docs/DEVELOPMENT.md"; exit 1; }'
 
   db:
-    desc: Start MongoDB and Mongo Express
+    desc: Start MongoDB, Mongo Express and the dev login server
     cmds:
       - task: check
-      - docker compose up -d --wait mongo mongo-express
+      - docker compose up -d --wait mongo mongo-express oidc
 
   dev:
     desc: Run MongoDB, the backend (reloads on save) and the frontend

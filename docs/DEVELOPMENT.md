@@ -15,16 +15,16 @@ Works on Linux, macOS and WSL. You need [Docker](https://docs.docker.com/get-doc
 ```sh
 task setup    # first time: checks your tools, creates backend/.env and frontend/static/config.json, installs dependencies
 task dev      # MongoDB + backend + frontend in one terminal, Ctrl-C to stop
-task seed     # optional: sample products and test accounts
+task seed     # sample products and test accounts, needed to sign in on /client
 ```
 
 `task setup` never overwrites a `.env` or `config.json` you already have, so you can run it again at any time.
 
-`task dev` starts MongoDB and Mongo Express in Docker, then runs the backend on <http://localhost:8080> and the frontend on <http://localhost:5173>. The backend runs under [air](https://github.com/air-verse/air) and rebuilds when you save a `.go` file. If the build fails, the error shows up in the log and the previous version keeps running. The very first start takes a little longer while Go compiles everything.
+`task dev` starts MongoDB, Mongo Express and a dev login server in Docker, then runs the backend on <http://localhost:8080> and the frontend on <http://localhost:5173>. The backend runs under [air](https://github.com/air-verse/air) and rebuilds when you save a `.go` file. If the build fails, the error shows up in the log and the previous version keeps running. The very first start takes a little longer while Go compiles everything.
 
 Ctrl-C stops the backend and the frontend. MongoDB keeps running, with your data, until you run `task down`.
 
-Mongo Express is at <http://localhost:8081>, with no login. Like MongoDB, it only accepts connections from your own machine.
+Mongo Express is at <http://localhost:8081>, with no login, and the dev login server is at <http://localhost:8082>. Like MongoDB, they only accept connections from your own machine.
 
 MongoDB runs as a replica set, because the backend uses multi-document transactions and change streams. The compose file sets that up. If you bring your own Mongo, initialise a replica set first.
 
@@ -34,7 +34,7 @@ MongoDB runs as a replica set, because the backend uses multi-document transacti
 
 ### Backend: `backend/.env`
 
-`task setup` creates it from [`.env.example`](../backend/.env.example). Those values work for local development as they are. Google sign-in and HelloAsso stay off until you fill them in.
+`task setup` creates it from [`.env.example`](../backend/.env.example). Those values work for local development as they are: sign-in on `/client` goes through the dev login server, and HelloAsso stays off until you fill it in.
 
 | Variable | Default | Notes |
 |---|---|---|
@@ -46,7 +46,10 @@ MongoDB runs as a replica set, because the backend uses multi-document transacti
 | `BAR_API_FRONTEND_BASE_PATH` | `http://localhost:5173` | Where to send users back after login |
 | `BAR_API_SESSION_SECRET` / `BAR_API_ADMIN_SESSION_SECRET` | | Cookie signing keys. Use long random values outside development. |
 | `BAR_API_LOCAL_TOKEN` | | Shared secret for the bar's own machines (see below) |
+| `BAR_OAUTH_PROVIDER` | `google` | `google`, or `oidc` for any OpenID Connect server. `.env.example` sets `oidc` for the dev login server. |
 | `BAR_OAUTH_GOOGLE_CLIENT_ID` / `_SECRET` | | Google sign-in |
+| `BAR_OAUTH_OIDC_ISSUER` | | Issuer URL when the provider is `oidc`, `http://localhost:8082/default` for the dev server |
+| `BAR_OAUTH_OIDC_CLIENT_ID` / `_SECRET` | | Client credentials for that issuer. The dev server accepts any. |
 | `HELLOASSO_CLIENT_ID` / `_SECRET` / `_SLUG` / `_URL` | | Online top-ups. Optional. |
 | `HELLOASSO_CHECKOUT_PROCESSING_INTERVAL` | `10m` | How often pending HelloAsso checkouts are reconciled |
 | `BAR_STORAGE_STORAGE_PATH` | `./storage` | Uploaded pictures |
@@ -62,7 +65,7 @@ Some routes (card login, the kiosk QR code, the door and cash drawer) are only m
 1. In the [Google Cloud Console](https://console.cloud.google.com/), create a project, then go to *APIs & Services → Credentials*.
 2. Create an *OAuth client ID* of type *Web application*.
 3. Add `<BAR_API_BASE_PATH>/auth/google/callback` (for example `http://localhost:8080/auth/google/callback`) as an authorised redirect URI.
-4. Put the client ID and secret in `BAR_OAUTH_GOOGLE_CLIENT_ID` and `BAR_OAUTH_GOOGLE_CLIENT_SECRET`.
+4. Put the client ID and secret in `BAR_OAUTH_GOOGLE_CLIENT_ID` and `BAR_OAUTH_GOOGLE_CLIENT_SECRET`, and set `BAR_OAUTH_PROVIDER=google`.
 
 #### HelloAsso (optional)
 
@@ -95,12 +98,18 @@ After `task seed` there are three more test cards, all with PIN `1234`:
 
 Any other card ID starts the onboarding flow with the PIN `1234`.
 
+### On `/client`
+
+`/client` signs in through the dev login server instead of Google. On <http://localhost:5173/auth>, click the sign-in button and type a username on the page that opens. It logs you in as `<username>@telecomnancy.net`.
+
+As with Google, that only works for an account that already exists. After `task seed`, use `membre`, `etudiant` or `admin` (cards 2, 3 and 4). To use any other name, link it to a card first: sign in on `/borne` with a new card number and go through onboarding, which shows a QR code to link an account. A phone can't reach `localhost`, but the backend logs the QR code's URL (`QR code generated for account …`) at the `debug` level that `.env.example` sets. Open that URL in your browser and type the name there.
+
 The main interfaces:
 
 | URL | Interface |
 |---|---|
 | `/borne` | Kiosk on the bar's touchscreen |
-| `/client` | Members on their phone (Google sign-in via `/auth`) |
+| `/client` | Members on their phone (sign-in via `/auth`) |
 | `/comptoir` | Counter staff |
 | `/admin`, `/panel` | Administration |
 
