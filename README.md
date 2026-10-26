@@ -7,7 +7,7 @@
 Software for running a student bar: self-service kiosk, ordering from your phone, the counter, stock and the cash register.
 
 [![Release](https://img.shields.io/github/v/release/CETEN-OpenBar/bar?style=flat-square&color=e8a33d)](https://github.com/CETEN-OpenBar/bar/releases/latest)
-[![Build](https://img.shields.io/github/actions/workflow/status/CETEN-OpenBar/bar/build.yml?branch=main&style=flat-square&label=build)](https://github.com/CETEN-OpenBar/bar/actions/workflows/build.yml)
+[![CI](https://img.shields.io/github/actions/workflow/status/CETEN-OpenBar/bar/ci.yml?branch=main&style=flat-square&label=ci)](https://github.com/CETEN-OpenBar/bar/actions/workflows/ci.yml)
 [![License](https://img.shields.io/github/license/CETEN-OpenBar/bar?style=flat-square&color=brightgreen)](LICENSE)
 [![Last commit](https://img.shields.io/github/last-commit/CETEN-OpenBar/bar?style=flat-square)](https://github.com/CETEN-OpenBar/bar/commits/main)
 [![Contributors](https://img.shields.io/github/contributors/CETEN-OpenBar/bar?style=flat-square)](https://github.com/CETEN-OpenBar/bar/graphs/contributors)
