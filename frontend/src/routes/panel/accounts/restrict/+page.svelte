@@ -7,38 +7,40 @@
 	let selectedAccount: Account | null = null;
 
 	async function getAccounts(search: string) {
-		let res = await accountsApi().getAccounts(0, 5, search, undefined, undefined, { withCredentials: true });
+		let res = await accountsApi().getAccounts(0, 5, search, undefined, undefined, {
+			withCredentials: true
+		});
 		if (Array.isArray(res.data.accounts)) accounts = res.data.accounts;
 	}
 
-    function isAccountBlocked(account: Account) {
-        for (let restriction of account.restrictions??[]) {
-            if (restriction === "blocked") return true;
-        }
-    }
+	function isAccountBlocked(account: Account) {
+		for (let restriction of account.restrictions ?? []) {
+			if (restriction === 'blocked') return true;
+		}
+	}
 
-    async function toggleBlock(account: Account) {
-        if (isAccountBlocked(account)) {
-            // remove blocked from restrictions
-            account.restrictions = account.restrictions.filter((r) => r !== "blocked");
-            let update: UpdateAccountAdmin = {
-                restrictions: account.restrictions
-            };
-            await accountsApi().patchAccountId(account.id, update, { withCredentials: true });
-        } else {
-            // block
-            if (!account.restrictions) account.restrictions = [];
-            account.restrictions.push("blocked");
-            let update: UpdateAccountAdmin = {
-                restrictions: account.restrictions
-            };
-            await accountsApi().patchAccountId(account.id, update, { withCredentials: true });
-        }
+	async function toggleBlock(account: Account) {
+		if (isAccountBlocked(account)) {
+			// remove blocked from restrictions
+			account.restrictions = account.restrictions.filter((r) => r !== 'blocked');
+			let update: UpdateAccountAdmin = {
+				restrictions: account.restrictions
+			};
+			await accountsApi().patchAccountId(account.id, update, { withCredentials: true });
+		} else {
+			// block
+			if (!account.restrictions) account.restrictions = [];
+			account.restrictions.push('blocked');
+			let update: UpdateAccountAdmin = {
+				restrictions: account.restrictions
+			};
+			await accountsApi().patchAccountId(account.id, update, { withCredentials: true });
+		}
 
-        // fetch account to update
-        let res = await accountsApi().getAccountId(account.id, { withCredentials: true });
-        if (res.data) selectedAccount = res.data;
-    }
+		// fetch account to update
+		let res = await accountsApi().getAccountId(account.id, { withCredentials: true });
+		if (res.data) selectedAccount = res.data;
+	}
 
 	onMount(async () => {
 		await getAccounts('');
@@ -83,22 +85,26 @@
 				<div class="text-3xl text-center font-bold p-5">
 					{selectedAccount?.first_name}
 					{selectedAccount?.last_name}
-                    {#if isAccountBlocked(selectedAccount)}
-                        (bloqué)
-                    {/if}
+					{#if isAccountBlocked(selectedAccount)}
+						(bloqué)
+					{/if}
 				</div>
 
 				<button
-					class="rounded-sm p-5 text-center text-lg h-24 justify-center {isAccountBlocked(selectedAccount) ? 'bg-red-200 hover:bg-red-300' : 'bg-green-200 hover:bg-green-300'}"
-                    on:click={() => {
-                        if (selectedAccount) toggleBlock(selectedAccount);
-                    }}
+					class="rounded-sm p-5 text-center text-lg h-24 justify-center {isAccountBlocked(
+						selectedAccount
+					)
+						? 'bg-red-200 hover:bg-red-300'
+						: 'bg-green-200 hover:bg-green-300'}"
+					on:click={() => {
+						if (selectedAccount) toggleBlock(selectedAccount);
+					}}
 				>
-                {#if isAccountBlocked(selectedAccount)}
-                    Débloquer
-                {:else}
-                    Bloquer
-                {/if}
+					{#if isAccountBlocked(selectedAccount)}
+						Débloquer
+					{:else}
+						Bloquer
+					{/if}
 				</button>
 			</div>
 		{/if}

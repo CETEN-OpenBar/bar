@@ -1,10 +1,10 @@
 // Create a svelte store here to pass context to the app
-import type { Account } from "$lib/api";
-import { writable } from "svelte/store";
+import type { Account } from '$lib/api';
+import { writable } from 'svelte/store';
 
 // Create type for store
 export type Store = {
-    account: Account | undefined;
+	account: Account | undefined;
 };
 
 // Create variable to store store
@@ -18,5 +18,5 @@ export const searchName = writable('');
 
 // Create function to set store
 export const setStore = (store: Store) => {
-    s = store;
-}
+	s = store;
+};

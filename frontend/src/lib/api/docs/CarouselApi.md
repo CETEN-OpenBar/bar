@@ -1,18 +1,19 @@
 # CarouselApi
 
-All URIs are relative to *http://localhost:8080*
+All URIs are relative to _http://localhost:8080_
 
-|Method | HTTP request | Description|
-|------------- | ------------- | -------------|
-|[**addCarouselImage**](#addcarouselimage) | **POST** /carousel/images | |
-|[**addCarouselText**](#addcarouseltext) | **POST** /carousel/texts | |
-|[**getCarouselImage**](#getcarouselimage) | **GET** /carousel/images/{image_id} | |
-|[**getCarouselImages**](#getcarouselimages) | **GET** /carousel/images | |
-|[**getCarouselTexts**](#getcarouseltexts) | **GET** /carousel/texts | |
-|[**markDeleteCarouselImage**](#markdeletecarouselimage) | **DELETE** /carousel/images/{image_id} | |
-|[**markDeleteCarouselText**](#markdeletecarouseltext) | **DELETE** /carousel/texts/{text_id} | |
+| Method                                                  | HTTP request                           | Description |
+| ------------------------------------------------------- | -------------------------------------- | ----------- |
+| [**addCarouselImage**](#addcarouselimage)               | **POST** /carousel/images              |             |
+| [**addCarouselText**](#addcarouseltext)                 | **POST** /carousel/texts               |             |
+| [**getCarouselImage**](#getcarouselimage)               | **GET** /carousel/images/{image_id}    |             |
+| [**getCarouselImages**](#getcarouselimages)             | **GET** /carousel/images               |             |
+| [**getCarouselTexts**](#getcarouseltexts)               | **GET** /carousel/texts                |             |
+| [**markDeleteCarouselImage**](#markdeletecarouselimage) | **DELETE** /carousel/images/{image_id} |             |
+| [**markDeleteCarouselText**](#markdeletecarouseltext)   | **DELETE** /carousel/texts/{text_id}   |             |
 
 # **addCarouselImage**
+
 > CarouselImage addCarouselImage()
 
 Add a carousel image
@@ -20,27 +21,21 @@ Add a carousel image
 ### Example
 
 ```typescript
-import {
-    CarouselApi,
-    Configuration
-} from './api';
+import { CarouselApi, Configuration } from './api';
 
 const configuration = new Configuration();
 const apiInstance = new CarouselApi(configuration);
 
 let image: File; //Image to display (default to undefined)
 
-const { status, data } = await apiInstance.addCarouselImage(
-    image
-);
+const { status, data } = await apiInstance.addCarouselImage(image);
 ```
 
 ### Parameters
 
-|Name | Type | Description  | Notes|
-|------------- | ------------- | ------------- | -------------|
-| **image** | [**File**] | Image to display | defaults to undefined|
-
+| Name      | Type       | Description      | Notes                 |
+| --------- | ---------- | ---------------- | --------------------- |
+| **image** | [**File**] | Image to display | defaults to undefined |
 
 ### Return type
 
@@ -52,23 +47,24 @@ const { status, data } = await apiInstance.addCarouselImage(
 
 ### HTTP request headers
 
- - **Content-Type**: multipart/form-data
- - **Accept**: application/json
-
+- **Content-Type**: multipart/form-data
+- **Accept**: application/json
 
 ### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-|**201** |  |  -  |
-|**400** | Bad request |  -  |
-|**401** | Not authorized |  -  |
-|**403** | Forbidden |  -  |
-|**409** | Item already exists |  -  |
-|**500** | Internal server error |  -  |
+
+| Status code | Description           | Response headers |
+| ----------- | --------------------- | ---------------- |
+| **201**     |                       | -                |
+| **400**     | Bad request           | -                |
+| **401**     | Not authorized        | -                |
+| **403**     | Forbidden             | -                |
+| **409**     | Item already exists   | -                |
+| **500**     | Internal server error | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **addCarouselText**
+
 > CarouselText addCarouselText(carouselTextCreate)
 
 Add a carousel text
@@ -76,28 +72,21 @@ Add a carousel text
 ### Example
 
 ```typescript
-import {
-    CarouselApi,
-    Configuration,
-    CarouselTextCreate
-} from './api';
+import { CarouselApi, Configuration, CarouselTextCreate } from './api';
 
 const configuration = new Configuration();
 const apiInstance = new CarouselApi(configuration);
 
 let carouselTextCreate: CarouselTextCreate; //Carousel text object
 
-const { status, data } = await apiInstance.addCarouselText(
-    carouselTextCreate
-);
+const { status, data } = await apiInstance.addCarouselText(carouselTextCreate);
 ```
 
 ### Parameters
 
-|Name | Type | Description  | Notes|
-|------------- | ------------- | ------------- | -------------|
-| **carouselTextCreate** | **CarouselTextCreate**| Carousel text object | |
-
+| Name                   | Type                   | Description          | Notes |
+| ---------------------- | ---------------------- | -------------------- | ----- |
+| **carouselTextCreate** | **CarouselTextCreate** | Carousel text object |       |
 
 ### Return type
 
@@ -109,23 +98,24 @@ const { status, data } = await apiInstance.addCarouselText(
 
 ### HTTP request headers
 
- - **Content-Type**: application/json
- - **Accept**: application/json
-
+- **Content-Type**: application/json
+- **Accept**: application/json
 
 ### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-|**201** |  |  -  |
-|**400** | Bad request |  -  |
-|**401** | Not authorized |  -  |
-|**403** | Forbidden |  -  |
-|**409** | Item already exists |  -  |
-|**500** | Internal server error |  -  |
+
+| Status code | Description           | Response headers |
+| ----------- | --------------------- | ---------------- |
+| **201**     |                       | -                |
+| **400**     | Bad request           | -                |
+| **401**     | Not authorized        | -                |
+| **403**     | Forbidden             | -                |
+| **409**     | Item already exists   | -                |
+| **500**     | Internal server error | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **getCarouselImage**
+
 > File getCarouselImage()
 
 Get a carousel image
@@ -133,27 +123,21 @@ Get a carousel image
 ### Example
 
 ```typescript
-import {
-    CarouselApi,
-    Configuration
-} from './api';
+import { CarouselApi, Configuration } from './api';
 
 const configuration = new Configuration();
 const apiInstance = new CarouselApi(configuration);
 
 let imageId: string; //ID of the image (default to undefined)
 
-const { status, data } = await apiInstance.getCarouselImage(
-    imageId
-);
+const { status, data } = await apiInstance.getCarouselImage(imageId);
 ```
 
 ### Parameters
 
-|Name | Type | Description  | Notes|
-|------------- | ------------- | ------------- | -------------|
-| **imageId** | [**string**] | ID of the image | defaults to undefined|
-
+| Name        | Type         | Description     | Notes                 |
+| ----------- | ------------ | --------------- | --------------------- |
+| **imageId** | [**string**] | ID of the image | defaults to undefined |
 
 ### Return type
 
@@ -165,20 +149,21 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
- - **Accept**: image/*, application/json
-
+- **Content-Type**: Not defined
+- **Accept**: image/\*, application/json
 
 ### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-|**200** |  |  -  |
-|**404** | Image not found |  -  |
-|**500** | Internal server error |  -  |
+
+| Status code | Description           | Response headers |
+| ----------- | --------------------- | ---------------- |
+| **200**     |                       | -                |
+| **404**     | Image not found       | -                |
+| **500**     | Internal server error | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **getCarouselImages**
+
 > Array<CarouselImage> getCarouselImages()
 
 Get carousel images
@@ -186,10 +171,7 @@ Get carousel images
 ### Example
 
 ```typescript
-import {
-    CarouselApi,
-    Configuration
-} from './api';
+import { CarouselApi, Configuration } from './api';
 
 const configuration = new Configuration();
 const apiInstance = new CarouselApi(configuration);
@@ -198,8 +180,8 @@ const { status, data } = await apiInstance.getCarouselImages();
 ```
 
 ### Parameters
-This endpoint does not have any parameters.
 
+This endpoint does not have any parameters.
 
 ### Return type
 
@@ -211,19 +193,20 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
- - **Accept**: application/json
-
+- **Content-Type**: Not defined
+- **Accept**: application/json
 
 ### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-|**200** |  |  -  |
-|**500** | Internal server error |  -  |
+
+| Status code | Description           | Response headers |
+| ----------- | --------------------- | ---------------- |
+| **200**     |                       | -                |
+| **500**     | Internal server error | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **getCarouselTexts**
+
 > Array<CarouselText> getCarouselTexts()
 
 Get carousel texts
@@ -231,10 +214,7 @@ Get carousel texts
 ### Example
 
 ```typescript
-import {
-    CarouselApi,
-    Configuration
-} from './api';
+import { CarouselApi, Configuration } from './api';
 
 const configuration = new Configuration();
 const apiInstance = new CarouselApi(configuration);
@@ -243,8 +223,8 @@ const { status, data } = await apiInstance.getCarouselTexts();
 ```
 
 ### Parameters
-This endpoint does not have any parameters.
 
+This endpoint does not have any parameters.
 
 ### Return type
 
@@ -256,19 +236,20 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
- - **Accept**: application/json
-
+- **Content-Type**: Not defined
+- **Accept**: application/json
 
 ### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-|**200** |  |  -  |
-|**500** | Internal server error |  -  |
+
+| Status code | Description           | Response headers |
+| ----------- | --------------------- | ---------------- |
+| **200**     |                       | -                |
+| **500**     | Internal server error | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **markDeleteCarouselImage**
+
 > markDeleteCarouselImage()
 
 Delete a carousel image
@@ -276,27 +257,21 @@ Delete a carousel image
 ### Example
 
 ```typescript
-import {
-    CarouselApi,
-    Configuration
-} from './api';
+import { CarouselApi, Configuration } from './api';
 
 const configuration = new Configuration();
 const apiInstance = new CarouselApi(configuration);
 
 let imageId: string; //ID of the image (default to undefined)
 
-const { status, data } = await apiInstance.markDeleteCarouselImage(
-    imageId
-);
+const { status, data } = await apiInstance.markDeleteCarouselImage(imageId);
 ```
 
 ### Parameters
 
-|Name | Type | Description  | Notes|
-|------------- | ------------- | ------------- | -------------|
-| **imageId** | [**string**] | ID of the image | defaults to undefined|
-
+| Name        | Type         | Description     | Notes                 |
+| ----------- | ------------ | --------------- | --------------------- |
+| **imageId** | [**string**] | ID of the image | defaults to undefined |
 
 ### Return type
 
@@ -308,22 +283,23 @@ void (empty response body)
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
- - **Accept**: application/json
-
+- **Content-Type**: Not defined
+- **Accept**: application/json
 
 ### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-|**204** | Success |  -  |
-|**401** | Not authorized |  -  |
-|**403** | Forbidden |  -  |
-|**404** | Image not found |  -  |
-|**500** | Internal server error |  -  |
+
+| Status code | Description           | Response headers |
+| ----------- | --------------------- | ---------------- |
+| **204**     | Success               | -                |
+| **401**     | Not authorized        | -                |
+| **403**     | Forbidden             | -                |
+| **404**     | Image not found       | -                |
+| **500**     | Internal server error | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **markDeleteCarouselText**
+
 > markDeleteCarouselText()
 
 Delete a carousel text
@@ -331,27 +307,21 @@ Delete a carousel text
 ### Example
 
 ```typescript
-import {
-    CarouselApi,
-    Configuration
-} from './api';
+import { CarouselApi, Configuration } from './api';
 
 const configuration = new Configuration();
 const apiInstance = new CarouselApi(configuration);
 
 let textId: string; //ID of the text (default to undefined)
 
-const { status, data } = await apiInstance.markDeleteCarouselText(
-    textId
-);
+const { status, data } = await apiInstance.markDeleteCarouselText(textId);
 ```
 
 ### Parameters
 
-|Name | Type | Description  | Notes|
-|------------- | ------------- | ------------- | -------------|
-| **textId** | [**string**] | ID of the text | defaults to undefined|
-
+| Name       | Type         | Description    | Notes                 |
+| ---------- | ------------ | -------------- | --------------------- |
+| **textId** | [**string**] | ID of the text | defaults to undefined |
 
 ### Return type
 
@@ -363,18 +333,17 @@ void (empty response body)
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
- - **Accept**: application/json
-
+- **Content-Type**: Not defined
+- **Accept**: application/json
 
 ### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-|**204** | Success |  -  |
-|**401** | Not authorized |  -  |
-|**403** | Forbidden |  -  |
-|**404** | Text not found |  -  |
-|**500** | Internal server error |  -  |
+
+| Status code | Description           | Response headers |
+| ----------- | --------------------- | ---------------- |
+| **204**     | Success               | -                |
+| **401**     | Not authorized        | -                |
+| **403**     | Forbidden             | -                |
+| **404**     | Text not found        | -                |
+| **500**     | Internal server error | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-

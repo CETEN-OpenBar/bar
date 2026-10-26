@@ -80,6 +80,16 @@
 	modules.sort((a, b) => a.name.localeCompare(b.name));
 </script>
 
+<div class="modules-grid">
+	{#each modules as module}
+		<a href={module.link}>
+			<div class="module-card {module.color}">
+				<p class="module-title">{module.name}</p>
+			</div>
+		</a>
+	{/each}
+</div>
+
 <style>
 	.modules-grid {
 		display: grid;
@@ -131,15 +141,3 @@
 		background-color: rgb(202, 138, 4);
 	}
 </style>
-
-<div class="modules-grid">
-	{#each modules as module}
-			<a href={module.link}>
-				<div
-					class="module-card {module.color}"
-				>
-					<p class="module-title">{module.name}</p>
-				</div>
-			</a>
-		{/each}
-</div>

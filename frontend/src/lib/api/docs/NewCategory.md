@@ -1,13 +1,12 @@
 # NewCategory
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**name** | **string** | Name of the current category | [default to undefined]
-**picture** | **string** |  | [default to undefined]
-**position** | **number** |  | [default to undefined]
+| Name         | Type       | Description                  | Notes                  |
+| ------------ | ---------- | ---------------------------- | ---------------------- |
+| **name**     | **string** | Name of the current category | [default to undefined] |
+| **picture**  | **string** |                              | [default to undefined] |
+| **position** | **number** |                              | [default to undefined] |
 
 ## Example
 
@@ -15,9 +14,9 @@ Name | Type | Description | Notes
 import { NewCategory } from './api';
 
 const instance: NewCategory = {
-    name,
-    picture,
-    position,
+	name,
+	picture,
+	position
 };
 ```
 

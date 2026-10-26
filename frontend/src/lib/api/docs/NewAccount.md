@@ -1,17 +1,16 @@
 # NewAccount
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**first_name** | **string** |  | [default to undefined]
-**last_name** | **string** |  | [default to undefined]
-**email_address** | **string** |  | [default to undefined]
-**card_id** | **string** |  | [optional] [default to undefined]
-**balance** | **number** |  | [default to undefined]
-**role** | [**AccountRole**](AccountRole.md) |  | [default to undefined]
-**price_role** | [**AccountPriceRole**](AccountPriceRole.md) |  | [optional] [default to undefined]
+| Name              | Type                                        | Description | Notes                             |
+| ----------------- | ------------------------------------------- | ----------- | --------------------------------- |
+| **first_name**    | **string**                                  |             | [default to undefined]            |
+| **last_name**     | **string**                                  |             | [default to undefined]            |
+| **email_address** | **string**                                  |             | [default to undefined]            |
+| **card_id**       | **string**                                  |             | [optional] [default to undefined] |
+| **balance**       | **number**                                  |             | [default to undefined]            |
+| **role**          | [**AccountRole**](AccountRole.md)           |             | [default to undefined]            |
+| **price_role**    | [**AccountPriceRole**](AccountPriceRole.md) |             | [optional] [default to undefined] |
 
 ## Example
 
@@ -19,13 +18,13 @@ Name | Type | Description | Notes
 import { NewAccount } from './api';
 
 const instance: NewAccount = {
-    first_name,
-    last_name,
-    email_address,
-    card_id,
-    balance,
-    role,
-    price_role,
+	first_name,
+	last_name,
+	email_address,
+	card_id,
+	balance,
+	role,
+	price_role
 };
 ```
 

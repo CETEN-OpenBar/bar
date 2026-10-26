@@ -160,81 +160,85 @@
 											</td>
 											<td class="h-px w-72">
 												<div class="px-6 py-3">
-                                                    {#if refill.type == RefillType.RefillHelloAsso}
-                                                        <div class="block text-sm dark:text-white/[.8] dark:bg-slate-800 break-words p-2 bg-transparent">HelloAsso</div>
-                                                    {:else}
-                                                        <select
-                                                            class="block text-sm dark:text-white/[.8] dark:bg-slate-800 break-words p-2 bg-transparent"
-                                                            bind:value={refill.type}
-                                                            on:change={(e) => {
-                                                                // @ts-ignore
-                                                                refill.type = e.target?.value;
-                                                                refillsApi()
-                                                                    .patchRefillId(account.id, refill.id, refill.state, refill.type, {
-                                                                        withCredentials: true
-                                                                    })
-                                                                    .then((res) => {
-                                                                        reloadRefills();
-                                                                    })
-                                                                    .catch((err) => {
-                                                                        console.error(err);
-                                                                    });
-                                                            }}
-                                                        >
-                                                            <option value={RefillType.RefillOther}>Autre</option>
-                                                            <option value={RefillType.RefillCash}>Liquide</option>
-                                                            <option value={RefillType.RefillCard}>Carte</option>
-                                                        </select>
-                                                    {/if}
+													{#if refill.type == RefillType.RefillHelloAsso}
+														<div
+															class="block text-sm dark:text-white/[.8] dark:bg-slate-800 break-words p-2 bg-transparent"
+														>
+															HelloAsso
+														</div>
+													{:else}
+														<select
+															class="block text-sm dark:text-white/[.8] dark:bg-slate-800 break-words p-2 bg-transparent"
+															bind:value={refill.type}
+															on:change={(e) => {
+																// @ts-ignore
+																refill.type = e.target?.value;
+																refillsApi()
+																	.patchRefillId(account.id, refill.id, refill.state, refill.type, {
+																		withCredentials: true
+																	})
+																	.then((res) => {
+																		reloadRefills();
+																	})
+																	.catch((err) => {
+																		console.error(err);
+																	});
+															}}
+														>
+															<option value={RefillType.RefillOther}>Autre</option>
+															<option value={RefillType.RefillCash}>Liquide</option>
+															<option value={RefillType.RefillCard}>Carte</option>
+														</select>
+													{/if}
 												</div>
 											</td>
 											<td class="h-px w-72">
 												<div class="px-6 py-3">
-                                                    {#if refill.type == RefillType.RefillHelloAsso}
-                                                        <select
-                                                            class="block text-sm dark:text-white/[.8] dark:bg-slate-800 break-words p-2 bg-transparent"
-                                                            value={refill.state}
-                                                            disabled
-                                                        >
-                                                            <option value={RefillState.Valid}>Valide</option>
-                                                            <option value={RefillState.Canceled}>Annulé</option>
-                                                        </select>
-                                                    {:else}
-                                                        <select
-                                                            class="block text-sm dark:text-white/[.8] dark:bg-slate-800 break-words p-2 bg-transparent"
-                                                            bind:value={refill.state}
-                                                            on:change={(e) => {
-                                                                // @ts-ignore
-                                                                refill.state = e.target?.value;
-                                                                refillsApi()
-                                                                    .patchRefillId(account.id, refill.id, refill.state, refill.type, {
-                                                                        withCredentials: true
-                                                                    })
-                                                                    .then((res) => {
-                                                                        reloadRefills();
-                                                                    })
-                                                                    .catch((err) => {
-                                                                        console.error(err);
-                                                                    });
-                                                            }}
-                                                        >
-                                                            <option value={RefillState.Valid}>Valide</option>
-                                                            <option value={RefillState.Canceled}>Annulé</option>
-                                                        </select>
-                                                    {/if}
+													{#if refill.type == RefillType.RefillHelloAsso}
+														<select
+															class="block text-sm dark:text-white/[.8] dark:bg-slate-800 break-words p-2 bg-transparent"
+															value={refill.state}
+															disabled
+														>
+															<option value={RefillState.Valid}>Valide</option>
+															<option value={RefillState.Canceled}>Annulé</option>
+														</select>
+													{:else}
+														<select
+															class="block text-sm dark:text-white/[.8] dark:bg-slate-800 break-words p-2 bg-transparent"
+															bind:value={refill.state}
+															on:change={(e) => {
+																// @ts-ignore
+																refill.state = e.target?.value;
+																refillsApi()
+																	.patchRefillId(account.id, refill.id, refill.state, refill.type, {
+																		withCredentials: true
+																	})
+																	.then((res) => {
+																		reloadRefills();
+																	})
+																	.catch((err) => {
+																		console.error(err);
+																	});
+															}}
+														>
+															<option value={RefillState.Valid}>Valide</option>
+															<option value={RefillState.Canceled}>Annulé</option>
+														</select>
+													{/if}
 												</div>
 											</td>
 											<td class="h-px w-px whitespace-nowrap">
-                                                {#if refill.type != RefillType.RefillHelloAsso}
-                                                    <div class="px-6 py-1.5">
-                                                        <button
-                                                            class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
-                                                            on:click={() => deleteRefill(refill.id)}
-                                                        >
-                                                            Supprimer
-                                                        </button>
-                                                    </div>
-                                                {/if}
+												{#if refill.type != RefillType.RefillHelloAsso}
+													<div class="px-6 py-1.5">
+														<button
+															class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium"
+															on:click={() => deleteRefill(refill.id)}
+														>
+															Supprimer
+														</button>
+													</div>
+												{/if}
 											</td>
 										</tr>
 									{/each}

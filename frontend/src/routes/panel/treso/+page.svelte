@@ -3,12 +3,10 @@
 		<a class="self-center p-4 text-3xl bg-slate-200 rounded-lg" href="treso/recharges">
 			Recharges
 		</a>
-        <a class="self-center p-4 text-3xl bg-slate-200 rounded-lg" href="treso/recharges-helloasso">
+		<a class="self-center p-4 text-3xl bg-slate-200 rounded-lg" href="treso/recharges-helloasso">
 			Recharges HelloAsso
 		</a>
-        <a class="self-center p-4 text-3xl bg-slate-200 rounded-lg" href="treso/stars">
-            Etoiles
-        </a>
+		<a class="self-center p-4 text-3xl bg-slate-200 rounded-lg" href="treso/stars"> Etoiles </a>
 		<a class="self-center p-4 text-3xl bg-slate-200 rounded-lg" href="treso/histoproduitmenu">
 			Historique d'achat produit/menu
 		</a>

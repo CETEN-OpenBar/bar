@@ -1,14 +1,14 @@
 <script>
-import '../app.css';
-import 'preline/dist/preline.js';
-import 'iconify-icon';
-import { loadConfig } from '$lib/config/config';
+	import '../app.css';
+	import 'preline/dist/preline.js';
+	import 'iconify-icon';
+	import { loadConfig } from '$lib/config/config';
 
 	let loading = true;
 
 	loadConfig().then(() => {
 		loading = false;
-	})
+	});
 </script>
 
 {#if loading}

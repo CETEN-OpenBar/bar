@@ -1,4 +1,4 @@
- <script lang="ts">
+<script lang="ts">
 	import type { Account, NewAccount, NewCategory } from '$lib/api';
 	import Refills from '$lib/components/admin/refills.svelte';
 	import Stars from '$lib/components/admin/stars.svelte';
@@ -24,7 +24,6 @@
 
 	let searchPriceRole: string | undefined = undefined;
 	let searchRole: string | undefined = undefined;
-
 
 	let searchQuery = '';
 	let filtersOpen: boolean = false;
@@ -80,7 +79,9 @@
 
 	function reloadAccounts() {
 		accountsApi()
-			.getAccounts(page, accounts_per_page, searchQuery, searchPriceRole, searchRole, { withCredentials: true })
+			.getAccounts(page, accounts_per_page, searchQuery, searchPriceRole, searchRole, {
+				withCredentials: true
+			})
 			.then((res) => {
 				accounts = res.data.accounts ?? [];
 				page = res.data.page;
@@ -232,8 +233,6 @@
 					</h2>
 				</div>
 
-			
-
 				<div class="mt-5">
 					<!-- Form -->
 					<div class="grid gap-y-4">
@@ -333,16 +332,20 @@
 			<div class="flex items-center gap-2 mb-2">
 				<button
 					class="flex-1 py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-gray-300 dark:border-gray-600 font-medium bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all text-sm"
-					on:click={() => filtersOpen = !filtersOpen}
+					on:click={() => (filtersOpen = !filtersOpen)}
 				>
-					<iconify-icon icon="mdi:filter-variant" width="18" height="18"></iconify-icon>
+					<iconify-icon icon="mdi:filter-variant" width="18" height="18" />
 					Filtres
 					{#if searchPriceRole || searchRole || searchQuery}
 						<span class="bg-blue-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[18px]">
 							{(searchPriceRole ? 1 : 0) + (searchRole ? 1 : 0) + (searchQuery ? 1 : 0)}
 						</span>
 					{/if}
-					<iconify-icon icon={filtersOpen ? "mdi:chevron-up" : "mdi:chevron-down"} width="18" height="18"></iconify-icon>
+					<iconify-icon
+						icon={filtersOpen ? 'mdi:chevron-up' : 'mdi:chevron-down'}
+						width="18"
+						height="18"
+					/>
 				</button>
 				<button
 					class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
@@ -367,9 +370,13 @@
 				</button>
 			</div>
 			{#if filtersOpen}
-				<div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3 mb-2 space-y-3">
+				<div
+					class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3 mb-2 space-y-3"
+				>
 					<div>
-						<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1">Rechercher</label>
+						<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
+							>Rechercher</label
+						>
 						<input
 							type="text"
 							placeholder="Rechercher par nom..."
@@ -383,7 +390,9 @@
 					</div>
 					<div class="grid grid-cols-2 gap-3">
 						<div>
-							<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1">Prix</label>
+							<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
+								>Prix</label
+							>
 							<select
 								id="category-mobile"
 								name="category"
@@ -405,7 +414,9 @@
 							</select>
 						</div>
 						<div>
-							<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1">Rôle</label>
+							<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
+								>Rôle</label
+							>
 							<select
 								id="category-mobile"
 								name="category"
@@ -555,7 +566,9 @@
 
 	<div class="flex-1 min-h-0 w-full overflow-x-auto overflow-y-auto">
 		<!-- Desktop Table View -->
-		<div class="hidden min-[1300px]:block min-w-full bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-visible">
+		<div
+			class="hidden min-[1300px]:block min-w-full bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-visible"
+		>
 			<table class="min-w-full table-fixed divide-y divide-gray-200 dark:divide-gray-700">
 				<colgroup>
 					<col class="w-[12%]" />
@@ -569,25 +582,39 @@
 				</colgroup>
 				<thead class="bg-gray-50 dark:bg-gray-700">
 					<tr>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+						<th
+							class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+						>
 							Nom
 						</th>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+						<th
+							class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+						>
 							Prénom
 						</th>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+						<th
+							class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+						>
 							Adresse E-Mail
 						</th>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+						<th
+							class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+						>
 							Solde
 						</th>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+						<th
+							class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+						>
 							Étoiles
 						</th>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+						<th
+							class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+						>
 							Rôle
 						</th>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+						<th
+							class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+						>
 							Prix
 						</th>
 						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300">
@@ -598,7 +625,9 @@
 				<tbody class="divide-y divide-gray-200 dark:divide-gray-700">
 					{#each accounts as account}
 						<tr>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600 group relative">
+							<td
+								class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600 group relative"
+							>
 								<input
 									type="text"
 									class="block w-full text-sm dark:text-white/[.8] p-2 bg-transparent border-none outline-none"
@@ -622,12 +651,14 @@
 											});
 									}}
 								/>
-								<iconify-icon 
-									icon="mdi:pencil" 
+								<iconify-icon
+									icon="mdi:pencil"
 									class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
 								/>
 							</td>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600 group relative">
+							<td
+								class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600 group relative"
+							>
 								<input
 									type="text"
 									class="block w-full text-sm dark:text-white/[.8] p-2 bg-transparent border-none outline-none"
@@ -651,12 +682,14 @@
 											});
 									}}
 								/>
-								<iconify-icon 
-									icon="mdi:pencil" 
+								<iconify-icon
+									icon="mdi:pencil"
 									class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
 								/>
 							</td>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600 group relative">
+							<td
+								class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600 group relative"
+							>
 								<input
 									type="text"
 									class="block w-full text-sm dark:text-white/[.8] p-2 bg-transparent border-none outline-none"
@@ -680,17 +713,23 @@
 											});
 									}}
 								/>
-								<iconify-icon 
-									icon="mdi:pencil" 
+								<iconify-icon
+									icon="mdi:pencil"
 									class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
 								/>
 							</td>
-							<td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							<td
+								class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+							>
 								{formatPrice(account.balance)}
 							</td>
-							<td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							<td
+								class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+							>
 								{#if account.points >= 1000000000}
-									{(account.points / 1000000000).toFixed(account.points % 1000000000 === 0 ? 0 : 1)}G
+									{(account.points / 1000000000).toFixed(
+										account.points % 1000000000 === 0 ? 0 : 1
+									)}G
 								{:else if account.points >= 1000000}
 									{(account.points / 1000000).toFixed(account.points % 1000000 === 0 ? 0 : 1)}M
 								{:else if account.points >= 1000}
@@ -700,7 +739,9 @@
 								{/if}
 								<iconify-icon icon="mdi:star" class="ml-1 text-yellow-500" />
 							</td>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							<td
+								class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+							>
 								<select
 									class="block w-full text-sm dark:text-white/[.8] dark:bg-slate-900 p-2 bg-transparent border-none outline-none"
 									value={account.role}
@@ -731,7 +772,9 @@
 									<option value="superadmin">Superadmin</option>
 								</select>
 							</td>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							<td
+								class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+							>
 								<select
 									class="block w-full text-sm dark:text-white/[.8] dark:bg-slate-900 p-2 bg-transparent border-none outline-none"
 									value={account.price_role}
@@ -772,10 +815,10 @@
 											const viewportHeight = window.innerHeight;
 											const spaceBelow = viewportHeight - rect.bottom;
 											const spaceAbove = rect.top;
-											
+
 											// @ts-ignore
 											menu.style.left = `${rect.left}px`;
-											
+
 											// Position above if not enough space below and enough space above
 											if (spaceBelow < menuHeight && spaceAbove > menuHeight) {
 												// @ts-ignore
@@ -784,7 +827,7 @@
 												// @ts-ignore
 												menu.style.top = `${rect.bottom + 8}px`;
 											}
-											
+
 											menu.classList.toggle('hidden');
 											menu.classList.toggle('flex');
 											menu.classList.toggle('flex-col');
@@ -877,17 +920,23 @@
 		<!-- Mobile Card View -->
 		<div class="block min-[1300px]:hidden space-y-4 px-2 pb-4">
 			{#if accounts.length === 0}
-				<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center">
+				<div
+					class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center"
+				>
 					<p class="text-gray-500 dark:text-gray-400">Aucun compte trouvé</p>
 				</div>
 			{:else}
 				{#each accounts as account}
-					<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+					<div
+						class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4"
+					>
 						<div class="flex justify-between items-start mb-3">
 							<div class="flex-1">
 								<div class="grid grid-cols-2 gap-2 mb-2">
 									<div>
-										<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Nom</label>
+										<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+											>Nom</label
+										>
 										<input
 											type="text"
 											class="w-full text-sm dark:text-white/[.8] bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
@@ -913,7 +962,9 @@
 										/>
 									</div>
 									<div>
-										<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Prénom</label>
+										<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+											>Prénom</label
+										>
 										<input
 											type="text"
 											class="w-full text-sm dark:text-white/[.8] bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
@@ -940,7 +991,9 @@
 									</div>
 								</div>
 								<div class="mb-2">
-									<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">E-mail</label>
+									<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+										>E-mail</label
+									>
 									<input
 										type="text"
 										class="w-full text-sm dark:text-white/[.8] bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
@@ -968,30 +1021,40 @@
 							</div>
 						</div>
 						<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
-						<div>
-							<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Solde</label>
-							<div class="text-sm font-medium text-gray-900 dark:text-gray-300 py-2">
-								{formatPrice(account.balance)}
+							<div>
+								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+									>Solde</label
+								>
+								<div class="text-sm font-medium text-gray-900 dark:text-gray-300 py-2">
+									{formatPrice(account.balance)}
+								</div>
 							</div>
-						</div>
-						<div>
-							<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Étoiles</label>
-							<div class="text-sm font-medium text-gray-900 dark:text-gray-300 py-2 flex items-center">
-								{#if account.points >= 1000000000}
-									{(account.points / 1000000000).toFixed(account.points % 1000000000 === 0 ? 0 : 1)}G
-								{:else if account.points >= 1000000}
-									{(account.points / 1000000).toFixed(account.points % 1000000 === 0 ? 0 : 1)}M
-								{:else if account.points >= 1000}
-									{(account.points / 1000).toFixed(account.points % 1000 === 0 ? 0 : 1)}k
-								{:else}
-									{account.points}
-								{/if}
-								<iconify-icon icon="mdi:star" class="ml-1 text-yellow-500" />
+							<div>
+								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+									>Étoiles</label
+								>
+								<div
+									class="text-sm font-medium text-gray-900 dark:text-gray-300 py-2 flex items-center"
+								>
+									{#if account.points >= 1000000000}
+										{(account.points / 1000000000).toFixed(
+											account.points % 1000000000 === 0 ? 0 : 1
+										)}G
+									{:else if account.points >= 1000000}
+										{(account.points / 1000000).toFixed(account.points % 1000000 === 0 ? 0 : 1)}M
+									{:else if account.points >= 1000}
+										{(account.points / 1000).toFixed(account.points % 1000 === 0 ? 0 : 1)}k
+									{:else}
+										{account.points}
+									{/if}
+									<iconify-icon icon="mdi:star" class="ml-1 text-yellow-500" />
+								</div>
 							</div>
-						</div>
-						<div>
-							<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Rôle</label>
-							<select
+							<div>
+								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+									>Rôle</label
+								>
+								<select
 									class="w-full text-sm dark:text-white/[.8] dark:bg-slate-900 bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
 									value={account.role}
 									on:change={(e) => {
@@ -1022,7 +1085,9 @@
 								</select>
 							</div>
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Prix</label>
+								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+									>Prix</label
+								>
 								<select
 									class="w-full text-sm dark:text-white/[.8] dark:bg-slate-900 bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
 									value={account.price_role}
@@ -1097,11 +1162,7 @@
 										deleteAccount(account.id);
 									};
 									confirmationMessage =
-										'Supprimer le compte de ' +
-										account.first_name +
-										' ' +
-										account.last_name +
-										' ?';
+										'Supprimer le compte de ' + account.first_name + ' ' + account.last_name + ' ?';
 									deletingAccount = true;
 								}}
 							>

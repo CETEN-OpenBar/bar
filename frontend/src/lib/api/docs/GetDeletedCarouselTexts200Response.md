@@ -1,14 +1,13 @@
 # GetDeletedCarouselTexts200Response
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**items** | [**Array&lt;CarouselText&gt;**](CarouselText.md) |  | [default to undefined]
-**page** | **number** |  | [default to undefined]
-**limit** | **number** |  | [default to undefined]
-**max_page** | **number** |  | [default to undefined]
+| Name         | Type                                             | Description | Notes                  |
+| ------------ | ------------------------------------------------ | ----------- | ---------------------- |
+| **items**    | [**Array&lt;CarouselText&gt;**](CarouselText.md) |             | [default to undefined] |
+| **page**     | **number**                                       |             | [default to undefined] |
+| **limit**    | **number**                                       |             | [default to undefined] |
+| **max_page** | **number**                                       |             | [default to undefined] |
 
 ## Example
 
@@ -16,10 +15,10 @@ Name | Type | Description | Notes
 import { GetDeletedCarouselTexts200Response } from './api';
 
 const instance: GetDeletedCarouselTexts200Response = {
-    items,
-    page,
-    limit,
-    max_page,
+	items,
+	page,
+	limit,
+	max_page
 };
 ```
 

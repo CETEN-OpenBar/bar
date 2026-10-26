@@ -1,14 +1,13 @@
 # CarouselImage
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**id** | **string** |  | [default to undefined]
-**image_url** | **string** | Image to display | [default to undefined]
-**deleted_at** | **number** |  | [optional] [default to undefined]
-**deleted_by** | **string** |  | [optional] [default to undefined]
+| Name           | Type       | Description      | Notes                             |
+| -------------- | ---------- | ---------------- | --------------------------------- |
+| **id**         | **string** |                  | [default to undefined]            |
+| **image_url**  | **string** | Image to display | [default to undefined]            |
+| **deleted_at** | **number** |                  | [optional] [default to undefined] |
+| **deleted_by** | **string** |                  | [optional] [default to undefined] |
 
 ## Example
 
@@ -16,10 +15,10 @@ Name | Type | Description | Notes
 import { CarouselImage } from './api';
 
 const instance: CarouselImage = {
-    id,
-    image_url,
-    deleted_at,
-    deleted_by,
+	id,
+	image_url,
+	deleted_at,
+	deleted_by
 };
 ```
 

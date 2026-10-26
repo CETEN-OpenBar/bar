@@ -1,10 +1,9 @@
 # RestockState
 
-
 ## Enum
 
-* `RestockFinished` (value: `'finished'`)
+- `RestockFinished` (value: `'finished'`)
 
-* `RestockPending` (value: `'pending'`)
+- `RestockPending` (value: `'pending'`)
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

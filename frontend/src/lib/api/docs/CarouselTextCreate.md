@@ -1,12 +1,11 @@
 # CarouselTextCreate
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**text** | **string** | Text to display | [default to undefined]
-**color** | **string** | Color of the text | [optional] [default to undefined]
+| Name      | Type       | Description       | Notes                             |
+| --------- | ---------- | ----------------- | --------------------------------- |
+| **text**  | **string** | Text to display   | [default to undefined]            |
+| **color** | **string** | Color of the text | [optional] [default to undefined] |
 
 ## Example
 
@@ -14,8 +13,8 @@ Name | Type | Description | Notes
 import { CarouselTextCreate } from './api';
 
 const instance: CarouselTextCreate = {
-    text,
-    color,
+	text,
+	color
 };
 ```
 

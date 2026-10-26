@@ -82,48 +82,66 @@
 
 	<div class="flex-grow w-full overflow-x-auto">
 		<div class="min-w-full bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-			<div class="grid grid-cols-[1fr_1.5fr_1fr_0.75fr_0.5fr] bg-gray-50 dark:bg-gray-700 divide-x divide-gray-200 dark:divide-gray-700" >
-				<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Date
-                </th>
-				<th	class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Compte
-                </th>
-				<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"> 
-                    Émetteur
-                </th>
-				<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"> 
-                    Montant
-                </th>
-				<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider opacity-60"> 
-                    État
-                </th>
+			<div
+				class="grid grid-cols-[1fr_1.5fr_1fr_0.75fr_0.5fr] bg-gray-50 dark:bg-gray-700 divide-x divide-gray-200 dark:divide-gray-700"
+			>
+				<th
+					class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+				>
+					Date
+				</th>
+				<th
+					class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+				>
+					Compte
+				</th>
+				<th
+					class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+				>
+					Émetteur
+				</th>
+				<th
+					class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+				>
+					Montant
+				</th>
+				<th
+					class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider opacity-60"
+				>
+					État
+				</th>
 			</div>
 			<div class="divide-y divide-gray-200 dark:divide-gray-700">
 				{#each stars as star}
-					<div class="grid grid-cols-[1fr_1.5fr_1fr_0.75fr_0.5fr] divide-x divide-gray-200 dark:divide-gray-700">
+					<div
+						class="grid grid-cols-[1fr_1.5fr_1fr_0.75fr_0.5fr] divide-x divide-gray-200 dark:divide-gray-700"
+					>
 						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-                            {new Date(star.issued_at * 1000).toLocaleDateString('fr-FR', {
+							{new Date(star.issued_at * 1000).toLocaleDateString('fr-FR', {
 								day: 'numeric',
 								month: 'long',
 								year: 'numeric',
 								hour: '2-digit',
 								minute: '2-digit'
 							})}
-                        </td>
+						</td>
 						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-                            {star.account_name}
-                        </td>
+							{star.account_name}
+						</td>
 						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-                            {star.issued_by_name}
-                        </td>
-						<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">
-                            {star.amount}
+							{star.issued_by_name}
+						</td>
+						<td
+							class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300"
+						>
+							{star.amount}
 							<iconify-icon icon="mdi:star" class="text-yellow-500" />
 						</td>
-						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300 opacity-60">
-                            {star.state}
-                        </td>
+						<td
+							class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300 opacity-60"
+						>
+							{star.state}
+						</td>
 					</div>
 				{/each}
 			</div>
@@ -131,7 +149,9 @@
 	</div>
 
 	<!-- Pagination -->
-	<div class="sticky bottom-0 left-0 right-0 mt-4 px-6 py-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
+	<div
+		class="sticky bottom-0 left-0 right-0 mt-4 px-6 py-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4"
+	>
 		<div>
 			<p class="text-sm text-gray-600 dark:text-gray-400">
 				<span class="font-semibold text-gray-800 dark:text-gray-200">{stars.length}</span> résultats

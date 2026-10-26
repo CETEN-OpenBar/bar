@@ -210,9 +210,7 @@
 						{/if}
 						<iconify-icon
 							icon="mdi:account-circle"
-							class="refill-avatar placeholder-icon {refill.account_google_picture
-								? 'hidden'
-								: ''}"
+							class="refill-avatar placeholder-icon {refill.account_google_picture ? 'hidden' : ''}"
 						/>
 						<div class="refill-user-info">
 							<b>{refill.account_name}</b>
@@ -249,13 +247,16 @@
 									<span>Annuler</span>
 								</button>
 							{:else if refill.state == 'canceled'}
-								<button class="action-button validate" on:click={() => handleReValidateRefill(refill)}>
+								<button
+									class="action-button validate"
+									on:click={() => handleReValidateRefill(refill)}
+								>
 									<iconify-icon icon="mdi:check-circle" />
 									<span>Re-valider</span>
 								</button>
 							{/if}
-                        {:else}
-                            <span>Recharge HelloAsso - Pas d'actions possibles</span>
+						{:else}
+							<span>Recharge HelloAsso - Pas d'actions possibles</span>
 						{/if}
 					</div>
 				</div>
@@ -566,7 +567,5 @@
 		.placeholder-icon {
 			font-size: 32px;
 		}
-
-
 	}
 </style>

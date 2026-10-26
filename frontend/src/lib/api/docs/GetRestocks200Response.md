@@ -1,14 +1,13 @@
 # GetRestocks200Response
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**restocks** | [**Array&lt;Restock&gt;**](Restock.md) |  | [default to undefined]
-**page** | **number** |  | [default to undefined]
-**limit** | **number** |  | [default to undefined]
-**max_page** | **number** |  | [default to undefined]
+| Name         | Type                                   | Description | Notes                  |
+| ------------ | -------------------------------------- | ----------- | ---------------------- |
+| **restocks** | [**Array&lt;Restock&gt;**](Restock.md) |             | [default to undefined] |
+| **page**     | **number**                             |             | [default to undefined] |
+| **limit**    | **number**                             |             | [default to undefined] |
+| **max_page** | **number**                             |             | [default to undefined] |
 
 ## Example
 
@@ -16,10 +15,10 @@ Name | Type | Description | Notes
 import { GetRestocks200Response } from './api';
 
 const instance: GetRestocks200Response = {
-    restocks,
-    page,
-    limit,
-    max_page,
+	restocks,
+	page,
+	limit,
+	max_page
 };
 ```
 

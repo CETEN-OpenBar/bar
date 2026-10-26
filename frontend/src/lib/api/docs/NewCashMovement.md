@@ -1,12 +1,11 @@
 # NewCashMovement
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**amount** | **number** |  | [default to undefined]
-**reason** | **string** |  | [default to undefined]
+| Name       | Type       | Description | Notes                  |
+| ---------- | ---------- | ----------- | ---------------------- |
+| **amount** | **number** |             | [default to undefined] |
+| **reason** | **string** |             | [default to undefined] |
 
 ## Example
 
@@ -14,8 +13,8 @@ Name | Type | Description | Notes
 import { NewCashMovement } from './api';
 
 const instance: NewCashMovement = {
-    amount,
-    reason,
+	amount,
+	reason
 };
 ```
 

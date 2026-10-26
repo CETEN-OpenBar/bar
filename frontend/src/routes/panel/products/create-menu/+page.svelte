@@ -46,7 +46,7 @@
 			staff_bar: 0,
 			coutant: 0,
 			privilegies: 0,
-			menu: 0,
+			menu: 0
 		},
 		available_from: undefined,
 		available_to: undefined,
@@ -145,9 +145,18 @@
 								on:click={async () => {
 									steps.category = c;
 									currentStep = 2;
-									const res = await itemsApi().getAllItems(0, 16, undefined, undefined, '', undefined, undefined, {
-										withCredentials: true
-									});
+									const res = await itemsApi().getAllItems(
+										0,
+										16,
+										undefined,
+										undefined,
+										'',
+										undefined,
+										undefined,
+										{
+											withCredentials: true
+										}
+									);
 									if (!Array.isArray(res.data.items)) {
 										return;
 									}
@@ -182,9 +191,18 @@
 						on:keyup={async (e) => {
 							// @ts-ignore
 							let val = e.target?.value;
-							const res = await itemsApi().getAllItems(0, 16, undefined, undefined, val, undefined, undefined, {
-								withCredentials: true
-							});
+							const res = await itemsApi().getAllItems(
+								0,
+								16,
+								undefined,
+								undefined,
+								val,
+								undefined,
+								undefined,
+								{
+									withCredentials: true
+								}
+							);
 							if (!Array.isArray(res.data.items)) {
 								return;
 							}

@@ -32,7 +32,9 @@
 				<div class="flex flex-col gap-1 text-xs flex-1 min-w-0">
 					<div class="flex items-center gap-2">
 						<span class="text-gray-500 dark:text-gray-400 font-medium">Fourn:</span>
-						<span class="font-semibold dark:text-gray-200 truncate">{getFournisseurName(item.fournisseur)}</span>
+						<span class="font-semibold dark:text-gray-200 truncate"
+							>{getFournisseurName(item.fournisseur)}</span
+						>
 					</div>
 					{#if item.amount_per_bundle || item.ref_bundle}
 						<div class="flex items-center gap-2 text-gray-600 dark:text-gray-400">
@@ -45,18 +47,27 @@
 						</div>
 					{/if}
 				</div>
-				<iconify-icon icon="mdi:chevron-down" width="16" height="16" class="text-gray-400 group-hover:text-blue-500 transition-colors flex-shrink-0"></iconify-icon>
+				<iconify-icon
+					icon="mdi:chevron-down"
+					width="16"
+					height="16"
+					class="text-gray-400 group-hover:text-blue-500 transition-colors flex-shrink-0"
+				/>
 			</div>
 		</button>
 	{:else}
-		<div class="border border-blue-500 dark:border-blue-400 rounded-md p-3 bg-blue-50/50 dark:bg-blue-950/20">
+		<div
+			class="border border-blue-500 dark:border-blue-400 rounded-md p-3 bg-blue-50/50 dark:bg-blue-950/20"
+		>
 			<div class="flex items-center justify-between mb-3">
-				<span class="text-xs font-semibold text-blue-700 dark:text-blue-300">Modifier Fournisseur</span>
+				<span class="text-xs font-semibold text-blue-700 dark:text-blue-300"
+					>Modifier Fournisseur</span
+				>
 				<button
 					class="px-2 py-1 text-xs bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded flex items-center gap-1 transition-colors"
 					on:click={() => (expanded = false)}
 				>
-					<iconify-icon icon="mdi:check" width="14" height="14"></iconify-icon>
+					<iconify-icon icon="mdi:check" width="14" height="14" />
 					<span>Fermer</span>
 				</button>
 			</div>
@@ -87,7 +98,11 @@
 						on:input={(e) => {
 							// @ts-ignore
 							let val = e.target?.value;
-							editItem(item.id, { amount_per_bundle: val ? parseInt(val) : undefined }, item.category_id);
+							editItem(
+								item.id,
+								{ amount_per_bundle: val ? parseInt(val) : undefined },
+								item.category_id
+							);
 						}}
 					/>
 				</div>

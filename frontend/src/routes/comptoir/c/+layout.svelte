@@ -54,8 +54,8 @@
 	const go_admin_panel = (card_id: string, password: string) => {
 		info = {
 			card_id: card_id,
-			password: password,
-		}
+			password: password
+		};
 		authApi()
 			.connectPassword(info, { withCredentials: true })
 			.then(() => {
@@ -77,6 +77,194 @@
 			});
 	});
 </script>
+
+<Autodisconnect delay={900000} location="/comptoir" />
+
+{#if account !== undefined}
+	<main class="main-container">
+		<div class="content-wrapper">
+			<header class="main-header">
+				<div class="actions-group">
+					<button class="btn btn-small" on:click={() => (newRefill = true)}>
+						<iconify-icon icon="mdi:cash-plus" width="16" height="16" />
+						Recharge
+					</button>
+
+					<button class="btn" on:click={() => (changePassword = true)}>
+						<iconify-icon icon="mdi:key-change" width="20" height="20" />
+						Changer MDP
+					</button>
+					<button
+						class="btn"
+						on:click={() => {
+							to_call = open_door;
+							askForCard = true;
+						}}
+					>
+						<iconify-icon icon="mdi:door-open" width="20" height="20" />
+						Porte
+					</button>
+					<button
+						class="btn"
+						on:click={() => {
+							to_call = open_ventilo;
+							askForCard = true;
+						}}
+					>
+						<iconify-icon icon="mdi:fan" width="20" height="20" />
+						Ventilo
+					</button>
+					<button
+						class="btn"
+						on:click={() => {
+							to_call = open_caisse;
+							askForCard = true;
+						}}
+					>
+						<iconify-icon icon="mdi:cash-register" width="20" height="20" />
+						Caisse
+					</button>
+					<button
+						class="btn"
+						on:click={() => {
+							to_call = go_admin_panel;
+							askForCard = true;
+						}}
+					>
+						<iconify-icon icon="mdi:shield-crown" width="20" height="20" />
+						Admin Panel
+					</button>
+				</div>
+
+				<div class="right-section">
+					<div class="nav-group">
+						<button class="btn btn-danger" on:click={logoutAccount}>
+							<iconify-icon icon="mdi:logout" width="24" height="24" />
+							Déconnexion
+						</button>
+					</div>
+
+					<button class="mobile-menu-btn" on:click={() => (mobileMenuOpen = !mobileMenuOpen)}>
+						<iconify-icon icon="mdi:menu" width="24" height="24" />
+					</button>
+				</div>
+
+				<div class="mobile-menu" class:open={mobileMenuOpen}>
+					<button
+						class="btn btn-small"
+						on:click={() => {
+							newRefill = true;
+							mobileMenuOpen = false;
+						}}
+					>
+						<iconify-icon icon="mdi:cash-plus" width="16" height="16" />
+						Recharge
+					</button>
+
+					<button
+						class="btn"
+						on:click={() => {
+							changePassword = true;
+							mobileMenuOpen = false;
+						}}
+					>
+						<iconify-icon icon="mdi:key-change" width="20" height="20" />
+						Changer MDP
+					</button>
+					<button
+						class="btn"
+						on:click={() => {
+							to_call = open_door;
+							askForCard = true;
+							mobileMenuOpen = false;
+						}}
+					>
+						<iconify-icon icon="mdi:door-open" width="20" height="20" />
+						Porte
+					</button>
+					<button
+						class="btn"
+						on:click={() => {
+							to_call = open_ventilo;
+							askForCard = true;
+							mobileMenuOpen = false;
+						}}
+					>
+						<iconify-icon icon="mdi:fan" width="20" height="20" />
+						Ventilo
+					</button>
+					<button
+						class="btn"
+						on:click={() => {
+							to_call = open_caisse;
+							askForCard = true;
+							mobileMenuOpen = false;
+						}}
+					>
+						<iconify-icon icon="mdi:cash-register" width="20" height="20" />
+						Caisse
+					</button>
+					<button
+						class="btn"
+						on:click={() => {
+							to_call = go_admin_panel;
+							askForCard = true;
+							mobileMenuOpen = false;
+						}}
+					>
+						<iconify-icon icon="mdi:shield-crown" width="20" height="20" />
+						Admin Panel
+					</button>
+
+					<button class="btn btn-danger" on:click={logoutAccount}>
+						<iconify-icon icon="mdi:logout" width="24" height="24" />
+						Déconnexion
+					</button>
+				</div>
+			</header>
+
+			<div class="slot-container">
+				<slot />
+			</div>
+
+			{#if askForCard}
+				<div class="modal-overlay" on:click={reset}>
+					<div class="modal-content" on:click|stopPropagation>
+						<button class="modal-close" on:click={reset}>
+							<iconify-icon icon="mdi:close" width="24" height="24" />
+						</button>
+						<h2 class="modal-title">Veuillez scanner la carte</h2>
+					</div>
+				</div>
+				<ReadCard
+					callback={(id) => {
+						infos.card_id = id;
+						askForPassword = true;
+						askForCard = false;
+					}}
+				/>
+			{/if}
+
+			{#if askForPassword}
+				<Password
+					callback={(password) => {
+						infos.card_pin = password;
+						to_call(infos.card_id, infos.card_pin);
+						reset();
+					}}
+				/>
+			{/if}
+
+			{#if changePassword}
+				<ChangePassword onEnd={() => (changePassword = false)} />
+			{/if}
+
+			{#if newRefill}
+				<NewRefill {close} />
+			{/if}
+		</div>
+	</main>
+{/if}
 
 <style>
 	:root {
@@ -317,7 +505,6 @@
 		transition: all 0.2s ease;
 	}
 
-
 	.modal-title {
 		font-size: 1.5rem;
 		font-weight: 600;
@@ -325,127 +512,3 @@
 		margin-bottom: 1rem;
 	}
 </style>
-
-<Autodisconnect delay={900000} location="/comptoir" />
-
-{#if account !== undefined}
-	<main class="main-container">
-		<div class="content-wrapper">
-			<header class="main-header">
-				<div class="actions-group">
-					<button class="btn btn-small" on:click={() => newRefill = true}>
-						<iconify-icon icon="mdi:cash-plus" width="16" height="16" />
-						Recharge
-					</button>
-
-					<button class="btn" on:click={() => changePassword = true}>
-						<iconify-icon icon="mdi:key-change" width="20" height="20" />
-						Changer MDP
-					</button>
-					<button class="btn" on:click={() => { to_call = open_door; askForCard = true; }}>
-						<iconify-icon icon="mdi:door-open" width="20" height="20" />
-						Porte
-					</button>
-					<button class="btn" on:click={() => { to_call = open_ventilo; askForCard = true; }}>
-						<iconify-icon icon="mdi:fan" width="20" height="20" />
-						Ventilo
-					</button>
-					<button class="btn" on:click={() => { to_call = open_caisse; askForCard = true; }}>
-						<iconify-icon icon="mdi:cash-register" width="20" height="20" />
-						Caisse
-					</button>
-					<button class="btn" on:click={() => { to_call = go_admin_panel; askForCard = true; }}>
-						<iconify-icon icon="mdi:shield-crown" width="20" height="20" />
-						Admin Panel
-					</button>
-				</div>
-
-				<div class="right-section">
-					<div class="nav-group">
-						<button class="btn btn-danger" on:click={logoutAccount}>
-							<iconify-icon icon="mdi:logout" width="24" height="24" />
-							Déconnexion
-						</button>
-					</div>
-
-					<button class="mobile-menu-btn" on:click={() => mobileMenuOpen = !mobileMenuOpen}>
-						<iconify-icon icon="mdi:menu" width="24" height="24" />
-					</button>
-				</div>
-
-				<div class="mobile-menu" class:open={mobileMenuOpen}>
-					<button class="btn btn-small" on:click={() => { newRefill = true; mobileMenuOpen = false; }}>
-						<iconify-icon icon="mdi:cash-plus" width="16" height="16" />
-						Recharge
-					</button>
-
-					<button class="btn" on:click={() => { changePassword = true; mobileMenuOpen = false; }}>
-						<iconify-icon icon="mdi:key-change" width="20" height="20" />
-						Changer MDP
-					</button>
-					<button class="btn" on:click={() => { to_call = open_door; askForCard = true; mobileMenuOpen = false; }}>
-						<iconify-icon icon="mdi:door-open" width="20" height="20" />
-						Porte
-					</button>
-					<button class="btn" on:click={() => { to_call = open_ventilo; askForCard = true; mobileMenuOpen = false; }}>
-						<iconify-icon icon="mdi:fan" width="20" height="20" />
-						Ventilo
-					</button>
-					<button class="btn" on:click={() => { to_call = open_caisse; askForCard = true; mobileMenuOpen = false; }}>
-						<iconify-icon icon="mdi:cash-register" width="20" height="20" />
-						Caisse
-					</button>
-					<button class="btn" on:click={() => { to_call = go_admin_panel; askForCard = true; mobileMenuOpen = false; }}>
-						<iconify-icon icon="mdi:shield-crown" width="20" height="20" />
-						Admin Panel
-					</button>
-
-					<button class="btn btn-danger" on:click={logoutAccount}>
-						<iconify-icon icon="mdi:logout" width="24" height="24" />
-						Déconnexion
-					</button>
-				</div>
-			</header>
-
-			<div class="slot-container">
-				<slot />
-			</div>
-
-			{#if askForCard}
-				<div class="modal-overlay" on:click={reset}>
-					<div class="modal-content" on:click|stopPropagation>
-						<button class="modal-close" on:click={reset}>
-							<iconify-icon icon="mdi:close" width="24" height="24" />
-						</button>
-						<h2 class="modal-title">Veuillez scanner la carte</h2>
-					</div>
-				</div>
-				<ReadCard
-					callback={(id) => {
-						infos.card_id = id;
-						askForPassword = true;
-						askForCard = false;
-					}}
-				/>
-			{/if}
-
-			{#if askForPassword}
-				<Password
-					callback={(password) => {
-						infos.card_pin = password;
-						to_call(infos.card_id, infos.card_pin);
-						reset();
-					}}
-				/>
-			{/if}
-
-			{#if changePassword}
-				<ChangePassword onEnd={() => (changePassword = false)} />
-			{/if}
-
-			{#if newRefill}
-				<NewRefill {close} />
-			{/if}
-		</div>
-	</main>
-{/if}

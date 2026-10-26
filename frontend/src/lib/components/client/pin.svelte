@@ -19,9 +19,15 @@
 	<!-- Put a title and the numpad -->
 	<div class="flex flex-col items-center bg-neutral-700 rounded-lg shadow-lg p-4 z-40">
 		<h1 class="text-2xl font-bold mb-4 text-white">{custom_text}</h1>
-		<div class="flex flex-col items-center ">
+		<div class="flex flex-col items-center">
 			<!-- Display the pin -->
-			<input name=pin bind:value={temp_pin} disabled type="password" class="w-full h-20 m-3 bg-neutral-800 rounded-xl text-white text-4xl text-center">
+			<input
+				name="pin"
+				bind:value={temp_pin}
+				disabled
+				type="password"
+				class="w-full h-20 m-3 bg-neutral-800 rounded-xl text-white text-4xl text-center"
+			/>
 			<!-- Display the numpad -->
 			<div class="grid grid-cols-3 gap-2">
 				{#each Array.from({ length: 9 }, (_, i) => i + 1) as i}

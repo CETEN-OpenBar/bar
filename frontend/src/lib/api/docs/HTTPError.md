@@ -1,12 +1,11 @@
 # HTTPError
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**message** | [**Messages**](Messages.md) |  | [default to undefined]
-**error_code** | [**ErrorCodes**](ErrorCodes.md) |  | [default to undefined]
+| Name           | Type                            | Description | Notes                  |
+| -------------- | ------------------------------- | ----------- | ---------------------- |
+| **message**    | [**Messages**](Messages.md)     |             | [default to undefined] |
+| **error_code** | [**ErrorCodes**](ErrorCodes.md) |             | [default to undefined] |
 
 ## Example
 
@@ -14,8 +13,8 @@ Name | Type | Description | Notes
 import { HTTPError } from './api';
 
 const instance: HTTPError = {
-    message,
-    error_code,
+	message,
+	error_code
 };
 ```
 

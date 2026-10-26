@@ -1,15 +1,14 @@
 # UpdateCategory
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**name** | **string** | Name of the current category | [optional] [default to undefined]
-**picture** | **string** |  | [optional] [default to undefined]
-**position** | **number** |  | [optional] [default to undefined]
-**hidden** | **boolean** |  | [optional] [default to undefined]
-**special_price** | **boolean** |  | [optional] [default to undefined]
+| Name              | Type        | Description                  | Notes                             |
+| ----------------- | ----------- | ---------------------------- | --------------------------------- |
+| **name**          | **string**  | Name of the current category | [optional] [default to undefined] |
+| **picture**       | **string**  |                              | [optional] [default to undefined] |
+| **position**      | **number**  |                              | [optional] [default to undefined] |
+| **hidden**        | **boolean** |                              | [optional] [default to undefined] |
+| **special_price** | **boolean** |                              | [optional] [default to undefined] |
 
 ## Example
 
@@ -17,11 +16,11 @@ Name | Type | Description | Notes
 import { UpdateCategory } from './api';
 
 const instance: UpdateCategory = {
-    name,
-    picture,
-    position,
-    hidden,
-    special_price,
+	name,
+	picture,
+	position,
+	hidden,
+	special_price
 };
 ```
 

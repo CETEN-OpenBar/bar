@@ -40,7 +40,7 @@
 
 		if (Math.abs(diff) > swipeThreshold) {
 			if (diff > 0) {
-				if (page < maxPage+1) nextPage();
+				if (page < maxPage + 1) nextPage();
 			} else {
 				if (page > 1) prevPage();
 			}
@@ -53,7 +53,7 @@
 
 		if (Math.abs(diff) > swipeThreshold) {
 			if (diff > 0) {
-				if (page < maxPage+1) nextPage();
+				if (page < maxPage + 1) nextPage();
 			} else {
 				if (page > 1) prevPage();
 			}
@@ -67,7 +67,6 @@
 
 	// Update item when clicking on it
 	function clickWrapper(item: Item) {
-
 		if (item.amount_left == 0) {
 			return;
 		}

@@ -9,15 +9,22 @@
 	let rebounceTimeout: number | null = null;
 
 	const priceLabels: Record<string, string> = {
-		'coutant': 'Cout',
-		'externe': 'Ext',
-		'ceten': 'Ceten',
-		'staff_bar': 'Staff',
-		'privilegies': 'Priv',
-		'menu': 'Menu'
+		coutant: 'Cout',
+		externe: 'Ext',
+		ceten: 'Ceten',
+		staff_bar: 'Staff',
+		privilegies: 'Priv',
+		menu: 'Menu'
 	};
 
-	const priceRoles: AccountPriceRole[] = ['coutant', 'externe', 'ceten', 'staff_bar', 'privilegies', 'menu'];
+	const priceRoles: AccountPriceRole[] = [
+		'coutant',
+		'externe',
+		'ceten',
+		'staff_bar',
+		'privilegies',
+		'menu'
+	];
 
 	function getCompactPrice(role: AccountPriceRole): string {
 		return `${priceLabels[role]}:${formatPrice(item.prices[role])}`;
@@ -56,25 +63,43 @@
 						</div>
 					{/each}
 				</div>
-				<iconify-icon icon="mdi:chevron-down" width="16" height="16" class="text-gray-400 group-hover:text-blue-500 transition-colors flex-shrink-0"></iconify-icon>
+				<iconify-icon
+					icon="mdi:chevron-down"
+					width="16"
+					height="16"
+					class="text-gray-400 group-hover:text-blue-500 transition-colors flex-shrink-0"
+				/>
 			</div>
 		</button>
 	{:else}
-		<div class="border border-blue-500 dark:border-blue-400 rounded-md p-3 bg-blue-50/50 dark:bg-blue-950/20">
+		<div
+			class="border border-blue-500 dark:border-blue-400 rounded-md p-3 bg-blue-50/50 dark:bg-blue-950/20"
+		>
 			<div class="flex items-center justify-between mb-3">
 				<span class="text-xs font-semibold text-blue-700 dark:text-blue-300">Modifier Prix</span>
 				<button
 					class="px-2 py-1 text-xs bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded flex items-center gap-1 transition-colors"
 					on:click={() => (expanded = false)}
 				>
-					<iconify-icon icon="mdi:check" width="14" height="14"></iconify-icon>
+					<iconify-icon icon="mdi:check" width="14" height="14" />
 					<span>Fermer</span>
 				</button>
 			</div>
 			<div class="space-y-2">
 				{#each priceRoles as role}
 					{@const price = item.prices[role]}
-					{@const label = role === 'coutant' ? 'Coutant' : role === 'externe' ? 'Externe' : role === 'ceten' ? 'Ceten' : role === 'staff_bar' ? 'Staff' : role === 'privilegies' ? 'Privil.' : 'Menu'}
+					{@const label =
+						role === 'coutant'
+							? 'Coutant'
+							: role === 'externe'
+							? 'Externe'
+							: role === 'ceten'
+							? 'Ceten'
+							: role === 'staff_bar'
+							? 'Staff'
+							: role === 'privilegies'
+							? 'Privil.'
+							: 'Menu'}
 					<div class="flex items-center gap-2">
 						<label class="text-xs w-16 shrink-0 font-medium dark:text-gray-300">{label}:</label>
 						<div class="flex-1 relative">

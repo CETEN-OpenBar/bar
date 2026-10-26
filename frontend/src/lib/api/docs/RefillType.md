@@ -1,18 +1,17 @@
 # RefillType
 
-
 ## Enum
 
-* `RefillCash` (value: `'cash'`)
+- `RefillCash` (value: `'cash'`)
 
-* `RefillCard` (value: `'card'`)
+- `RefillCard` (value: `'card'`)
 
-* `RefillTransfer` (value: `'tranfer'`)
+- `RefillTransfer` (value: `'tranfer'`)
 
-* `RefillCheck` (value: `'check'`)
+- `RefillCheck` (value: `'check'`)
 
-* `RefillHelloAsso` (value: `'helloasso'`)
+- `RefillHelloAsso` (value: `'helloasso'`)
 
-* `RefillOther` (value: `'other'`)
+- `RefillOther` (value: `'other'`)
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

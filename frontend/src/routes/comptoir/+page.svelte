@@ -179,7 +179,6 @@
 	<Pin callback={pinCallback} />
 {/if}
 
-
 {#if display}
 	<div in:fly={{ x: -1000, duration: 1000 }}>
 		<Carousel {images} {texts} />

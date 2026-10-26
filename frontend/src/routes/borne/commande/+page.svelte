@@ -215,7 +215,7 @@
 				};
 			}),
 			card_pin: card_pin,
-			is_remote: false,
+			is_remote: false
 		};
 
 		transactionsApi()

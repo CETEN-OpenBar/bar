@@ -1,14 +1,13 @@
 # GetDeletedStarring200Response
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**starring** | [**Array&lt;Starring&gt;**](Starring.md) |  | [default to undefined]
-**page** | **number** |  | [default to undefined]
-**limit** | **number** |  | [default to undefined]
-**max_page** | **number** |  | [default to undefined]
+| Name         | Type                                     | Description | Notes                  |
+| ------------ | ---------------------------------------- | ----------- | ---------------------- |
+| **starring** | [**Array&lt;Starring&gt;**](Starring.md) |             | [default to undefined] |
+| **page**     | **number**                               |             | [default to undefined] |
+| **limit**    | **number**                               |             | [default to undefined] |
+| **max_page** | **number**                               |             | [default to undefined] |
 
 ## Example
 
@@ -16,10 +15,10 @@ Name | Type | Description | Notes
 import { GetDeletedStarring200Response } from './api';
 
 const instance: GetDeletedStarring200Response = {
-    starring,
-    page,
-    limit,
-    max_page,
+	starring,
+	page,
+	limit,
+	max_page
 };
 ```
 

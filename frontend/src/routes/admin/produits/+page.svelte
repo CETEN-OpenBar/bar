@@ -35,7 +35,7 @@
 			staff_bar: 0,
 			coutant: 0,
 			privilegies: 0,
-			menu: 0,
+			menu: 0
 		} as ItemPrices,
 		amount_left: 0,
 		buy_limit: undefined,
@@ -93,9 +93,18 @@
 
 	function reloadItems() {
 		itemsApi()
-			.getAllItems(page, itemsPerPage, searchState, searchCategory, searchName, searchFournisseur, undefined, {
-				withCredentials: true
-			})
+			.getAllItems(
+				page,
+				itemsPerPage,
+				searchState,
+				searchCategory,
+				searchName,
+				searchFournisseur,
+				undefined,
+				{
+					withCredentials: true
+				}
+			)
 			.then((res) => {
 				maxPage = res.data.max_page ?? 1;
 				page = res.data.page ?? 1;
@@ -476,12 +485,12 @@
 </div>
 
 {#if deletingItem}
-	<ConfirmationPopup 
+	<ConfirmationPopup
 		message={confirmationMessage}
 		confirm_text="Supprimer"
 		cancel_callback={() => {
 			deletingItem = false;
-		}} 
+		}}
 		confirm_callback={deleteItemCallback}
 	/>
 {/if}
@@ -493,16 +502,20 @@
 			<div class="flex items-center gap-2 mb-2">
 				<button
 					class="flex-1 py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-gray-300 dark:border-gray-600 font-medium bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all text-sm"
-					on:click={() => filtersOpen = !filtersOpen}
+					on:click={() => (filtersOpen = !filtersOpen)}
 				>
-					<iconify-icon icon="mdi:filter-variant" width="18" height="18"></iconify-icon>
+					<iconify-icon icon="mdi:filter-variant" width="18" height="18" />
 					Filtres
 					{#if searchCategory || searchState || searchName}
 						<span class="bg-blue-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[18px]">
 							{(searchCategory ? 1 : 0) + (searchState ? 1 : 0) + (searchName ? 1 : 0)}
 						</span>
 					{/if}
-					<iconify-icon icon={filtersOpen ? "mdi:chevron-up" : "mdi:chevron-down"} width="18" height="18"></iconify-icon>
+					<iconify-icon
+						icon={filtersOpen ? 'mdi:chevron-up' : 'mdi:chevron-down'}
+						width="18"
+						height="18"
+					/>
 				</button>
 				<button
 					class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
@@ -527,10 +540,14 @@
 				</button>
 			</div>
 			{#if filtersOpen}
-				<div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3 mb-2 space-y-3">
+				<div
+					class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3 mb-2 space-y-3"
+				>
 					<div class="grid grid-cols-2 gap-3">
 						<div>
-							<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1">Catégorie</label>
+							<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
+								>Catégorie</label
+							>
 							<select
 								id="category-mobile"
 								name="category"
@@ -550,7 +567,9 @@
 							</select>
 						</div>
 						<div>
-							<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1">Etat</label>
+							<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
+								>Etat</label
+							>
 							<select
 								id="state-mobile"
 								name="state"
@@ -571,7 +590,9 @@
 						</div>
 					</div>
 					<div>
-						<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1">Fournisseur</label>
+						<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
+							>Fournisseur</label
+						>
 						<select
 							id="fournisseur-mobile"
 							name="fournisseur"
@@ -592,7 +613,9 @@
 						</select>
 					</div>
 					<div>
-						<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1">Rechercher</label>
+						<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
+							>Rechercher</label
+						>
 						<input
 							type="text"
 							placeholder="Nom du produit..."
@@ -671,7 +694,7 @@
 					{/each}
 				</select>
 			</div>
-            <div class="flex flex-row items-center gap-3">
+			<div class="flex flex-row items-center gap-3">
 				<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Par nom:</span>
 				<input
 					type="text"
@@ -712,7 +735,9 @@
 
 	<div class="flex-1 min-h-0 w-full overflow-x-auto overflow-y-auto">
 		<!-- Desktop Table View -->
-		<div class="hidden min-[1300px]:block min-w-full bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-visible">
+		<div
+			class="hidden min-[1300px]:block min-w-full bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-visible"
+		>
 			<table class="min-w-full table-fixed divide-y divide-gray-200 dark:divide-gray-700">
 				<colgroup>
 					<col class="w-[14%]" />
@@ -726,25 +751,39 @@
 				</colgroup>
 				<thead class="bg-gray-50 dark:bg-gray-700">
 					<tr>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+						<th
+							class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+						>
 							Nom
 						</th>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+						<th
+							class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+						>
 							Catégorie
 						</th>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+						<th
+							class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+						>
 							Image
 						</th>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+						<th
+							class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+						>
 							Achetable
 						</th>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+						<th
+							class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+						>
 							Stocks
 						</th>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+						<th
+							class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+						>
 							Fournisseur
 						</th>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+						<th
+							class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+						>
 							Prix
 						</th>
 						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300">
@@ -755,7 +794,9 @@
 				<tbody class="divide-y divide-gray-200 dark:divide-gray-700">
 					{#each items as item}
 						<tr>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							<td
+								class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+							>
 								<div class="relative group">
 									<input
 										type="text"
@@ -767,10 +808,17 @@
 											editItem(item.id, { name: name }, item.category_id);
 										}}
 									/>
-									<iconify-icon icon="mdi:pencil" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" width="14" height="14"></iconify-icon>
+									<iconify-icon
+										icon="mdi:pencil"
+										class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity"
+										width="14"
+										height="14"
+									/>
 								</div>
 							</td>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							<td
+								class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+							>
 								<select
 									class="block w-full text-sm dark:text-white/[.8] dark:bg-slate-900 p-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 									value={item.category_id}
@@ -785,7 +833,9 @@
 									{/each}
 								</select>
 							</td>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600 relative">
+							<td
+								class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600 relative"
+							>
 								<input
 									type="file"
 									class="absolute w-12 h-12 opacity-0 cursor-pointer"
@@ -803,7 +853,9 @@
 									/>
 								{/if}
 							</td>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							<td
+								class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+							>
 								<select
 									class="block w-full text-sm dark:text-white/[.8] dark:bg-slate-900 p-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 									value={item.state}
@@ -817,16 +869,24 @@
 									<option value="not_buyable">❌</option>
 								</select>
 							</td>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							<td
+								class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+							>
 								<StockCell {item} {editItem} />
 							</td>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							<td
+								class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+							>
 								<FournisseurCell {item} {editItem} />
 							</td>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							<td
+								class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+							>
 								<PriceCell {item} {editItem} />
 							</td>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 relative flex flex-col gap-1">
+							<td
+								class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 relative flex flex-col gap-1"
+							>
 								<button
 									class="{item.promotion_ends_at ?? 0 > new Date().getTime() / 1000
 										? 'animate-pulse'
@@ -834,7 +894,7 @@
 									data-hs-overlay="#hs-modal-edit-item"
 									on:click={() => (selectedItem = item)}
 								>
-									<iconify-icon icon="mdi:percent" width="16" height="16"></iconify-icon>
+									<iconify-icon icon="mdi:percent" width="16" height="16" />
 									Promotions
 								</button>
 								<button
@@ -848,7 +908,7 @@
 										deletingItem = true;
 									}}
 								>
-									<iconify-icon icon="mdi:delete" width="16" height="16"></iconify-icon>
+									<iconify-icon icon="mdi:delete" width="16" height="16" />
 									Supprimer
 								</button>
 							</td>
@@ -861,17 +921,23 @@
 		<!-- Mobile Card View -->
 		<div class="block min-[1300px]:hidden space-y-4 px-2 pb-4">
 			{#if items.length === 0}
-				<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center">
+				<div
+					class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center"
+				>
 					<p class="text-gray-500 dark:text-gray-400">Aucun produit trouvé</p>
 				</div>
 			{:else}
 				{#each items as item}
-					<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+					<div
+						class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4"
+					>
 						<div class="flex justify-between items-start mb-3">
 							<div class="flex-1">
 								<div class="grid grid-cols-2 gap-2 mb-2">
 									<div>
-										<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Nom</label>
+										<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+											>Nom</label
+										>
 										<input
 											type="text"
 											class="w-full text-sm dark:text-white/[.8] bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
@@ -884,7 +950,9 @@
 										/>
 									</div>
 									<div>
-										<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Catégorie</label>
+										<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+											>Catégorie</label
+										>
 										<select
 											class="w-full text-sm dark:text-white/[.8] dark:bg-slate-900 bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
 											value={item.category_id}
@@ -901,7 +969,9 @@
 									</div>
 								</div>
 								<div class="mb-2">
-									<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Image</label>
+									<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+										>Image</label
+									>
 									<div class="relative inline-block">
 										<input
 											type="file"
@@ -925,7 +995,9 @@
 						</div>
 						<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
+								<label
+									class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1"
+								>
 									Achetable
 								</label>
 								<select
@@ -942,8 +1014,10 @@
 								</select>
 							</div>
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
-									<iconify-icon icon="mdi:pencil" width="12" height="12"></iconify-icon>
+								<label
+									class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1"
+								>
+									<iconify-icon icon="mdi:pencil" width="12" height="12" />
 									Stock
 								</label>
 								<input
@@ -958,8 +1032,10 @@
 								/>
 							</div>
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
-									<iconify-icon icon="mdi:pencil" width="12" height="12"></iconify-icon>
+								<label
+									class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1"
+								>
+									<iconify-icon icon="mdi:pencil" width="12" height="12" />
 									Limite
 								</label>
 								<input
@@ -979,8 +1055,10 @@
 								/>
 							</div>
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
-									<iconify-icon icon="mdi:pencil" width="12" height="12"></iconify-icon>
+								<label
+									class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1"
+								>
+									<iconify-icon icon="mdi:pencil" width="12" height="12" />
 									Optimal
 								</label>
 								<input
@@ -997,11 +1075,15 @@
 						</div>
 						<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1">Fournisseur</label>
+								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
+									>Fournisseur</label
+								>
 								<FournisseurCell {item} {editItem} />
 							</div>
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1">Prix</label>
+								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
+									>Prix</label
+								>
 								<PriceCell {item} {editItem} />
 							</div>
 						</div>

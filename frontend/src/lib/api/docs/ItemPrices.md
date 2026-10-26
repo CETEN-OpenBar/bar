@@ -1,16 +1,15 @@
 # ItemPrices
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**coutant** | **number** |  | [default to undefined]
-**staff_bar** | **number** |  | [default to undefined]
-**privilegies** | **number** |  | [default to undefined]
-**menu** | **number** |  | [default to undefined]
-**ceten** | **number** |  | [default to undefined]
-**externe** | **number** |  | [default to undefined]
+| Name            | Type       | Description | Notes                  |
+| --------------- | ---------- | ----------- | ---------------------- |
+| **coutant**     | **number** |             | [default to undefined] |
+| **staff_bar**   | **number** |             | [default to undefined] |
+| **privilegies** | **number** |             | [default to undefined] |
+| **menu**        | **number** |             | [default to undefined] |
+| **ceten**       | **number** |             | [default to undefined] |
+| **externe**     | **number** |             | [default to undefined] |
 
 ## Example
 
@@ -18,12 +17,12 @@ Name | Type | Description | Notes
 import { ItemPrices } from './api';
 
 const instance: ItemPrices = {
-    coutant,
-    staff_bar,
-    privilegies,
-    menu,
-    ceten,
-    externe,
+	coutant,
+	staff_bar,
+	privilegies,
+	menu,
+	ceten,
+	externe
 };
 ```
 

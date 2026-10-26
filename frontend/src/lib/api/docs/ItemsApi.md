@@ -1,18 +1,19 @@
 # ItemsApi
 
-All URIs are relative to *http://localhost:8080*
+All URIs are relative to _http://localhost:8080_
 
-|Method | HTTP request | Description|
-|------------- | ------------- | -------------|
-|[**getAllIncoherentItems**](#getallincoherentitems) | **GET** /items/incoherent | |
-|[**getAllItems**](#getallitems) | **GET** /items | |
-|[**getCategoryItems**](#getcategoryitems) | **GET** /categories/{category_id}/items | |
-|[**getItemPicture**](#getitempicture) | **GET** /categories/{category_id}/items/{item_id}/picture | |
-|[**markDeleteItem**](#markdeleteitem) | **DELETE** /categories/{category_id}/items/{item_id} | |
-|[**patchItem**](#patchitem) | **PATCH** /categories/{category_id}/items/{item_id} | |
-|[**postItem**](#postitem) | **POST** /categories/{category_id}/items | |
+| Method                                              | HTTP request                                              | Description |
+| --------------------------------------------------- | --------------------------------------------------------- | ----------- |
+| [**getAllIncoherentItems**](#getallincoherentitems) | **GET** /items/incoherent                                 |             |
+| [**getAllItems**](#getallitems)                     | **GET** /items                                            |             |
+| [**getCategoryItems**](#getcategoryitems)           | **GET** /categories/{category_id}/items                   |             |
+| [**getItemPicture**](#getitempicture)               | **GET** /categories/{category_id}/items/{item_id}/picture |             |
+| [**markDeleteItem**](#markdeleteitem)               | **DELETE** /categories/{category_id}/items/{item_id}      |             |
+| [**patchItem**](#patchitem)                         | **PATCH** /categories/{category_id}/items/{item_id}       |             |
+| [**postItem**](#postitem)                           | **POST** /categories/{category_id}/items                  |             |
 
 # **getAllIncoherentItems**
+
 > GetAllItems200Response getAllIncoherentItems()
 
 (admin) Get all incoherent items with filters and pagination
@@ -20,10 +21,7 @@ All URIs are relative to *http://localhost:8080*
 ### Example
 
 ```typescript
-import {
-    ItemsApi,
-    Configuration
-} from './api';
+import { ItemsApi, Configuration } from './api';
 
 const configuration = new Configuration();
 const apiInstance = new ItemsApi(configuration);
@@ -35,24 +33,23 @@ let categoryId: string; //Filter by category (optional) (default to undefined)
 let name: string; //Filter by name (optional) (default to undefined)
 
 const { status, data } = await apiInstance.getAllIncoherentItems(
-    page,
-    limit,
-    state,
-    categoryId,
-    name
+	page,
+	limit,
+	state,
+	categoryId,
+	name
 );
 ```
 
 ### Parameters
 
-|Name | Type | Description  | Notes|
-|------------- | ------------- | ------------- | -------------|
-| **page** | [**number**] | Page number | (optional) defaults to undefined|
-| **limit** | [**number**] | Number of items per page | (optional) defaults to undefined|
-| **state** | [**ItemState**] | Filter by state | (optional) defaults to undefined|
-| **categoryId** | [**string**] | Filter by category | (optional) defaults to undefined|
-| **name** | [**string**] | Filter by name | (optional) defaults to undefined|
-
+| Name           | Type            | Description              | Notes                            |
+| -------------- | --------------- | ------------------------ | -------------------------------- |
+| **page**       | [**number**]    | Page number              | (optional) defaults to undefined |
+| **limit**      | [**number**]    | Number of items per page | (optional) defaults to undefined |
+| **state**      | [**ItemState**] | Filter by state          | (optional) defaults to undefined |
+| **categoryId** | [**string**]    | Filter by category       | (optional) defaults to undefined |
+| **name**       | [**string**]    | Filter by name           | (optional) defaults to undefined |
 
 ### Return type
 
@@ -64,20 +61,21 @@ const { status, data } = await apiInstance.getAllIncoherentItems(
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
- - **Accept**: application/json
-
+- **Content-Type**: Not defined
+- **Accept**: application/json
 
 ### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-|**200** |  |  -  |
-|**403** | Forbidden |  -  |
-|**500** | Internal server error |  -  |
+
+| Status code | Description           | Response headers |
+| ----------- | --------------------- | ---------------- |
+| **200**     |                       | -                |
+| **403**     | Forbidden             | -                |
+| **500**     | Internal server error | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **getAllItems**
+
 > GetAllItems200Response getAllItems()
 
 (admin) Get all items with filters and pagination
@@ -85,10 +83,7 @@ const { status, data } = await apiInstance.getAllIncoherentItems(
 ### Example
 
 ```typescript
-import {
-    ItemsApi,
-    Configuration
-} from './api';
+import { ItemsApi, Configuration } from './api';
 
 const configuration = new Configuration();
 const apiInstance = new ItemsApi(configuration);
@@ -102,28 +97,27 @@ let fournisseur: Fournisseur; //Filter by fournisseur (optional) (default to und
 let refBundle: string; //Filter by reference (optional) (default to undefined)
 
 const { status, data } = await apiInstance.getAllItems(
-    page,
-    limit,
-    state,
-    categoryId,
-    name,
-    fournisseur,
-    refBundle
+	page,
+	limit,
+	state,
+	categoryId,
+	name,
+	fournisseur,
+	refBundle
 );
 ```
 
 ### Parameters
 
-|Name | Type | Description  | Notes|
-|------------- | ------------- | ------------- | -------------|
-| **page** | [**number**] | Page number | (optional) defaults to undefined|
-| **limit** | [**number**] | Number of items per page | (optional) defaults to undefined|
-| **state** | [**ItemState**] | Filter by state | (optional) defaults to undefined|
-| **categoryId** | [**string**] | Filter by category | (optional) defaults to undefined|
-| **name** | [**string**] | Filter by name | (optional) defaults to undefined|
-| **fournisseur** | **Fournisseur** | Filter by fournisseur | (optional) defaults to undefined|
-| **refBundle** | [**string**] | Filter by reference | (optional) defaults to undefined|
-
+| Name            | Type            | Description              | Notes                            |
+| --------------- | --------------- | ------------------------ | -------------------------------- |
+| **page**        | [**number**]    | Page number              | (optional) defaults to undefined |
+| **limit**       | [**number**]    | Number of items per page | (optional) defaults to undefined |
+| **state**       | [**ItemState**] | Filter by state          | (optional) defaults to undefined |
+| **categoryId**  | [**string**]    | Filter by category       | (optional) defaults to undefined |
+| **name**        | [**string**]    | Filter by name           | (optional) defaults to undefined |
+| **fournisseur** | **Fournisseur** | Filter by fournisseur    | (optional) defaults to undefined |
+| **refBundle**   | [**string**]    | Filter by reference      | (optional) defaults to undefined |
 
 ### Return type
 
@@ -135,20 +129,21 @@ const { status, data } = await apiInstance.getAllItems(
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
- - **Accept**: application/json
-
+- **Content-Type**: Not defined
+- **Accept**: application/json
 
 ### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-|**200** |  |  -  |
-|**403** | Forbidden |  -  |
-|**500** | Internal server error |  -  |
+
+| Status code | Description           | Response headers |
+| ----------- | --------------------- | ---------------- |
+| **200**     |                       | -                |
+| **403**     | Forbidden             | -                |
+| **500**     | Internal server error | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **getCategoryItems**
+
 > GetAllItems200Response getCategoryItems()
 
 Get all items of a category
@@ -156,10 +151,7 @@ Get all items of a category
 ### Example
 
 ```typescript
-import {
-    ItemsApi,
-    Configuration
-} from './api';
+import { ItemsApi, Configuration } from './api';
 
 const configuration = new Configuration();
 const apiInstance = new ItemsApi(configuration);
@@ -169,23 +161,17 @@ let page: number; //Page number (optional) (default to undefined)
 let limit: number; //Number of items per page (optional) (default to undefined)
 let state: ItemState; //Filter by state (optional) (default to undefined)
 
-const { status, data } = await apiInstance.getCategoryItems(
-    categoryId,
-    page,
-    limit,
-    state
-);
+const { status, data } = await apiInstance.getCategoryItems(categoryId, page, limit, state);
 ```
 
 ### Parameters
 
-|Name | Type | Description  | Notes|
-|------------- | ------------- | ------------- | -------------|
-| **categoryId** | [**string**] | ID of the category | defaults to undefined|
-| **page** | [**number**] | Page number | (optional) defaults to undefined|
-| **limit** | [**number**] | Number of items per page | (optional) defaults to undefined|
-| **state** | [**ItemState**] | Filter by state | (optional) defaults to undefined|
-
+| Name           | Type            | Description              | Notes                            |
+| -------------- | --------------- | ------------------------ | -------------------------------- |
+| **categoryId** | [**string**]    | ID of the category       | defaults to undefined            |
+| **page**       | [**number**]    | Page number              | (optional) defaults to undefined |
+| **limit**      | [**number**]    | Number of items per page | (optional) defaults to undefined |
+| **state**      | [**ItemState**] | Filter by state          | (optional) defaults to undefined |
 
 ### Return type
 
@@ -197,20 +183,21 @@ const { status, data } = await apiInstance.getCategoryItems(
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
- - **Accept**: application/json
-
+- **Content-Type**: Not defined
+- **Accept**: application/json
 
 ### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-|**200** |  |  -  |
-|**404** | Category not found |  -  |
-|**500** | Internal server error |  -  |
+
+| Status code | Description           | Response headers |
+| ----------- | --------------------- | ---------------- |
+| **200**     |                       | -                |
+| **404**     | Category not found    | -                |
+| **500**     | Internal server error | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **getItemPicture**
+
 > File getItemPicture()
 
 Get an item picture
@@ -218,10 +205,7 @@ Get an item picture
 ### Example
 
 ```typescript
-import {
-    ItemsApi,
-    Configuration
-} from './api';
+import { ItemsApi, Configuration } from './api';
 
 const configuration = new Configuration();
 const apiInstance = new ItemsApi(configuration);
@@ -229,19 +213,15 @@ const apiInstance = new ItemsApi(configuration);
 let categoryId: string; //ID of the category (default to undefined)
 let itemId: string; //ID of the item (default to undefined)
 
-const { status, data } = await apiInstance.getItemPicture(
-    categoryId,
-    itemId
-);
+const { status, data } = await apiInstance.getItemPicture(categoryId, itemId);
 ```
 
 ### Parameters
 
-|Name | Type | Description  | Notes|
-|------------- | ------------- | ------------- | -------------|
-| **categoryId** | [**string**] | ID of the category | defaults to undefined|
-| **itemId** | [**string**] | ID of the item | defaults to undefined|
-
+| Name           | Type         | Description        | Notes                 |
+| -------------- | ------------ | ------------------ | --------------------- |
+| **categoryId** | [**string**] | ID of the category | defaults to undefined |
+| **itemId**     | [**string**] | ID of the item     | defaults to undefined |
 
 ### Return type
 
@@ -253,20 +233,21 @@ const { status, data } = await apiInstance.getItemPicture(
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
- - **Accept**: image/png, application/json
-
+- **Content-Type**: Not defined
+- **Accept**: image/png, application/json
 
 ### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-|**200** |  |  -  |
-|**404** | Item not found |  -  |
-|**500** | Internal server error |  -  |
+
+| Status code | Description           | Response headers |
+| ----------- | --------------------- | ---------------- |
+| **200**     |                       | -                |
+| **404**     | Item not found        | -                |
+| **500**     | Internal server error | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **markDeleteItem**
+
 > markDeleteItem()
 
 Delete an item
@@ -274,10 +255,7 @@ Delete an item
 ### Example
 
 ```typescript
-import {
-    ItemsApi,
-    Configuration
-} from './api';
+import { ItemsApi, Configuration } from './api';
 
 const configuration = new Configuration();
 const apiInstance = new ItemsApi(configuration);
@@ -285,19 +263,15 @@ const apiInstance = new ItemsApi(configuration);
 let categoryId: string; //ID of the category (default to undefined)
 let itemId: string; //ID of the item (default to undefined)
 
-const { status, data } = await apiInstance.markDeleteItem(
-    categoryId,
-    itemId
-);
+const { status, data } = await apiInstance.markDeleteItem(categoryId, itemId);
 ```
 
 ### Parameters
 
-|Name | Type | Description  | Notes|
-|------------- | ------------- | ------------- | -------------|
-| **categoryId** | [**string**] | ID of the category | defaults to undefined|
-| **itemId** | [**string**] | ID of the item | defaults to undefined|
-
+| Name           | Type         | Description        | Notes                 |
+| -------------- | ------------ | ------------------ | --------------------- |
+| **categoryId** | [**string**] | ID of the category | defaults to undefined |
+| **itemId**     | [**string**] | ID of the item     | defaults to undefined |
 
 ### Return type
 
@@ -309,22 +283,23 @@ void (empty response body)
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
- - **Accept**: application/json
-
+- **Content-Type**: Not defined
+- **Accept**: application/json
 
 ### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-|**204** |  |  -  |
-|**401** | Not authorized |  -  |
-|**403** | Forbidden |  -  |
-|**404** | Item not found |  -  |
-|**500** | Internal server error |  -  |
+
+| Status code | Description           | Response headers |
+| ----------- | --------------------- | ---------------- |
+| **204**     |                       | -                |
+| **401**     | Not authorized        | -                |
+| **403**     | Forbidden             | -                |
+| **404**     | Item not found        | -                |
+| **500**     | Internal server error | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **patchItem**
+
 > Item patchItem(updateItem)
 
 Update an item
@@ -332,11 +307,7 @@ Update an item
 ### Example
 
 ```typescript
-import {
-    ItemsApi,
-    Configuration,
-    UpdateItem
-} from './api';
+import { ItemsApi, Configuration, UpdateItem } from './api';
 
 const configuration = new Configuration();
 const apiInstance = new ItemsApi(configuration);
@@ -345,21 +316,16 @@ let categoryId: string; //ID of the category (default to undefined)
 let itemId: string; //ID of the item (default to undefined)
 let updateItem: UpdateItem; //Item object
 
-const { status, data } = await apiInstance.patchItem(
-    categoryId,
-    itemId,
-    updateItem
-);
+const { status, data } = await apiInstance.patchItem(categoryId, itemId, updateItem);
 ```
 
 ### Parameters
 
-|Name | Type | Description  | Notes|
-|------------- | ------------- | ------------- | -------------|
-| **updateItem** | **UpdateItem**| Item object | |
-| **categoryId** | [**string**] | ID of the category | defaults to undefined|
-| **itemId** | [**string**] | ID of the item | defaults to undefined|
-
+| Name           | Type           | Description        | Notes                 |
+| -------------- | -------------- | ------------------ | --------------------- |
+| **updateItem** | **UpdateItem** | Item object        |                       |
+| **categoryId** | [**string**]   | ID of the category | defaults to undefined |
+| **itemId**     | [**string**]   | ID of the item     | defaults to undefined |
 
 ### Return type
 
@@ -371,23 +337,24 @@ const { status, data } = await apiInstance.patchItem(
 
 ### HTTP request headers
 
- - **Content-Type**: application/json
- - **Accept**: application/json
-
+- **Content-Type**: application/json
+- **Accept**: application/json
 
 ### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-|**200** |  |  -  |
-|**400** | Bad request |  -  |
-|**401** | Not authorized |  -  |
-|**403** | Forbidden |  -  |
-|**404** | Item not found |  -  |
-|**500** | Internal server error |  -  |
+
+| Status code | Description           | Response headers |
+| ----------- | --------------------- | ---------------- |
+| **200**     |                       | -                |
+| **400**     | Bad request           | -                |
+| **401**     | Not authorized        | -                |
+| **403**     | Forbidden             | -                |
+| **404**     | Item not found        | -                |
+| **500**     | Internal server error | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **postItem**
+
 > Item postItem(newItem)
 
 Create a new item
@@ -395,11 +362,7 @@ Create a new item
 ### Example
 
 ```typescript
-import {
-    ItemsApi,
-    Configuration,
-    NewItem
-} from './api';
+import { ItemsApi, Configuration, NewItem } from './api';
 
 const configuration = new Configuration();
 const apiInstance = new ItemsApi(configuration);
@@ -407,19 +370,15 @@ const apiInstance = new ItemsApi(configuration);
 let categoryId: string; //ID of the category (default to undefined)
 let newItem: NewItem; //Item object
 
-const { status, data } = await apiInstance.postItem(
-    categoryId,
-    newItem
-);
+const { status, data } = await apiInstance.postItem(categoryId, newItem);
 ```
 
 ### Parameters
 
-|Name | Type | Description  | Notes|
-|------------- | ------------- | ------------- | -------------|
-| **newItem** | **NewItem**| Item object | |
-| **categoryId** | [**string**] | ID of the category | defaults to undefined|
-
+| Name           | Type         | Description        | Notes                 |
+| -------------- | ------------ | ------------------ | --------------------- |
+| **newItem**    | **NewItem**  | Item object        |                       |
+| **categoryId** | [**string**] | ID of the category | defaults to undefined |
 
 ### Return type
 
@@ -431,19 +390,18 @@ const { status, data } = await apiInstance.postItem(
 
 ### HTTP request headers
 
- - **Content-Type**: application/json
- - **Accept**: application/json
-
+- **Content-Type**: application/json
+- **Accept**: application/json
 
 ### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-|**201** |  |  -  |
-|**400** | Bad request |  -  |
-|**401** | Not authorized |  -  |
-|**403** | Forbidden |  -  |
-|**409** | Item already exists |  -  |
-|**500** | Internal server error |  -  |
+
+| Status code | Description           | Response headers |
+| ----------- | --------------------- | ---------------- |
+| **201**     |                       | -                |
+| **400**     | Bad request           | -                |
+| **401**     | Not authorized        | -                |
+| **403**     | Forbidden             | -                |
+| **409**     | Item already exists   | -                |
+| **500**     | Internal server error | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-

@@ -190,16 +190,16 @@
 	}
 
 	function formatTimestampToReadableDate(timestamp: number): string {
-        return new Date(timestamp).toLocaleTimeString('fr-FR', {
+		return new Date(timestamp).toLocaleTimeString('fr-FR', {
 			day: '2-digit',
-			month: "2-digit",
-            hour: '2-digit',
-            minute: '2-digit',
+			month: '2-digit',
+			hour: '2-digit',
+			minute: '2-digit',
 			second: '2-digit'
-        });
-    }
+		});
+	}
 
-	let readableDate: string = formatTimestampToReadableDate(transaction.created_at*1000);
+	let readableDate: string = formatTimestampToReadableDate(transaction.created_at * 1000);
 </script>
 
 <button
@@ -251,12 +251,9 @@
 			<div class="items-grid">
 				{#each newTransaction.items as item, i}
 					<div
-						class="item-card {item.state ==
-						TransactionItemState.TransactionItemCanceled
+						class="item-card {item.state == TransactionItemState.TransactionItemCanceled
 							? 'canceled'
-							: ''} {item.state == TransactionItemState.TransactionItemFinished
-							? 'finished'
-							: ''}"
+							: ''} {item.state == TransactionItemState.TransactionItemFinished ? 'finished' : ''}"
 					>
 						{#if item.state == TransactionItemState.TransactionItemCanceled}
 							<div class="item-status-badge canceled">
@@ -281,11 +278,7 @@
 									}}
 								>
 									{#if item.picture_uri}
-										<img
-											src={api() + item.picture_uri}
-											alt={item.item_name}
-											class="item-image"
-										/>
+										<img src={api() + item.picture_uri} alt={item.item_name} class="item-image" />
 									{:else}
 										<div class="item-image-placeholder">
 											<iconify-icon icon="mdi:food-off" class="placeholder-icon" />
@@ -293,18 +286,12 @@
 									{/if}
 									<iconify-icon icon="mdi:expand" class="menu-expand-icon" />
 								</button>
+							{:else if item.picture_uri}
+								<img src={api() + item.picture_uri} alt={item.item_name} class="item-image" />
 							{:else}
-								{#if item.picture_uri}
-									<img
-										src={api() + item.picture_uri}
-										alt={item.item_name}
-										class="item-image"
-									/>
-								{:else}
-									<div class="item-image-placeholder">
-										<iconify-icon icon="mdi:food-off" class="placeholder-icon" />
-									</div>
-								{/if}
+								<div class="item-image-placeholder">
+									<iconify-icon icon="mdi:food-off" class="placeholder-icon" />
+								</div>
 							{/if}
 							<div class="item-name">{item.item_name ? item.item_name : 'Test'}</div>
 						</div>
@@ -376,11 +363,7 @@
 				{#each menuPopup.categories ?? [] as cat}
 					<div class="menu-item">
 						{#if cat.picture_uri}
-							<img
-								src={api() + cat.picture_uri}
-								alt={cat.name}
-								class="menu-item-image"
-							/>
+							<img src={api() + cat.picture_uri} alt={cat.name} class="menu-item-image" />
 						{:else}
 							<div class="menu-item-placeholder">
 								<iconify-icon icon="mdi:folder-outline" class="menu-placeholder-icon" />
@@ -392,11 +375,7 @@
 				{#each menuPopup.items ?? [] as item}
 					<div class="menu-item">
 						{#if item.picture_uri}
-							<img
-								src={api() + item.picture_uri}
-								alt={item.name}
-								class="menu-item-image"
-							/>
+							<img src={api() + item.picture_uri} alt={item.name} class="menu-item-image" />
 						{:else}
 							<div class="menu-item-placeholder">
 								<iconify-icon icon="mdi:food-off" class="menu-placeholder-icon" />
@@ -418,7 +397,9 @@
 								<iconify-icon icon="mdi:food-off" class="menu-placeholder-icon" />
 							</div>
 						{/if}
-						<span class="menu-item-name">{pickedItem.item_name ? pickedItem.item_name : 'Test'}</span>
+						<span class="menu-item-name"
+							>{pickedItem.item_name ? pickedItem.item_name : 'Test'}</span
+						>
 					</div>
 				{/each}
 			</div>

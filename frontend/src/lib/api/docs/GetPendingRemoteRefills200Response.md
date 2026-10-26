@@ -1,11 +1,10 @@
 # GetPendingRemoteRefills200Response
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**remote_refills** | [**Array&lt;RemoteRefill&gt;**](RemoteRefill.md) |  | [default to undefined]
+| Name               | Type                                             | Description | Notes                  |
+| ------------------ | ------------------------------------------------ | ----------- | ---------------------- |
+| **remote_refills** | [**Array&lt;RemoteRefill&gt;**](RemoteRefill.md) |             | [default to undefined] |
 
 ## Example
 
@@ -13,7 +12,7 @@ Name | Type | Description | Notes
 import { GetPendingRemoteRefills200Response } from './api';
 
 const instance: GetPendingRemoteRefills200Response = {
-    remote_refills,
+	remote_refills
 };
 ```
 

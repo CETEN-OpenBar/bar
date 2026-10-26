@@ -1,12 +1,11 @@
 # ConnectCard200Response
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**message** | [**Messages**](Messages.md) |  | [optional] [default to undefined]
-**account** | [**Account**](Account.md) |  | [optional] [default to undefined]
+| Name        | Type                        | Description | Notes                             |
+| ----------- | --------------------------- | ----------- | --------------------------------- |
+| **message** | [**Messages**](Messages.md) |             | [optional] [default to undefined] |
+| **account** | [**Account**](Account.md)   |             | [optional] [default to undefined] |
 
 ## Example
 
@@ -14,8 +13,8 @@ Name | Type | Description | Notes
 import { ConnectCard200Response } from './api';
 
 const instance: ConnectCard200Response = {
-    message,
-    account,
+	message,
+	account
 };
 ```
 

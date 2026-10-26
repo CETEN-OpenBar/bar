@@ -1,12 +1,11 @@
 # ConnectPasswordRequest
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**card_id** | **string** |  | [default to undefined]
-**password** | **string** |  | [default to undefined]
+| Name         | Type       | Description | Notes                  |
+| ------------ | ---------- | ----------- | ---------------------- |
+| **card_id**  | **string** |             | [default to undefined] |
+| **password** | **string** |             | [default to undefined] |
 
 ## Example
 
@@ -14,8 +13,8 @@ Name | Type | Description | Notes
 import { ConnectPasswordRequest } from './api';
 
 const instance: ConnectPasswordRequest = {
-    card_id,
-    password,
+	card_id,
+	password
 };
 ```
 

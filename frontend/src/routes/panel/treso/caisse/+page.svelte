@@ -57,7 +57,6 @@
 		await reloadCashMovements();
 	});
 
-
 	let transfert = false;
 
 	let majcaisse = false;
@@ -186,7 +185,6 @@
 	</div>
 {/if}
 
-
 {#if transfert}
 	<!-- overlay -->
 	<button
@@ -199,25 +197,25 @@
 	<!-- modal -->
 	<div class="fixed inset-0 flex items-center justify-center z-10" aria-hidden="true">
 		<div class="max-w-sm w-full bg-white dark:bg-slate-800 shadow-lg rounded-lg p-6 sm:p-8">
-			<p class="text-white text-2xl pb-3" >Êtes-vous sûr de vouloir transférer la caisse ?</p>
+			<p class="text-white text-2xl pb-3">Êtes-vous sûr de vouloir transférer la caisse ?</p>
 
 			<div class="flex flex-col gap-4">
 				<div class="flex flex-row gap-4">
 					<button
 						class="p-4 bg-red-200 rounded-lg"
-						on:click={() =>{
+						on:click={() => {
 							transfert = false;
-							}}
-						>
+						}}
+					>
 						Annuler
 					</button>
 					<button
 						class="p-4 bg-green-200 rounded-lg"
-							on:click={() =>{
-								transfertCaisse();
-								transfert = false;
-							}}
-						>
+						on:click={() => {
+							transfertCaisse();
+							transfert = false;
+						}}
+					>
 						Valider
 					</button>
 				</div>
@@ -225,7 +223,6 @@
 		</div>
 	</div>
 {/if}
-
 
 <div class="w-full flex flex-col items-center">
 	<div class="flex flex-col p-5 gap-3">
@@ -246,10 +243,12 @@
 	</div>
 	<div class="flex flex-col p-5 gap-3">
 		<div class="flex flex-row gap-4">
-			<button class="p-4 bg-red-200 rounded-lg" on:click={() => {
-				transfert = true;
-				
-			}}>
+			<button
+				class="p-4 bg-red-200 rounded-lg"
+				on:click={() => {
+					transfert = true;
+				}}
+			>
 				Transfert de caisse
 			</button>
 			<button

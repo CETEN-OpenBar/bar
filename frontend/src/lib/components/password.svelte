@@ -10,14 +10,14 @@
 			password = '';
 		}
 	}
-	let warnCapsLockOn: boolean = false
+	let warnCapsLockOn: boolean = false;
 
-    function checkCapsLock(e: KeyboardEvent) {
-		warnCapsLockOn = e.getModifierState("CapsLock")
-    }
+	function checkCapsLock(e: KeyboardEvent) {
+		warnCapsLockOn = e.getModifierState('CapsLock');
+	}
 </script>
 
-<svelte:document on:keydown={onEnter}/>
+<svelte:document on:keydown={onEnter} />
 
 <!-- Display a popup that asks for a pin -->
 

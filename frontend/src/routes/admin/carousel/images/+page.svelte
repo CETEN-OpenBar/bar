@@ -12,7 +12,7 @@
 	let imagesPerPage = 10;
 
 	let showConfirmation: boolean = false;
-	let confirmationCallback: VoidFunction = () => {}
+	let confirmationCallback: VoidFunction = () => {};
 
 	onMount(() => {
 		carouselApi()
@@ -133,7 +133,7 @@
 		confirm_text="Supprimer"
 		cancel_callback={() => {
 			showConfirmation = false;
-		}} 
+		}}
 		confirm_callback={confirmationCallback}
 	/>
 {/if}
@@ -222,8 +222,8 @@
 												on:click={() => {
 													confirmationCallback = () => {
 														showConfirmation = false;
-														deleteCarouselImage(carouselImage.id)
-													}
+														deleteCarouselImage(carouselImage.id);
+													};
 													showConfirmation = true;
 												}}
 											>

@@ -1,14 +1,13 @@
 # GetDeletedCategories200Response
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**categories** | [**Array&lt;Category&gt;**](Category.md) |  | [default to undefined]
-**page** | **number** |  | [default to undefined]
-**limit** | **number** |  | [default to undefined]
-**max_page** | **number** |  | [default to undefined]
+| Name           | Type                                     | Description | Notes                  |
+| -------------- | ---------------------------------------- | ----------- | ---------------------- |
+| **categories** | [**Array&lt;Category&gt;**](Category.md) |             | [default to undefined] |
+| **page**       | **number**                               |             | [default to undefined] |
+| **limit**      | **number**                               |             | [default to undefined] |
+| **max_page**   | **number**                               |             | [default to undefined] |
 
 ## Example
 
@@ -16,10 +15,10 @@ Name | Type | Description | Notes
 import { GetDeletedCategories200Response } from './api';
 
 const instance: GetDeletedCategories200Response = {
-    categories,
-    page,
-    limit,
-    max_page,
+	categories,
+	page,
+	limit,
+	max_page
 };
 ```
 
