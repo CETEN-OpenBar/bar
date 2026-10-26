@@ -1,10 +1,11 @@
 <script lang="ts">
+	import { noop } from '$lib/utils';
 	import { accountsApi } from '$lib/requests/requests';
 	import Error from '../error.svelte';
 	import Password from '../password.svelte';
 	import Success from '../success.svelte';
 
-	export let onEnd = () => {};
+	export let onEnd = noop;
 
 	let state = '';
 	let timeout: number;

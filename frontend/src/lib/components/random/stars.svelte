@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { formatPrice } from '$lib/utils';
 
-	export let stars: number = 0;
-	export let icon_size: number = 7;
+	export let stars = 0;
+	export let icon_size = 7;
 </script>
 
 <div class={$$restProps.class || ''}>

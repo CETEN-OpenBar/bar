@@ -9,8 +9,8 @@
 	let accounts: Account[] = [];
 
 	let searchQuery = '';
-	let page: number = 0;
-	let maxPage: number = 0;
+	let page = 0;
+	let maxPage = 0;
 	let nextPage = () => {
 		if (page < maxPage) {
 			page++;
@@ -83,7 +83,7 @@
 								placeholder="Rechercher"
 								aria-label="Rechercher"
 								on:input={(e) => {
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									searchQuery = e.target.value.toLowerCase();
 
 									reloadAccounts();
@@ -184,35 +184,36 @@
 									<td class="h-px w-72">
 										<div class="px-6 py-3">
 											<p
-												class="w-72 block text-sm dark:text-white/[.8]  break-words p-2 bg-transparent"
+												class="w-72 block text-sm dark:text-white/[.8] break-words p-2 bg-transparent"
 											>
 												{account.last_name}
-											<p/>
+											</p>
+											<p />
 										</div>
 									</td>
 									<td class="h-px w-72">
 										<div class="px-6 py-3">
 											<p
-												class="w-72 block text-sm dark:text-white/[.8]  break-words p-2 bg-transparent"
+												class="w-72 block text-sm dark:text-white/[.8] break-words p-2 bg-transparent"
 											>
 												{account.first_name}
-											<p/>
+											</p>
+											<p />
 										</div>
 									</td>
 									<td class="h-px w-96">
 										<div class="px-6 py-3">
 											<p
-												class="w-72 block text-sm dark:text-white/[.8]  break-words p-2 bg-transparent"
+												class="w-72 block text-sm dark:text-white/[.8] break-words p-2 bg-transparent"
 											>
 												{account.email_address}
-											<p/>
+											</p>
+											<p />
 										</div>
 									</td>
 									<td class="h-px w-72">
 										<div class="px-6 py-3">
-											<p
-												class="text-sm dark:text-white/[.8]  break-words p-2 bg-transparent"
-											>
+											<p class="text-sm dark:text-white/[.8] break-words p-2 bg-transparent">
 												{formatPrice(account.balance)}
 											</p>
 										</div>

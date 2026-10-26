@@ -1,12 +1,11 @@
 # ImportAccounts200Response
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**message** | [**Messages**](Messages.md) |  | [optional] [default to undefined]
-**not_accepted** | **Array&lt;string&gt;** |  | [optional] [default to undefined]
+| Name             | Type                        | Description | Notes                             |
+| ---------------- | --------------------------- | ----------- | --------------------------------- |
+| **message**      | [**Messages**](Messages.md) |             | [optional] [default to undefined] |
+| **not_accepted** | **Array&lt;string&gt;**     |             | [optional] [default to undefined] |
 
 ## Example
 
@@ -14,8 +13,8 @@ Name | Type | Description | Notes
 import { ImportAccounts200Response } from './api';
 
 const instance: ImportAccounts200Response = {
-    message,
-    not_accepted,
+	message,
+	not_accepted
 };
 ```
 

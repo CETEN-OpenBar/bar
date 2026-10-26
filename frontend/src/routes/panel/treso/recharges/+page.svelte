@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { formatDateTime, formatPrice, time2Utc } from '$lib/utils';
 	import { RefillType } from '$lib/api';
-    import type { Refill } from '$lib/api';
+	import type { Refill } from '$lib/api';
 	import { refillsApi } from '$lib/requests/requests';
 	import { onMount } from 'svelte';
 
 	let refills: Refill[] = [];
 
-	let page: number = 0;
-	let maxPage: number = 0;
+	let page = 0;
+	let maxPage = 0;
 	let nextPage = () => {
 		if (page <= maxPage) {
 			page++;
@@ -27,7 +27,7 @@
 	// Set it precisely to midnight LOCAL time today
 	today.setHours(0, 0, 0, 0);
 	let startTimestampSeconds = today.getTime() / 1000;
-	let endTimestampSeconds = startTimestampSeconds + (24 * 60 * 60);
+	let endTimestampSeconds = startTimestampSeconds + 24 * 60 * 60;
 	let startDate = Math.floor(startTimestampSeconds).toString();
 	let endDate = Math.floor(endTimestampSeconds).toString();
 
@@ -53,7 +53,12 @@
 		reloadItems();
 	});
 
-	let types = [RefillType.RefillCash, RefillType.RefillCard, RefillType.RefillHelloAsso, RefillType.RefillOther];
+	let types = [
+		RefillType.RefillCash,
+		RefillType.RefillCard,
+		RefillType.RefillHelloAsso,
+		RefillType.RefillOther
+	];
 </script>
 
 <div class="w-full p-5 mt-4 justify-center">
@@ -63,13 +68,13 @@
 			<button
 				class="p-2 rounded-full bg-blue-300 hover:bg-blue-400 transition shadow"
 				on:click={() => {
-				let d = new Date(today);
-				d.setDate(d.getDate() - 1);
-				today = d;
-				let s = time2Utc(d.getTime() / 1000);
-				startDate = s.toString();
-				endDate = (s + 24 * 60 * 60).toString();
-				reloadItems();
+					let d = new Date(today);
+					d.setDate(d.getDate() - 1);
+					today = d;
+					let s = time2Utc(d.getTime() / 1000);
+					startDate = s.toString();
+					endDate = (s + 24 * 60 * 60).toString();
+					reloadItems();
 				}}
 			>
 				◀
@@ -81,34 +86,32 @@
 					today.toLocaleString('default', { month: '2-digit' }) +
 					'-' +
 					today.toLocaleString('default', { day: '2-digit' })}
-
 				on:change={(e) => {
-				let s = time2Utc(new Date(e.currentTarget.value).getTime() / 1000);
-				today = new Date(e.currentTarget.value);
-				startDate = s.toString();
-				endDate = (s + 24 * 60 * 60).toString();
-				reloadItems();
+					let s = time2Utc(new Date(e.currentTarget.value).getTime() / 1000);
+					today = new Date(e.currentTarget.value);
+					startDate = s.toString();
+					endDate = (s + 24 * 60 * 60).toString();
+					reloadItems();
 				}}
-				class="rounded-md bg-white px-3 py-2 text-blue-900 font-medium shadow-sm 
+				class="rounded-md bg-white px-3 py-2 text-blue-900 font-medium shadow-sm
 					focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500"
 			/>
 
 			<button
 				class="p-2 rounded-full bg-blue-300 hover:bg-blue-400 transition shadow"
 				on:click={() => {
-				let d = new Date(today);
-				d.setDate(d.getDate() + 1);
-				today = d;
-				let s = time2Utc(d.getTime() / 1000);
-				startDate = s.toString();
-				endDate = (s + 24 * 60 * 60).toString();
-				reloadItems();
+					let d = new Date(today);
+					d.setDate(d.getDate() + 1);
+					today = d;
+					let s = time2Utc(d.getTime() / 1000);
+					startDate = s.toString();
+					endDate = (s + 24 * 60 * 60).toString();
+					reloadItems();
 				}}
 			>
 				▶
 			</button>
 		</div>
-
 	</div>
 	<div class="grid grid-cols-1 lg:grid-cols-2 w-full min-w-full mt-5 gap-4 justify-center">
 		{#each types as t}
@@ -119,7 +122,7 @@
 						en espèces
 					{:else if t == RefillType.RefillCard}
 						par carte
-                    {:else if t == RefillType.RefillHelloAsso}
+					{:else if t == RefillType.RefillHelloAsso}
 						par HelloAsso
 					{:else}
 						autres
@@ -141,11 +144,12 @@
 							<tr>
 								<td class="px-4">
 									{refills.filter((refill) => refill.type == t).length}
-									</td>
+								</td>
 								<td class="px-4">
-									{refills.filter((refill) => refill.type == t)
-									.filter((refill) => refill.canceled_by == undefined).length}
-									</td>
+									{refills
+										.filter((refill) => refill.type == t)
+										.filter((refill) => refill.canceled_by == undefined).length}
+								</td>
 								<td class="px-4">
 									{formatPrice(
 										refills
@@ -164,11 +168,11 @@
 						<thead>
 							<tr>
 								<th class="px-4">Compte</th>
-                                <!-- HelloAsso refills are validated by the user and cannot be canceled -->
-                                {#if t != RefillType.RefillHelloAsso}
-                                    <th class="px-4">Opérateur</th>
-                                    <th class="px-4">Annulé par</th>
-                                {/if}
+								<!-- HelloAsso refills are validated by the user and cannot be canceled -->
+								{#if t != RefillType.RefillHelloAsso}
+									<th class="px-4">Opérateur</th>
+									<th class="px-4">Annulé par</th>
+								{/if}
 								<th class="px-4">Montant</th>
 								<th class="px-4">Date</th>
 							</tr>
@@ -178,10 +182,10 @@
 								{#if refill.type == t}
 									<tr>
 										<td class="px-4">{refill.account_name}</td>
-                                        {#if t != RefillType.RefillHelloAsso}
-                                            <td class="px-4">{refill.issued_by_name}</td>
-                                            <td class="px-4">{refill.canceled_by_name ?? ''}</td>
-                                        {/if}
+										{#if t != RefillType.RefillHelloAsso}
+											<td class="px-4">{refill.issued_by_name}</td>
+											<td class="px-4">{refill.canceled_by_name ?? ''}</td>
+										{/if}
 										<td class="px-4">{formatPrice(refill.amount)}</td>
 										<td class="px-4">{formatDateTime(refill.issued_at)}</td>
 									</tr>

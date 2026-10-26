@@ -12,7 +12,7 @@
 	import ConfirmationPopup from '$lib/components/confirmationPopup.svelte';
 	import { api } from '$lib/config/config';
 	import { categoriesApi, itemsApi } from '$lib/requests/requests';
-	import { formatPrice, parsePrice, fournisseurIterator } from '$lib/utils';
+	import { formatPrice, parsePrice, fournisseurIterator, noop } from '$lib/utils';
 	import { onMount } from 'svelte';
 	import PaginationFooter from '$lib/components/PaginationFooter.svelte';
 	import PriceCell from '$lib/components/admin/priceCell.svelte';
@@ -35,7 +35,7 @@
 			staff_bar: 0,
 			coutant: 0,
 			privilegies: 0,
-			menu: 0,
+			menu: 0
 		} as ItemPrices,
 		amount_left: 0,
 		buy_limit: undefined,
@@ -46,8 +46,8 @@
 	let newItemPriceRole: AccountPriceRole = 'ceten';
 	let promoItemPriceRole: AccountPriceRole = 'ceten';
 
-	let page: number = 1;
-	let maxPage: number = 0;
+	let page = 1;
+	let maxPage = 0;
 	let handlePageInput = () => {
 		if (page < 1) {
 			page = 1;
@@ -75,11 +75,11 @@
 	let searchName: string | undefined = undefined;
 	let searchFournisseur: Fournisseur | undefined = undefined;
 
-	let deletingItem: boolean = false;
+	let deletingItem = false;
 	let confirmationMessage: string | undefined = undefined;
-	let deleteItemCallback: VoidFunction = () => {};
+	let deleteItemCallback: VoidFunction = noop;
 
-	let filtersOpen: boolean = false;
+	let filtersOpen = false;
 
 	onMount(() => {
 		categoriesApi()
@@ -93,9 +93,18 @@
 
 	function reloadItems() {
 		itemsApi()
-			.getAllItems(page, itemsPerPage, searchState, searchCategory, searchName, searchFournisseur, undefined, {
-				withCredentials: true
-			})
+			.getAllItems(
+				page,
+				itemsPerPage,
+				searchState,
+				searchCategory,
+				searchName,
+				searchFournisseur,
+				undefined,
+				{
+					withCredentials: true
+				}
+			)
 			.then((res) => {
 				maxPage = res.data.max_page ?? 1;
 				page = res.data.page ?? 1;
@@ -228,7 +237,7 @@
 									required
 									aria-describedby="text-error"
 									on:change={(e) => {
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										let file = e.target?.files[0];
 										file2Base64(file).then((res) => {
 											res = res.replace('data:', '').replace(/^.+,/, '');
@@ -253,9 +262,9 @@
 											// Remove the value of elems with id "price"
 											let elems = document.querySelectorAll('[id=price-new]');
 											elems.forEach((elem) => {
-												// @ts-ignore
+												// @ts-expect-error TODO: fix or drop when types improve
 												elem.value = '';
-												// @ts-ignore
+												// @ts-expect-error TODO: fix or drop when types improve
 												elem.placeholder = formatPrice(newItem.prices[newItemPriceRole]);
 											});
 										}}
@@ -282,7 +291,7 @@
 										required
 										aria-describedby="text-error"
 										on:input={(e) => {
-											// @ts-ignore
+											// @ts-expect-error TODO: fix or drop when types improve
 											newItem.prices[newItemPriceRole] = parsePrice(e.target?.value);
 										}}
 									/>
@@ -320,12 +329,12 @@
 										aria-describedby="text-error"
 										bind:value={newItem.buy_limit}
 										on:input={(e) => {
-											// @ts-ignore
+											// @ts-expect-error TODO: fix or drop when types improve
 											if (e.target?.value === '') {
 												newItem.buy_limit = undefined;
 												return;
 											}
-											// @ts-ignore
+											// @ts-expect-error TODO: fix or drop when types improve
 											let buy_limit = parseInt(e.target?.value);
 											newItem.buy_limit = buy_limit;
 										}}
@@ -346,7 +355,7 @@
 										aria-describedby="text-error"
 										bind:value={newItem.optimal_amount}
 										on:input={(e) => {
-											// @ts-ignore
+											// @ts-expect-error TODO: fix or drop when types improve
 											let optimal_amount = parseInt(e.target?.value);
 											newItem.optimal_amount = optimal_amount;
 										}}
@@ -411,7 +420,7 @@
 							class="block text-sm dark:text-white/[.8] w-16 break-words p-2 bg-transparent"
 							value={selectedItem?.promotion ?? 0}
 							on:input={(e) => {
-								// @ts-ignore
+								// @ts-expect-error TODO: fix or drop when types improve
 								let promotion = parseInt(e.target?.value);
 								editItem(
 									selectedItem?.id ?? '',
@@ -437,7 +446,7 @@
 							required
 							aria-describedby="text-error"
 							on:input={(e) => {
-								// @ts-ignore
+								// @ts-expect-error TODO: fix or drop when types improve
 								let date = e.target?.value;
 								let timestampSeconds = Date.parse(date) / 1000;
 								editItem(
@@ -476,12 +485,12 @@
 </div>
 
 {#if deletingItem}
-	<ConfirmationPopup 
+	<ConfirmationPopup
 		message={confirmationMessage}
 		confirm_text="Supprimer"
 		cancel_callback={() => {
 			deletingItem = false;
-		}} 
+		}}
 		confirm_callback={deleteItemCallback}
 	/>
 {/if}
@@ -493,16 +502,20 @@
 			<div class="flex items-center gap-2 mb-2">
 				<button
 					class="flex-1 py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-gray-300 dark:border-gray-600 font-medium bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all text-sm"
-					on:click={() => filtersOpen = !filtersOpen}
+					on:click={() => (filtersOpen = !filtersOpen)}
 				>
-					<iconify-icon icon="mdi:filter-variant" width="18" height="18"></iconify-icon>
+					<iconify-icon icon="mdi:filter-variant" width="18" height="18" />
 					Filtres
 					{#if searchCategory || searchState || searchName}
 						<span class="bg-blue-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[18px]">
 							{(searchCategory ? 1 : 0) + (searchState ? 1 : 0) + (searchName ? 1 : 0)}
 						</span>
 					{/if}
-					<iconify-icon icon={filtersOpen ? "mdi:chevron-up" : "mdi:chevron-down"} width="18" height="18"></iconify-icon>
+					<iconify-icon
+						icon={filtersOpen ? 'mdi:chevron-up' : 'mdi:chevron-down'}
+						width="18"
+						height="18"
+					/>
 				</button>
 				<button
 					class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
@@ -527,16 +540,21 @@
 				</button>
 			</div>
 			{#if filtersOpen}
-				<div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3 mb-2 space-y-3">
+				<div
+					class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3 mb-2 space-y-3"
+				>
 					<div class="grid grid-cols-2 gap-3">
 						<div>
-							<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1">Catégorie</label>
+							<label
+								class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
+								for="category-mobile">Catégorie</label
+							>
 							<select
 								id="category-mobile"
 								name="category"
 								class="w-full px-2 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white"
 								on:change={(e) => {
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									searchCategory = e.target?.value;
 									if (searchCategory === '') searchCategory = undefined;
 									page = 1;
@@ -550,13 +568,16 @@
 							</select>
 						</div>
 						<div>
-							<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1">Etat</label>
+							<label
+								class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
+								for="state-mobile">Etat</label
+							>
 							<select
 								id="state-mobile"
 								name="state"
 								class="w-full px-2 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white"
 								on:change={(e) => {
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									let val = e.target?.value;
 									if (val == '') searchState = undefined;
 									else searchState = val;
@@ -571,13 +592,16 @@
 						</div>
 					</div>
 					<div>
-						<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1">Fournisseur</label>
+						<label
+							class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
+							for="fournisseur-mobile">Fournisseur</label
+						>
 						<select
 							id="fournisseur-mobile"
 							name="fournisseur"
 							class="w-full px-2 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white"
 							on:change={(e) => {
-								// @ts-ignore
+								// @ts-expect-error TODO: fix or drop when types improve
 								let val = e.target?.value;
 								if (val == '') searchFournisseur = undefined;
 								else searchFournisseur = val;
@@ -592,8 +616,12 @@
 						</select>
 					</div>
 					<div>
-						<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1">Rechercher</label>
+						<label
+							class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
+							for="product-search">Rechercher</label
+						>
 						<input
+							id="product-search"
 							type="text"
 							placeholder="Nom du produit..."
 							bind:value={searchName}
@@ -617,7 +645,7 @@
 					name="category"
 					class="px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white dark:placeholder-gray-500 w-auto"
 					on:change={(e) => {
-						// @ts-ignore
+						// @ts-expect-error TODO: fix or drop when types improve
 						searchCategory = e.target?.value;
 						if (searchCategory === '') searchCategory = undefined;
 						page = 1;
@@ -637,7 +665,7 @@
 					name="state"
 					class="px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white dark:placeholder-gray-500 w-auto"
 					on:change={(e) => {
-						// @ts-ignore
+						// @ts-expect-error TODO: fix or drop when types improve
 						let val = e.target?.value;
 						if (val == '') searchState = undefined;
 						else searchState = val;
@@ -657,7 +685,7 @@
 					name="fournisseur"
 					class="px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white dark:placeholder-gray-500 w-auto"
 					on:change={(e) => {
-						// @ts-ignore
+						// @ts-expect-error TODO: fix or drop when types improve
 						let val = e.target?.value;
 						if (val == '') searchFournisseur = undefined;
 						else searchFournisseur = val;
@@ -671,7 +699,7 @@
 					{/each}
 				</select>
 			</div>
-            <div class="flex flex-row items-center gap-3">
+			<div class="flex flex-row items-center gap-3">
 				<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Par nom:</span>
 				<input
 					type="text"
@@ -712,7 +740,9 @@
 
 	<div class="flex-1 min-h-0 w-full overflow-x-auto overflow-y-auto">
 		<!-- Desktop Table View -->
-		<div class="hidden min-[1300px]:block min-w-full bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-visible">
+		<div
+			class="hidden min-[1300px]:block min-w-full bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-visible"
+		>
 			<table class="min-w-full table-fixed divide-y divide-gray-200 dark:divide-gray-700">
 				<colgroup>
 					<col class="w-[14%]" />
@@ -726,25 +756,39 @@
 				</colgroup>
 				<thead class="bg-gray-50 dark:bg-gray-700">
 					<tr>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+						<th
+							class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+						>
 							Nom
 						</th>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+						<th
+							class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+						>
 							Catégorie
 						</th>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+						<th
+							class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+						>
 							Image
 						</th>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+						<th
+							class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+						>
 							Achetable
 						</th>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+						<th
+							class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+						>
 							Stocks
 						</th>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+						<th
+							class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+						>
 							Fournisseur
 						</th>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+						<th
+							class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+						>
 							Prix
 						</th>
 						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300">
@@ -755,27 +799,36 @@
 				<tbody class="divide-y divide-gray-200 dark:divide-gray-700">
 					{#each items as item}
 						<tr>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							<td
+								class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+							>
 								<div class="relative group">
 									<input
 										type="text"
 										class="block w-full text-sm dark:text-white/[.8] p-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 										value={item.name}
 										on:input={(e) => {
-											// @ts-ignore
+											// @ts-expect-error TODO: fix or drop when types improve
 											let name = e.target?.value;
 											editItem(item.id, { name: name }, item.category_id);
 										}}
 									/>
-									<iconify-icon icon="mdi:pencil" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" width="14" height="14"></iconify-icon>
+									<iconify-icon
+										icon="mdi:pencil"
+										class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity"
+										width="14"
+										height="14"
+									/>
 								</div>
 							</td>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							<td
+								class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+							>
 								<select
 									class="block w-full text-sm dark:text-white/[.8] dark:bg-slate-900 p-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 									value={item.category_id}
 									on:change={(e) => {
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										let category_id = e.target?.value;
 										editItem(item.id, { category_id: category_id }, item.category_id);
 									}}
@@ -785,12 +838,14 @@
 									{/each}
 								</select>
 							</td>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600 relative">
+							<td
+								class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600 relative"
+							>
 								<input
 									type="file"
 									class="absolute w-12 h-12 opacity-0 cursor-pointer"
 									on:change={(e) => {
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										let file = e.target?.files[0];
 										reuploadItemPicture(item.id, file, item.category_id);
 									}}
@@ -803,12 +858,14 @@
 									/>
 								{/if}
 							</td>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							<td
+								class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+							>
 								<select
 									class="block w-full text-sm dark:text-white/[.8] dark:bg-slate-900 p-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 									value={item.state}
 									on:change={(e) => {
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										let state = e.target?.value;
 										editItem(item.id, { state: state }, item.category_id);
 									}}
@@ -817,16 +874,24 @@
 									<option value="not_buyable">❌</option>
 								</select>
 							</td>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							<td
+								class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+							>
 								<StockCell {item} {editItem} />
 							</td>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							<td
+								class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+							>
 								<FournisseurCell {item} {editItem} />
 							</td>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							<td
+								class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+							>
 								<PriceCell {item} {editItem} />
 							</td>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 relative flex flex-col gap-1">
+							<td
+								class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 relative flex flex-col gap-1"
+							>
 								<button
 									class="{item.promotion_ends_at ?? 0 > new Date().getTime() / 1000
 										? 'animate-pulse'
@@ -834,7 +899,7 @@
 									data-hs-overlay="#hs-modal-edit-item"
 									on:click={() => (selectedItem = item)}
 								>
-									<iconify-icon icon="mdi:percent" width="16" height="16"></iconify-icon>
+									<iconify-icon icon="mdi:percent" width="16" height="16" />
 									Promotions
 								</button>
 								<button
@@ -848,7 +913,7 @@
 										deletingItem = true;
 									}}
 								>
-									<iconify-icon icon="mdi:delete" width="16" height="16"></iconify-icon>
+									<iconify-icon icon="mdi:delete" width="16" height="16" />
 									Supprimer
 								</button>
 							</td>
@@ -861,35 +926,47 @@
 		<!-- Mobile Card View -->
 		<div class="block min-[1300px]:hidden space-y-4 px-2 pb-4">
 			{#if items.length === 0}
-				<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center">
+				<div
+					class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center"
+				>
 					<p class="text-gray-500 dark:text-gray-400">Aucun produit trouvé</p>
 				</div>
 			{:else}
 				{#each items as item}
-					<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+					<div
+						class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4"
+					>
 						<div class="flex justify-between items-start mb-3">
 							<div class="flex-1">
 								<div class="grid grid-cols-2 gap-2 mb-2">
 									<div>
-										<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Nom</label>
+										<label
+											class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+											for="item-name-{item.id}">Nom</label
+										>
 										<input
+											id="item-name-{item.id}"
 											type="text"
 											class="w-full text-sm dark:text-white/[.8] bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
 											value={item.name}
 											on:input={(e) => {
-												// @ts-ignore
+												// @ts-expect-error TODO: fix or drop when types improve
 												let name = e.target?.value;
 												editItem(item.id, { name: name }, item.category_id);
 											}}
 										/>
 									</div>
 									<div>
-										<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Catégorie</label>
+										<label
+											class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+											for="item-category-{item.id}">Catégorie</label
+										>
 										<select
+											id="item-category-{item.id}"
 											class="w-full text-sm dark:text-white/[.8] dark:bg-slate-900 bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
 											value={item.category_id}
 											on:change={(e) => {
-												// @ts-ignore
+												// @ts-expect-error TODO: fix or drop when types improve
 												let category_id = e.target?.value;
 												editItem(item.id, { category_id: category_id }, item.category_id);
 											}}
@@ -901,13 +978,17 @@
 									</div>
 								</div>
 								<div class="mb-2">
-									<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Image</label>
+									<label
+										class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+										for="item-image-{item.id}">Image</label
+									>
 									<div class="relative inline-block">
 										<input
+											id="item-image-{item.id}"
 											type="file"
 											class="absolute w-12 h-12 opacity-0 cursor-pointer"
 											on:change={(e) => {
-												// @ts-ignore
+												// @ts-expect-error TODO: fix or drop when types improve
 												let file = e.target?.files[0];
 												reuploadItemPicture(item.id, file, item.category_id);
 											}}
@@ -925,14 +1006,18 @@
 						</div>
 						<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
+								<label
+									for="item-state-{item.id}"
+									class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1"
+								>
 									Achetable
 								</label>
 								<select
+									id="item-state-{item.id}"
 									class="w-full text-sm dark:text-white/[.8] dark:bg-slate-900 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 									value={item.state}
 									on:change={(e) => {
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										let state = e.target?.value;
 										editItem(item.id, { state: state }, item.category_id);
 									}}
@@ -942,34 +1027,42 @@
 								</select>
 							</div>
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
-									<iconify-icon icon="mdi:pencil" width="12" height="12"></iconify-icon>
+								<label
+									for="item-stock-{item.id}"
+									class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1"
+								>
+									<iconify-icon icon="mdi:pencil" width="12" height="12" />
 									Stock
 								</label>
 								<input
+									id="item-stock-{item.id}"
 									type="number"
 									class="w-full text-sm dark:text-white/[.8] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 									value={item.amount_left}
 									on:input={(e) => {
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										let stock = parseInt(e.target?.value);
 										editItem(item.id, { amount_left: stock }, item.category_id);
 									}}
 								/>
 							</div>
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
-									<iconify-icon icon="mdi:pencil" width="12" height="12"></iconify-icon>
+								<label
+									for="item-limit-{item.id}"
+									class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1"
+								>
+									<iconify-icon icon="mdi:pencil" width="12" height="12" />
 									Limite
 								</label>
 								<input
+									id="item-limit-{item.id}"
 									type="number"
 									class="w-full text-sm dark:text-white/[.8] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 									value={item.buy_limit}
 									on:input={(e) => {
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										let buy_limit = parseInt(e.target?.value);
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										if (e.target?.value === '') {
 											editItem(item.id, { buy_limit: -1 }, item.category_id);
 											return;
@@ -979,16 +1072,20 @@
 								/>
 							</div>
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
-									<iconify-icon icon="mdi:pencil" width="12" height="12"></iconify-icon>
+								<label
+									for="item-optimal-{item.id}"
+									class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1"
+								>
+									<iconify-icon icon="mdi:pencil" width="12" height="12" />
 									Optimal
 								</label>
 								<input
+									id="item-optimal-{item.id}"
 									type="number"
 									class="w-full text-sm dark:text-white/[.8] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 									value={item.optimal_amount}
 									on:input={(e) => {
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										let optimal_amount = parseInt(e.target?.value);
 										editItem(item.id, { optimal_amount: optimal_amount }, item.category_id);
 									}}
@@ -997,11 +1094,16 @@
 						</div>
 						<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1">Fournisseur</label>
+								<label
+									class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
+									for="fournisseur-{item.id}">Fournisseur</label
+								>
 								<FournisseurCell {item} {editItem} />
 							</div>
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1">Prix</label>
+								<span class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
+									>Prix</span
+								>
 								<PriceCell {item} {editItem} />
 							</div>
 						</div>

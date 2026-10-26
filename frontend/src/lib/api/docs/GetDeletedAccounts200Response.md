@@ -1,14 +1,13 @@
 # GetDeletedAccounts200Response
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**accounts** | [**Array&lt;Account&gt;**](Account.md) |  | [default to undefined]
-**page** | **number** |  | [default to undefined]
-**limit** | **number** |  | [default to undefined]
-**max_page** | **number** |  | [default to undefined]
+| Name         | Type                                   | Description | Notes                  |
+| ------------ | -------------------------------------- | ----------- | ---------------------- |
+| **accounts** | [**Array&lt;Account&gt;**](Account.md) |             | [default to undefined] |
+| **page**     | **number**                             |             | [default to undefined] |
+| **limit**    | **number**                             |             | [default to undefined] |
+| **max_page** | **number**                             |             | [default to undefined] |
 
 ## Example
 
@@ -16,10 +15,10 @@ Name | Type | Description | Notes
 import { GetDeletedAccounts200Response } from './api';
 
 const instance: GetDeletedAccounts200Response = {
-    accounts,
-    page,
-    limit,
-    max_page,
+	accounts,
+	page,
+	limit,
+	max_page
 };
 ```
 

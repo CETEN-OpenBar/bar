@@ -1,11 +1,10 @@
 # GetAccountQRRequest
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**card_pin** | **string** |  | [default to undefined]
+| Name         | Type       | Description | Notes                  |
+| ------------ | ---------- | ----------- | ---------------------- |
+| **card_pin** | **string** |             | [default to undefined] |
 
 ## Example
 
@@ -13,7 +12,7 @@ Name | Type | Description | Notes
 import { GetAccountQRRequest } from './api';
 
 const instance: GetAccountQRRequest = {
-    card_pin,
+	card_pin
 };
 ```
 

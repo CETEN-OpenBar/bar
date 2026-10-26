@@ -1,14 +1,13 @@
 # GetTransactions200Response
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**transactions** | [**Array&lt;Transaction&gt;**](Transaction.md) |  | [default to undefined]
-**page** | **number** |  | [default to undefined]
-**limit** | **number** |  | [default to undefined]
-**max_page** | **number** |  | [default to undefined]
+| Name             | Type                                           | Description | Notes                  |
+| ---------------- | ---------------------------------------------- | ----------- | ---------------------- |
+| **transactions** | [**Array&lt;Transaction&gt;**](Transaction.md) |             | [default to undefined] |
+| **page**         | **number**                                     |             | [default to undefined] |
+| **limit**        | **number**                                     |             | [default to undefined] |
+| **max_page**     | **number**                                     |             | [default to undefined] |
 
 ## Example
 
@@ -16,10 +15,10 @@ Name | Type | Description | Notes
 import { GetTransactions200Response } from './api';
 
 const instance: GetTransactions200Response = {
-    transactions,
-    page,
-    limit,
-    max_page,
+	transactions,
+	page,
+	limit,
+	max_page
 };
 ```
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { noop } from '$lib/utils';
 	import type { CarouselImage } from '$lib/api';
 	import { api } from '$lib/config/config';
 	import { carouselApi } from '$lib/requests/requests';
@@ -11,8 +12,8 @@
 	let page = 0;
 	let imagesPerPage = 10;
 
-	let showConfirmation: boolean = false;
-	let confirmationCallback: VoidFunction = () => {}
+	let showConfirmation = false;
+	let confirmationCallback: VoidFunction = noop;
 
 	onMount(() => {
 		carouselApi()
@@ -105,7 +106,7 @@
 									required
 									aria-describedby="text-error"
 									on:change={(e) => {
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										newImage = e.target?.files[0];
 									}}
 								/>
@@ -133,7 +134,7 @@
 		confirm_text="Supprimer"
 		cancel_callback={() => {
 			showConfirmation = false;
-		}} 
+		}}
 		confirm_callback={confirmationCallback}
 	/>
 {/if}
@@ -222,8 +223,8 @@
 												on:click={() => {
 													confirmationCallback = () => {
 														showConfirmation = false;
-														deleteCarouselImage(carouselImage.id)
-													}
+														deleteCarouselImage(carouselImage.id);
+													};
 													showConfirmation = true;
 												}}
 											>

@@ -1,14 +1,13 @@
 # GetRefills200Response
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**refills** | [**Array&lt;Refill&gt;**](Refill.md) |  | [default to undefined]
-**page** | **number** |  | [default to undefined]
-**limit** | **number** |  | [default to undefined]
-**max_page** | **number** |  | [default to undefined]
+| Name         | Type                                 | Description | Notes                  |
+| ------------ | ------------------------------------ | ----------- | ---------------------- |
+| **refills**  | [**Array&lt;Refill&gt;**](Refill.md) |             | [default to undefined] |
+| **page**     | **number**                           |             | [default to undefined] |
+| **limit**    | **number**                           |             | [default to undefined] |
+| **max_page** | **number**                           |             | [default to undefined] |
 
 ## Example
 
@@ -16,10 +15,10 @@ Name | Type | Description | Notes
 import { GetRefills200Response } from './api';
 
 const instance: GetRefills200Response = {
-    refills,
-    page,
-    limit,
-    max_page,
+	refills,
+	page,
+	limit,
+	max_page
 };
 ```
 

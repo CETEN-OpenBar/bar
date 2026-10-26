@@ -1,12 +1,11 @@
 # ToggleAccountWantsToStaff200Response
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**message** | [**Messages**](Messages.md) |  | [optional] [default to undefined]
-**wants_to_staff** | **boolean** |  | [default to undefined]
+| Name               | Type                        | Description | Notes                             |
+| ------------------ | --------------------------- | ----------- | --------------------------------- |
+| **message**        | [**Messages**](Messages.md) |             | [optional] [default to undefined] |
+| **wants_to_staff** | **boolean**                 |             | [default to undefined]            |
 
 ## Example
 
@@ -14,8 +13,8 @@ Name | Type | Description | Notes
 import { ToggleAccountWantsToStaff200Response } from './api';
 
 const instance: ToggleAccountWantsToStaff200Response = {
-    message,
-    wants_to_staff,
+	message,
+	wants_to_staff
 };
 ```
 

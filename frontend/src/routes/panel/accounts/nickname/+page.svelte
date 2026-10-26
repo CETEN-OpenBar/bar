@@ -6,10 +6,12 @@
 	let accounts: Account[] = [];
 	let selectedAccount: Account | null = null;
 
-	let nickname: string = '';
+	let nickname = '';
 
 	async function getAccounts(search: string) {
-		let res = await accountsApi().getAccounts(0, 5, search, undefined, undefined, { withCredentials: true });
+		let res = await accountsApi().getAccounts(0, 5, search, undefined, undefined, {
+			withCredentials: true
+		});
 		if (Array.isArray(res.data.accounts)) accounts = res.data.accounts;
 	}
 
@@ -43,7 +45,7 @@
 					class="w-1/2 rounded-lg p-2 border-2 border-slate-200"
 					placeholder="nom du compte"
 					on:keyup={async (e) => {
-						// @ts-ignore
+						// @ts-expect-error TODO: fix or drop when types improve
 						let val = e.target?.value;
 						await getAccounts(val);
 					}}

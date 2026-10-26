@@ -1,12 +1,11 @@
 # ConnectCardRequest
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**card_id** | **string** |  | [default to undefined]
-**card_pin** | **string** |  | [default to undefined]
+| Name         | Type       | Description | Notes                  |
+| ------------ | ---------- | ----------- | ---------------------- |
+| **card_id**  | **string** |             | [default to undefined] |
+| **card_pin** | **string** |             | [default to undefined] |
 
 ## Example
 
@@ -14,8 +13,8 @@ Name | Type | Description | Notes
 import { ConnectCardRequest } from './api';
 
 const instance: ConnectCardRequest = {
-    card_id,
-    card_pin,
+	card_id,
+	card_pin
 };
 ```
 

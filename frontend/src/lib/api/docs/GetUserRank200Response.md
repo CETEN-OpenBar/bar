@@ -1,12 +1,11 @@
 # GetUserRank200Response
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**rank** | **number** |  | [default to undefined]
-**total_users** | **number** |  | [default to undefined]
+| Name            | Type       | Description | Notes                  |
+| --------------- | ---------- | ----------- | ---------------------- |
+| **rank**        | **number** |             | [default to undefined] |
+| **total_users** | **number** |             | [default to undefined] |
 
 ## Example
 
@@ -14,8 +13,8 @@ Name | Type | Description | Notes
 import { GetUserRank200Response } from './api';
 
 const instance: GetUserRank200Response = {
-    rank,
-    total_users,
+	rank,
+	total_users
 };
 ```
 

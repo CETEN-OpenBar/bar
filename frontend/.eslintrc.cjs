@@ -20,6 +20,13 @@ module.exports = {
 	},
 	overrides: [
 		{
+			// TypeScript already reports undefined variables; no-undef cannot see TS globals
+			files: ['*.ts', '*.svelte'],
+			rules: {
+				'no-undef': 'off'
+			}
+		},
+		{
 			files: ['*.svelte'],
 			parser: 'svelte-eslint-parser',
 			parserOptions: {

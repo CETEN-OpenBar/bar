@@ -1,13 +1,14 @@
 <script lang="ts">
+	import { noop } from '$lib/utils';
 	export let message: string;
-    export let close: () => void = () => {};
+	export let close: () => void = noop;
 </script>
 
 <!-- Display a popup that asks for a pin -->
 
 <button
 	id="overlay"
-    on:click={close}
+	on:click={close}
 	class="absolute w-full h-full top-0 left-0 bg-black bg-opacity-50 flex justify-center items-center z-40"
 />
 

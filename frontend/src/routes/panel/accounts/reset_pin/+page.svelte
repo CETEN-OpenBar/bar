@@ -2,37 +2,40 @@
 	import type { Account } from '$lib/api';
 	import { accountsApi } from '$lib/requests/requests';
 	import { onMount } from 'svelte';
-    import Error from '$lib/components/error.svelte';
-    import Success from '$lib/components/success.svelte';
+	import Error from '$lib/components/error.svelte';
+	import Success from '$lib/components/success.svelte';
 	import { goto } from '$app/navigation';
 
 	let accounts: Account[] = [];
 	let selectedAccount: Account | null = null;
 
-    let success = '';
+	let success = '';
 	let error = '';
 
 	async function getAccounts(search: string) {
-		let res = await accountsApi().getAccounts(0, 5, search, undefined, undefined, { withCredentials: true });
+		let res = await accountsApi().getAccounts(0, 5, search, undefined, undefined, {
+			withCredentials: true
+		});
 		if (Array.isArray(res.data.accounts)) accounts = res.data.accounts;
 	}
 
 	async function resetPin() {
 		if (!selectedAccount) return;
-		await accountsApi().resetAccountPin(selectedAccount.id, { withCredentials: true })
+		await accountsApi()
+			.resetAccountPin(selectedAccount.id, { withCredentials: true })
 			.then((res) => {
 				if (res.status == 200) {
-					success = 'Code pin réinitialisé'
+					success = 'Code pin réinitialisé';
 				} else {
-					error = 'Une erreur est survenue'
+					error = 'Une erreur est survenue';
 				}
 			})
 			.catch((err) => {
-				error = 'Une erreur est survenue'
+				error = 'Une erreur est survenue';
 			});
-        setTimeout(() => {
-            goto("/panel");
-        }, 2000);
+		setTimeout(() => {
+			goto('/panel');
+		}, 2000);
 	}
 
 	onMount(async () => {
@@ -59,7 +62,7 @@
 					class="w-1/2 rounded-lg p-2 border-2 border-slate-200"
 					placeholder="nom du compte"
 					on:keyup={async (e) => {
-						// @ts-ignore
+						// @ts-expect-error TODO: fix or drop when types improve
 						let val = e.target?.value;
 						await getAccounts(val);
 					}}

@@ -3,7 +3,7 @@
 	import { searchName } from '$lib/store/store';
 
 	export let activeTab: 'transactions' | 'resume' | 'refills' = 'transactions';
-	export let showSearch: boolean = true;
+	export let showSearch = true;
 
 	function handleSearchInput(event: Event) {
 		const target = event.currentTarget as HTMLInputElement;

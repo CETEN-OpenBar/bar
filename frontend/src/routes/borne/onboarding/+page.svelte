@@ -8,7 +8,9 @@
 <div class="absolute top-5 right-5">
 	<!-- Go home button -->
 	<a href="/borne">
-		<button class="bg-slate-700 hover:bg-slate-600 text-red-500 text-5xl font-bold py-2 px-4 rounded">
+		<button
+			class="bg-slate-700 hover:bg-slate-600 text-red-500 text-5xl font-bold py-2 px-4 rounded"
+		>
 			X
 		</button>
 	</a>
@@ -21,7 +23,6 @@
 		</div>
 		<div class="w-full flex justify-center">
 			<div class="w-96 h-96">
-
 				<QrOnboarding />
 			</div>
 		</div>

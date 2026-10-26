@@ -54,25 +54,35 @@
 						<span class="font-semibold dark:text-gray-200">{item.optimal_amount}</span>
 					</div>
 				</div>
-				<iconify-icon icon="mdi:chevron-down" width="16" height="16" class="text-gray-400 group-hover:text-blue-500 transition-colors flex-shrink-0"></iconify-icon>
+				<iconify-icon
+					icon="mdi:chevron-down"
+					width="16"
+					height="16"
+					class="text-gray-400 group-hover:text-blue-500 transition-colors flex-shrink-0"
+				/>
 			</div>
 		</button>
 	{:else}
-		<div class="border border-blue-500 dark:border-blue-400 rounded-md p-3 bg-blue-50/50 dark:bg-blue-950/20">
+		<div
+			class="border border-blue-500 dark:border-blue-400 rounded-md p-3 bg-blue-50/50 dark:bg-blue-950/20"
+		>
 			<div class="flex items-center justify-between mb-3">
 				<span class="text-xs font-semibold text-blue-700 dark:text-blue-300">Modifier Stocks</span>
 				<button
 					class="px-2 py-1 text-xs bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded flex items-center gap-1 transition-colors"
 					on:click={() => (expanded = false)}
 				>
-					<iconify-icon icon="mdi:check" width="14" height="14"></iconify-icon>
+					<iconify-icon icon="mdi:check" width="14" height="14" />
 					<span>Fermer</span>
 				</button>
 			</div>
 			<div class="space-y-2">
 				<div class="flex items-center gap-2">
-					<label class="text-xs w-16 shrink-0 font-medium dark:text-gray-300">Stock:</label>
+					<label class="text-xs w-16 shrink-0 font-medium dark:text-gray-300" for="stock-{item.id}"
+						>Stock:</label
+					>
 					<input
+						id="stock-{item.id}"
 						type="number"
 						value={item.amount_left}
 						class="flex-1 text-xs px-2 py-1.5 border border-gray-300 dark:border-gray-500 rounded bg-white dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
@@ -80,8 +90,11 @@
 					/>
 				</div>
 				<div class="flex items-center gap-2">
-					<label class="text-xs w-16 shrink-0 font-medium dark:text-gray-300">Limite:</label>
+					<label class="text-xs w-16 shrink-0 font-medium dark:text-gray-300" for="limit-{item.id}"
+						>Limite:</label
+					>
 					<input
+						id="limit-{item.id}"
 						type="number"
 						value={item.buy_limit}
 						class="flex-1 text-xs px-2 py-1.5 border border-gray-300 dark:border-gray-500 rounded bg-white dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
@@ -89,8 +102,12 @@
 					/>
 				</div>
 				<div class="flex items-center gap-2">
-					<label class="text-xs w-16 shrink-0 font-medium dark:text-gray-300">Optimal:</label>
+					<label
+						class="text-xs w-16 shrink-0 font-medium dark:text-gray-300"
+						for="optimal-{item.id}">Optimal:</label
+					>
 					<input
+						id="optimal-{item.id}"
 						type="number"
 						value={item.optimal_amount}
 						class="flex-1 text-xs px-2 py-1.5 border border-gray-300 dark:border-gray-500 rounded bg-white dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"

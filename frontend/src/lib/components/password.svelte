@@ -1,7 +1,7 @@
 <script lang="ts">
 	let password = '';
 	export let callback: (pin: string) => void;
-	export let custom_text: string = 'Entrez votre mot de passe';
+	export let custom_text = 'Entrez votre mot de passe';
 
 	// onEnter
 	function onEnter(e: KeyboardEvent) {
@@ -10,14 +10,14 @@
 			password = '';
 		}
 	}
-	let warnCapsLockOn: boolean = false
+	let warnCapsLockOn = false;
 
-    function checkCapsLock(e: KeyboardEvent) {
-		warnCapsLockOn = e.getModifierState("CapsLock")
-    }
+	function checkCapsLock(e: KeyboardEvent) {
+		warnCapsLockOn = e.getModifierState('CapsLock');
+	}
 </script>
 
-<svelte:document on:keydown={onEnter}/>
+<svelte:document on:keydown={onEnter} />
 
 <!-- Display a popup that asks for a pin -->
 

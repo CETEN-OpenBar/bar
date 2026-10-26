@@ -1,14 +1,13 @@
 # GetDeletedCarouselImages200Response
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**items** | [**Array&lt;CarouselImage&gt;**](CarouselImage.md) |  | [default to undefined]
-**page** | **number** |  | [default to undefined]
-**limit** | **number** |  | [default to undefined]
-**max_page** | **number** |  | [default to undefined]
+| Name         | Type                                               | Description | Notes                  |
+| ------------ | -------------------------------------------------- | ----------- | ---------------------- |
+| **items**    | [**Array&lt;CarouselImage&gt;**](CarouselImage.md) |             | [default to undefined] |
+| **page**     | **number**                                         |             | [default to undefined] |
+| **limit**    | **number**                                         |             | [default to undefined] |
+| **max_page** | **number**                                         |             | [default to undefined] |
 
 ## Example
 
@@ -16,10 +15,10 @@ Name | Type | Description | Notes
 import { GetDeletedCarouselImages200Response } from './api';
 
 const instance: GetDeletedCarouselImages200Response = {
-    items,
-    page,
-    limit,
-    max_page,
+	items,
+	page,
+	limit,
+	max_page
 };
 ```
 

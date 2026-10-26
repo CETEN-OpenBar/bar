@@ -3,8 +3,8 @@
 	import { authApi } from '$lib/requests/requests';
 	import { onMount } from 'svelte';
 
-	export let delay: number = 60000;
-	export let location: string = '/borne';
+	export let delay = 60000;
+	export let location = '/borne';
 
 	onMount(() => {
 		let mounted = true;

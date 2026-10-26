@@ -1,13 +1,12 @@
 # PatchAccountPinRequest
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**card_id** | **string** |  | [optional] [default to undefined]
-**old_card_pin** | **string** |  | [default to undefined]
-**new_card_pin** | **string** |  | [default to undefined]
+| Name             | Type       | Description | Notes                             |
+| ---------------- | ---------- | ----------- | --------------------------------- |
+| **card_id**      | **string** |             | [optional] [default to undefined] |
+| **old_card_pin** | **string** |             | [default to undefined]            |
+| **new_card_pin** | **string** |             | [default to undefined]            |
 
 ## Example
 
@@ -15,9 +14,9 @@ Name | Type | Description | Notes
 import { PatchAccountPinRequest } from './api';
 
 const instance: PatchAccountPinRequest = {
-    card_id,
-    old_card_pin,
-    new_card_pin,
+	card_id,
+	old_card_pin,
+	new_card_pin
 };
 ```
 

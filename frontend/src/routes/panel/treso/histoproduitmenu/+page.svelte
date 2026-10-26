@@ -7,13 +7,22 @@
 
 	let items: Item[] = [];
 	let itemsPerPage = 5;
-	let searchItem: string = '';
+	let searchItem = '';
 	let selectedItem: Item | undefined = undefined;
 	let hide_remotes = true;
 	async function reloadItems() {
-		let resp = await itemsApi().getAllItems(1, itemsPerPage, undefined, undefined, searchItem, undefined, undefined, {
-			withCredentials: true
-		});
+		let resp = await itemsApi().getAllItems(
+			1,
+			itemsPerPage,
+			undefined,
+			undefined,
+			searchItem,
+			undefined,
+			undefined,
+			{
+				withCredentials: true
+			}
+		);
 		items = resp.data.items ?? [];
 	}
 
@@ -24,20 +33,28 @@
 		if (reloading) return;
 		reloading = true;
 		try {
-			if (selectedItem != undefined){
+			if (selectedItem != undefined) {
 				itemID = selectedItem.id;
-			}
-			else{
+			} else {
 				var itemID = undefined;
 			}
-		
-			let resp = await transactionsApi().getTransactions(1, undefined, "finished", true, !hide_remotes, undefined, startDate, endDate, itemID, {
-				withCredentials: true
-			});
-		
-			transactions = resp.data.transactions ?? [];
-			
 
+			let resp = await transactionsApi().getTransactions(
+				1,
+				undefined,
+				'finished',
+				true,
+				!hide_remotes,
+				undefined,
+				startDate,
+				endDate,
+				itemID,
+				{
+					withCredentials: true
+				}
+			);
+
+			transactions = resp.data.transactions ?? [];
 		} finally {
 			reloading = false;
 		}
@@ -45,7 +62,7 @@
 
 	let todayMorning = new Date();
 	todayMorning.setHours(0, 0, 0, 0);
-	let startDate = time2Utc(todayMorning.getTime() / 1000)
+	let startDate = time2Utc(todayMorning.getTime() / 1000);
 	let endDate = time2Utc(todayMorning.getTime() / 1000 + 24 * 60 * 60);
 </script>
 
@@ -61,26 +78,21 @@
 				on:keydown={reloadItems}
 				on:keyup={reloadItems}
 				on:change={() => {
-					selectedItem = items.find((item) => item.name == searchItem); 
+					selectedItem = items.find((item) => item.name == searchItem);
 				}}
 			/>
-			
+
 			<button class="rounded-r-lg bg-slate-200 p-4"> &#x1F50D; </button>
 		</div>
-	
-	
+
 		<datalist id="items">
 			{#each items as item}
 				<option value={item.name} />
 			{/each}
 		</datalist>
 		<div class="flex flex-row gap-2 red-tex">
-		<h1 class="text-l text-white">En ligne </h1>
-		<input 
-				type="checkbox" 
-				class="h-6 w-6 align-middle ml-1"
-				bind:checked={hide_remotes}
-			/>
+			<h1 class="text-l text-white">En ligne</h1>
+			<input type="checkbox" class="h-6 w-6 align-middle ml-1" bind:checked={hide_remotes} />
 		</div>
 		<div class="flex flex-row gap-2">
 			<div class="flex flex-col">
@@ -94,7 +106,7 @@
 						'-' +
 						todayMorning.toLocaleString('default', { day: '2-digit' })}
 					on:change={(e) => {
-						// @ts-ignore
+						// @ts-expect-error TODO: fix or drop when types improve
 						startDate = time2Utc(new Date(e.target.value).getTime() / 1000);
 					}}
 				/>
@@ -110,9 +122,8 @@
 						'-' +
 						todayMorning.toLocaleString('default', { day: '2-digit' })}
 					on:change={(e) => {
-						// @ts-ignore
+						// @ts-expect-error TODO: fix or drop when types improve
 						endDate = time2Utc(new Date(e.target.value).getTime() / 1000 + 24 * 60 * 60);
-			
 					}}
 				/>
 			</div>
@@ -191,31 +202,30 @@
 			</thead>
 			<tbody>
 				{#each transactions as t, index (t.id)}
-						<tr>
-							<td class="px-4">{t.account_name}</td>
-							<td class="px-4">{formatDateTime(t.created_at)}</td>
-							<td class="px-4">
-								{formatPrice(
-									t.items
-										.filter((item) => item.item_id == selectedItem?.id)
-										.reduce((acc, item) => acc + item.unit_cost * item.item_amount, 0)
-								)}
-							</td>
-							<td class="px-4">
-								{t.items
+					<tr>
+						<td class="px-4">{t.account_name}</td>
+						<td class="px-4">{formatDateTime(t.created_at)}</td>
+						<td class="px-4">
+							{formatPrice(
+								t.items
 									.filter((item) => item.item_id == selectedItem?.id)
-									.reduce((acc, item) => acc + item.item_amount, 0) +
-									t.items
-										.flatMap((item) => item.menu_items ?? [])
-										.filter((item) => item.id == selectedItem?.id)
-										.reduce((acc, item) => acc + item.amount, 0) +
-									t.items
-										.flatMap((item) => item.picked_categories_items ?? [])
-										.filter((item) => item.item_id == selectedItem?.id)
-										.reduce((acc, item) => acc + item.item_amount, 0)}
-							</td>
-						</tr>
-			
+									.reduce((acc, item) => acc + item.unit_cost * item.item_amount, 0)
+							)}
+						</td>
+						<td class="px-4">
+							{t.items
+								.filter((item) => item.item_id == selectedItem?.id)
+								.reduce((acc, item) => acc + item.item_amount, 0) +
+								t.items
+									.flatMap((item) => item.menu_items ?? [])
+									.filter((item) => item.id == selectedItem?.id)
+									.reduce((acc, item) => acc + item.amount, 0) +
+								t.items
+									.flatMap((item) => item.picked_categories_items ?? [])
+									.filter((item) => item.item_id == selectedItem?.id)
+									.reduce((acc, item) => acc + item.item_amount, 0)}
+						</td>
+					</tr>
 				{/each}
 			</tbody>
 		</table>

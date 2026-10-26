@@ -1,12 +1,11 @@
 # PatchAccountPasswordRequest
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**old_password** | **string** |  | [default to undefined]
-**new_password** | **string** |  | [default to undefined]
+| Name             | Type       | Description | Notes                  |
+| ---------------- | ---------- | ----------- | ---------------------- |
+| **old_password** | **string** |             | [default to undefined] |
+| **new_password** | **string** |             | [default to undefined] |
 
 ## Example
 
@@ -14,8 +13,8 @@ Name | Type | Description | Notes
 import { PatchAccountPasswordRequest } from './api';
 
 const instance: PatchAccountPasswordRequest = {
-    old_password,
-    new_password,
+	old_password,
+	new_password
 };
 ```
 

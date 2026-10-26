@@ -68,7 +68,7 @@
 			<h1>Veuillez selectionner le moyen de paiement.</h1>
 			<div class="grid grid-cols-2 w-full gap-8 p-4">
 				<button
-					class="bg-blue-500 hover:bg-blue-700 text-white font-bold text-xl py-12 px-4 rounded "
+					class="bg-blue-500 hover:bg-blue-700 text-white font-bold text-xl py-12 px-4 rounded"
 					on:click={() => (card.type = RefillType.RefillCard)}
 				>
 					Carte
@@ -90,18 +90,20 @@
 					if (e.key == 'Enter' && card.type)
 						refillsApi()
 							.postRefill(card.id, card.amount, card.type, { withCredentials: true })
-					.then(() => {
-						success = 'Recharge effectuée avec succès.';
-						setTimeout(() => close(), 2000);
-					})
-					.catch(() => {
-						error = 'Une erreur est survenue.';
-						setTimeout(() => close(), 2000);
-					});
+							.then(() => {
+								success = 'Recharge effectuée avec succès.';
+								setTimeout(() => close(), 2000);
+							})
+							.catch(() => {
+								error = 'Une erreur est survenue.';
+								setTimeout(() => close(), 2000);
+							});
 				}}
 			>
 				<div class="flex flex-col">
-					<label for="price-new" class="block text-xl mb-2 align-middle dark:text-white">Montant :</label>
+					<label for="price-new" class="block text-xl mb-2 align-middle dark:text-white"
+						>Montant :</label
+					>
 					<input
 						type="number"
 						id="price-new"
@@ -111,7 +113,7 @@
 						required
 						aria-describedby="text-error"
 						on:input={(e) => {
-							// @ts-ignore
+							// @ts-expect-error TODO: fix or drop when types improve
 							card.amount = parsePrice(e.target?.value);
 
 							// rebounce update
@@ -119,9 +121,9 @@
 							rebounce = setTimeout(() => {
 								let elem = document.getElementById('price-new');
 								if (elem) {
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									elem.value = '';
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									elem.placeholder = formatPrice(card.amount);
 								}
 							}, 1000);

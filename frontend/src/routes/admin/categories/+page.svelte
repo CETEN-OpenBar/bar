@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { noop } from '$lib/utils';
 	import type { Category, NewCategory } from '$lib/api';
 	import { api } from '$lib/config/config';
 	import { categoriesApi } from '$lib/requests/requests';
@@ -13,8 +14,8 @@
 		position: 0
 	};
 
-	let page: number = 1;
-	let maxPage: number = 1;
+	let page = 1;
+	let maxPage = 1;
 	let categories_per_page = 10;
 
 	let nextPage = () => {
@@ -38,9 +39,9 @@
 		reloadCategories();
 	};
 
-	let deletingCategory: boolean = false;
+	let deletingCategory = false;
 	let confirmationMessage: string | undefined = undefined;
-	let deleteCategoryCallback: VoidFunction = () => {};
+	let deleteCategoryCallback: VoidFunction = noop;
 
 	onMount(() => {
 		reloadCategories();
@@ -195,7 +196,7 @@
 									required
 									aria-describedby="text-error"
 									on:change={(e) => {
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										let file = e.target?.files[0];
 										file2Base64(file).then((res) => {
 											res = res.replace('data:', '').replace(/^.+,/, '');
@@ -226,7 +227,7 @@
 		confirm_text="Supprimer"
 		cancel_callback={() => {
 			deletingCategory = false;
-		}} 
+		}}
 		confirm_callback={deleteCategoryCallback}
 	/>
 {/if}
@@ -263,7 +264,9 @@
 
 	<div class="flex-1 min-h-0 w-full overflow-x-auto overflow-y-auto">
 		<!-- Desktop Table View -->
-		<div class="hidden min-[800px]:block min-w-full bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-visible">
+		<div
+			class="hidden min-[800px]:block min-w-full bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-visible"
+		>
 			<table class="min-w-full table-fixed divide-y divide-gray-200 dark:divide-gray-700">
 				<colgroup>
 					<col class="w-[25%]" />
@@ -274,16 +277,24 @@
 				</colgroup>
 				<thead class="bg-gray-50 dark:bg-gray-700">
 					<tr>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+						<th
+							class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+						>
 							Nom
 						</th>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+						<th
+							class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+						>
 							Image
 						</th>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+						<th
+							class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+						>
 							Cachee
 						</th>
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+						<th
+							class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+						>
 							Prix Special
 						</th>
 						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-300">
@@ -294,30 +305,34 @@
 				<tbody class="divide-y divide-gray-200 dark:divide-gray-700">
 					{#each categories as category}
 						<tr>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600 group relative">
+							<td
+								class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600 group relative"
+							>
 								<input
 									type="text"
 									class="block w-full text-sm dark:text-white/[.8] p-2 bg-transparent border-none outline-none"
 									value={category.name}
 									on:input={(e) => {
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										let name = e.target?.value;
 										renameCategory(category.id, name);
 									}}
 								/>
-								<iconify-icon 
-									icon="mdi:pencil" 
+								<iconify-icon
+									icon="mdi:pencil"
 									class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
 								/>
 							</td>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							<td
+								class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+							>
 								<div class="w-16 relative">
 									<input
 										type="file"
 										class="absolute w-full h-full opacity-0 cursor-pointer"
 										accept=".jpg, .jpeg, .png"
 										on:change={(e) => {
-											// @ts-ignore
+											// @ts-expect-error TODO: fix or drop when types improve
 											let file = e.target?.files[0];
 											reuploadCategoryPicture(category.id, file);
 										}}
@@ -329,13 +344,17 @@
 											class="w-full h-full rounded-md object-cover"
 										/>
 									{:else}
-										<div class="w-full h-12 bg-gray-200 dark:bg-gray-600 rounded-md flex items-center justify-center">
+										<div
+											class="w-full h-12 bg-gray-200 dark:bg-gray-600 rounded-md flex items-center justify-center"
+										>
 											<iconify-icon icon="mdi:image-plus" class="text-gray-400" />
 										</div>
 									{/if}
 								</div>
 							</td>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							<td
+								class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+							>
 								<input
 									type="checkbox"
 									checked={category.hidden}
@@ -343,7 +362,9 @@
 									on:change={() => toggleHidden(category.id, !category.hidden)}
 								/>
 							</td>
-							<td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600">
+							<td
+								class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 border-r border-gray-200 dark:border-gray-600"
+							>
 								<input
 									type="checkbox"
 									checked={category.special_price}
@@ -376,36 +397,48 @@
 		<!-- Mobile Card View -->
 		<div class="block min-[800px]:hidden space-y-4 px-2 pb-4">
 			{#if categories.length === 0}
-				<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center">
+				<div
+					class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center"
+				>
 					<p class="text-gray-500 dark:text-gray-400">Aucune categorie trouvee</p>
 				</div>
 			{:else}
 				{#each categories as category}
-					<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+					<div
+						class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4"
+					>
 						<div class="flex justify-between items-start mb-3">
 							<div class="flex-1">
 								<div class="mb-2">
-									<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Nom</label>
+									<label
+										class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+										for="name-{category.id}">Nom</label
+									>
 									<input
+										id="name-{category.id}"
 										type="text"
 										class="w-full text-sm dark:text-white/[.8] bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
 										value={category.name}
 										on:input={(e) => {
-											// @ts-ignore
+											// @ts-expect-error TODO: fix or drop when types improve
 											let name = e.target?.value;
 											renameCategory(category.id, name);
 										}}
 									/>
 								</div>
 								<div class="mb-2">
-									<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Image</label>
+									<label
+										class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+										for="image-{category.id}">Image</label
+									>
 									<div class="w-20 relative mt-1">
 										<input
+											id="image-{category.id}"
 											type="file"
 											class="absolute w-full h-full opacity-0 cursor-pointer"
 											accept=".jpg, .jpeg, .png"
 											on:change={(e) => {
-												// @ts-ignore
+												// @ts-expect-error TODO: fix or drop when types improve
 												let file = e.target?.files[0];
 												reuploadCategoryPicture(category.id, file);
 											}}
@@ -417,7 +450,9 @@
 												class="w-full h-full rounded-md object-cover"
 											/>
 										{:else}
-											<div class="w-full h-12 bg-gray-200 dark:bg-gray-600 rounded-md flex items-center justify-center">
+											<div
+												class="w-full h-12 bg-gray-200 dark:bg-gray-600 rounded-md flex items-center justify-center"
+											>
 												<iconify-icon icon="mdi:image-plus" class="text-gray-400" />
 											</div>
 										{/if}
@@ -427,9 +462,13 @@
 						</div>
 						<div class="grid grid-cols-2 gap-2 mb-3">
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Cachee</label>
+								<label
+									class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+									for="hidden-{category.id}">Cachee</label
+								>
 								<div class="py-2">
 									<input
+										id="hidden-{category.id}"
 										type="checkbox"
 										checked={category.hidden}
 										class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
@@ -438,9 +477,13 @@
 								</div>
 							</div>
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Prix Special</label>
+								<label
+									class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+									for="special-price-{category.id}">Prix Special</label
+								>
 								<div class="py-2">
 									<input
+										id="special-price-{category.id}"
 										type="checkbox"
 										checked={category.special_price}
 										class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"

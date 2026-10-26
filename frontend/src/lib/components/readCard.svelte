@@ -1,6 +1,7 @@
 <script lang="ts">
+	import { noop } from '$lib/utils';
 	import { onMount } from 'svelte';
-	export let callback: (card: string) => void = () => {};
+	export let callback: (card: string) => void = noop;
 
 	onMount(() => {
 		let mounted = true;

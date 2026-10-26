@@ -1,13 +1,12 @@
 # GetAccountAdmin200Response
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**message** | [**Messages**](Messages.md) |  | [optional] [default to undefined]
-**is_allowed** | **boolean** |  | [default to undefined]
-**can_restore** | **boolean** |  | [default to undefined]
+| Name            | Type                        | Description | Notes                             |
+| --------------- | --------------------------- | ----------- | --------------------------------- |
+| **message**     | [**Messages**](Messages.md) |             | [optional] [default to undefined] |
+| **is_allowed**  | **boolean**                 |             | [default to undefined]            |
+| **can_restore** | **boolean**                 |             | [default to undefined]            |
 
 ## Example
 
@@ -15,9 +14,9 @@ Name | Type | Description | Notes
 import { GetAccountAdmin200Response } from './api';
 
 const instance: GetAccountAdmin200Response = {
-    message,
-    is_allowed,
-    can_restore,
+	message,
+	is_allowed,
+	can_restore
 };
 ```
 

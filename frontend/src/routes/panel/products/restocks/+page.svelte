@@ -10,13 +10,13 @@
 	import ConfirmationPopup from '$lib/components/confirmationPopup.svelte';
 	import { restockAuchan, restockAuchanDrive } from '$lib/components/random/invoiceParser.svelte';
 	import { itemsApi, restocksApi } from '$lib/requests/requests';
-	import { formatPrice, parsePrice, restockTypeIterator } from '$lib/utils';
+	import { formatPrice, parsePrice, restockTypeIterator, noop } from '$lib/utils';
 	import { onMount } from 'svelte';
 	import Time from 'svelte-time';
 	import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
 	import pdfjsWorker from 'pdfjs-dist/build/pdf.worker?url';
 
-	let sure: boolean = false;
+	let sure = false;
 	let items: Item[] = [];
 	// Array of items which are unknown by their reference for the automatic restock with the invoice
 	let unknownItems: Array<{
@@ -38,11 +38,11 @@
 		items: []
 	};
 
-	let page: number = 0;
-	let max_page: number = 0;
-	let maxPageRestock: number = 0;
-	let pageRestock: number = 0;
-	let itemsPerPage: number = 4;
+	let page = 0;
+	let max_page = 0;
+	let maxPageRestock = 0;
+	let pageRestock = 0;
+	let itemsPerPage = 4;
 
 	let nextPage = () => {
 		if (pageRestock < maxPageRestock) {
@@ -67,7 +67,7 @@
 		bundle_cost_float_ttc: 0,
 		tva: 0
 	};
-	let searchName: string = '';
+	let searchName = '';
 
 	type dV = {
 		name: string;
@@ -94,7 +94,7 @@
 	};
 
 	let deletingRestock = false;
-	let deleteRestockCallback: VoidFunction = () => {};
+	let deleteRestockCallback: VoidFunction = noop;
 	let confirmationMessage: string | undefined = undefined;
 
 	let selectedViewRestock: Restock | undefined = undefined;
@@ -637,12 +637,12 @@
 							class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent placeholder:text-slate-500"
 							placeholder={displayedValues.name}
 							on:input={(e) => {
-								// @ts-ignore
+								// @ts-expect-error TODO: fix or drop when types improve
 								searchName = e.target.value.toLowerCase();
 								reloadItems();
 							}}
 							on:change={(e) => {
-								// @ts-ignore
+								// @ts-expect-error TODO: fix or drop when types improve
 								e.target.value = '';
 							}}
 							on:focusout={() => {
@@ -651,7 +651,7 @@
 								}, 200);
 							}}
 							on:focusin={(e) => {
-								// @ts-ignore
+								// @ts-expect-error TODO: fix or drop when types improve
 								searchName = e.target.value.toLowerCase();
 							}}
 						/>
@@ -726,16 +726,16 @@
 							class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							placeholder={displayedValues.bundle_cost_ht}
 							on:change={(e) => {
-								// @ts-ignore
+								// @ts-expect-error TODO: fix or drop when types improve
 								if (e.target?.value < 0) {
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									e.target.value = 0;
 								}
-								// @ts-ignore
+								// @ts-expect-error TODO: fix or drop when types improve
 								newItem.bundle_cost_ht = parsePrice(e.target?.value);
 								let r = formatPrice(newItem.bundle_cost_ht);
 								displayedValues.bundle_cost_ht = r;
-								// @ts-ignore
+								// @ts-expect-error TODO: fix or drop when types improve
 								e.target.value = r;
 								newItem.bundle_cost_ttc = Math.round(
 									newItem.bundle_cost_ht * (1 + newItem.tva / 10000)
@@ -754,7 +754,7 @@
 							class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							id="tva"
 							on:change={(e) => {
-								// @ts-ignore
+								// @ts-expect-error TODO: fix or drop when types improve
 								newItem.tva = parseInt(e.target?.value);
 								updatePrices();
 							}}
@@ -777,16 +777,16 @@
 							placeholder={displayedValues.bundle_cost_ttc}
 							on:change={(e) => {
 								newItem.bundle_cost_ht = Math.round(
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									parsePrice(e.target?.value) / (1 + (newItem.tva ?? 0) / 10000)
 								);
-								// @ts-ignore
+								// @ts-expect-error TODO: fix or drop when types improve
 								newItem.bundle_cost_ttc = parsePrice(e.target?.value);
 								newItem.bundle_cost_float_ttc = 0.0;
 								let r = formatPrice(newItem.bundle_cost_ttc);
 								displayedValues.bundle_cost_ttc = r;
 								displayedValues.bundle_cost_ht = formatPrice(newItem.bundle_cost_ht);
-								// @ts-ignore
+								// @ts-expect-error TODO: fix or drop when types improve
 								e.target.value = r;
 							}}
 						/>
@@ -863,7 +863,7 @@
 								max="1000"
 								value={(item.bundle_cost_ht / 100).toString()}
 								on:input={(e) => {
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									item.bundle_cost_ht = parsePrice(e.target?.value);
 									item.bundle_cost_ttc = calculateTtc(item);
 									updateTotalHTandTTC();
@@ -878,7 +878,7 @@
 								id="tva"
 								value={item.tva.toString()}
 								on:change={(e) => {
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									item.tva = parseInt(e.target?.value);
 									item.bundle_cost_ttc = calculateTtc(item);
 									updateTotalHTandTTC();
@@ -900,7 +900,7 @@
 								max="1000"
 								value={(item.bundle_cost_ttc / 100).toString()}
 								on:input={(e) => {
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									item.bundle_cost_ttc = parsePrice(e.target?.value);
 									item.bundle_cost_ht = calculateHt(item);
 									updateTotalHTandTTC();

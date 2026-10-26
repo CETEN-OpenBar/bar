@@ -27,7 +27,7 @@
 					});
 			});
 	};
-	goto("auth");
+	goto('auth');
 </script>
 
 <Button class="text-white bg-blue-500 hover:bg-blue-700" text="Click me!" {callback} />

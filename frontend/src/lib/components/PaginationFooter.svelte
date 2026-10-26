@@ -4,8 +4,8 @@
 	export let page: number;
 	export let maxPage: number;
 	export let resultsCount: number;
-	export let showPageInput: boolean = false;
-	export let zeroBased: boolean = false;
+	export let showPageInput = false;
+	export let zeroBased = false;
 
 	const dispatch = createEventDispatcher();
 
@@ -70,12 +70,7 @@
 			<button class="pagination-button" on:click={nextPage} disabled={isLastPage}>
 				<span>Suivant</span>
 				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						d="M9 5l7 7-7 7"
-					/>
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
 				</svg>
 			</button>
 		</div>

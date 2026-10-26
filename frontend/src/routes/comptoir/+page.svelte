@@ -36,7 +36,7 @@
 		}
 	];
 
-	let display: Boolean = false;
+	let display = false;
 	let images: Array<CarouselImage> = fakeImages;
 	let texts: Array<CarouselText> = fakeTexts;
 	let mounted = false;
@@ -178,7 +178,6 @@
 {#if card.id !== ''}
 	<Pin callback={pinCallback} />
 {/if}
-
 
 {#if display}
 	<div in:fly={{ x: -1000, duration: 1000 }}>

@@ -1,12 +1,11 @@
 # CourseItem
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**amountToBuy** | **number** |  | [default to undefined]
-**item** | [**Item**](Item.md) |  | [default to undefined]
+| Name            | Type                | Description | Notes                  |
+| --------------- | ------------------- | ----------- | ---------------------- |
+| **amountToBuy** | **number**          |             | [default to undefined] |
+| **item**        | [**Item**](Item.md) |             | [default to undefined] |
 
 ## Example
 
@@ -14,8 +13,8 @@ Name | Type | Description | Notes
 import { CourseItem } from './api';
 
 const instance: CourseItem = {
-    amountToBuy,
-    item,
+	amountToBuy,
+	item
 };
 ```
 

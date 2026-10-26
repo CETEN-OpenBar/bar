@@ -8,12 +8,12 @@
 	import 'iconify-icon';
 
 	let account: Account | undefined = undefined;
-    let unsub: () => void;
+	let unsub: () => void;
 
 	onMount(() => {
-        unsub = store.subscribe((state) => {
-            account = state.account
-        });
+		unsub = store.subscribe((state) => {
+			account = state.account;
+		});
 		accountsApi()
 			.getAccount({
 				withCredentials: true
@@ -26,9 +26,9 @@
 			});
 	});
 
-    onDestroy(() => {
-        unsub();
-    })
+	onDestroy(() => {
+		unsub();
+	});
 
 	function changeWantsToStaff() {
 		accountsApi()

@@ -1,14 +1,13 @@
 # TransactionItemState
 
-
 ## Enum
 
-* `TransactionItemStarted` (value: `'started'`)
+- `TransactionItemStarted` (value: `'started'`)
 
-* `TransactionItemTakenCareOf` (value: `'taken_care_of'`)
+- `TransactionItemTakenCareOf` (value: `'taken_care_of'`)
 
-* `TransactionItemFinished` (value: `'finished'`)
+- `TransactionItemFinished` (value: `'finished'`)
 
-* `TransactionItemCanceled` (value: `'canceled'`)
+- `TransactionItemCanceled` (value: `'canceled'`)
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

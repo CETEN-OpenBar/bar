@@ -3,7 +3,7 @@
 version: '3'
 
 tasks:
-  setup: 
+  setup:
     cmds:
       - npm install
       - npm install @openapitools/openapi-generator-cli -g

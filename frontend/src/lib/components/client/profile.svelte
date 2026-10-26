@@ -25,22 +25,22 @@
 		account.google_picture = `https://www.gravatar.com/avatar/${account.email_address}?d=mp`;
 	}
 
-	function formatPriceRole(price_role: string){
-		switch (price_role){
-			case "coutant":
-				return "Prix Coutant";
-			case "staff_bar":
-				return "Prix Staff";
-			case "privilegies":
-				return "Prix Privilégies";
-			case "ceten":
-				return "Prix Ceten";
-			case "externe":
-				return "Prix Externe";
-			case "menu":
-				return "Prix Menu";
+	function formatPriceRole(price_role: string) {
+		switch (price_role) {
+			case 'coutant':
+				return 'Prix Coutant';
+			case 'staff_bar':
+				return 'Prix Staff';
+			case 'privilegies':
+				return 'Prix Privilégies';
+			case 'ceten':
+				return 'Prix Ceten';
+			case 'externe':
+				return 'Prix Externe';
+			case 'menu':
+				return 'Prix Menu';
 			default:
-				return "";
+				return '';
 		}
 	}
 	function setNewPin(pin: string) {
@@ -107,9 +107,12 @@
 			}}
 		>
 			<img
-				src={account?.google_picture ?? 'https://www.gravatar.com/avatar/' + account?.email_address + '?d=mp'}
+				src={account?.google_picture ??
+					'https://www.gravatar.com/avatar/' + account?.email_address + '?d=mp'}
 				alt="Profil"
-				class="w-14 h-14 rounded-full cursor-pointer text-white {popup ? 'border-gray-200' : 'border-transparent'} border-4"
+				class="w-14 h-14 rounded-full cursor-pointer text-white {popup
+					? 'border-gray-200'
+					: 'border-transparent'} border-4"
 			/>
 		</button>
 		<button
@@ -118,7 +121,9 @@
 			}}
 			class="ml-2 self-center flex flex-col justify-start"
 		>
-			<h1 class="text-lg text-white font-bold">{account.nickname || account.first_name +" "+ account.last_name}</h1>
+			<h1 class="text-lg text-white font-bold">
+				{account.nickname || account.first_name + ' ' + account.last_name}
+			</h1>
 			<div class="flex flex-col justify-center">
 				<Price amount={account.balance} class="text-md text-white self-center" />
 				<Stars stars={account.points} class="text-md text-white self-center" />

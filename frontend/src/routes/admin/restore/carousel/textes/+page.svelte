@@ -7,8 +7,8 @@
 
 	let images: CarouselText[] = [];
 
-	let page: number = 0;
-	let maxPage: number = 0;
+	let page = 0;
+	let maxPage = 0;
 	let nextPage = () => {
 		if (page <= maxPage) {
 			page++;
@@ -70,7 +70,9 @@
 					>
 						<div>
 							<h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Textes</h2>
-							<p class="text-sm text-gray-600 dark:text-gray-400">Restorer des textes du carousel</p>
+							<p class="text-sm text-gray-600 dark:text-gray-400">
+								Restorer des textes du carousel
+							</p>
 						</div>
 					</div>
 					<!-- End Header -->

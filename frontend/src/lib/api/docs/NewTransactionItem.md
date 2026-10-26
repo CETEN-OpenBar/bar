@@ -1,13 +1,12 @@
 # NewTransactionItem
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**item_id** | **string** |  | [default to undefined]
-**amount** | **number** |  | [default to undefined]
-**picked_categories_items** | [**Array&lt;NewTransactionItem&gt;**](NewTransactionItem.md) |  | [optional] [default to undefined]
+| Name                        | Type                                                         | Description | Notes                             |
+| --------------------------- | ------------------------------------------------------------ | ----------- | --------------------------------- |
+| **item_id**                 | **string**                                                   |             | [default to undefined]            |
+| **amount**                  | **number**                                                   |             | [default to undefined]            |
+| **picked_categories_items** | [**Array&lt;NewTransactionItem&gt;**](NewTransactionItem.md) |             | [optional] [default to undefined] |
 
 ## Example
 
@@ -15,9 +14,9 @@ Name | Type | Description | Notes
 import { NewTransactionItem } from './api';
 
 const instance: NewTransactionItem = {
-    item_id,
-    amount,
-    picked_categories_items,
+	item_id,
+	amount,
+	picked_categories_items
 };
 ```
 

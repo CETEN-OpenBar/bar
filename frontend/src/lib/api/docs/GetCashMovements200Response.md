@@ -1,14 +1,13 @@
 # GetCashMovements200Response
 
-
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**cash_movements** | [**Array&lt;CashMovement&gt;**](CashMovement.md) |  | [default to undefined]
-**page** | **number** |  | [default to undefined]
-**limit** | **number** |  | [default to undefined]
-**max_page** | **number** |  | [default to undefined]
+| Name               | Type                                             | Description | Notes                  |
+| ------------------ | ------------------------------------------------ | ----------- | ---------------------- |
+| **cash_movements** | [**Array&lt;CashMovement&gt;**](CashMovement.md) |             | [default to undefined] |
+| **page**           | **number**                                       |             | [default to undefined] |
+| **limit**          | **number**                                       |             | [default to undefined] |
+| **max_page**       | **number**                                       |             | [default to undefined] |
 
 ## Example
 
@@ -16,10 +15,10 @@ Name | Type | Description | Notes
 import { GetCashMovements200Response } from './api';
 
 const instance: GetCashMovements200Response = {
-    cash_movements,
-    page,
-    limit,
-    max_page,
+	cash_movements,
+	page,
+	limit,
+	max_page
 };
 ```
 
