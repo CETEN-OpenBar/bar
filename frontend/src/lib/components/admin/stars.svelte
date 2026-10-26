@@ -1,10 +1,11 @@
 <script lang="ts">
+	import { noop } from '$lib/utils';
 	import type { Account } from '$lib/api';
 	import { starsApi } from '$lib/requests/requests';
 
 	export let account: Account;
 	export let close: () => void;
-	export let onStarsAdded: () => void = () => {};
+	export let onStarsAdded: () => void = noop;
 
 	let amount = 0;
 

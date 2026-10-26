@@ -1,5 +1,8 @@
 import { Fournisseur, RestockType } from './api';
 
+/** No-op default for optional callbacks. */
+export const noop = (): void => undefined;
+
 export const parsePrice = (price: string) => {
 	let splt: Array<string> = [price];
 	if (price.includes(',')) {

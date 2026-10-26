@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { noop } from '$lib/utils';
 	import type { CarouselImage } from '$lib/api';
 	import { api } from '$lib/config/config';
 	import { carouselApi } from '$lib/requests/requests';
@@ -12,7 +13,7 @@
 	let imagesPerPage = 10;
 
 	let showConfirmation = false;
-	let confirmationCallback: VoidFunction = () => {};
+	let confirmationCallback: VoidFunction = noop;
 
 	onMount(() => {
 		carouselApi()

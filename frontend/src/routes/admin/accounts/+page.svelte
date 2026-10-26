@@ -5,7 +5,7 @@
 	import NewRefill from '$lib/components/comptoir/newRefill.svelte';
 	import ConfirmationPopup from '$lib/components/confirmationPopup.svelte';
 	import { accountsApi } from '$lib/requests/requests';
-	import { formatPrice } from '$lib/utils';
+	import { formatPrice, noop } from '$lib/utils';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import ReadCard from '$lib/components/readCard.svelte';
@@ -56,7 +56,7 @@
 
 	let deletingAccount = false;
 	let confirmationMessage: string | undefined = undefined;
-	let deleteAccountCallback: VoidFunction = () => {};
+	let deleteAccountCallback: VoidFunction = noop;
 	let selectedAccount: Account | undefined = undefined;
 	let askForCard = false;
 	onMount(() => {

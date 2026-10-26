@@ -12,7 +12,7 @@
 	import ConfirmationPopup from '$lib/components/confirmationPopup.svelte';
 	import { api } from '$lib/config/config';
 	import { categoriesApi, itemsApi } from '$lib/requests/requests';
-	import { formatPrice, parsePrice, fournisseurIterator } from '$lib/utils';
+	import { formatPrice, parsePrice, fournisseurIterator, noop } from '$lib/utils';
 	import { onMount } from 'svelte';
 	import PaginationFooter from '$lib/components/PaginationFooter.svelte';
 	import PriceCell from '$lib/components/admin/priceCell.svelte';
@@ -77,7 +77,7 @@
 
 	let deletingItem = false;
 	let confirmationMessage: string | undefined = undefined;
-	let deleteItemCallback: VoidFunction = () => {};
+	let deleteItemCallback: VoidFunction = noop;
 
 	let filtersOpen = false;
 

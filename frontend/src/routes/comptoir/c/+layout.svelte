@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { noop } from '$lib/utils';
 	import { goto } from '$app/navigation';
 	import { accountsApi } from '$lib/requests/requests';
 	import type { Account } from '$lib/api';
@@ -19,7 +20,7 @@
 	function reset() {
 		askForCard = false;
 		askForPassword = false;
-		to_call = () => {};
+		to_call = noop;
 	}
 
 	let to_call = open_door;

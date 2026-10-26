@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { noop } from '$lib/utils';
 	import { page } from '$app/stores';
 	import Spinner from '$lib/components/spinner.svelte';
 	import { accountsApi, refillsApi } from '$lib/requests/requests';
@@ -47,7 +48,7 @@
 					.then((res) => {
 						store.set({ account: res.data.account });
 					})
-					.catch((_) => {});
+					.catch(noop);
 			})
 			.catch((err) => {
 				switch (err.status) {

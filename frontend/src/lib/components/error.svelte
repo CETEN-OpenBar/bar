@@ -1,6 +1,7 @@
 <script lang="ts">
+	import { noop } from '$lib/utils';
 	export let error: string;
-	export let close: () => void = () => {};
+	export let close: () => void = noop;
 </script>
 
 <!-- Display a popup that asks for a pin -->

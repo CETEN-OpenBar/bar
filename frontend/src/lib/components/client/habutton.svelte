@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { noop } from '$lib/utils';
 	export let disabled = false;
 	export let type: 'button' | 'submit' | 'reset' | null | undefined;
-	export let onclick: () => void = () => {};
+	export let onclick: () => void = noop;
 </script>
 
 <div class="HaPay">

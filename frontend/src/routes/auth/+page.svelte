@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { noop } from '$lib/utils';
 	import { api } from '$lib/config/config';
 	import { page } from '$app/stores';
 	import Error from '$lib/components/error.svelte';
@@ -18,7 +19,7 @@
 				goto('/client/commande');
 			})
 			.catch((e) => {
-				return () => {};
+				return noop;
 			});
 	});
 </script>

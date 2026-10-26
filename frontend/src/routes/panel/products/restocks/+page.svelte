@@ -10,7 +10,7 @@
 	import ConfirmationPopup from '$lib/components/confirmationPopup.svelte';
 	import { restockAuchan, restockAuchanDrive } from '$lib/components/random/invoiceParser.svelte';
 	import { itemsApi, restocksApi } from '$lib/requests/requests';
-	import { formatPrice, parsePrice, restockTypeIterator } from '$lib/utils';
+	import { formatPrice, parsePrice, restockTypeIterator, noop } from '$lib/utils';
 	import { onMount } from 'svelte';
 	import Time from 'svelte-time';
 	import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
@@ -94,7 +94,7 @@
 	};
 
 	let deletingRestock = false;
-	let deleteRestockCallback: VoidFunction = () => {};
+	let deleteRestockCallback: VoidFunction = noop;
 	let confirmationMessage: string | undefined = undefined;
 
 	let selectedViewRestock: Restock | undefined = undefined;

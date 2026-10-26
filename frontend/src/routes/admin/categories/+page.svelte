@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { noop } from '$lib/utils';
 	import type { Category, NewCategory } from '$lib/api';
 	import { api } from '$lib/config/config';
 	import { categoriesApi } from '$lib/requests/requests';
@@ -40,7 +41,7 @@
 
 	let deletingCategory = false;
 	let confirmationMessage: string | undefined = undefined;
-	let deleteCategoryCallback: VoidFunction = () => {};
+	let deleteCategoryCallback: VoidFunction = noop;
 
 	onMount(() => {
 		reloadCategories();

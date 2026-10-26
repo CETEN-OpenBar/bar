@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { noop } from '$lib/utils';
 	import type { CarouselText, CarouselTextCreate } from '$lib/api';
 	import { carouselApi } from '$lib/requests/requests';
 	import { onMount } from 'svelte';
@@ -16,7 +17,7 @@
 	let textsPerPage = 10;
 
 	let showConfirmation = false;
-	let confirmationCallback: VoidFunction = () => {};
+	let confirmationCallback: VoidFunction = noop;
 
 	onMount(() => {
 		carouselApi()
