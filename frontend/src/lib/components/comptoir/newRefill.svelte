@@ -113,7 +113,7 @@
 						required
 						aria-describedby="text-error"
 						on:input={(e) => {
-							// @ts-ignore
+							// @ts-expect-error TODO: fix or drop when types improve
 							card.amount = parsePrice(e.target?.value);
 
 							// rebounce update
@@ -121,9 +121,9 @@
 							rebounce = setTimeout(() => {
 								let elem = document.getElementById('price-new');
 								if (elem) {
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									elem.value = '';
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									elem.placeholder = formatPrice(card.amount);
 								}
 							}, 1000);

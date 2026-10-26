@@ -189,7 +189,7 @@
 						class="w-1/2 rounded-lg p-2 border-2 border-slate-200"
 						placeholder="Rechercher un objet"
 						on:keyup={async (e) => {
-							// @ts-ignore
+							// @ts-expect-error TODO: fix or drop when types improve
 							let val = e.target?.value;
 							const res = await itemsApi().getAllItems(
 								0,
@@ -483,13 +483,13 @@
 									required
 									aria-describedby="text-error"
 									on:change={(e) => {
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										steps.prices[c] = parsePrice(e.target?.value);
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										let r = formatPrice(steps.prices[c]);
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										e.target.placeholder = r;
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										e.target.value = r;
 									}}
 								/>
@@ -510,11 +510,11 @@
 								required
 								aria-describedby="text-error"
 								on:keyup={(e) => {
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									steps.amount_left = parseInt(e.target?.value);
 								}}
 								on:change={(e) => {
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									steps.amount_left = parseInt(e.target?.value);
 								}}
 							/>
@@ -531,11 +531,11 @@
 								required
 								aria-describedby="text-error"
 								on:keyup={(e) => {
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									steps.buy_limit = parseInt(e.target?.value);
 								}}
 								on:change={(e) => {
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									steps.buy_limit = parseInt(e.target?.value);
 								}}
 							/>
@@ -552,11 +552,11 @@
 								required
 								aria-describedby="text-error"
 								on:keyup={(e) => {
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									steps.optimal_amount = parseInt(e.target?.value);
 								}}
 								on:change={(e) => {
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									steps.optimal_amount = parseInt(e.target?.value);
 								}}
 							/>
@@ -576,7 +576,7 @@
 							required
 							aria-describedby="text-error"
 							on:change={(e) => {
-								// @ts-ignore
+								// @ts-expect-error TODO: fix or drop when types improve
 								let file = e.target?.files[0];
 								file2Base64(file).then((res) => {
 									res = res.replace('data:', '').replace(/^.+,/, '');
@@ -605,7 +605,7 @@
 								required
 								aria-describedby="text-error"
 								on:change={(e) => {
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									steps.available_from = time2Utc(e.target?.valueAsNumber / 1000);
 								}}
 							/>
@@ -625,7 +625,7 @@
 								required
 								aria-describedby="text-error"
 								on:change={(e) => {
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									steps.available_to = time2Utc(e.target?.valueAsNumber / 1000);
 								}}
 							/>

@@ -106,7 +106,7 @@
 									required
 									aria-describedby="text-error"
 									on:change={(e) => {
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										newImage = e.target?.files[0];
 									}}
 								/>

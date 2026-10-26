@@ -78,7 +78,7 @@
 						class="w-full text-xs px-2 py-1.5 border border-gray-300 dark:border-gray-500 rounded bg-white dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 						value={item.fournisseur ?? ''}
 						on:change={(e) => {
-							// @ts-ignore
+							// @ts-expect-error TODO: fix or drop when types improve
 							editItem(item.id, { fournisseur: e.target?.value || undefined }, item.category_id);
 						}}
 					>
@@ -96,7 +96,7 @@
 						value={item.amount_per_bundle ?? ''}
 						placeholder="0"
 						on:input={(e) => {
-							// @ts-ignore
+							// @ts-expect-error TODO: fix or drop when types improve
 							let val = e.target?.value;
 							editItem(
 								item.id,
@@ -114,7 +114,7 @@
 						value={item.ref_bundle ?? ''}
 						placeholder="-"
 						on:input={(e) => {
-							// @ts-ignore
+							// @ts-expect-error TODO: fix or drop when types improve
 							editItem(item.id, { ref_bundle: e.target?.value || undefined }, item.category_id);
 						}}
 					/>

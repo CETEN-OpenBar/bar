@@ -154,7 +154,7 @@
 				required
 				aria-describedby="text-error"
 				on:change={(e) => {
-					// @ts-ignore
+					// @ts-expect-error TODO: fix or drop when types improve
 					let val = e.target?.value;
 					fournisseur = val;
 					reloadCourse();
@@ -237,7 +237,7 @@
 										class="w-6 h-6 border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
 										type="checkbox"
 										on:change={(event) => {
-											// @ts-ignore
+											// @ts-expect-error TODO: fix or drop when types improve
 											if (event.target?.checked) {
 												item = addNewRestockItem(item);
 											} else {

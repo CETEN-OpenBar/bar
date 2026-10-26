@@ -120,7 +120,7 @@
 								placeholder="Montant"
 								on:change={(e) => {
 									let t = amounts;
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									t.set(index, parseInt(e.target.value));
 									amounts = t;
 								}}
@@ -233,7 +233,7 @@
 				type="text"
 				list="items"
 				on:keyup={async (e) => {
-					// @ts-ignore
+					// @ts-expect-error TODO: fix or drop when types improve
 					search = e.target.value;
 					await reloadCashMovements();
 				}}

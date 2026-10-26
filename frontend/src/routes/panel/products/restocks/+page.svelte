@@ -637,12 +637,12 @@
 							class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent placeholder:text-slate-500"
 							placeholder={displayedValues.name}
 							on:input={(e) => {
-								// @ts-ignore
+								// @ts-expect-error TODO: fix or drop when types improve
 								searchName = e.target.value.toLowerCase();
 								reloadItems();
 							}}
 							on:change={(e) => {
-								// @ts-ignore
+								// @ts-expect-error TODO: fix or drop when types improve
 								e.target.value = '';
 							}}
 							on:focusout={() => {
@@ -651,7 +651,7 @@
 								}, 200);
 							}}
 							on:focusin={(e) => {
-								// @ts-ignore
+								// @ts-expect-error TODO: fix or drop when types improve
 								searchName = e.target.value.toLowerCase();
 							}}
 						/>
@@ -726,16 +726,16 @@
 							class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							placeholder={displayedValues.bundle_cost_ht}
 							on:change={(e) => {
-								// @ts-ignore
+								// @ts-expect-error TODO: fix or drop when types improve
 								if (e.target?.value < 0) {
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									e.target.value = 0;
 								}
-								// @ts-ignore
+								// @ts-expect-error TODO: fix or drop when types improve
 								newItem.bundle_cost_ht = parsePrice(e.target?.value);
 								let r = formatPrice(newItem.bundle_cost_ht);
 								displayedValues.bundle_cost_ht = r;
-								// @ts-ignore
+								// @ts-expect-error TODO: fix or drop when types improve
 								e.target.value = r;
 								newItem.bundle_cost_ttc = Math.round(
 									newItem.bundle_cost_ht * (1 + newItem.tva / 10000)
@@ -754,7 +754,7 @@
 							class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
 							id="tva"
 							on:change={(e) => {
-								// @ts-ignore
+								// @ts-expect-error TODO: fix or drop when types improve
 								newItem.tva = parseInt(e.target?.value);
 								updatePrices();
 							}}
@@ -777,16 +777,16 @@
 							placeholder={displayedValues.bundle_cost_ttc}
 							on:change={(e) => {
 								newItem.bundle_cost_ht = Math.round(
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									parsePrice(e.target?.value) / (1 + (newItem.tva ?? 0) / 10000)
 								);
-								// @ts-ignore
+								// @ts-expect-error TODO: fix or drop when types improve
 								newItem.bundle_cost_ttc = parsePrice(e.target?.value);
 								newItem.bundle_cost_float_ttc = 0.0;
 								let r = formatPrice(newItem.bundle_cost_ttc);
 								displayedValues.bundle_cost_ttc = r;
 								displayedValues.bundle_cost_ht = formatPrice(newItem.bundle_cost_ht);
-								// @ts-ignore
+								// @ts-expect-error TODO: fix or drop when types improve
 								e.target.value = r;
 							}}
 						/>
@@ -863,7 +863,7 @@
 								max="1000"
 								value={(item.bundle_cost_ht / 100).toString()}
 								on:input={(e) => {
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									item.bundle_cost_ht = parsePrice(e.target?.value);
 									item.bundle_cost_ttc = calculateTtc(item);
 									updateTotalHTandTTC();
@@ -878,7 +878,7 @@
 								id="tva"
 								value={item.tva.toString()}
 								on:change={(e) => {
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									item.tva = parseInt(e.target?.value);
 									item.bundle_cost_ttc = calculateTtc(item);
 									updateTotalHTandTTC();
@@ -900,7 +900,7 @@
 								max="1000"
 								value={(item.bundle_cost_ttc / 100).toString()}
 								on:input={(e) => {
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									item.bundle_cost_ttc = parsePrice(e.target?.value);
 									item.bundle_cost_ht = calculateHt(item);
 									updateTotalHTandTTC();

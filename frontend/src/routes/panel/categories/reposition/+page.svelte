@@ -88,7 +88,7 @@
 				draggingItem = item;
 				draggingItemIndex = index;
 
-				// @ts-ignore
+				// @ts-expect-error TODO: fix or drop when types improve
 				distanceTopGrabbedVsPointer = e.target.getBoundingClientRect().y - e.clientY;
 			}}
 			on:drag={(e) => {

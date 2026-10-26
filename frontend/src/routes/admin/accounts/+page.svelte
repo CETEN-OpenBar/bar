@@ -398,7 +398,7 @@
 								name="category"
 								class="w-full px-2 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white"
 								on:change={(e) => {
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									searchPriceRole = e.target?.value;
 									if (searchPriceRole === '') searchPriceRole = undefined;
 									page = 1;
@@ -422,7 +422,7 @@
 								name="category"
 								class="w-full px-2 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white"
 								on:change={(e) => {
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									searchRole = e.target?.value;
 									if (searchRole === '') searchRole = undefined;
 									page = 1;
@@ -471,7 +471,7 @@
 				<button
 					class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
 					on:click={() => {
-						// @ts-ignore
+						// @ts-expect-error TODO: fix or drop when types improve
 						document.getElementById('import').click();
 					}}
 				>
@@ -523,7 +523,7 @@
 					name="category"
 					class="px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white dark:placeholder-gray-500 w-auto"
 					on:change={(e) => {
-						// @ts-ignore
+						// @ts-expect-error TODO: fix or drop when types improve
 						searchPriceRole = e.target?.value;
 						if (searchPriceRole === '') searchPriceRole = undefined;
 						page = 1;
@@ -545,7 +545,7 @@
 					name="category"
 					class="px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white dark:placeholder-gray-500 w-auto"
 					on:change={(e) => {
-						// @ts-ignore
+						// @ts-expect-error TODO: fix or drop when types improve
 						searchRole = e.target?.value;
 						if (searchRole === '') searchRole = undefined;
 						page = 1;
@@ -633,7 +633,7 @@
 									class="block w-full text-sm dark:text-white/[.8] p-2 bg-transparent border-none outline-none"
 									value={account.last_name}
 									on:input={(e) => {
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										let name = e.target?.value;
 										accountsApi()
 											.patchAccountId(
@@ -664,7 +664,7 @@
 									class="block w-full text-sm dark:text-white/[.8] p-2 bg-transparent border-none outline-none"
 									value={account.first_name}
 									on:input={(e) => {
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										let name = e.target?.value;
 										accountsApi()
 											.patchAccountId(
@@ -695,7 +695,7 @@
 									class="block w-full text-sm dark:text-white/[.8] p-2 bg-transparent border-none outline-none"
 									value={account.email_address}
 									on:input={(e) => {
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										let name = e.target?.value;
 										accountsApi()
 											.patchAccountId(
@@ -746,7 +746,7 @@
 									class="block w-full text-sm dark:text-white/[.8] dark:bg-slate-900 p-2 bg-transparent border-none outline-none"
 									value={account.role}
 									on:change={(e) => {
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										let role = e.target?.value;
 										accountsApi()
 											.patchAccountId(
@@ -779,7 +779,7 @@
 									class="block w-full text-sm dark:text-white/[.8] dark:bg-slate-900 p-2 bg-transparent border-none outline-none"
 									value={account.price_role}
 									on:change={(e) => {
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										let role = e.target?.value;
 										accountsApi()
 											.patchAccountId(
@@ -816,15 +816,15 @@
 											const spaceBelow = viewportHeight - rect.bottom;
 											const spaceAbove = rect.top;
 
-											// @ts-ignore
+											// @ts-expect-error TODO: fix or drop when types improve
 											menu.style.left = `${rect.left}px`;
 
 											// Position above if not enough space below and enough space above
 											if (spaceBelow < menuHeight && spaceAbove > menuHeight) {
-												// @ts-ignore
+												// @ts-expect-error TODO: fix or drop when types improve
 												menu.style.top = `${rect.top - menuHeight - 8}px`;
 											} else {
-												// @ts-ignore
+												// @ts-expect-error TODO: fix or drop when types improve
 												menu.style.top = `${rect.bottom + 8}px`;
 											}
 
@@ -942,7 +942,7 @@
 											class="w-full text-sm dark:text-white/[.8] bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
 											value={account.last_name}
 											on:input={(e) => {
-												// @ts-ignore
+												// @ts-expect-error TODO: fix or drop when types improve
 												let name = e.target?.value;
 												accountsApi()
 													.patchAccountId(
@@ -970,7 +970,7 @@
 											class="w-full text-sm dark:text-white/[.8] bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
 											value={account.first_name}
 											on:input={(e) => {
-												// @ts-ignore
+												// @ts-expect-error TODO: fix or drop when types improve
 												let name = e.target?.value;
 												accountsApi()
 													.patchAccountId(
@@ -999,7 +999,7 @@
 										class="w-full text-sm dark:text-white/[.8] bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
 										value={account.email_address}
 										on:input={(e) => {
-											// @ts-ignore
+											// @ts-expect-error TODO: fix or drop when types improve
 											let name = e.target?.value;
 											accountsApi()
 												.patchAccountId(
@@ -1058,7 +1058,7 @@
 									class="w-full text-sm dark:text-white/[.8] dark:bg-slate-900 bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
 									value={account.role}
 									on:change={(e) => {
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										let role = e.target?.value;
 										accountsApi()
 											.patchAccountId(
@@ -1092,7 +1092,7 @@
 									class="w-full text-sm dark:text-white/[.8] dark:bg-slate-900 bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
 									value={account.price_role}
 									on:change={(e) => {
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										let role = e.target?.value;
 										accountsApi()
 											.patchAccountId(

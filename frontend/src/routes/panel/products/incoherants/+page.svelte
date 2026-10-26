@@ -211,7 +211,7 @@
 									required
 									aria-describedby="text-error"
 									on:change={(e) => {
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										let file = e.target?.files[0];
 										file2Base64(file).then((res) => {
 											res = res.replace('data:', '').replace(/^.+,/, '');
@@ -236,9 +236,9 @@
 											// Remove the value of elems with id "price"
 											let elems = document.querySelectorAll('[id=price-new]');
 											elems.forEach((elem) => {
-												// @ts-ignore
+												// @ts-expect-error TODO: fix or drop when types improve
 												elem.value = '';
-												// @ts-ignore
+												// @ts-expect-error TODO: fix or drop when types improve
 												elem.placeholder = formatPrice(newItem.prices[newItemPriceRole]);
 											});
 										}}
@@ -265,7 +265,7 @@
 										required
 										aria-describedby="text-error"
 										on:input={(e) => {
-											// @ts-ignore
+											// @ts-expect-error TODO: fix or drop when types improve
 											newItem.prices[newItemPriceRole] = parsePrice(e.target?.value);
 										}}
 									/>
@@ -303,12 +303,12 @@
 										aria-describedby="text-error"
 										bind:value={newItem.buy_limit}
 										on:input={(e) => {
-											// @ts-ignore
+											// @ts-expect-error TODO: fix or drop when types improve
 											if (e.target?.value === '') {
 												newItem.buy_limit = undefined;
 												return;
 											}
-											// @ts-ignore
+											// @ts-expect-error TODO: fix or drop when types improve
 											let buy_limit = parseInt(e.target?.value);
 											newItem.buy_limit = buy_limit;
 										}}
@@ -329,7 +329,7 @@
 										aria-describedby="text-error"
 										bind:value={newItem.optimal_amount}
 										on:input={(e) => {
-											// @ts-ignore
+											// @ts-expect-error TODO: fix or drop when types improve
 											let optimal_amount = parseInt(e.target?.value);
 											newItem.optimal_amount = optimal_amount;
 										}}
@@ -394,7 +394,7 @@
 							class="block text-sm dark:text-white/[.8] w-16 break-words p-2 bg-transparent"
 							value={selectedItem?.promotion ?? 0}
 							on:input={(e) => {
-								// @ts-ignore
+								// @ts-expect-error TODO: fix or drop when types improve
 								let promotion = parseInt(e.target?.value);
 								editItem(
 									selectedItem?.id ?? '',
@@ -420,7 +420,7 @@
 							required
 							aria-describedby="text-error"
 							on:input={(e) => {
-								// @ts-ignore
+								// @ts-expect-error TODO: fix or drop when types improve
 								let date = e.target?.value;
 								let timestampSeconds = Date.parse(date) / 1000;
 								editItem(
@@ -490,7 +490,7 @@
 									required
 									aria-describedby="text-error"
 									on:change={(e) => {
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										searchCategory = e.target?.value;
 										if (searchCategory === '') searchCategory = undefined;
 										reloadItems();
@@ -511,7 +511,7 @@
 									required
 									aria-describedby="text-error"
 									on:change={(e) => {
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										let val = e.target?.value;
 										if (val == '') searchState = undefined;
 										else searchState = val;
@@ -530,7 +530,7 @@
 									placeholder="Rechercher"
 									aria-label="Rechercher"
 									on:input={(e) => {
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										searchName = e.target.value.toLowerCase();
 										reloadItems();
 									}}
@@ -698,7 +698,7 @@
 												class="py-3 px-2 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
 												value={item.name}
 												on:input={(e) => {
-													// @ts-ignore
+													// @ts-expect-error TODO: fix or drop when types improve
 													let name = e.target?.value;
 													editItem(item.id, { name: name }, item.category_id);
 												}}
@@ -711,7 +711,7 @@
 												class="block text-sm dark:text-white/[.8] dark:bg-slate-900 break-words p-2 bg-transparent"
 												value={item.category_id}
 												on:change={(e) => {
-													// @ts-ignore
+													// @ts-expect-error TODO: fix or drop when types improve
 													let category_id = e.target?.value;
 													editItem(item.id, { category_id: category_id }, item.category_id);
 												}}
@@ -736,7 +736,7 @@
 												type="file"
 												class="absolute w-12 h-12 opacity-0 cursor-pointer"
 												on:change={(e) => {
-													// @ts-ignore
+													// @ts-expect-error TODO: fix or drop when types improve
 													let file = e.target?.files[0];
 													reuploadItemPicture(item.id, file, item.category_id);
 												}}
@@ -756,7 +756,7 @@
 												class="block text-sm dark:text-white/[.8] dark:bg-slate-900 break-words p-2 bg-transparent"
 												value={item.state}
 												on:change={(e) => {
-													// @ts-ignore
+													// @ts-expect-error TODO: fix or drop when types improve
 													let state = e.target?.value;
 													editItem(item.id, { state: state }, item.category_id);
 												}}
@@ -773,7 +773,7 @@
 												class="py-3 px-2 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
 												value={item.amount_left}
 												on:input={(e) => {
-													// @ts-ignore
+													// @ts-expect-error TODO: fix or drop when types improve
 													let stock = parseInt(e.target?.value);
 													editItem(item.id, { amount_left: stock }, item.category_id);
 												}}
@@ -787,9 +787,9 @@
 												class="py-3 px-2 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
 												value={item.buy_limit}
 												on:input={(e) => {
-													// @ts-ignore
+													// @ts-expect-error TODO: fix or drop when types improve
 													let buy_limit = parseInt(e.target?.value);
-													// @ts-ignore
+													// @ts-expect-error TODO: fix or drop when types improve
 													if (e.target?.value === '') {
 														editItem(item.id, { buy_limit: -1 }, item.category_id);
 														return;
@@ -806,7 +806,7 @@
 												class="py-3 px-2 block w-[95%] border-gray-200 border-2 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
 												value={item.optimal_amount}
 												on:input={(e) => {
-													// @ts-ignore
+													// @ts-expect-error TODO: fix or drop when types improve
 													let optimal_amount = parseInt(e.target?.value);
 													editItem(item.id, { optimal_amount: optimal_amount }, item.category_id);
 												}}
@@ -825,7 +825,7 @@
 												aria-describedby="text-error"
 												on:input={(e) => {
 													let prices = item.prices;
-													// @ts-ignore
+													// @ts-expect-error TODO: fix or drop when types improve
 													prices['coutant'] = parsePrice(e.target?.value);
 
 													editItem(item.id, { prices: prices }, item.category_id);
@@ -835,7 +835,7 @@
 													rebounceTimeout = setTimeout(() => {
 														let elems = document.querySelectorAll('[id=price]');
 														elems.forEach((elem) => {
-															// @ts-ignore
+															// @ts-expect-error TODO: fix or drop when types improve
 															elem.value = '';
 														});
 													}, 1000);
@@ -855,7 +855,7 @@
 												aria-describedby="text-error"
 												on:input={(e) => {
 													let prices = item.prices;
-													// @ts-ignore
+													// @ts-expect-error TODO: fix or drop when types improve
 													prices['ceten'] = parsePrice(e.target?.value);
 
 													editItem(item.id, { prices: prices }, item.category_id);
@@ -865,7 +865,7 @@
 													rebounceTimeout = setTimeout(() => {
 														let elems = document.querySelectorAll('[id=price]');
 														elems.forEach((elem) => {
-															// @ts-ignore
+															// @ts-expect-error TODO: fix or drop when types improve
 															elem.value = '';
 														});
 													}, 1000);
@@ -885,7 +885,7 @@
 												aria-describedby="text-error"
 												on:input={(e) => {
 													let prices = item.prices;
-													// @ts-ignore
+													// @ts-expect-error TODO: fix or drop when types improve
 													prices['externe'] = parsePrice(e.target?.value);
 
 													editItem(item.id, { prices: prices }, item.category_id);
@@ -895,7 +895,7 @@
 													rebounceTimeout = setTimeout(() => {
 														let elems = document.querySelectorAll('[id=price]');
 														elems.forEach((elem) => {
-															// @ts-ignore
+															// @ts-expect-error TODO: fix or drop when types improve
 															elem.value = '';
 														});
 													}, 1000);
@@ -915,7 +915,7 @@
 												aria-describedby="text-error"
 												on:input={(e) => {
 													let prices = item.prices;
-													// @ts-ignore
+													// @ts-expect-error TODO: fix or drop when types improve
 													prices['staff_bar'] = parsePrice(e.target?.value);
 
 													editItem(item.id, { prices: prices }, item.category_id);
@@ -925,7 +925,7 @@
 													rebounceTimeout = setTimeout(() => {
 														let elems = document.querySelectorAll('[id=price]');
 														elems.forEach((elem) => {
-															// @ts-ignore
+															// @ts-expect-error TODO: fix or drop when types improve
 															elem.value = '';
 														});
 													}, 1000);
@@ -945,7 +945,7 @@
 												aria-describedby="text-error"
 												on:input={(e) => {
 													let prices = item.prices;
-													// @ts-ignore
+													// @ts-expect-error TODO: fix or drop when types improve
 													prices['privilegies'] = parsePrice(e.target?.value);
 
 													editItem(item.id, { prices: prices }, item.category_id);
@@ -955,7 +955,7 @@
 													rebounceTimeout = setTimeout(() => {
 														let elems = document.querySelectorAll('[id=price]');
 														elems.forEach((elem) => {
-															// @ts-ignore
+															// @ts-expect-error TODO: fix or drop when types improve
 															elem.value = '';
 														});
 													}, 1000);
@@ -975,7 +975,7 @@
 												aria-describedby="text-error"
 												on:input={(e) => {
 													let prices = item.prices;
-													// @ts-ignore
+													// @ts-expect-error TODO: fix or drop when types improve
 													prices['menu'] = parsePrice(e.target?.value);
 
 													editItem(item.id, { prices: prices }, item.category_id);
@@ -985,7 +985,7 @@
 													rebounceTimeout = setTimeout(() => {
 														let elems = document.querySelectorAll('[id=price]');
 														elems.forEach((elem) => {
-															// @ts-ignore
+															// @ts-expect-error TODO: fix or drop when types improve
 															elem.value = '';
 														});
 													}, 1000);

@@ -83,7 +83,7 @@
 								placeholder="Rechercher"
 								aria-label="Rechercher"
 								on:input={(e) => {
-									// @ts-ignore
+									// @ts-expect-error TODO: fix or drop when types improve
 									searchQuery = e.target.value.toLowerCase();
 
 									reloadAccounts();

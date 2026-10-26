@@ -62,7 +62,7 @@
 					class="w-1/2 rounded-lg p-2 border-2 border-slate-200"
 					placeholder="nom du compte"
 					on:keyup={async (e) => {
-						// @ts-ignore
+						// @ts-expect-error TODO: fix or drop when types improve
 						let val = e.target?.value;
 						await getAccounts(val);
 					}}

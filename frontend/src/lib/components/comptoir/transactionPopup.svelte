@@ -102,7 +102,7 @@
 		for (let i = 0; i < newTransaction.items.length; i++) {
 			let item = newTransaction.items[i];
 
-			// @ts-ignore
+			// @ts-expect-error TODO: fix or drop when types improve
 			if (item.state == transaction.items[i].state) item.state = undefined;
 
 			let res = await transactionsApi().patchTransactionItemId(
@@ -150,7 +150,7 @@
 		for (let i = 0; i < newTransaction.items.length; i++) {
 			let item = newTransaction.items[i];
 
-			// @ts-ignore
+			// @ts-expect-error TODO: fix or drop when types improve
 			if (item.state == transaction.items[i].state) item.state = undefined;
 
 			let res = await transactionsApi().patchTransactionItemId(

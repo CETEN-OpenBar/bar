@@ -171,7 +171,7 @@
 															class="block text-sm dark:text-white/[.8] dark:bg-slate-800 break-words p-2 bg-transparent"
 															bind:value={refill.type}
 															on:change={(e) => {
-																// @ts-ignore
+																// @ts-expect-error TODO: fix or drop when types improve
 																refill.type = e.target?.value;
 																refillsApi()
 																	.patchRefillId(account.id, refill.id, refill.state, refill.type, {
@@ -208,7 +208,7 @@
 															class="block text-sm dark:text-white/[.8] dark:bg-slate-800 break-words p-2 bg-transparent"
 															bind:value={refill.state}
 															on:change={(e) => {
-																// @ts-ignore
+																// @ts-expect-error TODO: fix or drop when types improve
 																refill.state = e.target?.value;
 																refillsApi()
 																	.patchRefillId(account.id, refill.id, refill.state, refill.type, {

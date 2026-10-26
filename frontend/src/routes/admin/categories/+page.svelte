@@ -196,7 +196,7 @@
 									required
 									aria-describedby="text-error"
 									on:change={(e) => {
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										let file = e.target?.files[0];
 										file2Base64(file).then((res) => {
 											res = res.replace('data:', '').replace(/^.+,/, '');
@@ -313,7 +313,7 @@
 									class="block w-full text-sm dark:text-white/[.8] p-2 bg-transparent border-none outline-none"
 									value={category.name}
 									on:input={(e) => {
-										// @ts-ignore
+										// @ts-expect-error TODO: fix or drop when types improve
 										let name = e.target?.value;
 										renameCategory(category.id, name);
 									}}
@@ -332,7 +332,7 @@
 										class="absolute w-full h-full opacity-0 cursor-pointer"
 										accept=".jpg, .jpeg, .png"
 										on:change={(e) => {
-											// @ts-ignore
+											// @ts-expect-error TODO: fix or drop when types improve
 											let file = e.target?.files[0];
 											reuploadCategoryPicture(category.id, file);
 										}}
@@ -418,7 +418,7 @@
 										class="w-full text-sm dark:text-white/[.8] bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
 										value={category.name}
 										on:input={(e) => {
-											// @ts-ignore
+											// @ts-expect-error TODO: fix or drop when types improve
 											let name = e.target?.value;
 											renameCategory(category.id, name);
 										}}
@@ -434,7 +434,7 @@
 											class="absolute w-full h-full opacity-0 cursor-pointer"
 											accept=".jpg, .jpeg, .png"
 											on:change={(e) => {
-												// @ts-ignore
+												// @ts-expect-error TODO: fix or drop when types improve
 												let file = e.target?.files[0];
 												reuploadCategoryPicture(category.id, file);
 											}}

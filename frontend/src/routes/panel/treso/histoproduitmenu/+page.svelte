@@ -106,7 +106,7 @@
 						'-' +
 						todayMorning.toLocaleString('default', { day: '2-digit' })}
 					on:change={(e) => {
-						// @ts-ignore
+						// @ts-expect-error TODO: fix or drop when types improve
 						startDate = time2Utc(new Date(e.target.value).getTime() / 1000);
 					}}
 				/>
@@ -122,7 +122,7 @@
 						'-' +
 						todayMorning.toLocaleString('default', { day: '2-digit' })}
 					on:change={(e) => {
-						// @ts-ignore
+						// @ts-expect-error TODO: fix or drop when types improve
 						endDate = time2Utc(new Date(e.target.value).getTime() / 1000 + 24 * 60 * 60);
 					}}
 				/>
