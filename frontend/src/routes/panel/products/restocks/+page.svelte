@@ -16,7 +16,7 @@
 	import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
 	import pdfjsWorker from 'pdfjs-dist/build/pdf.worker?url';
 
-	let sure: boolean = false;
+	let sure = false;
 	let items: Item[] = [];
 	// Array of items which are unknown by their reference for the automatic restock with the invoice
 	let unknownItems: Array<{
@@ -38,11 +38,11 @@
 		items: []
 	};
 
-	let page: number = 0;
-	let max_page: number = 0;
-	let maxPageRestock: number = 0;
-	let pageRestock: number = 0;
-	let itemsPerPage: number = 4;
+	let page = 0;
+	let max_page = 0;
+	let maxPageRestock = 0;
+	let pageRestock = 0;
+	let itemsPerPage = 4;
 
 	let nextPage = () => {
 		if (pageRestock < maxPageRestock) {
@@ -67,7 +67,7 @@
 		bundle_cost_float_ttc: 0,
 		tva: 0
 	};
-	let searchName: string = '';
+	let searchName = '';
 
 	type dV = {
 		name: string;

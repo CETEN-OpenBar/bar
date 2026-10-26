@@ -61,7 +61,7 @@
 	}
 
 	export let state: ItemState = 'buyable';
-	export let category: string = '';
+	export let category = '';
 
 	export let click: (item: Item) => void;
 
@@ -84,8 +84,8 @@
 
 	let items: Item[] = [];
 
-	let page: number = 1;
-	let maxPage: number = 1;
+	let page = 1;
+	let maxPage = 1;
 	let nextPage = () => {
 		if (page < maxPage) {
 			page++;
@@ -98,7 +98,7 @@
 			reloadItems();
 		}
 	};
-	let limit: number = 12;
+	let limit = 12;
 
 	type MenuPopup = {
 		items: MenuItem[] | undefined;
@@ -110,7 +110,7 @@
 		reloadItems();
 	});
 
-	function reloadItems(anim: boolean = true) {
+	function reloadItems(anim = true) {
 		itemsApi()
 			.getCategoryItems(category, page, limit, state, { withCredentials: true })
 			.then((res) => {

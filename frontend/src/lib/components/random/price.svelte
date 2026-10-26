@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { formatPrice } from '$lib/utils';
 
-	export let amount: number = 0;
+	export let amount = 0;
 </script>
 
 <div class={$$restProps.class || ''}>

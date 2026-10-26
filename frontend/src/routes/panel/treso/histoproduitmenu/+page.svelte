@@ -7,7 +7,7 @@
 
 	let items: Item[] = [];
 	let itemsPerPage = 5;
-	let searchItem: string = '';
+	let searchItem = '';
 	let selectedItem: Item | undefined = undefined;
 	let hide_remotes = true;
 	async function reloadItems() {

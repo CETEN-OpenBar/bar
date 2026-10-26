@@ -4,7 +4,7 @@
 	import { formatPrice } from '$lib/utils';
 	import { onMount } from 'svelte';
 
-	export let amount: number = 3;
+	export let amount = 3;
 
 	let refills: Array<Refill> = [];
 

@@ -1,7 +1,7 @@
 <script lang="ts">
-	export let message: string = 'Voulez-vous vraiment faire ceci ?';
-	export let confirm_text: string = 'Confirmer';
-	export let cancel_text: string = 'Annuler';
+	export let message = 'Voulez-vous vraiment faire ceci ?';
+	export let confirm_text = 'Confirmer';
+	export let cancel_text = 'Annuler';
 	export let cancel_callback: VoidFunction;
 	export let confirm_callback: VoidFunction;
 </script>

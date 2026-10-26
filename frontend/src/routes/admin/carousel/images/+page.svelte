@@ -11,7 +11,7 @@
 	let page = 0;
 	let imagesPerPage = 10;
 
-	let showConfirmation: boolean = false;
+	let showConfirmation = false;
 	let confirmationCallback: VoidFunction = () => {};
 
 	onMount(() => {

@@ -4,8 +4,8 @@
 	export let page: number;
 	export let maxPage: number;
 	export let resultsCount: number;
-	export let showPageInput: boolean = false;
-	export let zeroBased: boolean = false;
+	export let showPageInput = false;
+	export let zeroBased = false;
 
 	const dispatch = createEventDispatcher();
 

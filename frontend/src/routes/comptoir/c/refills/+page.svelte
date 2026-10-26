@@ -8,11 +8,11 @@
 	import PaginationFooter from '$lib/components/PaginationFooter.svelte';
 
 	let refills: Array<Refill> = [];
-	let refillAmount: number = 4;
+	let refillAmount = 4;
 	let interval: number;
 
-	let page: number = 0;
-	let maxPage: number = 0;
+	let page = 0;
+	let maxPage = 0;
 	let nextPage = () => {
 		if (page < maxPage) {
 			page++;

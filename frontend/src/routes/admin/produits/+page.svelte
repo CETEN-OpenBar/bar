@@ -46,8 +46,8 @@
 	let newItemPriceRole: AccountPriceRole = 'ceten';
 	let promoItemPriceRole: AccountPriceRole = 'ceten';
 
-	let page: number = 1;
-	let maxPage: number = 0;
+	let page = 1;
+	let maxPage = 0;
 	let handlePageInput = () => {
 		if (page < 1) {
 			page = 1;
@@ -75,11 +75,11 @@
 	let searchName: string | undefined = undefined;
 	let searchFournisseur: Fournisseur | undefined = undefined;
 
-	let deletingItem: boolean = false;
+	let deletingItem = false;
 	let confirmationMessage: string | undefined = undefined;
 	let deleteItemCallback: VoidFunction = () => {};
 
-	let filtersOpen: boolean = false;
+	let filtersOpen = false;
 
 	onMount(() => {
 		categoriesApi()

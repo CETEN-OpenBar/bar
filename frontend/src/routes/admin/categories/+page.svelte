@@ -13,8 +13,8 @@
 		position: 0
 	};
 
-	let page: number = 1;
-	let maxPage: number = 1;
+	let page = 1;
+	let maxPage = 1;
 	let categories_per_page = 10;
 
 	let nextPage = () => {
@@ -38,7 +38,7 @@
 		reloadCategories();
 	};
 
-	let deletingCategory: boolean = false;
+	let deletingCategory = false;
 	let confirmationMessage: string | undefined = undefined;
 	let deleteCategoryCallback: VoidFunction = () => {};
 

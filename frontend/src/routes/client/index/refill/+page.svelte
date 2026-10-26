@@ -5,9 +5,9 @@
 	import { refillsApi } from '$lib/requests/requests';
 	import { onMount } from 'svelte';
 
-	let value: string = '';
+	let value = '';
 
-	let remote_refills_available: boolean = true;
+	let remote_refills_available = true;
 	onMount(() => {
 		refillsApi()
 			.getRemoteRefillStatus({ withCredentials: true })
@@ -19,12 +19,12 @@
 			});
 	});
 
-	let isValid: boolean = false;
-	let loading: boolean = false;
+	let isValid = false;
+	let loading = false;
 	let error: string | undefined;
 
 	// Regex: positive integer or float with up to 2 decimals
-	const regex: RegExp = /^(?:\d+)(?:\.\d{1,2})?$/;
+	const regex = /^(?:\d+)(?:\.\d{1,2})?$/;
 
 	function validate(): void {
 		isValid = regex.test(value) && parseFloat(value) > 0.5;

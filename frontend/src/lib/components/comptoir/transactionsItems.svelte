@@ -6,7 +6,7 @@
 
 	let items: Array<TransactionItem> = [];
 	let stockItems: Array<Item> = [];
-	let name: string = '';
+	let name = '';
 
 	$: filtered_items =
 		name !== ''

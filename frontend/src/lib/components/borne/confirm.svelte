@@ -1,6 +1,6 @@
 <script lang="ts">
-	export let callback: (response: Boolean) => void;
-	export let custom_text: string = 'Êtes-vous sûr ?';
+	export let callback: (response: boolean) => void;
+	export let custom_text = 'Êtes-vous sûr ?';
 </script>
 
 <!-- Display a popup that asks for a pin -->

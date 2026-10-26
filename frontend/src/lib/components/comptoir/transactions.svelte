@@ -28,11 +28,11 @@
 	let mounted = false;
 
 	let transactions: Array<Transaction> = [];
-	let maxItemPerTransaction: number = 6;
-	let transactionAmount: number = 4;
+	let maxItemPerTransaction = 6;
+	let transactionAmount = 4;
 
-	let page: number = 1;
-	let maxPage: number = 1;
+	let page = 1;
+	let maxPage = 1;
 	let nextPage = () => {
 		if (page < maxPage) {
 			page++;
@@ -161,7 +161,7 @@
 
 	let st: TransactionState | undefined = 'started';
 
-	let showRemoteTransactions: boolean = true;
+	let showRemoteTransactions = true;
 
 	type TransactionItemWithFakeAmount = TransactionItem & { item_fake_amount?: number };
 

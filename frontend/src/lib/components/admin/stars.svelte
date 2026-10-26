@@ -6,7 +6,7 @@
 	export let close: () => void;
 	export let onStarsAdded: () => void = () => {};
 
-	let amount: number = 0;
+	let amount = 0;
 
 	function sendStars() {
 		if (amount >= 0) {

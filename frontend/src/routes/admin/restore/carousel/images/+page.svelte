@@ -7,8 +7,8 @@
 
 	let images: CarouselImage[] = [];
 
-	let page: number = 0;
-	let maxPage: number = 0;
+	let page = 0;
+	let maxPage = 0;
 	let nextPage = () => {
 		if (page <= maxPage) {
 			page++;

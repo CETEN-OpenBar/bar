@@ -34,7 +34,7 @@
 	};
 
 	let order: NewTransactionItemWithItem[] = [];
-	let orderPrice: number = 0;
+	let orderPrice = 0;
 
 	onMount(() => {
 		unsub = store.subscribe((state) => {
@@ -46,7 +46,7 @@
 		unsub();
 	});
 
-	let currentCatgory: string = '';
+	let currentCatgory = '';
 
 	let changeCategory: (category: string) => void = (category: string) => {
 		currentCatgory = '';
@@ -161,7 +161,7 @@
 		}
 	};
 
-	function removeItem(item: NewTransactionItemWithItem, amount: number = 1) {
+	function removeItem(item: NewTransactionItemWithItem, amount = 1) {
 		return () => {
 			let newOrder = order;
 			let found = newOrder.find((i) => i.item_id == item.item.id)!;
@@ -184,7 +184,7 @@
 		};
 	}
 
-	function confirmOrder(response: Boolean) {
+	function confirmOrder(response: boolean) {
 		confirm = false;
 		if (!response) {
 			return;

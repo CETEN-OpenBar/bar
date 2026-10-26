@@ -55,7 +55,7 @@
 
 	let loading = false;
 	let error: string | undefined = undefined;
-	let success: boolean = false;
+	let success = false;
 
 	const verifyRefill = (id: string) => {
 		loading = true;
@@ -101,7 +101,7 @@
 			});
 	};
 
-	let remote_refills_available: boolean = true;
+	let remote_refills_available = true;
 	onMount(() => {
 		fetchRefills();
 		refillsApi()

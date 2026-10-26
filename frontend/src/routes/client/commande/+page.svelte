@@ -33,7 +33,7 @@
 	};
 
 	let order: NewTransactionItemWithItem[] = [];
-	let orderPrice: number = 0;
+	let orderPrice = 0;
 
 	let admin = false;
 	accountsApi()
@@ -63,8 +63,8 @@
 	});
 
 	let categories: Category[] = [];
-	let currentCatgoryId: string = '';
-	let currentCategoryName: string = '';
+	let currentCatgoryId = '';
+	let currentCategoryName = '';
 
 	let changeCategory: (categoryId: string, categoryName: string) => void = (
 		categoryId: string,
@@ -198,7 +198,7 @@
 		}
 	};
 
-	function removeItem(item: NewTransactionItemWithItem, amount: number = 1) {
+	function removeItem(item: NewTransactionItemWithItem, amount = 1) {
 		return () => {
 			let newOrder = order;
 			let found = newOrder.find((i) => i.item_id == item.item.id)!;
@@ -221,7 +221,7 @@
 		};
 	}
 
-	function confirmOrder(response: Boolean) {
+	function confirmOrder(response: boolean) {
 		confirm = false;
 		if (!response) {
 			return;

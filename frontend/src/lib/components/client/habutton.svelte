@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let disabled: boolean = false;
+	export let disabled = false;
 	export let type: 'button' | 'submit' | 'reset' | null | undefined;
 	export let onclick: () => void = () => {};
 </script>

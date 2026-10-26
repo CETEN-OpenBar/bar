@@ -42,7 +42,7 @@
 		}
 	];
 
-	let display: Boolean = false;
+	let display = false;
 	let images: Array<CarouselImage> = fakeImages;
 	let texts: Array<CarouselText> = fakeTexts;
 

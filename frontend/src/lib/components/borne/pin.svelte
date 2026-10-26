@@ -1,7 +1,7 @@
 <script lang="ts">
 	let temp_pin = '';
 	export let callback: (pin: string) => void;
-	export let custom_text: string = 'Entrez votre code pin';
+	export let custom_text = 'Entrez votre code pin';
 </script>
 
 <!-- Display a popup that asks for a pin -->

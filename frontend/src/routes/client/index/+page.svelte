@@ -13,7 +13,7 @@
 
 	let account: Account | undefined = undefined;
 	let pending_refills: RemoteRefill[] = [];
-	let remote_refills_available: boolean = true;
+	let remote_refills_available = true;
 	let unsub: () => void;
 
 	onMount(() => {

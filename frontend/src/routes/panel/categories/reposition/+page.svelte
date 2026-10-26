@@ -21,7 +21,7 @@
 	});
 
 	let mouseYCoordinate: number | null = null; // pointer y coordinate within client
-	let distanceTopGrabbedVsPointer: number = 0;
+	let distanceTopGrabbedVsPointer = 0;
 
 	let draggingItem: Category | null = null;
 	let draggingItemIndex: number | null = null;

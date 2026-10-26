@@ -9,10 +9,10 @@
 	const checkoutIntentId = $page.url.searchParams.get('checkoutIntentId');
 	const code = $page.url.searchParams.get('code');
 
-	let loading: boolean = false;
-	let success: boolean = false;
+	let loading = false;
+	let success = false;
 	let error: string | null = $page.url.searchParams.get('error');
-	let show_disclaimer: boolean = false;
+	let show_disclaimer = false;
 
 	// Try to validate the payment on load
 	onMount(() => {

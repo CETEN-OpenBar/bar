@@ -26,9 +26,9 @@
 	let searchRole: string | undefined = undefined;
 
 	let searchQuery = '';
-	let filtersOpen: boolean = false;
-	let page: number = 1;
-	let maxPage: number = 0;
+	let filtersOpen = false;
+	let page = 1;
+	let maxPage = 0;
 	let nextPage = () => {
 		if (page < maxPage) {
 			page++;
@@ -54,7 +54,7 @@
 	let shown_stars: Account | undefined = undefined;
 	let recharging_account: Account | undefined = undefined;
 
-	let deletingAccount: boolean = false;
+	let deletingAccount = false;
 	let confirmationMessage: string | undefined = undefined;
 	let deleteAccountCallback: VoidFunction = () => {};
 	let selectedAccount: Account | undefined = undefined;

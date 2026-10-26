@@ -6,7 +6,7 @@
 	let accounts: Account[] = [];
 	let selectedAccount: Account | null = null;
 
-	let nickname: string = '';
+	let nickname = '';
 
 	async function getAccounts(search: string) {
 		let res = await accountsApi().getAccounts(0, 5, search, undefined, undefined, {
