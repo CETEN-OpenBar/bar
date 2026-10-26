@@ -374,10 +374,12 @@
 					class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3 mb-2 space-y-3"
 				>
 					<div>
-						<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
-							>Rechercher</label
+						<label
+							class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
+							for="search-mobile">Rechercher</label
 						>
 						<input
+							id="search-mobile"
 							type="text"
 							placeholder="Rechercher par nom..."
 							bind:value={searchQuery}
@@ -390,11 +392,12 @@
 					</div>
 					<div class="grid grid-cols-2 gap-3">
 						<div>
-							<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
-								>Prix</label
+							<label
+								class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
+								for="price-role-mobile">Prix</label
 							>
 							<select
-								id="category-mobile"
+								id="price-role-mobile"
 								name="category"
 								class="w-full px-2 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white"
 								on:change={(e) => {
@@ -414,11 +417,12 @@
 							</select>
 						</div>
 						<div>
-							<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
-								>Rôle</label
+							<label
+								class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
+								for="role-mobile">Rôle</label
 							>
 							<select
-								id="category-mobile"
+								id="role-mobile"
 								name="category"
 								class="w-full px-2 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white"
 								on:change={(e) => {
@@ -934,10 +938,12 @@
 							<div class="flex-1">
 								<div class="grid grid-cols-2 gap-2 mb-2">
 									<div>
-										<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
-											>Nom</label
+										<label
+											class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+											for="last-name-{account.id}">Nom</label
 										>
 										<input
+											id="last-name-{account.id}"
 											type="text"
 											class="w-full text-sm dark:text-white/[.8] bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
 											value={account.last_name}
@@ -962,10 +968,12 @@
 										/>
 									</div>
 									<div>
-										<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
-											>Prénom</label
+										<label
+											class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+											for="first-name-{account.id}">Prénom</label
 										>
 										<input
+											id="first-name-{account.id}"
 											type="text"
 											class="w-full text-sm dark:text-white/[.8] bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
 											value={account.first_name}
@@ -991,10 +999,12 @@
 									</div>
 								</div>
 								<div class="mb-2">
-									<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
-										>E-mail</label
+									<label
+										class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+										for="email-{account.id}">E-mail</label
 									>
 									<input
+										id="email-{account.id}"
 										type="text"
 										class="w-full text-sm dark:text-white/[.8] bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
 										value={account.email_address}
@@ -1022,16 +1032,15 @@
 						</div>
 						<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
-									>Solde</label
+								<span class="text-xs font-medium text-gray-500 dark:text-gray-400 block">Solde</span
 								>
 								<div class="text-sm font-medium text-gray-900 dark:text-gray-300 py-2">
 									{formatPrice(account.balance)}
 								</div>
 							</div>
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
-									>Étoiles</label
+								<span class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+									>Étoiles</span
 								>
 								<div
 									class="text-sm font-medium text-gray-900 dark:text-gray-300 py-2 flex items-center"
@@ -1051,10 +1060,12 @@
 								</div>
 							</div>
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
-									>Rôle</label
+								<label
+									class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+									for="role-{account.id}">Rôle</label
 								>
 								<select
+									id="role-{account.id}"
 									class="w-full text-sm dark:text-white/[.8] dark:bg-slate-900 bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
 									value={account.role}
 									on:change={(e) => {
@@ -1085,10 +1096,12 @@
 								</select>
 							</div>
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
-									>Prix</label
+								<label
+									class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+									for="price-role-{account.id}">Prix</label
 								>
 								<select
+									id="price-role-{account.id}"
 									class="w-full text-sm dark:text-white/[.8] dark:bg-slate-900 bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
 									value={account.price_role}
 									on:change={(e) => {

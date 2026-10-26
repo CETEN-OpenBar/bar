@@ -545,8 +545,9 @@
 				>
 					<div class="grid grid-cols-2 gap-3">
 						<div>
-							<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
-								>Catégorie</label
+							<label
+								class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
+								for="category-mobile">Catégorie</label
 							>
 							<select
 								id="category-mobile"
@@ -567,8 +568,9 @@
 							</select>
 						</div>
 						<div>
-							<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
-								>Etat</label
+							<label
+								class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
+								for="state-mobile">Etat</label
 							>
 							<select
 								id="state-mobile"
@@ -590,8 +592,9 @@
 						</div>
 					</div>
 					<div>
-						<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
-							>Fournisseur</label
+						<label
+							class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
+							for="fournisseur-mobile">Fournisseur</label
 						>
 						<select
 							id="fournisseur-mobile"
@@ -613,10 +616,12 @@
 						</select>
 					</div>
 					<div>
-						<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
-							>Rechercher</label
+						<label
+							class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
+							for="product-search">Rechercher</label
 						>
 						<input
+							id="product-search"
 							type="text"
 							placeholder="Nom du produit..."
 							bind:value={searchName}
@@ -935,10 +940,12 @@
 							<div class="flex-1">
 								<div class="grid grid-cols-2 gap-2 mb-2">
 									<div>
-										<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
-											>Nom</label
+										<label
+											class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+											for="item-name-{item.id}">Nom</label
 										>
 										<input
+											id="item-name-{item.id}"
 											type="text"
 											class="w-full text-sm dark:text-white/[.8] bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
 											value={item.name}
@@ -950,10 +957,12 @@
 										/>
 									</div>
 									<div>
-										<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
-											>Catégorie</label
+										<label
+											class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+											for="item-category-{item.id}">Catégorie</label
 										>
 										<select
+											id="item-category-{item.id}"
 											class="w-full text-sm dark:text-white/[.8] dark:bg-slate-900 bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
 											value={item.category_id}
 											on:change={(e) => {
@@ -969,11 +978,13 @@
 									</div>
 								</div>
 								<div class="mb-2">
-									<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
-										>Image</label
+									<label
+										class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+										for="item-image-{item.id}">Image</label
 									>
 									<div class="relative inline-block">
 										<input
+											id="item-image-{item.id}"
 											type="file"
 											class="absolute w-12 h-12 opacity-0 cursor-pointer"
 											on:change={(e) => {
@@ -996,11 +1007,13 @@
 						<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
 							<div>
 								<label
+									for="item-state-{item.id}"
 									class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1"
 								>
 									Achetable
 								</label>
 								<select
+									id="item-state-{item.id}"
 									class="w-full text-sm dark:text-white/[.8] dark:bg-slate-900 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 									value={item.state}
 									on:change={(e) => {
@@ -1015,12 +1028,14 @@
 							</div>
 							<div>
 								<label
+									for="item-stock-{item.id}"
 									class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1"
 								>
 									<iconify-icon icon="mdi:pencil" width="12" height="12" />
 									Stock
 								</label>
 								<input
+									id="item-stock-{item.id}"
 									type="number"
 									class="w-full text-sm dark:text-white/[.8] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 									value={item.amount_left}
@@ -1033,12 +1048,14 @@
 							</div>
 							<div>
 								<label
+									for="item-limit-{item.id}"
 									class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1"
 								>
 									<iconify-icon icon="mdi:pencil" width="12" height="12" />
 									Limite
 								</label>
 								<input
+									id="item-limit-{item.id}"
 									type="number"
 									class="w-full text-sm dark:text-white/[.8] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 									value={item.buy_limit}
@@ -1056,12 +1073,14 @@
 							</div>
 							<div>
 								<label
+									for="item-optimal-{item.id}"
 									class="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1"
 								>
 									<iconify-icon icon="mdi:pencil" width="12" height="12" />
 									Optimal
 								</label>
 								<input
+									id="item-optimal-{item.id}"
 									type="number"
 									class="w-full text-sm dark:text-white/[.8] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 									value={item.optimal_amount}
@@ -1075,14 +1094,15 @@
 						</div>
 						<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
-									>Fournisseur</label
+								<label
+									class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
+									for="fournisseur-{item.id}">Fournisseur</label
 								>
 								<FournisseurCell {item} {editItem} />
 							</div>
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
-									>Prix</label
+								<span class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1"
+									>Prix</span
 								>
 								<PriceCell {item} {editItem} />
 							</div>

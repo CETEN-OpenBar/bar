@@ -73,8 +73,12 @@
 			</div>
 			<div class="space-y-2">
 				<div>
-					<label class="text-xs block font-medium dark:text-gray-300 mb-1">Fournisseur</label>
+					<label
+						class="text-xs block font-medium dark:text-gray-300 mb-1"
+						for="fournisseur-{item.id}">Fournisseur</label
+					>
 					<select
+						id="fournisseur-{item.id}"
 						class="w-full text-xs px-2 py-1.5 border border-gray-300 dark:border-gray-500 rounded bg-white dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 						value={item.fournisseur ?? ''}
 						on:change={(e) => {
@@ -89,8 +93,11 @@
 					</select>
 				</div>
 				<div>
-					<label class="text-xs block font-medium dark:text-gray-300 mb-1">Bundle/Quantité</label>
+					<label class="text-xs block font-medium dark:text-gray-300 mb-1" for="bundle-{item.id}"
+						>Bundle/Quantité</label
+					>
 					<input
+						id="bundle-{item.id}"
 						type="number"
 						class="w-full text-xs px-2 py-1.5 border border-gray-300 dark:border-gray-500 rounded bg-white dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 						value={item.amount_per_bundle ?? ''}
@@ -107,8 +114,12 @@
 					/>
 				</div>
 				<div>
-					<label class="text-xs block font-medium dark:text-gray-300 mb-1">Code Référence</label>
+					<label
+						class="text-xs block font-medium dark:text-gray-300 mb-1"
+						for="ref-bundle-{item.id}">Code Référence</label
+					>
 					<input
+						id="ref-bundle-{item.id}"
 						type="text"
 						class="w-full text-xs px-2 py-1.5 border border-gray-300 dark:border-gray-500 rounded bg-white dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition-all"
 						value={item.ref_bundle ?? ''}

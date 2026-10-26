@@ -188,6 +188,7 @@
 <div
 	bind:this={itemsContainer}
 	class="flex flex-col flex-grow w-full"
+	role="presentation"
 	on:touchstart={handleTouchStart}
 	on:touchend={handleTouchEnd}
 	on:mousedown={handleMouseDown}

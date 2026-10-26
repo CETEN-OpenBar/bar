@@ -410,10 +410,12 @@
 						<div class="flex justify-between items-start mb-3">
 							<div class="flex-1">
 								<div class="mb-2">
-									<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
-										>Nom</label
+									<label
+										class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+										for="name-{category.id}">Nom</label
 									>
 									<input
+										id="name-{category.id}"
 										type="text"
 										class="w-full text-sm dark:text-white/[.8] bg-transparent border border-gray-200 dark:border-gray-600 rounded p-2 focus:border-blue-500 focus:outline-none"
 										value={category.name}
@@ -425,11 +427,13 @@
 									/>
 								</div>
 								<div class="mb-2">
-									<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
-										>Image</label
+									<label
+										class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+										for="image-{category.id}">Image</label
 									>
 									<div class="w-20 relative mt-1">
 										<input
+											id="image-{category.id}"
 											type="file"
 											class="absolute w-full h-full opacity-0 cursor-pointer"
 											accept=".jpg, .jpeg, .png"
@@ -458,11 +462,13 @@
 						</div>
 						<div class="grid grid-cols-2 gap-2 mb-3">
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
-									>Cachee</label
+								<label
+									class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+									for="hidden-{category.id}">Cachee</label
 								>
 								<div class="py-2">
 									<input
+										id="hidden-{category.id}"
 										type="checkbox"
 										checked={category.hidden}
 										class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
@@ -471,11 +477,13 @@
 								</div>
 							</div>
 							<div>
-								<label class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
-									>Prix Special</label
+								<label
+									class="text-xs font-medium text-gray-500 dark:text-gray-400 block"
+									for="special-price-{category.id}">Prix Special</label
 								>
 								<div class="py-2">
 									<input
+										id="special-price-{category.id}"
 										type="checkbox"
 										checked={category.special_price}
 										class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"

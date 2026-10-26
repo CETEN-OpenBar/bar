@@ -101,7 +101,10 @@
 							? 'Privil.'
 							: 'Menu'}
 					<div class="flex items-center gap-2">
-						<label class="text-xs w-16 shrink-0 font-medium dark:text-gray-300">{label}:</label>
+						<label
+							class="text-xs w-16 shrink-0 font-medium dark:text-gray-300"
+							for="price-{item.id}-{role}">{label}:</label
+						>
 						<div class="flex-1 relative">
 							<input
 								type="number"

@@ -833,11 +833,6 @@
 	}
 
 	@media (max-width: 480px) {
-		.view-tabs button {
-			font-size: 9px;
-			padding: 3px 8px;
-		}
-
 		.items-grid {
 			grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
 		}

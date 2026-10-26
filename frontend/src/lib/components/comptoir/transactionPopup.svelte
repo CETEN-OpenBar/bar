@@ -830,11 +830,6 @@
 		}
 	}
 
-	.amount-badge.pending {
-		color: #2563eb;
-		font-weight: 600;
-	}
-
 	.item-actions {
 		margin-top: 16px;
 		padding-top: 16px;
@@ -1086,44 +1081,6 @@
 	@media (prefers-color-scheme: dark) {
 		.price-value {
 			color: white;
-		}
-	}
-
-	.action-group {
-		display: flex;
-		gap: 12px;
-	}
-
-	.footer-btn {
-		display: flex;
-		align-items: center;
-		gap: 6px;
-		padding: 10px 16px;
-		border-radius: 8px;
-		border: none;
-		font-size: 14px;
-		font-weight: 600;
-		cursor: pointer;
-		transition: all 0.2s ease;
-	}
-
-	.footer-btn.secondary {
-		background-color: #e5e7eb;
-		color: #374151;
-	}
-
-	.footer-btn.secondary:hover {
-		background-color: #d1d5db;
-	}
-
-	@media (prefers-color-scheme: dark) {
-		.footer-btn.secondary {
-			background-color: #374151;
-			color: #d1d5db;
-		}
-
-		.footer-btn.secondary:hover {
-			background-color: #4b5563;
 		}
 	}
 

@@ -229,8 +229,8 @@
 			</div>
 
 			{#if askForCard}
-				<div class="modal-overlay" on:click={reset}>
-					<div class="modal-content" on:click|stopPropagation>
+				<div class="modal-overlay" role="presentation" on:click={reset}>
+					<div class="modal-content" role="presentation" on:click|stopPropagation>
 						<button class="modal-close" on:click={reset}>
 							<iconify-icon icon="mdi:close" width="24" height="24" />
 						</button>
